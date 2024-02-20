@@ -1,0 +1,37 @@
+.libcontainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 500;
+  height: 100%;
+  background-color: rgb(0, 8, 255);
+  padding: 0.5rem;
+  box-sizing: border-box;
+  color: rgb(154, 154, 154);
+}
+.library {
+  max-height: 100%;
+  width: 15rem;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+}
+
+.shelfcontainer {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+
+.libnodeentry {
+  background-color: rgba(1, 2, 93, 0.99);
+  margin: 0.1rem;
+  border-radius: 0.2rem;
+  padding: 0.2rem;
+  cursor: pointer;
+  border: 1px solid rgba(1, 2, 93, 0.99);
+  transition: border 0.2s ease-in-out;
+  &:hover {
+    background-color: rgba(1, 2, 93, 0.8);
+    border: 1px solid rgba(0, 4, 219, 0.99);
+  }
+}
