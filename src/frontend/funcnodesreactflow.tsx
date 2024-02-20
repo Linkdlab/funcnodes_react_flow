@@ -72,7 +72,7 @@ const ContextMenu = ({
     fnrf_zst.on_node_action({ type: "delete", id, from_remote: false });
   }, [id, setNodes, setEdges]);
 
-  const nodestore = fnrf_zst.nodespace.nodesstates.get(id);
+  const nodestore = fnrf_zst.nodespace.get_node(id, false);
   if (!nodestore) return <> </>;
   const node: NodeType = nodestore();
 

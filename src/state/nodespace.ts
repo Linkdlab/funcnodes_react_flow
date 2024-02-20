@@ -19,6 +19,8 @@ interface NodeSpaceZustandInterface {
   // A Map object that holds NodeStore objects. The key is a string (node id), and the value is a NodeStore.
   nodesstates: Map<string, NodeStore>;
 
+  get_node: (nid: string, raise?: boolean) => NodeStore | undefined;
+
   // A function to add a new node to the nodesstates Map. It takes a NodeType object as a parameter.
   // add_node: ({
   //   node,
@@ -131,6 +133,16 @@ const NodeSpaceZustand =
 
     return {
       nodesstates: nodesstates,
+      get_node: (nid: string, raise: boolean = true) => {
+        const store = nodesstates.get(nid);
+        if (!store && raise) {
+          const keys = nodesstates.keys();
+          throw new Error(
+            `Node ${nid} not found, available nodes: ${Array.from(keys)}`
+          );
+        }
+        return store;
+      },
       // add_node: add_node,
       // update_node: update_node,
       // set_value: set_value,

@@ -44,6 +44,14 @@ class FuncNodesWorker {
     }
   }
 
+  async trigger_node(node_id: string) {
+    await this._send_cmd({
+      cmd: "trigger_node",
+      kwargs: { nid: node_id },
+      wait_for_response: false,
+    });
+  }
+
   async add_node(node_id: string) {
     const resp = await this._send_cmd({
       cmd: "add_node",
@@ -224,12 +232,24 @@ class FuncNodesWorker {
           from_remote: true,
         });
 
+      case "node_trigger_error":
+        return this._zustand.on_node_action({
+          type: "error",
+          errortype: "trigger",
+          error: data.error,
+          id: data.node,
+          from_remote: true,
+        });
+
       case "node_removed":
         return this._zustand.on_node_action({
           type: "delete",
           id: data.node,
           from_remote: true,
         });
+
+      case "node_added":
+        return this._recieve_node_added(data.node);
 
       default:
         console.warn("Unhandled nodepsace event", event, data);

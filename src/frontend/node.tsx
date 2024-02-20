@@ -11,6 +11,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LanIcon from "@mui/icons-material/Lan";
 import ExpandIcon from "@mui/icons-material/Expand";
+import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import "./node.scss";
 import { FuncNodesReactFlowZustandInterface } from "../state/fnrfzst";
 import { FuncNodesContext } from ".";
@@ -18,10 +19,27 @@ import { FuncNodesContext } from ".";
 interface NodeHeaderProps {
   node_data: NodeType;
 }
+
 const NodeHeader = ({ node_data }: NodeHeaderProps) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+
+  const clicktrigger = () => {
+    fnrf_zst.on_node_action({
+      type: "trigger",
+      from_remote: false,
+      id: node_data.id,
+    });
+  };
+
   return (
     <div className="nodeheader">
       <div className="nodeheader_element">
+        <PlayCircleFilledIcon
+          fontSize="inherit"
+          className="triggerbutton"
+          onClick={clicktrigger}
+        />
         <LanIcon fontSize="inherit" />
       </div>
       <div className="nodeheader_element nodeheader_title">
@@ -170,6 +188,13 @@ const NodeName = ({ node_data }: { node_data: NodeType }) => {
   );
 };
 
+const NodeFooter = ({ node_data }: { node_data: NodeType }) => {
+  return (
+    <div className="nodefooter">
+      {node_data.error && <div className="nodeerror">{node_data.error}</div>}
+    </div>
+  );
+};
 /**
  * A generic function to deeply merge two objects of type T.
  *
@@ -210,12 +235,17 @@ const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
       >
         <ExpandIcon fontSize="inherit" className="noderesizeicon" />
       </NodeResizeControl> */}
-      <div className={"innernode" + (visualTrigger ? " intrigger" : "")}>
+      <div
+        className={
+          "innernode" +
+          (visualTrigger ? " intrigger" : "") +
+          (storedata.error ? " error" : "")
+        }
+      >
         <NodeHeader node_data={storedata} />
         <NodeName node_data={storedata} />
         <NodeBody node_data={storedata} />
-
-        <div className="nodefooter">Footer</div>
+        <NodeFooter node_data={storedata} />
       </div>
     </>
   );

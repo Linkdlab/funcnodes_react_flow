@@ -23,6 +23,7 @@ interface NodeType {
   };
   name: string;
   in_trigger: boolean;
+  error?: string;
 }
 
 type PartialNodeType = DeepPartial<NodeType>;
@@ -64,11 +65,26 @@ interface NodeActionDelete extends BaseNodeAction {
   type: "delete";
 }
 
+interface NodeActionError extends BaseNodeAction {
+  type: "error";
+  errortype: string;
+  error: string;
+}
+
+interface NodeTrigger extends BaseNodeAction {
+  type: "trigger";
+}
+
 /**
  * Type alias for NodeAction.
  * A NodeAction can be either a NodeActionAdd, NodeActionUpdate, or NodeActionDelete.
  */
-type NodeAction = NodeActionAdd | NodeActionUpdate | NodeActionDelete;
+type NodeAction =
+  | NodeActionAdd
+  | NodeActionUpdate
+  | NodeActionDelete
+  | NodeActionError
+  | NodeTrigger;
 
 type NodeStore = UseBoundStore<StoreApi<NodeType>>;
 
@@ -107,4 +123,5 @@ export type {
   NodeActionUpdate,
   NodeActionDelete,
   NodeActionAdd,
+  NodeActionError,
 };

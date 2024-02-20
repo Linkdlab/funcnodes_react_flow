@@ -89,7 +89,7 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
 
     switch (action.type) {
       case "add":
-        let store = ns.nodesstates.get(action.node.id);
+        let store = ns.get_node(action.node.id, false);
         if (!store) {
           store = createNodeStore(action.node);
           ns.nodesstates.set(action.node.id, store);
@@ -103,11 +103,13 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
         rfstore.setState({ nodes: new_ndoes });
         break;
       case "update":
+        // some action reset the error, so far trigger does, so errors should remove the in_trigger flag
+        if (action.node.in_trigger) {
+          action.node.error = undefined;
+        }
         if (action.from_remote) {
-          const store = ns.nodesstates.get(action.id);
-          if (!store) {
-            throw new Error(`Node ${action.id} not found`);
-          }
+          const store = ns.get_node(action.id) as NodeStore;
+
           const state = store.getState();
           const { new_obj, change } = deep_merge(state, action.node);
           if (change) {
@@ -131,6 +133,36 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
           iterf.worker?.remove_node(action.id);
         }
         break;
+      case "error":
+        console.error("Error", action);
+        on_node_action({
+          type: "update",
+          id: action.id,
+          node: {
+            in_trigger: false,
+            error: action.error,
+          },
+          from_remote: true,
+        });
+        break;
+
+      case "trigger":
+        if (action.from_remote) {
+          on_node_action({
+            type: "update",
+            id: action.id,
+            node: {
+              in_trigger: true,
+              error: undefined,
+            },
+            from_remote: true,
+          });
+        } else {
+          iterf.worker?.trigger_node(action.id);
+        }
+        break;
+      default:
+        console.error("Unknown action", action);
     }
   };
 
