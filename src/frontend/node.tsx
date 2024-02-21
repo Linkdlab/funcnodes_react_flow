@@ -127,7 +127,7 @@ const SingleValueOutput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
-  return <div>{io.value.toString()}</div>;
+  return <div>{JSON.stringify(io.value)}</div>;
 };
 
 const FloatInput = ({ io }: { io: IOType }) => {
@@ -187,8 +187,11 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
   if (node_data.render_options?.data?.src) {
     value = node_data.io[node_data.render_options.data.src]?.value;
   }
-  console.log("value", node_data.name, value, node_data);
-  return <div className="nodedatabody">{value ? value.toString() : ""}</div>;
+  return (
+    <div className="nodedatabody">
+      {value && JSON.stringify(value, null, 2)}
+    </div>
+  );
 };
 const NodeBody = ({ node_data }: NodeBodyProps) => {
   const inputs = Object.values(node_data.io).filter((io) => io.is_input);
