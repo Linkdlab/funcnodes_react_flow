@@ -42,6 +42,22 @@ class FuncNodesWorker {
       }
       this._recieve_node_added(node);
     }
+    for (const edge of resp.backend.edges) {
+      this._recieve_edge_added(...(edge as [string, string, string, string]));
+    }
+  }
+
+  async _recieve_edge_added(
+    src_nid: string,
+    src_ioid: string,
+    trg_nid: string,
+    trg_ioid: string
+  ) {
+    this._zustand.on_edge_action({
+      type: "add",
+      from_remote: true,
+      ...{ src_nid, src_ioid, trg_nid, trg_ioid },
+    });
   }
 
   async trigger_node(node_id: string) {
@@ -74,6 +90,25 @@ class FuncNodesWorker {
       node: data,
       id: data.id,
       from_remote: true,
+    });
+  }
+
+  add_edge({
+    src_nid,
+    src_ioid,
+    trg_nid,
+    trg_ioid,
+    replace = false,
+  }: {
+    src_nid: string;
+    src_ioid: string;
+    trg_nid: string;
+    trg_ioid: string;
+    replace?: boolean;
+  }) {
+    return this._send_cmd({
+      cmd: "add_edge",
+      kwargs: { src_nid, src_ioid, trg_nid, trg_ioid, replace },
     });
   }
 
@@ -119,20 +154,15 @@ class FuncNodesWorker {
     ioid,
     value,
     set_default,
-    trigger,
   }: {
     nid: string;
     ioid: string;
     value: any;
     set_default?: boolean;
-    trigger?: boolean;
   }) {
-    if (trigger === undefined) {
-      trigger = false;
-    }
     return this._send_cmd({
       cmd: "set_io_value",
-      kwargs: { nid, ioid, value, set_default, trigger },
+      kwargs: { nid, ioid, value, set_default },
       wait_for_response: true,
     });
   }
@@ -251,6 +281,26 @@ class FuncNodesWorker {
       case "node_added":
         return this._recieve_node_added(data.node);
 
+      case "after_disconnect":
+        if (!data.result) return;
+        if (!Array.isArray(data.result)) return;
+        if (data.result.length !== 4) return;
+        return this._zustand.on_edge_action({
+          type: "delete",
+          from_remote: true,
+          src_nid: data.result[0],
+          src_ioid: data.result[1],
+          trg_nid: data.result[2],
+          trg_ioid: data.result[3],
+        });
+
+      case "after_connect":
+        if (!data.result) return;
+        if (!Array.isArray(data.result)) return;
+        if (data.result.length !== 4) return;
+        return this._recieve_edge_added(
+          ...(data.result as [string, string, string, string])
+        );
       default:
         console.warn("Unhandled nodepsace event", event, data);
         break;

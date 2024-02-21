@@ -1,6 +1,16 @@
 import { useStore, create, UseBoundStore, StoreApi } from "zustand";
 import { DeepPartial, deep_merge } from "./";
 
+interface IORenderOptions {
+  step?: number;
+}
+
+interface IOValueOptions {
+  min?: number;
+  max?: number;
+  step?: number;
+  options?: string[];
+}
 interface IOType {
   connected: boolean;
   does_trigger: boolean;
@@ -11,19 +21,30 @@ interface IOType {
   node: string;
   type: string;
   value: any;
+  render_options?: IORenderOptions;
+  value_options?: IOValueOptions;
+}
+
+type PartialIOType = DeepPartial<IOType>;
+
+interface NodeRenderOptions {
+  data?: {
+    src?: string;
+  };
 }
 interface NodeType {
   id: string;
   node_name: string;
   io: { [key: string]: IOType };
   frontend: {
-    position: { x: number; y: number };
-    size: { width: number; height: number };
+    pos: [number, number];
+    size: [number, number];
     collapsed: boolean;
   };
   name: string;
   in_trigger: boolean;
   error?: string;
+  render_options?: NodeRenderOptions;
 }
 
 type PartialNodeType = DeepPartial<NodeType>;
@@ -92,8 +113,8 @@ const dummy_node: NodeType = {
   id: "dummy",
   node_name: "dummy",
   frontend: {
-    position: { x: 0, y: 0 },
-    size: { width: 100, height: 100 },
+    pos: [0, 0],
+    size: [200, 100],
     collapsed: false,
   },
   io: {},
@@ -124,4 +145,5 @@ export type {
   NodeActionDelete,
   NodeActionAdd,
   NodeActionError,
+  PartialIOType,
 };

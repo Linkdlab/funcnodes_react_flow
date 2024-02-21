@@ -25,10 +25,16 @@ type RFState = {
 type RFStore = UseBoundStore<StoreApi<RFState>>;
 const reactflowstore = ({
   on_node_change,
+  on_edge_change,
+  on_connect,
 }: {
   on_node_change?: (changes: NodeChange[]) => void;
+  on_edge_change?: (changes: EdgeChange[]) => void;
+  on_connect?: (connection: Connection) => void;
 }): RFStore => {
   const _on_node_change = on_node_change || ((changes: NodeChange[]) => {});
+  const _on_edge_change = on_edge_change || ((changes: EdgeChange[]) => {});
+  const _on_connect = on_connect || ((connection: Connection) => {});
   const useStore = create<RFState>((set, get) => ({
     nodes: [],
     edges: [],
@@ -42,11 +48,14 @@ const reactflowstore = ({
       set({
         edges: applyEdgeChanges(changes, get().edges),
       });
+      _on_edge_change(changes);
     },
     onConnect: (connection: Connection) => {
-      set({
-        edges: addEdge(connection, get().edges),
-      });
+      if (connection.source == null || connection.target == null) {
+        return;
+      }
+
+      _on_connect(connection);
     },
   }));
   return useStore;

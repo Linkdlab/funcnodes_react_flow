@@ -56,8 +56,43 @@ interface NodeBodyProps {
   node_data: NodeType;
 }
 
-const FloatInput = ({ io }: { io: IOType }) => {
-  const [value, setValue] = useState(io.value);
+const BooleanInput = ({ io }: { io: IOType }) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+
+  const indeterminate = io.value === undefined;
+  const cRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!cRef.current) return;
+    cRef.current.indeterminate = indeterminate;
+  }, [cRef, indeterminate]);
+
+  const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    fnrf_zst.worker?.set_io_value({
+      nid: io.node,
+      ioid: io.id,
+      value: e.target.checked,
+      set_default: true,
+    });
+  };
+  return (
+    <input
+      ref={cRef}
+      type="checkbox"
+      checked={!!io.value}
+      onChange={on_change}
+      disabled={io.connected}
+    />
+  );
+};
+const NumberInput = ({
+  io,
+  parser = (n: string) => parseFloat(n),
+}: {
+  io: IOType;
+  parser: (n: string) => number;
+}) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
@@ -67,26 +102,23 @@ const FloatInput = ({ io }: { io: IOType }) => {
       new_value = "<NoValue>";
     }
 
-    fnrf_zst.worker
-      ?.set_io_value({
-        nid: io.node,
-        ioid: io.id,
-        value: new_value,
-        set_default: true,
-        trigger: true,
-      })
-      .then((resp) => {
-        setValue(resp);
-      });
+    fnrf_zst.worker?.set_io_value({
+      nid: io.node,
+      ioid: io.id,
+      value: new_value,
+      set_default: true,
+    });
   };
 
   return (
     <input
       type="number"
       className="floatinput"
-      value={value}
+      value={io.value}
       onChange={on_change}
       disabled={io.connected}
+      step={io.render_options?.step}
+      min={io.value_options?.min}
     />
   );
 };
@@ -95,15 +127,27 @@ const SingleValueOutput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
-  return <div>{io.value}</div>;
+  return <div>{io.value.toString()}</div>;
+};
+
+const FloatInput = ({ io }: { io: IOType }) => {
+  return NumberInput({ io, parser: parseFloat });
+};
+
+const IntegerInput = ({ io }: { io: IOType }) => {
+  return NumberInput({ io, parser: parseInt });
 };
 
 const Inputrenderer: { [key: string]: any } = {
   float: FloatInput,
+  int: IntegerInput,
+  bool: BooleanInput,
 };
 
 const Outputrenderer: { [key: string]: any } = {
   float: SingleValueOutput,
+  bool: SingleValueOutput,
+  int: SingleValueOutput,
 };
 
 const NodeInput = ({ io }: { io: IOType }) => {
@@ -138,16 +182,27 @@ const NodeOutput = ({ io }: { io: IOType }) => {
   );
 };
 
+const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
+  let value = undefined;
+  if (node_data.render_options?.data?.src) {
+    value = node_data.io[node_data.render_options.data.src]?.value;
+  }
+  console.log("value", node_data.name, value, node_data);
+  return <div className="nodedatabody">{value ? value.toString() : ""}</div>;
+};
 const NodeBody = ({ node_data }: NodeBodyProps) => {
   const inputs = Object.values(node_data.io).filter((io) => io.is_input);
   const outputs = Object.values(node_data.io).filter((io) => !io.is_input);
+
+  if (node_data.render_options?.data?.src) {
+  }
 
   return (
     <div className="nodebody">
       {outputs.map((io) => (
         <NodeOutput key={io.id} io={io} />
       ))}
-      <div className="nodedatabody"></div>
+      <NodeDataRenderer node_data={node_data} />
       {inputs.map((io) => (
         <NodeInput key={io.id} io={io} />
       ))}
