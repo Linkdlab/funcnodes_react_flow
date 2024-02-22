@@ -167,6 +167,24 @@ class FuncNodesWorker {
     });
   }
 
+  clear() {
+    return this._send_cmd({ cmd: "clear" });
+  }
+
+  save() {
+    return this._send_cmd({ cmd: "save", wait_for_response: true });
+  }
+
+  load(data: any) {
+    return this._send_cmd({
+      cmd: "load_data",
+      kwargs: { data },
+      wait_for_response: true,
+    }).then(() => {
+      this.fullsync();
+    });
+  }
+
   get_io_value({ nid, ioid }: { nid: string; ioid: string }) {
     return this._send_cmd({
       cmd: "get_io_value",

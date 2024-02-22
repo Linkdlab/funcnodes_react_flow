@@ -3,6 +3,7 @@ import { useStore, create, UseBoundStore, StoreApi } from "zustand";
 type LibNode = {
   node_id: string;
   description?: string;
+  node_name?: string;
 };
 
 type Shelf = {

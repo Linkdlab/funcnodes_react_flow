@@ -1,37 +1,127 @@
+:root {
+  --expandtime: 0.3s;
+  --libnodebgcolor: #48465f;
+  --libnodebgcolor_hover: #6a6698;
+}
 .libcontainer {
-  position: absolute;
   top: 0;
   left: 0;
   z-index: 500;
   height: 100%;
-  background-color: rgb(0, 8, 255);
   padding: 0.5rem;
   box-sizing: border-box;
-  color: rgb(154, 154, 154);
-}
-.library {
-  max-height: 100%;
-  width: 15rem;
-  overflow-y: auto;
-  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+
   border-radius: 0.5rem;
 }
+.library {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+  width: 15rem;
+  background-color: var(--funcnodesbackground2);
+  border-radius: var(--containerboarderradius);
+  padding: 0.5rem;
 
+  & .libtitle {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--funheadercolor);
+  }
+
+  & hr {
+    &.hr_prominent {
+      border: 0.5px solid var(--funheadercolor);
+    }
+    width: 100%;
+  }
+}
+
+.libfilter {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.2rem;
+  &:focus-within {
+    border: 1px solid var(--funheadercolor);
+  }
+  & input {
+    flex-grow: 1;
+    background-color: transparent;
+    color: var(--funcnodestextcolor1);
+    border: 0;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+.libnodecontainer {
+  display: grid;
+
+  transition: grid-template-rows var(--expandtime) ease-out;
+  &.close {
+    grid-template-rows: 0fr;
+  }
+  &.open {
+    grid-template-rows: 1fr;
+  }
+
+  &_inner {
+    transition: opacity var(--expandtime) ease-out;
+    overflow: hidden;
+    padding-left: 10px;
+  }
+  &.close &_inner {
+    opacity: 0.2;
+  }
+  &.open &_inner {
+    opacity: 1;
+  }
+}
 .shelfcontainer {
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
+  display: flex;
+  flex-direction: column;
+  & .shelftitle {
+    font-size: 0.8rem;
+
+    color: var(--funheadercolor);
+    opacity: 0.8;
+    display: flex;
+
+    &_text {
+      flex-grow: 1;
+    }
+  }
 }
 
 .libnodeentry {
-  background-color: rgba(1, 2, 93, 0.99);
-  margin: 0.1rem;
-  border-radius: 0.2rem;
-  padding: 0.2rem;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background-color: var(--libnodebgcolor);
+  margin-bottom: 0.2rem;
+  //  border-radius: 0.2rem;
+  padding: 0.1rem;
   cursor: pointer;
-  border: 1px solid rgba(1, 2, 93, 0.99);
+  border: 1px solid var(--libnodebgcolor);
   transition: border 0.2s ease-in-out;
+  font-size: 0.8rem;
+  box-shadow: -0.2rem 0px rgba(0, 76, 255);
   &:hover {
-    background-color: rgba(1, 2, 93, 0.8);
-    border: 1px solid rgba(0, 4, 219, 0.99);
+    background-color: var(--libnodebgcolor_hover);
+    border: 1px solid rgba(0, 76, 255);
   }
+}
+
+.expandicon {
+  transform: rotate(0deg);
+  &.close {
+    transform: rotate(180deg);
+  }
+  transition: transform var(--expandtime) ease-out;
 }

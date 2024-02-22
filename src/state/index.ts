@@ -103,7 +103,6 @@ const deep_merge = <T extends {}>(
         new_obj[key] = mergedObj;
       }
     } else if (!deep_compare_objects(targetValue, sourceValue)) {
-      console.log("targetValue", targetValue, "sourceValue", sourceValue);
       change = true;
       // @ts-ignore: Type 'string' cannot be used to index type 'T
       new_obj[key] = sourceValue;

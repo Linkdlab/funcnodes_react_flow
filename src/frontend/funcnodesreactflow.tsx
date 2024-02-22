@@ -21,6 +21,8 @@ import ReactFlow, {
   MiniMap,
   useReactFlow,
   FitView,
+  NodeTypes,
+  EdgeTypes,
 } from "reactflow";
 import Library from "./lib";
 import FuncNodesReactFlowZustand, {
@@ -29,8 +31,10 @@ import FuncNodesReactFlowZustand, {
 
 import DefaultNode from "./node";
 import { NodeType } from "../state/node";
+import ConnectionLine from "./edge";
 
 import "./nodecontextmenu.scss";
+import DefaultEdge from "./edge";
 
 const FuncNodesContext = createContext<FuncNodesReactFlowZustandInterface>(
   FuncNodesReactFlowZustand()
@@ -106,7 +110,11 @@ const selector = (state: RFState) => ({
   onConnect: state.onConnect,
 });
 
-const nodeTypes = { default: DefaultNode };
+const nodeTypes: NodeTypes = { default: DefaultNode };
+
+const edgeTypes: EdgeTypes = {
+  default: DefaultEdge,
+};
 
 const ReactFlowLayer = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
@@ -148,34 +156,89 @@ const ReactFlowLayer = () => {
     fnrf_zst.useReactFlowStore(useShallow(selector));
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      nodeTypes={nodeTypes}
-      minZoom={0.1}
-      maxZoom={2}
-      fitView
-      ref={reactflowRef}
-      onNodeContextMenu={onNodeContextMenu}
-      onPaneClick={onPaneClick}
-    >
-      <ReactFlowManager />
-      <Background
-        color="#888" // Color of the grid lines
-        gap={16} // Distance between grid lines
-        size={1} // Thickness of the grid lines
-      />
-      <MiniMap
-        nodeStrokeWidth={3}
-        pannable={true}
-        zoomable={true}
-        zoomStep={3}
-      />
-      {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
-    </ReactFlow>
+    <div className="reactflowlayer">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        minZoom={0.1}
+        maxZoom={2}
+        fitView
+        ref={reactflowRef}
+        onNodeContextMenu={onNodeContextMenu}
+        onPaneClick={onPaneClick}
+      >
+        <ReactFlowManager />
+        <Background
+          color="#888" // Color of the grid lines
+          gap={16} // Distance between grid lines
+          size={1} // Thickness of the grid lines
+        />
+        <MiniMap
+          nodeStrokeWidth={3}
+          pannable={true}
+          zoomable={true}
+          zoomStep={3}
+        />
+        {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
+      </ReactFlow>
+    </div>
+  );
+};
+
+const FuncnodesHeader = () => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+  const onNew = () => {
+    const alert = window.confirm("Are you sure you want to start a new flow?");
+    if (alert) {
+      fnrf_zst.worker?.clear();
+    }
+  };
+
+  const onSave = async () => {
+    const data = await fnrf_zst.worker?.save();
+    if (!data) return;
+    const blob = new Blob([JSON.stringify(data)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "flow.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    a.remove();
+  };
+
+  const onOpen = async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const contents = e.target?.result;
+        if (!contents) return;
+        const data = JSON.parse(contents as string);
+        await fnrf_zst.worker?.load(data);
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+  return (
+    <div className="funcnodesreactflowheader">
+      <button onClick={onNew}>new</button>
+      <button onClick={onOpen}>open</button>
+      <button onClick={onSave}>save</button>
+    </div>
   );
 };
 
@@ -187,8 +250,11 @@ const FuncnodesReactFlow = () => {
   return (
     <FuncNodesContext.Provider value={fnrf_zst}>
       <div className="funcnodesreactflowcontainer">
-        <Library></Library>
-        <ReactFlowLayer></ReactFlowLayer>
+        <FuncnodesHeader></FuncnodesHeader>
+        <div className="funcnodesreactflowbody">
+          <Library></Library>
+          <ReactFlowLayer></ReactFlowLayer>
+        </div>
       </div>
     </FuncNodesContext.Provider>
   );

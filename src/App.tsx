@@ -5,8 +5,16 @@ import FuncnodesReactFlow from "./frontend";
 
 function App() {
   return (
-    <div className="App">
-      <FuncnodesReactFlow />
+    <div
+      className="App"
+      style={{
+        height: "98vh",
+        width: "98vw",
+        marginLeft: "1vw",
+        marginTop: "1vh",
+      }}
+    >
+      <FuncnodesReactFlow></FuncnodesReactFlow>
     </div>
   );
 }

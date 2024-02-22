@@ -142,7 +142,7 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
 
           const state = store.getState();
           const { new_obj, change } = deep_merge(state, action.node);
-       
+
           if (change) {
             store.setState(new_obj);
           }
@@ -217,9 +217,9 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
             target: action.trg_nid,
             sourceHandle: action.src_ioid,
             targetHandle: action.trg_ioid,
+            className: "funcnodes-edge animated",
           };
           rfstore.setState({ edges: [...edges, new_edge] });
-          console.log("edges", edges);
         } else {
         }
         break;

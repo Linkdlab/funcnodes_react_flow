@@ -1,25 +1,88 @@
 :root {
   --node_border_radius: 5px;
+  --handle_outer_radius: 4px;
+  --handle_inner_radius: 2px;
+  --handle_width: 10;
+  --handle_width_hover: 15;
+  --handle_source_color: #ff0000;
+  --handle_target_color: #00ff00;
 }
 
-.react-flow__node {
-  padding: 0;
-  border-radius: var(--node_border_radius);
-  background-color: #09dbd8;
-  display: flex;
-  flex-direction: column;
-  color: aliceblue;
-  box-sizing: content-box;
-  transform: (-50%, -50%);
-  border: 2px solid #ffffff00;
-  font-size: 0.5rem;
-  &.selected {
-    border-color: #ffffff99;
-  }
-  background-clip: content-box;
+@property --handle_width {
+  syntax: "<number>"; /* <- defined as type number for the transition to work */
+  initial-value: 0;
+  inherits: false;
+}
 
-  & * {
-    box-sizing: border-box;
+@property --handle_width_hover {
+  syntax: "<number>"; /* <- defined as type number for the transition to work */
+  initial-value: 0;
+  inherits: false;
+}
+
+.react-flow {
+  &__node {
+    padding: 0;
+    border-radius: var(--node_border_radius);
+    background-color: #09dbd8;
+    display: flex;
+    flex-direction: column;
+    color: aliceblue;
+    box-sizing: content-box;
+    transform: (-50%, -50%);
+    border: 2px solid #ffffff00;
+    font-size: 0.5rem;
+    &.selected {
+      border-color: #ffffff99;
+    }
+    background-clip: content-box;
+
+    & * {
+      box-sizing: border-box;
+    }
+  }
+
+  &__handle {
+    height: calc(100% - 4px);
+    border-radius: 0;
+    width: calc(var(--handle_width) * 1px);
+
+    transition: left 0.2s ease-in-out, right 0.2s ease-in-out,
+      width 0.2s ease-in-out;
+    &:hover {
+      width: calc(var(--handle_width_hover) * 1px);
+    }
+
+    &.source {
+      background-color: var(--handle_source_color);
+    }
+    &.target {
+      background-color: var(--handle_target_color);
+    }
+    &-left {
+      border-radius: var(--handle_outer_radius) var(--handle_inner_radius)
+        var(--handle_inner_radius) var(--handle_outer_radius);
+      left: calc((2 - var(--handle_width)) * 1px);
+      &:hover {
+        left: calc((2 - var(--handle_width_hover)) * 1px);
+      }
+    }
+    &-right {
+      border-radius: var(--handle_inner_radius) var(--handle_outer_radius)
+        var(--handle_outer_radius) var(--handle_inner_radius);
+      right: calc((2 - var(--handle_width)) * 1px);
+      &:hover {
+        right: calc((2 - var(--handle_width_hover)) * 1px);
+      }
+    }
+    &-top {
+      border-radius: var(--handle_outer_radius) var(--handle_outer_radius)
+        var(--handle_inner_radius) var(--handle_inner_radius);
+    }
+    &-bottom {
+      border-radius: var(--handle_inner_radius) var(--handle_inner_radius)
+        var(--handle_outer_radius) var(--handle_outer_radius);
+    }
   }
 }
 
