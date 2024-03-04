@@ -1,15 +1,21 @@
 import { useStore, create, UseBoundStore, StoreApi } from "zustand";
 import { DeepPartial, deep_merge } from "./";
+import {
+  BaseRenderOptions,
+  RenderOptions,
+  RenderType,
+} from "../frontend/datarenderer";
 
-interface IORenderOptions {
+interface IORenderOptions extends BaseRenderOptions {
   step?: number;
+  set_default?: boolean;
 }
 
 interface IOValueOptions {
   min?: number;
   max?: number;
   step?: number;
-  options?: string[];
+  options?: (string | number)[];
 }
 interface IOType {
   connected: boolean;
@@ -27,10 +33,12 @@ interface IOType {
 
 type PartialIOType = DeepPartial<IOType>;
 
+interface DataRenderOptions extends BaseRenderOptions {
+  src?: string;
+}
+
 interface NodeRenderOptions {
-  data?: {
-    src?: string;
-  };
+  data?: DataRenderOptions;
 }
 interface NodeType {
   id: string;
@@ -146,4 +154,5 @@ export type {
   NodeActionAdd,
   NodeActionError,
   PartialIOType,
+  RenderType,
 };

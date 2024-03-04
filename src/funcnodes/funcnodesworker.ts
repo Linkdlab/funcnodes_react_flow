@@ -257,6 +257,20 @@ class FuncNodesWorker {
           id: data.node,
           from_remote: true,
         });
+      case "after_update_value_options":
+        return this._zustand.on_node_action({
+          type: "update",
+          node: {
+            id: data.node,
+            io: {
+              [data.io]: {
+                value_options: data.result,
+              },
+            },
+          },
+          id: data.node,
+          from_remote: true,
+        });
 
       case "before_trigger":
         return this._zustand.on_node_action({

@@ -2,11 +2,12 @@ import React, {
   RefObject,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
 import { Handle, Position, NodeResizeControl } from "reactflow";
-import { NodeStore, NodeType, IOType } from "../state/node";
+import { NodeStore, NodeType, IOType, RenderType } from "../state/node";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandIcon from "@mui/icons-material/Expand";
@@ -15,6 +16,8 @@ import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import "./node.scss";
 import { FuncNodesReactFlowZustandInterface } from "../state/fnrfzst";
 import { FuncNodesContext } from ".";
+import get_rendertype from "./datarenderer";
+import CustomColorPicker, { HSLColorPicker } from "./utils/colorpicker";
 
 interface NodeHeaderProps {
   node_data: NodeType;
@@ -73,7 +76,7 @@ const BooleanInput = ({ io }: { io: IOType }) => {
       nid: io.node,
       ioid: io.id,
       value: e.target.checked,
-      set_default: true,
+      set_default: io.render_options?.set_default || false,
     });
   };
   return (
@@ -97,7 +100,7 @@ const NumberInput = ({
     useContext(FuncNodesContext);
 
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let new_value: number | string = parseFloat(e.target.value);
+    let new_value: number | string = parser(e.target.value);
     if (isNaN(new_value)) {
       new_value = "<NoValue>";
     }
@@ -106,7 +109,7 @@ const NumberInput = ({
       nid: io.node,
       ioid: io.id,
       value: new_value,
-      set_default: true,
+      set_default: io.render_options?.set_default || false,
     });
   };
 
@@ -120,6 +123,89 @@ const NumberInput = ({
       step={io.render_options?.step}
       min={io.value_options?.min}
     />
+  );
+};
+
+const StringInput = ({ io }: { io: IOType }) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+
+  const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let new_value: string = e.target.value;
+    if (!new_value) new_value = "<NoValue>";
+
+    fnrf_zst.worker?.set_io_value({
+      nid: io.node,
+      ioid: io.id,
+      value: new_value,
+      set_default: io.render_options?.set_default || false,
+    });
+  };
+
+  return (
+    <input
+      className="stringinput"
+      value={io.value}
+      onChange={on_change}
+      disabled={io.connected}
+    />
+  );
+};
+
+const ColorInput = ({ io }: { io: IOType }) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+
+  const on_change = (colorconverter?: {
+    [key: string]: () => number[] | string;
+  }) => {
+    let new_value: string = "<NoValue>";
+    if (colorconverter) {
+      new_value = "#" + colorconverter.hex();
+      console.log(colorconverter.hex(), colorconverter.hsl());
+    }
+    fnrf_zst.worker?.set_io_value({
+      nid: io.node,
+      ioid: io.id,
+      value: new_value,
+      set_default: io.render_options?.set_default || false,
+    });
+  };
+
+  return <CustomColorPicker onChange={on_change} inicolor={io.value} />;
+};
+
+const _SelectionInput = ({
+  io,
+  parser = (x) => x,
+}: {
+  io: IOType;
+  parser(s: string): any;
+}) => {
+  const options: (string | number)[] = io.value_options?.options || [];
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+
+  const on_change = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    fnrf_zst.worker?.set_io_value({
+      nid: io.node,
+      ioid: io.id,
+      value: parser(e.target.value),
+      set_default: io.render_options?.set_default || false,
+    });
+  };
+
+  return (
+    <select value={io.value} onChange={on_change} disabled={io.connected}>
+      <option value="<NoValue>" disabled>
+        select
+      </option>
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
   );
 };
 
@@ -138,27 +224,47 @@ const IntegerInput = ({ io }: { io: IOType }) => {
   return NumberInput({ io, parser: parseInt });
 };
 
-const Inputrenderer: { [key: string]: any } = {
-  float: FloatInput,
-  int: IntegerInput,
-  bool: BooleanInput,
-};
-
 const Outputrenderer: { [key: string]: any } = {
   float: SingleValueOutput,
   bool: SingleValueOutput,
   int: SingleValueOutput,
+  string: SingleValueOutput,
+};
+
+const SelectionInput: { [key: string]: any } = {
+  float: ({ io }: { io: IOType }) =>
+    _SelectionInput({ io, parser: parseFloat }),
+  bool: ({ io }: { io: IOType }) => _SelectionInput({ io, parser: (x) => !!x }),
+  int: ({ io }: { io: IOType }) => _SelectionInput({ io, parser: parseInt }),
+  str: _SelectionInput,
+};
+
+const Inputrenderer: { [key: string]: any } = {
+  float: FloatInput,
+  int: IntegerInput,
+  bool: BooleanInput,
+  string: StringInput,
+  color: ColorInput,
+  select: SelectionInput["str"],
 };
 
 const NodeInput = ({ io }: { io: IOType }) => {
-  const Input = Inputrenderer[io.type];
+  if (io.render_options === undefined) {
+    io.render_options = {};
+  }
+  if (io.render_options.set_default === undefined) {
+    io.render_options.set_default = true;
+  }
+  const Input = io.value_options?.options
+    ? SelectionInput[io.type]
+    : Inputrenderer[io.type];
 
   return (
     <div className="nodeinput">
       <Handle type="target" id={io.id} position={Position.Left} />
 
       {Input && (
-        <div className="iovaluefield">
+        <div className="iovaluefield nodrag">
           <Input io={io} />
         </div>
       )}
@@ -183,15 +289,27 @@ const NodeOutput = ({ io }: { io: IOType }) => {
 };
 
 const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
-  let value = undefined;
+  let value: any = undefined;
+  let rendertype: RenderType = "string";
   if (node_data.render_options?.data?.src) {
     value = node_data.io[node_data.render_options.data.src]?.value;
+    rendertype = node_data.render_options?.data?.type || "string";
   }
-  return (
-    <div className="nodedatabody">
-      {value && JSON.stringify(value, null, 2)}
-    </div>
-  );
+  if (value === "<NoValue>") value = undefined;
+
+  const renderoptions = node_data.render_options?.data;
+
+  const datarender = useMemo(() => {
+    if (value === undefined) {
+      return <></>;
+    }
+    return get_rendertype(rendertype)({
+      value,
+      renderoptions: renderoptions,
+    });
+  }, [value, renderoptions]);
+
+  return <div className="nodedatabody nodrag">{datarender}</div>;
 };
 const NodeBody = ({ node_data }: NodeBodyProps) => {
   const inputs = Object.values(node_data.io).filter((io) => io.is_input);
