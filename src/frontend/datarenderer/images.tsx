@@ -15,7 +15,7 @@ const Base64ImageRenderer = ({
 
   return (
     <img
-      src={"data:image/"+{renderoptions.format}+";base64," + value}
+      src={"data:image/"+renderoptions.format+";base64," + value}
       style={{
         maxWidth: "100%",
         maxHeight: "100%",
