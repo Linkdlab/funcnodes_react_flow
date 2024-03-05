@@ -18,14 +18,28 @@ const parse_colorstring = (colorstring: string): [string, any[]] => {
   return [colortype, colordata];
 };
 
-const create_color_converter = (type: string, data: any[]) => {
+const create_color_converter = (
+  type: string,
+  data: any[]
+): { [key: string]: () => number[] | string } => {
+  if (!Array.isArray(data)) data = [data];
+  if (data[0] === undefined || data[0] === null)
+    return create_color_converter("rgb", [0, 0, 0]);
   // @ts-ignore
   const source = convert[type];
-  if (!source) {
-    throw new Error("Unsupported color type: " + type);
-  }
+  if (!source) throw new Error("Unsupported color type: " + type);
 
   source[type] = () => data;
+
+  const checkrgb = source.rgb(data);
+  if (!Array.isArray(checkrgb)) return create_color_converter("rgb", [0, 0, 0]);
+  if (checkrgb[0] === undefined || checkrgb[0] === null)
+    return create_color_converter("rgb", [0, 0, 0]);
+
+  const checkhsl = source.hsl(data);
+  if (!Array.isArray(checkhsl)) return create_color_converter("rgb", [0, 0, 0]);
+  if (checkhsl[0] === undefined || checkhsl[0] === null)
+    return create_color_converter("rgb", [0, 0, 0]);
 
   const converter: { [key: string]: () => number[] | string } = {};
 
