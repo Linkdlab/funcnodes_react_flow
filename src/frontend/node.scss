@@ -4,8 +4,13 @@
   --handle_inner_radius: 2px;
   --handle_width: 10;
   --handle_width_hover: 15;
-  --handle_source_color: #ff0000;
-  --handle_target_color: #00ff00;
+  --handle_overlap: 3;
+  --nodeinput_margin: 2;
+  --nodeio_shift: calc(var(--handle_overlap) - var(--nodeinput_margin));
+  --handle_source_color: hsl(190, 98%, 49%);
+  --handle_target_color: hsl(204, 98%, 51%);
+  --node_background: hsl(245, 51%, 42%);
+  --node_header_color: hsl(245, 51%, 22%);
 }
 
 @property --handle_width {
@@ -24,7 +29,7 @@
   &__node {
     padding: 0;
     border-radius: var(--node_border_radius);
-    background-color: #09dbd8;
+    background-color: var(--node_background);
     display: flex;
     flex-direction: column;
     color: aliceblue;
@@ -33,6 +38,8 @@
     border: 2px solid #ffffff00;
     font-size: 0.5rem;
     width: auto;
+    max-width: 200px;
+    min-width: 100px;
     &.selected {
       border-color: #ffffff99;
     }
@@ -63,17 +70,17 @@
     &-left {
       border-radius: var(--handle_outer_radius) var(--handle_inner_radius)
         var(--handle_inner_radius) var(--handle_outer_radius);
-      left: calc((2 - var(--handle_width)) * 1px);
+      left: calc((var(--nodeio_shift) - var(--handle_width)) * 1px);
       &:hover {
-        left: calc((2 - var(--handle_width_hover)) * 1px);
+        left: calc((var(--nodeio_shift) - var(--handle_width_hover)) * 1px);
       }
     }
     &-right {
       border-radius: var(--handle_inner_radius) var(--handle_outer_radius)
         var(--handle_outer_radius) var(--handle_inner_radius);
-      right: calc((2 - var(--handle_width)) * 1px);
+      right: calc((var(--nodeio_shift) - var(--handle_width)) * 1px);
       &:hover {
-        right: calc((2 - var(--handle_width_hover)) * 1px);
+        right: calc((var(--nodeio_shift) - var(--handle_width_hover)) * 1px);
       }
     }
     &-top {
@@ -109,7 +116,7 @@
 }
 .nodeheader {
   box-sizing: border-box;
-  background-color: #08b439;
+  background-color: var(--node_header_color);
   width: 100%;
   padding: 0.1rem;
   border-radius: var(--node_border_radius) var(--node_border_radius) 0 0;
@@ -166,7 +173,9 @@
   width: 100%;
   padding: 0.1rem;
   border-radius: 0 0 var(--node_border_radius) var(--node_border_radius);
-
+  &:empty {
+    display: none;
+  }
   & .nodeerror {
     border: 1px solid #ff0000;
     border-radius: 2px;
@@ -177,7 +186,6 @@
 
 .nodebody {
   flex-grow: 1;
-  background-color: rgb(0, 109, 205);
 }
 
 .nodedatabody {
@@ -197,14 +205,20 @@
 }
 
 .nodeio {
-  width: 100%;
-  background-color: #ff0000;
+  width: auto;
+  background-color: inherit;
   padding: 0.1rem;
   margin-top: 0.1rem;
   margin-bottom: 0.1rem;
   position: relative;
   display: flex;
   flex-direction: row;
+
+  border: 1px solid #ffffff88;
+  border-radius: 3px;
+  box-sizing: border-box;
+  margin-left: calc(var(--nodeinput_margin) * 1px);
+  margin-right: calc(var(--nodeinput_margin) * 1px);
 }
 
 .nodeinput {
@@ -230,7 +244,7 @@
 .ioname {
   flex-grow: 1;
   flex-shrink: 1;
-  color: blue;
+  color: inherit;
   margin: 0.2rem;
   overflow: hidden;
   min-width: 2rem;
@@ -240,5 +254,11 @@
   }
   .nodeoutput & {
     text-align: right;
+  }
+}
+
+input.nodedatainput {
+  &:focus {
+    outline: none;
   }
 }

@@ -16,6 +16,7 @@ interface IOValueOptions {
   max?: number;
   step?: number;
   options?: (string | number)[];
+  colorspace?: string;
 }
 interface IOType {
   connected: boolean;
@@ -29,12 +30,15 @@ interface IOType {
   value: any;
   render_options?: IORenderOptions;
   value_options?: IOValueOptions;
+  valuepreview_type?: string;
 }
 
 type PartialIOType = DeepPartial<IOType>;
 
 interface DataRenderOptions extends BaseRenderOptions {
   src?: string;
+  type?: RenderType;
+  preview_type?: string;
 }
 
 interface NodeRenderOptions {

@@ -171,6 +171,7 @@ const ReactFlowLayer = () => {
         ref={reactflowRef}
         onNodeContextMenu={onNodeContextMenu}
         onPaneClick={onPaneClick}
+        //multiSelectionKeyCode="Control"
       >
         <ReactFlowManager />
         <Background

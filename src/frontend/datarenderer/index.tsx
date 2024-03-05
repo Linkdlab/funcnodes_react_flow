@@ -42,6 +42,7 @@ const RENDERTYPES: {
 } = {
   image: Base64ImageRenderer,
   string: StringRenderer,
+  str: StringRenderer,
   plot: AnyPlot,
 };
 const get_rendertype = (rendertype: string) => {

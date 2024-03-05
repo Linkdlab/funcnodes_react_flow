@@ -116,7 +116,7 @@ const NumberInput = ({
   return (
     <input
       type="number"
-      className="floatinput"
+      className="nodedatainput"
       value={io.value}
       onChange={on_change}
       disabled={io.connected}
@@ -144,7 +144,7 @@ const StringInput = ({ io }: { io: IOType }) => {
 
   return (
     <input
-      className="stringinput"
+      className="nodedatainput"
       value={io.value}
       onChange={on_change}
       disabled={io.connected}
@@ -156,14 +156,17 @@ const ColorInput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
+  const colorspace = io.value_options?.colorspace || "hex";
+
   const on_change = (colorconverter?: {
     [key: string]: () => number[] | string;
   }) => {
-    let new_value: string = "<NoValue>";
+    let new_value: string | number[] = "<NoValue>";
     if (colorconverter) {
-      new_value = "#" + colorconverter.hex();
-      console.log(colorconverter.hex(), colorconverter.hsl());
+      if (colorconverter[colorspace]) new_value = colorconverter[colorspace]();
+      else new_value = colorconverter.hex();
     }
+
     fnrf_zst.worker?.set_io_value({
       nid: io.node,
       ioid: io.id,
@@ -172,7 +175,13 @@ const ColorInput = ({ io }: { io: IOType }) => {
     });
   };
 
-  return <CustomColorPicker onChange={on_change} inicolor={io.value} />;
+  return (
+    <CustomColorPicker
+      onChange={on_change}
+      inicolordata={io.value}
+      inicolorspace={colorspace}
+    />
+  );
 };
 
 const _SelectionInput = ({
@@ -196,7 +205,12 @@ const _SelectionInput = ({
   };
 
   return (
-    <select value={io.value} onChange={on_change} disabled={io.connected}>
+    <select
+      value={io.value}
+      onChange={on_change}
+      disabled={io.connected}
+      className="nodedatainput"
+    >
       <option value="<NoValue>" disabled>
         select
       </option>
@@ -293,8 +307,15 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
   let rendertype: RenderType = "string";
   if (node_data.render_options?.data?.src) {
     value = node_data.io[node_data.render_options.data.src]?.value;
-    rendertype = node_data.render_options?.data?.type || "string";
+    rendertype =
+      (node_data.render_options?.data?.preview_type as RenderType) ||
+      (node_data.io[node_data.render_options.data.src]
+        ?.valuepreview_type as RenderType) ||
+      (node_data.render_options?.data?.type as RenderType) ||
+      (node_data.io[node_data.render_options.data.src]?.type as RenderType) ||
+      "string";
   }
+
   if (value === "<NoValue>") value = undefined;
 
   const renderoptions = node_data.render_options?.data;
