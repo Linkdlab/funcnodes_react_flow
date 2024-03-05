@@ -84,7 +84,6 @@ class FuncNodesWorker {
   }
 
   async _recieve_node_added(data: any) {
-    console.log("Recieved node added", data);
     this._zustand.on_node_action({
       type: "add",
       node: data,
@@ -109,6 +108,23 @@ class FuncNodesWorker {
     return this._send_cmd({
       cmd: "add_edge",
       kwargs: { src_nid, src_ioid, trg_nid, trg_ioid, replace },
+    });
+  }
+
+  remove_edge({
+    src_nid,
+    src_ioid,
+    trg_nid,
+    trg_ioid,
+  }: {
+    src_nid: string;
+    src_ioid: string;
+    trg_nid: string;
+    trg_ioid: string;
+  }) {
+    return this._send_cmd({
+      cmd: "remove_edge",
+      kwargs: { src_nid, src_ioid, trg_nid, trg_ioid },
     });
   }
 
@@ -208,7 +224,6 @@ class FuncNodesWorker {
       kwargs: kwargs || {},
     };
 
-    console.debug("Sending cmd", msg);
     // await self.assert_connection()
     if (wait_for_response) {
       const msid = msg.id || uuidv4();
@@ -272,7 +287,7 @@ class FuncNodesWorker {
           from_remote: true,
         });
 
-      case "before_trigger":
+      case "triggerstart":
         return this._zustand.on_node_action({
           type: "update",
           node: {
@@ -283,7 +298,7 @@ class FuncNodesWorker {
           from_remote: true,
         });
 
-      case "after_trigger":
+      case "triggerdone":
         return this._zustand.on_node_action({
           type: "update",
           node: {
@@ -340,7 +355,6 @@ class FuncNodesWorker {
   }
 
   async recieve(data: any) {
-    console.debug("Recieved data", data);
     let promise;
     switch (data.type) {
       case "nsevent":

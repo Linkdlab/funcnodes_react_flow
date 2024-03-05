@@ -59,7 +59,6 @@ const AnyPlot = ({
       });
     }
   }
-  console.warn("value", data);
 
   // auto resize
   layout.autosize = true;

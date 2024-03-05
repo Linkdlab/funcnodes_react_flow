@@ -92,7 +92,6 @@ const assert_reactflow_node = (
     ...node,
   };
 
-  console.log("assert_reactflow_node", extendedNode);
   return extendedNode;
 };
 
@@ -101,7 +100,6 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
   function that should be called when the remote node, e.g. in the python worker is performing an action
   */
   const on_node_action = (action: NodeAction) => {
-    console.debug("on_node_action", action);
     const rfstate = rfstore.getState();
 
     switch (action.type) {
@@ -117,7 +115,6 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
             ...rfstate.nodes,
             assert_reactflow_node(action.node, store, iterf),
           ];
-          console.log("new_ndoes", new_ndoes);
           rfstore.setState({ nodes: new_ndoes });
         }
         break;
@@ -201,7 +198,6 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
   };
 
   const on_edge_action = (action: EdgeAction) => {
-    console.debug("on_edge_action", action);
     const rfstate = rfstore.getState();
 
     switch (action.type) {
@@ -222,6 +218,7 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
             targetHandle: action.trg_ioid,
             className: "funcnodes-edge animated",
           };
+
           rfstore.setState({ edges: [...edges, new_edge] });
         } else {
         }
@@ -245,7 +242,6 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
   should update the local state if something changed
   */
   const on_node_change = (nodechange: NodeChange[]) => {
-    console.debug("on_node_change", nodechange);
     for (const change of nodechange) {
       switch (change.type) {
         case "position":
@@ -278,9 +274,7 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
     }
   };
 
-  const on_edge_change = (edgechange: EdgeChange[]) => {
-    console.debug("on_edge_change", edgechange);
-  };
+  const on_edge_change = (edgechange: EdgeChange[]) => {};
 
   const on_connect = (connection: RFConnection) => {
     if (

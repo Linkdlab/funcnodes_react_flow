@@ -57,7 +57,7 @@ class WebSocketWorker extends FuncNodesWorker {
         this.connect();
       }, timeout);
     } else {
-      console.log("Maximum reconnect attempts reached. Giving up.");
+      console.warn("Maximum reconnect attempts reached. Giving up.");
     }
   }
 
@@ -77,7 +77,7 @@ class WebSocketWorker extends FuncNodesWorker {
   }
 
   on_ws_error() {
-    console.log("Websocket error");
+    console.warn("Websocket error");
     if (this._websocket) {
       this._websocket.close(); // Ensure the connection is closed before attempting to reconnect
     } else {
@@ -86,7 +86,6 @@ class WebSocketWorker extends FuncNodesWorker {
   }
 
   async send(data: any) {
-    console.log("Sending data", data);
     if (!this._websocket) {
       throw new Error("Websocket not connected");
     }
