@@ -283,15 +283,16 @@ const CustomColorPicker = ({
   }) => void;
 }) => {
   if (inicolordata === undefined) {
-    inicolordata = [127, 127, 127];
+    inicolordata = [0, 0, 0];
     inicolorspace = "rgb";
   }
   if (!Array.isArray(inicolordata)) inicolordata = [inicolordata];
 
   let iniconverter = create_color_converter(inicolorspace, inicolordata);
-
+  console.log(iniconverter);
+  console.log(iniconverter.hex());
   if (iniconverter.rgb() === undefined)
-    iniconverter = create_color_converter("rgb", [127, 127, 127]);
+    iniconverter = create_color_converter("rgb", [0, 0, 0]);
   const [color, setColor] = useState(iniconverter);
 
   const innerSetColor = (colorconverter: {

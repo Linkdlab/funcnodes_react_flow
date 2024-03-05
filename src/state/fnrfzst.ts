@@ -75,6 +75,9 @@ const assert_reactflow_node = (
 
   for (const io in node.io) {
     node.io[io].node = node.id;
+    if (node.io[io].value === "<NoValue>") {
+      node.io[io].value = undefined;
+    }
   }
 
   const extendedNode: NodeType & RFNode = {

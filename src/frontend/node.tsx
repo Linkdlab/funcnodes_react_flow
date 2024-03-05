@@ -175,6 +175,9 @@ const ColorInput = ({ io }: { io: IOType }) => {
     });
   };
 
+  console.log(io.value);
+  console.log(colorspace);
+
   return (
     <CustomColorPicker
       onChange={on_change}
