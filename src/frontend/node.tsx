@@ -99,6 +99,8 @@ const NumberInput = ({
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
+  const [tempvalue, setTempValue] = useState(io.value);
+
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
     let new_value: number | string = parser(e.target.value);
     if (isNaN(new_value)) {
@@ -117,8 +119,9 @@ const NumberInput = ({
     <input
       type="number"
       className="nodedatainput"
-      value={io.value}
-      onChange={on_change}
+      value={io.connected ? io.value : tempvalue}
+      onChange={(e) => setTempValue(e.target.value)}
+      onBlur={on_change}
       disabled={io.connected}
       step={io.render_options?.step}
       min={io.value_options?.min}
@@ -174,9 +177,6 @@ const ColorInput = ({ io }: { io: IOType }) => {
       set_default: io.render_options?.set_default || false,
     });
   };
-
-  console.log(io.value);
-  console.log(colorspace);
 
   return (
     <CustomColorPicker
@@ -308,14 +308,15 @@ const NodeOutput = ({ io }: { io: IOType }) => {
 const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
   let value: any = undefined;
   let rendertype: RenderType = "string";
-  if (node_data.render_options?.data?.src) {
-    value = node_data.io[node_data.render_options.data.src]?.value;
+  const src = node_data.render_options?.data?.src;
+  if (src) {
+    value = node_data.io[src]?.value;
+    //    console.log("src", node_data.io[src]);
     rendertype =
       (node_data.render_options?.data?.preview_type as RenderType) ||
-      (node_data.io[node_data.render_options.data.src]
-        ?.valuepreview_type as RenderType) ||
+      (node_data.io[src]?.valuepreview_type as RenderType) ||
       (node_data.render_options?.data?.type as RenderType) ||
-      (node_data.io[node_data.render_options.data.src]?.type as RenderType) ||
+      (node_data.io[src]?.type as RenderType) ||
       "string";
   }
 

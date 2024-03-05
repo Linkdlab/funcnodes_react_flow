@@ -23,6 +23,8 @@ import ReactFlow, {
   FitView,
   NodeTypes,
   EdgeTypes,
+  useKeyPress,
+  useEdges,
 } from "reactflow";
 import Library from "./lib";
 import FuncNodesReactFlowZustand, {
@@ -35,6 +37,7 @@ import ConnectionLine from "./edge";
 
 import "./nodecontextmenu.scss";
 import DefaultEdge from "./edge";
+import { Key } from "@mui/icons-material";
 
 const FuncNodesContext = createContext<FuncNodesReactFlowZustandInterface>(
   FuncNodesReactFlowZustand()
@@ -174,6 +177,7 @@ const ReactFlowLayer = () => {
         //multiSelectionKeyCode="Control"
       >
         <ReactFlowManager />
+        <KeyHandler />
         <Background
           color="#888" // Color of the grid lines
           gap={16} // Distance between grid lines
@@ -241,6 +245,31 @@ const FuncnodesHeader = () => {
       <button onClick={onSave}>save</button>
     </div>
   );
+};
+
+const KeyHandler = () => {
+  const fnrf_zst = useContext(FuncNodesContext);
+  const delPressed = useKeyPress("Delete");
+  const edges = useEdges();
+
+  if (delPressed) {
+    for (const edge of edges) {
+      if (edge.selected) {
+
+        if (!fnrf_zst.worker) return <></>;
+        if (!edge.source || !edge.target) return <></>;
+        if (!edge.sourceHandle || !edge.targetHandle) return <></>;
+        fnrf_zst.worker?.remove_edge({
+          src_nid: edge.source,
+          src_ioid: edge.sourceHandle,
+          trg_nid: edge.target,
+          trg_ioid: edge.targetHandle,
+        });
+      }
+    }
+  }
+
+  return <></>;
 };
 
 const FuncnodesReactFlow = () => {
