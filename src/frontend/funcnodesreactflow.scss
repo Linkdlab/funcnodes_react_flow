@@ -50,3 +50,25 @@
   padding: 0.5rem;
   box-sizing: border-box;
 }
+
+.workerselect {
+  background-color: var(--funcnodesbackground2);
+  color: var(--funcnodestextcolor1);
+  border-radius: var(--containerboarderradius);
+  border: 1px solid var(--funheadercolor);
+  max-width: 140px;
+}
+.workerselectoption {
+  &.selected {
+    background-color: var(--funheadercolor);
+    color: var(--funcnodestextcolor1);
+  }
+  &.active {
+    background-color: var(--funcnodesbackground1);
+    color: var(--funcnodestextcolor1);
+  }
+  &.inactive {
+    background-color: var(--funcnodesbackground2); // Dark background color
+    color: var(--funcnodestextcolor1);
+  }
+}

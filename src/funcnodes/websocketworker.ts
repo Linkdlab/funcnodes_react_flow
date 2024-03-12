@@ -1,5 +1,9 @@
-import FuncNodesWorker from "./funcnodesworker";
+import FuncNodesWorker, { WorkerProps } from "./funcnodesworker";
 import { FuncNodesReactFlowZustandInterface } from "../state";
+
+interface WebSocketWorkerProps extends WorkerProps {
+  url: string;
+}
 class WebSocketWorker extends FuncNodesWorker {
   private _url: string;
   private _websocket: WebSocket | null = null;
@@ -7,9 +11,9 @@ class WebSocketWorker extends FuncNodesWorker {
   private maxReconnectAttempts: number = 999;
   private initialTimeout: number = 1000; // Initial reconnect delay in ms
   private maxTimeout: number = 30000; // Maximum reconnect delay
-  constructor(url: string, zustand: FuncNodesReactFlowZustandInterface) {
-    super(zustand);
-    this._url = url;
+  constructor(data: WebSocketWorkerProps) {
+    super(data);
+    this._url = data.url;
     this.connect();
   }
 

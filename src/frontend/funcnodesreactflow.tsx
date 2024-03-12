@@ -8,7 +8,7 @@ import {
   useState,
   MouseEvent as ReactMouseEvent,
 } from "react";
-import { WebSocketWorker } from "../funcnodes";
+import { FuncNodesWorker, WebSocketWorker, WorkerManager } from "../funcnodes";
 import "./funcnodesreactflow.scss";
 import useStore, { RFState } from "../state/reactflow";
 import { shallow } from "zustand/shallow";
@@ -25,6 +25,7 @@ import ReactFlow, {
   EdgeTypes,
   useKeyPress,
   useEdges,
+  useNodes,
 } from "reactflow";
 import Library from "./lib";
 import FuncNodesReactFlowZustand, {
@@ -198,6 +199,8 @@ const ReactFlowLayer = () => {
 const FuncnodesHeader = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
+
+  const workersstate = fnrf_zst.workers();
   const onNew = () => {
     const alert = window.confirm("Are you sure you want to start a new flow?");
     if (alert) {
@@ -238,9 +241,57 @@ const FuncnodesHeader = () => {
     };
     input.click();
   };
+
+  const workerselectchange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const workerid = e.target.value;
+    if (workerid === "__select__") return;
+    if (!fnrf_zst.workers) return;
+    if (!fnrf_zst.workermanager) return;
+    if (!workersstate[workerid]) return;
+    if (!workersstate[workerid].active) {
+      //create popup
+      const ans = window.confirm(
+        "this is an inactive worker, selecting it will start it, continue?"
+      );
+      if (!ans) return;
+    }
+    fnrf_zst.workermanager.set_active(workerid);
+  };
+
+  const stopworker = () => {
+    if (!fnrf_zst.worker) return;
+    fnrf_zst.worker.stop();
+  };
+  const onNewWorker = () => {
+    fnrf_zst.workermanager?.new_worker();
+  };
+
   return (
     <div className="funcnodesreactflowheader">
-      <button onClick={onNew}>new</button>
+      <select
+        className="workerselect"
+        value={fnrf_zst.worker ? fnrf_zst.worker.uuid : "__select__"}
+        onChange={workerselectchange}
+      >
+        <option disabled value="__select__">
+          Select Worker
+        </option>
+        {Object.keys(workersstate).map((workerid) => (
+          <option
+            className={
+              "workerselectoption" +
+              (workersstate[workerid].active ? " active" : " inactive")
+            }
+            key={workerid}
+            value={workerid}
+          >
+            {workerid}
+          </option>
+        ))}
+      </select>
+      {fnrf_zst.worker && <button onClick={stopworker}>stop worker</button>}
+      <button onClick={onNewWorker}>new worker</button>
+      <button onClick={onNew}>new nodespace</button>
       <button onClick={onOpen}>open</button>
       <button onClick={onSave}>save</button>
     </div>
@@ -251,11 +302,10 @@ const KeyHandler = () => {
   const fnrf_zst = useContext(FuncNodesContext);
   const delPressed = useKeyPress("Delete");
   const edges = useEdges();
-
+  const nodes = useNodes();
   if (delPressed) {
     for (const edge of edges) {
       if (edge.selected) {
-
         if (!fnrf_zst.worker) return <></>;
         if (!edge.source || !edge.target) return <></>;
         if (!edge.sourceHandle || !edge.targetHandle) return <></>;
@@ -267,20 +317,51 @@ const KeyHandler = () => {
         });
       }
     }
+    for (const node of nodes) {
+      if (node.selected) {
+        if (!fnrf_zst.worker) return <></>;
+        fnrf_zst.worker.remove_node(node.id);
+      }
+    }
   }
 
   return <></>;
 };
 
-const FuncnodesReactFlow = () => {
-  const fnrf_zst = FuncNodesReactFlowZustand();
-  const worker = new WebSocketWorker("ws://localhost:9382", fnrf_zst);
+const InnerFuncnodesReactFlow = ({
+  fnrf_zst,
+}: {
+  fnrf_zst: FuncNodesReactFlowZustandInterface;
+}) => {
+  const [workermanageruri, setWorkermanageruri] = useState<string>("");
+  const [worker, setWorker] = useState<FuncNodesWorker | undefined>(undefined);
+
+  useEffect(() => {
+    async function fetch_worker_manager() {
+      let response = await fetch("/worker_manager");
+      let workerewsuri = await response.text();
+      setWorkermanageruri(workerewsuri);
+    }
+    fetch_worker_manager();
+  }, []);
+
+  useEffect(() => {
+    if (workermanageruri) {
+      const workermanager = new WorkerManager(workermanageruri, fnrf_zst);
+      workermanager.on_setWorker = setWorker;
+      fnrf_zst.workermanager = workermanager;
+    }
+  }, [workermanageruri]);
+
   fnrf_zst.worker = worker;
+  // const worker = new WebSocketWorker("ws://localhost:9382", fnrf_zst);
+  // fnrf_zst.worker = worker;
 
   return (
     <FuncNodesContext.Provider value={fnrf_zst}>
       <div className="funcnodesreactflowcontainer">
         <FuncnodesHeader></FuncnodesHeader>
+
         <div className="funcnodesreactflowbody">
           <Library></Library>
           <ReactFlowLayer></ReactFlowLayer>
@@ -289,5 +370,14 @@ const FuncnodesReactFlow = () => {
     </FuncNodesContext.Provider>
   );
 };
+
+const FuncnodesReactFlow = () => {
+  const fnrf_zst = FuncNodesReactFlowZustand();
+
+  // @ts-ignore
+  window.fnrf_zst = fnrf_zst; // For debugging
+  return <InnerFuncnodesReactFlow fnrf_zst={fnrf_zst} />;
+};
+
 export default FuncnodesReactFlow;
 export { FuncNodesContext };

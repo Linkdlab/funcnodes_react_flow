@@ -1,3 +1,4 @@
 import WebSocketWorker from "./websocketworker";
 import FuncNodesWorker from "./funcnodesworker";
-export { WebSocketWorker, FuncNodesWorker };
+import WorkerManager from "./workermanager";
+export { WebSocketWorker, FuncNodesWorker, WorkerManager };

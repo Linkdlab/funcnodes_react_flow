@@ -1,10 +1,10 @@
 import LibZustand, { LibZustandInterface } from "./lib";
 import NodeSpaceZustand, { NodeSpaceZustandInterface } from "./nodespace";
-import { FuncNodesReactFlowZustandInterface } from "./fnrfzst";
+import { FuncNodesReactFlowZustandInterface, WorkersState } from "./fnrfzst";
 import FuncNodesReactFlowZustand from "./fnrfzst";
 export default FuncNodesReactFlowZustand;
 export { LibZustand, NodeSpaceZustand };
-export type { FuncNodesReactFlowZustandInterface };
+export type { FuncNodesReactFlowZustandInterface, WorkersState };
 
 // Type alias for DeepPartial. It makes all properties of T optional and recursive.
 type DeepPartial<T> = T extends object

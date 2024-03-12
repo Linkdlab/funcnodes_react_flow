@@ -18,9 +18,23 @@ import {
 import { NodeAction, PartialNodeType } from "./node";
 import { deep_merge } from ".";
 import { EdgeAction, generate_edge_id } from "./edge";
+import WorkerManager from "../funcnodes/workermanager";
+import { UseBoundStore, StoreApi, create } from "zustand";
 
+interface WorkerRepresentation {
+  uuid: string;
+  host: string;
+  port: number;
+  ssl: boolean;
+  active: boolean;
+}
+interface WorkersState {
+  [key: string]: WorkerRepresentation;
+}
 interface FuncNodesReactFlowZustandInterface {
   lib: LibZustandInterface;
+  workermanager: WorkerManager | undefined;
+  workers: UseBoundStore<StoreApi<WorkersState>>;
   worker: FuncNodesWorker | undefined;
   nodespace: NodeSpaceZustandInterface;
   useReactFlowStore: RFStore;
@@ -302,11 +316,14 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
   });
   const ns = NodeSpaceZustand({});
   const lib = LibZustand();
-  const worker = undefined;
+
+  
 
   const iterf: FuncNodesReactFlowZustandInterface = {
     lib: lib,
-    worker: worker,
+    workermanager: undefined,
+    workers: create<WorkersState>((set, get) => ({})),
+    worker: undefined,
     nodespace: ns,
     useReactFlowStore: rfstore,
     on_node_action: on_node_action,
@@ -318,4 +335,4 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
 
 export default FuncNodesReactFlowZustand;
 export { LibZustand, NodeSpaceZustand };
-export type { FuncNodesReactFlowZustandInterface };
+export type { FuncNodesReactFlowZustandInterface, WorkersState };

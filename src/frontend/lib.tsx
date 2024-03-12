@@ -10,6 +10,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CustomDialog from "./dialog";
 
 const LibraryNode = ({ item }: { item: LibNode }) => {
   const zustand: FuncNodesReactFlowZustandInterface =
@@ -32,6 +33,19 @@ const LibraryNode = ({ item }: { item: LibNode }) => {
   );
 };
 
+const filterShelf = (shelf: Shelf, filter: string): boolean => {
+  const hasFilteredNodes =
+    shelf.nodes?.some((node) =>
+      node.node_id.toLowerCase().includes(filter.toLowerCase())
+    ) ?? false;
+
+  const hasFilteredSubShelves =
+    shelf.subshelves?.some((subShelf) => filterShelf(subShelf, filter)) ??
+    false;
+
+  return hasFilteredNodes || hasFilteredSubShelves;
+};
+
 const LibraryShelf = ({ item, filter }: { item: Shelf; filter: string }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,6 +54,11 @@ const LibraryShelf = ({ item, filter }: { item: Shelf; filter: string }) => {
   const filterednodes = item.nodes?.filter((node) =>
     node.node_id.toLowerCase().includes(filter.toLowerCase())
   );
+
+  const _isopen = isOpen || filter.length > 0;
+  if (!filterShelf(item, filter)) {
+    return <></>;
+  }
 
   return (
     <div className="shelfcontainer">
@@ -50,27 +69,28 @@ const LibraryShelf = ({ item, filter }: { item: Shelf; filter: string }) => {
         title={item.description}
       >
         <div className="shelftitle_text">{item.name}</div>
-        <div className={"expandicon " + (isOpen ? "open" : "close")}>
+        <div className={"expandicon " + (_isopen ? "open" : "close")}>
           <ExpandLessIcon />
         </div>
       </div>
-
-      {filterednodes && (
-        <div className={"libnodecontainer " + (isOpen ? "open" : "close")}>
-          <div className="libnodecontainer_inner">
-            {filterednodes.map((subItem, idx) => (
-              <LibraryNode key={idx} item={subItem} />
-            ))}
-          </div>
+      <div className={"libnodecontainer " + (_isopen ? "open" : "close")}>
+        <div className="libnodecontainer_inner">
+          {filterednodes && (
+            <>
+              {filterednodes.map((subItem, idx) => (
+                <LibraryNode key={idx} item={subItem} />
+              ))}
+            </>
+          )}
+          {item.subshelves && (
+            <>
+              {item.subshelves.map((subItem, idx) => (
+                <LibraryShelf key={idx} item={subItem} filter={filter} />
+              ))}
+            </>
+          )}
         </div>
-      )}
-      {item.subshelves && (
-        <div style={{ marginLeft: 20 }}>
-          {item.subshelves.map((subItem, idx) => (
-            <LibraryShelf key={idx} item={subItem} filter={filter} />
-          ))}
-        </div>
-      )}
+      </div>
       <hr />
     </div>
   );
@@ -107,6 +127,44 @@ const LibFilter = ({
     </div>
   );
 };
+
+const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
+  const [newlib, setNewLib] = useState("");
+  const zustand: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+  if (!zustand.worker) {
+    return <></>;
+  }
+  const add_new_lib = () => {
+    if (zustand.worker === undefined) {
+      return;
+    }
+    zustand.worker.add_lib(newlib);
+    setNewLib("");
+  };
+  return (
+    <CustomDialog
+      title="Add Library"
+      trigger={children}
+      description="Add a new library to the current worker."
+      buttons={[
+        {
+          text: "add",
+          onClick: add_new_lib,
+        },
+      ]}
+    >
+      <input
+        type="text"
+        value={newlib}
+        onChange={(e) => {
+          setNewLib(e.target.value);
+        }}
+      />
+    </CustomDialog>
+  );
+};
+
 const Library = () => {
   const zustand: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
@@ -126,6 +184,11 @@ const Library = () => {
           ))}
         </div>
         <hr />
+      </div>
+      <div className="addlib">
+        <AddLibraryOverLay>
+          <button disabled={zustand.worker === undefined}>Add Library</button>
+        </AddLibraryOverLay>
       </div>
     </div>
   );

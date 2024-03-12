@@ -13,19 +13,23 @@ type CmdMessage = {
   id?: string;
 };
 
+interface WorkerProps {
+  zustand: FuncNodesReactFlowZustandInterface;
+  uuid: string;
+  on_error?: (error: string | Error) => void;
+}
 class FuncNodesWorker {
   messagePromises: Map<string, any>;
   _zustand: FuncNodesReactFlowZustandInterface;
   _nodeupdates: Map<string, PartialNodeType>;
   _nodeupdatetimer: NodeJS.Timeout;
+  uuid: string;
   on_error: (error: any) => void;
-  constructor(
-    zustand: FuncNodesReactFlowZustandInterface,
-    on_error?: (error: string | Error) => void
-  ) {
-    this.on_error = on_error || console.error;
+  constructor(data: WorkerProps) {
+    this.uuid = data.uuid;
+    this.on_error = data.on_error || console.error;
     this.messagePromises = new Map();
-    this._zustand = zustand;
+    this._zustand = data.zustand;
     this._nodeupdates = new Map();
     this._nodeupdatetimer = setTimeout(() => {
       this.perform_update();
@@ -348,10 +352,25 @@ class FuncNodesWorker {
         return this._recieve_edge_added(
           ...(data.result as [string, string, string, string])
         );
+
+      case "after_add_shelf":
+        if (!data.result) return;
+        return this._zustand.lib.libstate.getState().set(data.result);
+
       default:
         console.warn("Unhandled nodepsace event", event, data);
         break;
     }
+  }
+
+  async add_lib(lib: string) {
+    const ans = await this._send_cmd({
+      cmd: "add_shelf",
+      kwargs: { src: lib },
+      wait_for_response: true,
+    });
+    console.log("Added lib", ans);
+    return ans;
   }
 
   async recieve(data: any) {
@@ -377,6 +396,13 @@ class FuncNodesWorker {
         break;
     }
   }
+
+  async stop() {
+    this._send_cmd({ cmd: "stop_worker" });
+    this._zustand.workermanager?.setWorker(undefined);
+    this._zustand.lib.libstate.getState().set({ shelves: [] });
+  }
 }
 
 export default FuncNodesWorker;
+export type { WorkerProps };
