@@ -91,11 +91,12 @@ class WorkerManager {
           ":" +
           msg.data.port;
         this.setWorker(
-          new WebSocketWorker({
-            url,
-            zustand: this.zustand,
-            uuid: msg.data.uuid,
-          })
+          this.workers[msg.data.uuid] ||
+            new WebSocketWorker({
+              url,
+              zustand: this.zustand,
+              uuid: msg.data.uuid,
+            })
         );
       } else {
         console.error("WorkerManager: unknown worker type", msg);
@@ -109,11 +110,25 @@ class WorkerManager {
   }
 
   setWorker(worker: FuncNodesWorker | undefined) {
+    for (let w in this.workers) {
+      if (w !== worker?.uuid) {
+        this.workers[w].disconnect();
+      }
+    }
     if (worker !== undefined) {
       this.workers[worker.uuid] = worker;
+      worker.reconnect();
     }
     window.localStorage.setItem("funcnodes__active_worker", worker?.uuid || "");
+    if (this.zustand.worker !== undefined) {
+      this.zustand.clear_all();
+    }
+    this.zustand.worker = worker;
     this.on_setWorker(worker);
+  }
+
+  async restart_worker(workerid: string) {
+    this.ws?.send(JSON.stringify({ type: "restart_worker", workerid }));
   }
 
   private calculateReconnectTimeout(): number {

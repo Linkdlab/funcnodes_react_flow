@@ -6,33 +6,6 @@ import {
   RenderType,
 } from "../frontend/datarenderer";
 
-interface IORenderOptions extends BaseRenderOptions {
-  step?: number;
-  set_default?: boolean;
-}
-
-interface IOValueOptions {
-  min?: number;
-  max?: number;
-  step?: number;
-  options?: (string | number)[];
-  colorspace?: string;
-}
-interface IOType {
-  connected: boolean;
-  does_trigger: boolean;
-  full_id: string;
-  id: string;
-  is_input: boolean;
-  name: string;
-  node: string;
-  type: string;
-  value: any;
-  render_options?: IORenderOptions;
-  value_options?: IOValueOptions;
-  valuepreview_type?: string;
-}
-
 type PartialIOType = DeepPartial<IOType>;
 
 interface DataRenderOptions extends BaseRenderOptions {
@@ -44,22 +17,7 @@ interface DataRenderOptions extends BaseRenderOptions {
 interface NodeRenderOptions {
   data?: DataRenderOptions;
 }
-interface NodeType {
-  id: string;
-  node_name: string;
-  io: { [key: string]: IOType };
-  frontend: {
-    pos: [number, number];
-    size: [number, number];
-    collapsed: boolean;
-  };
-  name: string;
-  in_trigger: boolean;
-  error?: string;
-  render_options?: NodeRenderOptions;
-}
 
-type PartialNodeType = DeepPartial<NodeType>;
 /**
  * Interface for the NodeActionAdd.
  * This interface is used when a new node is being added.
@@ -132,6 +90,7 @@ const dummy_node: NodeType = {
   io: {},
   name: "dummy",
   in_trigger: false,
+  io_order: [],
 };
 const assert_full_node = (node: PartialNodeType): NodeType => {
   if (!node.id) {
@@ -143,16 +102,24 @@ const assert_full_node = (node: PartialNodeType): NodeType => {
 };
 
 const createNodeStore = (node: NodeType): NodeStore => {
+  if (Array.isArray(node.io)) {
+    node.io_order = node.io.map((io) => io.id);
+    const new_io: { [key: string]: IOType } = {};
+    for (const io of node.io) {
+      new_io[io.id] = io;
+    }
+    node.io = new_io;
+  } else {
+    node.io_order = Object.keys(node.io);
+  }
+
   return create<NodeType>((set, get) => node);
 };
 export { createNodeStore, assert_full_node };
 
 export type {
-  NodeType,
   NodeStore,
   NodeAction,
-  PartialNodeType,
-  IOType,
   NodeActionUpdate,
   NodeActionDelete,
   NodeActionAdd,

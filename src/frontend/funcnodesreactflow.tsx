@@ -33,7 +33,6 @@ import FuncNodesReactFlowZustand, {
 } from "../state";
 
 import DefaultNode from "./node";
-import { NodeType } from "../state/node";
 import ConnectionLine from "./edge";
 
 import "./nodecontextmenu.scss";
@@ -173,7 +172,7 @@ const ReactFlowLayer = () => {
         maxZoom={2}
         fitView
         ref={reactflowRef}
-        onNodeContextMenu={onNodeContextMenu}
+        //  onNodeContextMenu={onNodeContextMenu}
         onPaneClick={onPaneClick}
         //multiSelectionKeyCode="Control"
       >
@@ -258,10 +257,6 @@ const FuncnodesHeader = () => {
     fnrf_zst.workermanager.set_active(workerid);
   };
 
-  const stopworker = () => {
-    if (!fnrf_zst.worker) return;
-    fnrf_zst.worker.stop();
-  };
   const onNewWorker = () => {
     fnrf_zst.workermanager?.new_worker();
   };
@@ -289,7 +284,26 @@ const FuncnodesHeader = () => {
           </option>
         ))}
       </select>
-      {fnrf_zst.worker && <button onClick={stopworker}>stop worker</button>}
+      {fnrf_zst.worker && (
+        <>
+          <button
+            onClick={() => {
+              if (!fnrf_zst.worker) return;
+              fnrf_zst.worker.stop();
+            }}
+          >
+            stop worker
+          </button>
+          <button
+            onClick={() => {
+              if (!fnrf_zst.worker) return;
+              fnrf_zst.workermanager?.restart_worker(fnrf_zst.worker.uuid);
+            }}
+          >
+            restart worker
+          </button>
+        </>
+      )}
       <button onClick={onNewWorker}>new worker</button>
       <button onClick={onNew}>new nodespace</button>
       <button onClick={onOpen}>open</button>

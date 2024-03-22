@@ -2,10 +2,8 @@ import React, { useRef, useState } from "react";
 import { useStore, create, UseBoundStore, StoreApi } from "zustand";
 import {
   NodeStore,
-  NodeType,
   createNodeStore,
   NodeAction,
-  PartialNodeType,
   assert_full_node,
 } from "./node";
 import { deep_merge } from "./";
@@ -150,4 +148,4 @@ const NodeSpaceZustand =
   };
 
 export default NodeSpaceZustand;
-export type { NodeType, NodeSpaceZustandInterface };
+export type { NodeSpaceZustandInterface };

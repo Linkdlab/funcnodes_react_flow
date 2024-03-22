@@ -11,6 +11,7 @@ class WebSocketWorker extends FuncNodesWorker {
   private maxReconnectAttempts: number = 999;
   private initialTimeout: number = 1000; // Initial reconnect delay in ms
   private maxTimeout: number = 30000; // Maximum reconnect delay
+  private _reconnect: boolean = true;
   constructor(data: WebSocketWorkerProps) {
     super(data);
     this._url = data.url;
@@ -46,7 +47,7 @@ class WebSocketWorker extends FuncNodesWorker {
     );
     return timeout;
   }
-  private reconnect(): void {
+  private auto_reconnect(): void {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       let timeout = this.calculateReconnectTimeout();
       console.log(`Attempting to reconnect in ${timeout} ms`);
@@ -77,7 +78,7 @@ class WebSocketWorker extends FuncNodesWorker {
 
   onclose() {
     console.log("Websocket closed,reconnecting");
-    this.reconnect(); // Attempt to reconnect
+    if (this._reconnect) this.auto_reconnect(); // Attempt to reconnect
   }
 
   on_ws_error() {
@@ -85,7 +86,7 @@ class WebSocketWorker extends FuncNodesWorker {
     if (this._websocket) {
       this._websocket.close(); // Ensure the connection is closed before attempting to reconnect
     } else {
-      this.reconnect();
+      this.auto_reconnect();
     }
   }
 
@@ -96,8 +97,48 @@ class WebSocketWorker extends FuncNodesWorker {
     this._websocket.send(JSON.stringify(data));
   }
 
+  async stop() {
+    await super.stop();
+    this._reconnect = false;
+    this.close();
+  }
   close() {
     if (this._websocket) this._websocket.close();
+  }
+  disconnect() {
+    super.disconnect();
+    this._reconnect = false;
+    this.close();
+  }
+
+  async reconnect() {
+    await super.reconnect();
+    this._reconnect = true;
+    if (this._websocket) {
+      console.log("Reconnecting", this._websocket.readyState);
+      if (
+        this._websocket.readyState === WebSocket.OPEN ||
+        this._websocket.readyState === WebSocket.CONNECTING
+      ) {
+        if (this._websocket.readyState === WebSocket.CONNECTING) {
+          //await to ensure the websocket is connected, with a timeout of 2 seconds
+          await new Promise((resolve, reject) => {
+            let timeout = setTimeout(() => {
+              reject("Timeout");
+            }, 2000);
+            this._websocket?.addEventListener("open", () => {
+              clearTimeout(timeout);
+              resolve(null);
+            });
+          });
+        }
+        if (this._websocket.readyState === WebSocket.OPEN) {
+          this.fullsync();
+          return;
+        }
+      }
+    }
+    this.connect();
   }
 }
 

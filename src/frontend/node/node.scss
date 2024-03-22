@@ -13,18 +13,6 @@
   --node_header_color: hsl(245, 51%, 22%);
 }
 
-@property --handle_width {
-  syntax: "<number>"; /* <- defined as type number for the transition to work */
-  initial-value: 0;
-  inherits: false;
-}
-
-@property --handle_width_hover {
-  syntax: "<number>"; /* <- defined as type number for the transition to work */
-  initial-value: 0;
-  inherits: false;
-}
-
 .react-flow {
   &__node {
     padding: 0;
@@ -237,6 +225,7 @@
   justify-content: start;
   display: flex;
   margin: 0.2rem;
+  line-break: anywhere;
   & > input {
     width: 100%;
   }

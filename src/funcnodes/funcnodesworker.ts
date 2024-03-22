@@ -4,8 +4,8 @@ import {
   NodeSpaceZustand,
   deep_merge,
 } from "../state";
-import { PartialNodeType } from "../state/node";
 import { NodeActionUpdate } from "../state/node"; // Import the missing type
+import { wait } from "@testing-library/user-event/dist/utils";
 type CmdMessage = {
   type: string;
   cmd: string;
@@ -18,6 +18,7 @@ interface WorkerProps {
   uuid: string;
   on_error?: (error: string | Error) => void;
 }
+
 class FuncNodesWorker {
   messagePromises: Map<string, any>;
   _zustand: FuncNodesReactFlowZustandInterface;
@@ -36,9 +37,11 @@ class FuncNodesWorker {
     }, 1000);
   }
   async fullsync() {
-    const resp = await this._send_cmd({ cmd: "full_state" });
+    const resp = (await this._send_cmd({ cmd: "full_state" })) as FullState;
     console.log("Full state", resp);
     this._zustand.lib.libstate.getState().set(resp.backend.lib);
+    if (resp.view.renderoptions)
+      this._zustand.update_render_options(resp.view.renderoptions);
     const nodeview = resp.view.nodes;
     for (const node of resp.backend.nodes) {
       if (nodeview[node.id] !== undefined) {
@@ -47,7 +50,7 @@ class FuncNodesWorker {
       this._recieve_node_added(node);
     }
     for (const edge of resp.backend.edges) {
-      this._recieve_edge_added(...(edge as [string, string, string, string]));
+      this._recieve_edge_added(...edge);
     }
   }
 
@@ -77,7 +80,7 @@ class FuncNodesWorker {
       cmd: "add_node",
       kwargs: { id: node_id },
     });
-    this._recieve_node_added(resp);
+    this._recieve_node_added(resp as NodeType);
   }
 
   async remove_node(node_id: string) {
@@ -87,7 +90,7 @@ class FuncNodesWorker {
     });
   }
 
-  async _recieve_node_added(data: any) {
+  async _recieve_node_added(data: NodeType) {
     this._zustand.on_node_action({
       type: "add",
       node: data,
@@ -217,10 +220,12 @@ class FuncNodesWorker {
     cmd,
     kwargs,
     wait_for_response = true,
+    response_timeout = 5000,
   }: {
     cmd: string;
     kwargs?: any;
     wait_for_response?: boolean;
+    response_timeout?: number;
   }) {
     const msg: CmdMessage = {
       type: "cmd",
@@ -235,7 +240,7 @@ class FuncNodesWorker {
       const promise = new Promise<any>((resolve, reject) => {
         const timeout = setTimeout(() => {
           reject("Timeout");
-        }, 5000);
+        }, response_timeout);
         this.messagePromises.set(msid, {
           resolve: (data: any) => {
             clearTimeout(timeout);
@@ -330,7 +335,7 @@ class FuncNodesWorker {
         });
 
       case "node_added":
-        return this._recieve_node_added(data.node);
+        return this._recieve_node_added(data.node as NodeType);
 
       case "after_disconnect":
         if (!data.result) return;
@@ -397,10 +402,13 @@ class FuncNodesWorker {
     }
   }
 
+  disconnect() {}
+  async reconnect() {}
   async stop() {
     this._send_cmd({ cmd: "stop_worker" });
-    this._zustand.workermanager?.setWorker(undefined);
-    this._zustand.lib.libstate.getState().set({ shelves: [] });
+    if (this._zustand.worker === this) {
+      this._zustand.clear_all();
+    }
   }
 }
 

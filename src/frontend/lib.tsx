@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import "./lib.scss";
 
-import { Shelf, LibNode } from "../state/lib";
 import { FuncNodesReactFlowZustandInterface } from "../state";
 import { UseBoundStore } from "zustand";
 import { MouseEvent } from "react";

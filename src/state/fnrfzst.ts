@@ -1,9 +1,6 @@
 import LibZustand, { LibZustandInterface } from "./lib";
 import { FuncNodesWorker } from "../funcnodes";
-import NodeSpaceZustand, {
-  NodeSpaceZustandInterface,
-  NodeType,
-} from "./nodespace";
+import NodeSpaceZustand, { NodeSpaceZustandInterface } from "./nodespace";
 import { NodeStore, createNodeStore } from "./node";
 import { PartialIOType } from "./node";
 import reactflowstore, { RFStore } from "./reactflow";
@@ -15,7 +12,7 @@ import {
   Edge as RFEdge,
   Connection as RFConnection,
 } from "reactflow";
-import { NodeAction, PartialNodeType } from "./node";
+import { NodeAction } from "./node";
 import { deep_merge } from ".";
 import { EdgeAction, generate_edge_id } from "./edge";
 import WorkerManager from "../funcnodes/workermanager";
@@ -38,10 +35,13 @@ interface FuncNodesReactFlowZustandInterface {
   worker: FuncNodesWorker | undefined;
   nodespace: NodeSpaceZustandInterface;
   useReactFlowStore: RFStore;
+  render_options: UseBoundStore<StoreApi<RenderOptions>>;
+  update_render_options: (options: RenderOptions) => void;
   rf_instance?: ReturnType<typeof useReactFlow>;
   on_node_action: (action: NodeAction) => void;
   on_edge_action: (edge: EdgeAction) => void;
   reactflowRef: HTMLDivElement | null;
+  clear_all: () => void;
 }
 
 const _fill_node_frontend = (
@@ -317,18 +317,33 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
   const ns = NodeSpaceZustand({});
   const lib = LibZustand();
 
-  
-
+  const clear_all = () => {
+    iterf.worker?.disconnect();
+    iterf.worker = undefined;
+    iterf.workermanager?.setWorker(undefined);
+    iterf.lib.libstate.getState().set({ shelves: [] });
+    iterf.nodespace.nodesstates.clear();
+    iterf.useReactFlowStore.setState({ nodes: [], edges: [] });
+  };
   const iterf: FuncNodesReactFlowZustandInterface = {
     lib: lib,
     workermanager: undefined,
     workers: create<WorkersState>((set, get) => ({})),
+    render_options: create<RenderOptions>((set, get) => ({})),
+    update_render_options: (options: RenderOptions) => {
+      const current = iterf.render_options.getState();
+      const { new_obj, change } = deep_merge(current, options);
+      if (change) {
+        iterf.render_options.setState(new_obj);
+      }
+    },
     worker: undefined,
     nodespace: ns,
     useReactFlowStore: rfstore,
     on_node_action: on_node_action,
     on_edge_action: on_edge_action,
     reactflowRef: null,
+    clear_all: clear_all,
   };
   return iterf;
 };
