@@ -9,8 +9,9 @@ class WorkerManager {
   private reconnectAttempts: number = 0;
   private maxReconnectAttempts: number = 999;
   private initialTimeout: number = 1000; // Initial reconnect delay in ms
-  private maxTimeout: number = 30000; // Maximum reconnect delay
+  private maxTimeout: number = 10000; // Maximum reconnect delay
   private zustand: FuncNodesReactFlowZustandInterface;
+  private connectionTimeout?: NodeJS.Timeout;
   on_setWorker: (worker: FuncNodesWorker | undefined) => void;
   constructor(wsuri: string, zustand: FuncNodesReactFlowZustandInterface) {
     this.wsuri = wsuri;
@@ -23,6 +24,12 @@ class WorkerManager {
     this.connect();
   }
   private connect(): void {
+    this.zustand.set_progress({
+      progress: 0,
+      message: "connecting to worker manager",
+      status: "info",
+      blocking: true,
+    });
     console.log("Connecting to websocket");
     this.ws = new WebSocket(this.wsuri);
 
@@ -41,6 +48,12 @@ class WorkerManager {
     this.ws.onmessage = (event) => {
       this.onmessage(event.data);
     };
+
+    this.connectionTimeout = setTimeout(() => {
+      if (this.ws?.readyState !== WebSocket.OPEN) {
+        this.on_ws_error();
+      }
+    }, 5000);
   }
 
   on_ws_error() {
@@ -53,6 +66,11 @@ class WorkerManager {
   }
 
   onopen() {
+    if (this.connectionTimeout) {
+      clearTimeout(this.connectionTimeout);
+      this.connectionTimeout = undefined;
+    }
+    this.zustand.auto_progress();
     console.log("WorkerManager: onopen");
     if (this.ws) {
       this.ws.send("worker_status");
@@ -68,7 +86,7 @@ class WorkerManager {
   }
   onmessage(event: string) {
     let msg = JSON.parse(event);
-    if (msg.type == "worker_status") {
+    if (msg.type === "worker_status") {
       console.log("WorkerManager: worker_status", msg);
       const new_state: WorkersState = {};
       for (let worker of msg.active) {
@@ -81,8 +99,8 @@ class WorkerManager {
       }
       this.zustand.workers.setState(new_state);
       return;
-    } else if (msg.type == "set_worker") {
-      if (msg.data.type == "WSWorker") {
+    } else if (msg.type === "set_worker") {
+      if (msg.data.type === "WSWorker") {
         let url =
           "ws" +
           (msg.data.ssl ? "s" : "") +
@@ -104,6 +122,9 @@ class WorkerManager {
 
       //store active worker in window storage
 
+      return;
+    } else if (msg.type === "progress") {
+      this.zustand.set_progress(msg as ProgressStateMessage);
       return;
     }
     console.error("WorkerManager: unknown message", msg);

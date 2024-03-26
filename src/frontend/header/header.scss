@@ -1,0 +1,48 @@
+.funcnodesreactflowheader {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  justify-content: flex-start;
+  position: relative;
+  top: 0;
+  left: 0;
+
+  .headerelement {
+    height: 100%;
+    // center items vertically
+    display: flex;
+    align-items: center;
+    margin: 4px 4px 4px 4px;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  & .statusbar {
+    width: 250px;
+    height: 1.5rem;
+    background-color: var(--funcnodesbackground2);
+    display: inline-block;
+    margin: 2px 4px 0px 4px;
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+
+    &-progressbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: var(--funheadercolor);
+      display: inline-block;
+    }
+    &-message {
+      position: relative;
+      top: 0;
+      left: 0;
+      font-size: 0.8rem;
+      color: var(--funheadercolor);
+      mix-blend-mode: difference;
+    }
+  }
+}

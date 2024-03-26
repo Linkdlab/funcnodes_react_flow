@@ -1,4 +1,6 @@
 .tablecontainer {
+  overflow: auto;
+  background-color: white;
 }
 .tableHead {
   color: var(--funheadercolor) !important;

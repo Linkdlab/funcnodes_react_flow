@@ -25,6 +25,7 @@ class FuncNodesWorker {
   _nodeupdates: Map<string, PartialNodeType>;
   _nodeupdatetimer: NodeJS.Timeout;
   uuid: string;
+  is_open: boolean;
   on_error: (error: any) => void;
   constructor(data: WorkerProps) {
     this.uuid = data.uuid;
@@ -35,6 +36,7 @@ class FuncNodesWorker {
     this._nodeupdatetimer = setTimeout(() => {
       this.perform_update();
     }, 1000);
+    this.is_open = true;
   }
   async fullsync() {
     const resp = (await this._send_cmd({ cmd: "full_state" })) as FullState;
@@ -265,7 +267,7 @@ class FuncNodesWorker {
     throw new Error("Not implemented");
   }
 
-  async recieve_nodespace_event({ event, data }: { event: string; data: any }) {
+  async recieve_nodespace_event({ event, data }: NodeSpaceEvent) {
     switch (event) {
       case "after_set_value":
         return this._zustand.on_node_action({
@@ -372,29 +374,31 @@ class FuncNodesWorker {
     const ans = await this._send_cmd({
       cmd: "add_shelf",
       kwargs: { src: lib },
-      wait_for_response: true,
+      wait_for_response: false,
     });
-    console.log("Added lib", ans);
     return ans;
   }
 
-  async recieve(data: any) {
+  async recieve(data: JSONMessage) {
     let promise;
     switch (data.type) {
       case "nsevent":
         return await this.recieve_nodespace_event(data);
       case "result":
-        promise = this.messagePromises.get(data.id);
+        promise = data.id && this.messagePromises.get(data.id);
         if (promise) {
           return promise.resolve(data.result);
         }
         break;
       case "error":
         this.on_error(data.tb + "\n" + data.error);
-        promise = this.messagePromises.get(data.id);
+        promise = data.id && this.messagePromises.get(data.id);
         if (promise) {
           return promise.reject(data.error);
         }
+        break;
+      case "progress":
+        this._zustand.set_progress(data);
         break;
       default:
         console.warn("Unhandled message", data);
@@ -405,10 +409,32 @@ class FuncNodesWorker {
   disconnect() {}
   async reconnect() {}
   async stop() {
-    this._send_cmd({ cmd: "stop_worker" });
+    await this._send_cmd({ cmd: "stop_worker", wait_for_response: false });
     if (this._zustand.worker === this) {
       this._zustand.clear_all();
     }
+  }
+
+  async get_io_full_value({ nid, ioid }: { nid: string; ioid: string }) {
+    const res = await this._send_cmd({
+      cmd: "get_io_full_value",
+      kwargs: { nid, ioid },
+      wait_for_response: true,
+    });
+    console.log("Full value", res);
+    this._zustand.on_node_action({
+      type: "update",
+      node: {
+        io: {
+          [ioid]: {
+            fullvalue: res,
+          },
+        },
+      },
+      id: nid,
+      from_remote: true,
+    });
+    return res;
   }
 }
 

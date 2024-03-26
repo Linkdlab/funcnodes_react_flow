@@ -16,10 +16,12 @@ class WebSocketWorker extends FuncNodesWorker {
     super(data);
     this._url = data.url;
     this.connect();
+    this._zustand.auto_progress();
   }
 
   private connect(): void {
     console.log("Connecting to websocket");
+    this.is_open = false;
     this._websocket = new WebSocket(this._url);
 
     this._websocket.onopen = () => {
@@ -66,17 +68,21 @@ class WebSocketWorker extends FuncNodesWorker {
     }
   }
 
-  async onmessage(data: any) {
+  async onmessage(data: string) {
     await this.recieve(JSON.parse(data));
   }
 
   onopen() {
     console.log("Websocket opened");
+    this.is_open = true;
+    this._zustand.auto_progress();
     this.reconnectAttempts = 0;
     this.fullsync();
   }
 
   onclose() {
+    this.is_open = false;
+    this._zustand.auto_progress();
     console.log("Websocket closed,reconnecting");
     if (this._reconnect) this.auto_reconnect(); // Attempt to reconnect
   }
@@ -94,7 +100,9 @@ class WebSocketWorker extends FuncNodesWorker {
     if (!this._websocket) {
       throw new Error("Websocket not connected");
     }
+
     this._websocket.send(JSON.stringify(data));
+    console.log("Sent", data);
   }
 
   async stop() {

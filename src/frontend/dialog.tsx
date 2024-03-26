@@ -7,7 +7,8 @@ interface CustomDialogProps {
   description?: string | React.ReactNode;
   children: React.ReactNode;
   closebutton?: boolean;
-  buttons: {
+  onOpenChange?: (open: boolean) => void;
+  buttons?: {
     text: string;
     onClick: () => void;
   }[];
@@ -18,10 +19,12 @@ const CustomDialog = ({
   description,
   children,
   closebutton = true,
+  onOpenChange,
+
   buttons = [],
 }: CustomDialogProps) => {
   return (
-    <Dialog.Root>
+    <Dialog.Root onOpenChange={onOpenChange}>
       {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Overlay className="dialogoverlay" />

@@ -26,6 +26,34 @@ interface TransFormedTableData {
 
 const transform_table_data = (data: TableData): TransFormedTableData => {
   const rows = [];
+  if (data === undefined) {
+    // return empty table if data is undefined
+    return {
+      header: [],
+      rows: [],
+    };
+  }
+  if (data.data === undefined) {
+    // if data.data is undefined, make it empty
+    data.data = [];
+  }
+
+  if (data.columns === undefined) {
+    // if np columns are defined, create columns based on the first row
+
+    // if data is empty, there are no columns
+    if (data.data.length === 0) {
+      data.columns = [];
+    } else {
+      // create columns based on the first row
+      data.columns = data.data[0].map((_, i) => `col${i}`);
+    }
+  }
+  if (data.index === undefined) {
+    // if no index is defined, create index based on the number of rows
+    data.index = data.data.map((_, i) => `row${i}`);
+  }
+
   for (let i = 0; i < data.index.length; i++) {
     const row = [data.index[i]];
     for (let j = 0; j < data.columns.length; j++) {

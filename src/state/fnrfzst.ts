@@ -36,10 +36,13 @@ interface FuncNodesReactFlowZustandInterface {
   nodespace: NodeSpaceZustandInterface;
   useReactFlowStore: RFStore;
   render_options: UseBoundStore<StoreApi<RenderOptions>>;
+  progress_state: UseBoundStore<StoreApi<ProgressState>>;
   update_render_options: (options: RenderOptions) => void;
   rf_instance?: ReturnType<typeof useReactFlow>;
   on_node_action: (action: NodeAction) => void;
   on_edge_action: (edge: EdgeAction) => void;
+  set_progress: (progress: ProgressState) => void;
+  auto_progress: () => void;
   reactflowRef: HTMLDivElement | null;
   clear_all: () => void;
 }
@@ -76,6 +79,32 @@ const _fill_node_frontend = (
   }
   node.frontend = frontend;
 };
+
+const assert_react_flow_io = (
+  io: PartialIOType,
+  fnrf_instance?: FuncNodesReactFlowZustandInterface
+): PartialIOType => {
+  if (io.value === "<NoValue>") {
+    io.value = undefined;
+  }
+  if (io.fullvalue === "<NoValue>") {
+    io.fullvalue = undefined;
+  }
+
+  if (io.try_get_full_value === undefined) {
+    io.try_get_full_value = () => {
+      if (!fnrf_instance) {
+        return;
+      }
+      if (io.node === undefined || io.id === undefined) {
+        return;
+      }
+      fnrf_instance.worker?.get_io_full_value({ nid: io.node, ioid: io.id });
+    };
+  }
+
+  return io;
+};
 const assert_reactflow_node = (
   node: NodeType,
   store: NodeStore,
@@ -89,9 +118,7 @@ const assert_reactflow_node = (
 
   for (const io in node.io) {
     node.io[io].node = node.id;
-    if (node.io[io].value === "<NoValue>") {
-      node.io[io].value = undefined;
-    }
+    assert_react_flow_io(node.io[io], fnrf_instance);
   }
 
   const extendedNode: NodeType & RFNode = {
@@ -158,6 +185,15 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
           const { new_obj, change } = deep_merge(state, action.node);
 
           if (change) {
+            if (action.node.io) {
+              for (const io in action.node.io) {
+                // if fullvalue is in the update data, set to fullvalue otherwise set to undefined
+                new_obj.io[io].fullvalue = action.node.io[io].fullvalue;
+              }
+            }
+
+            assert_reactflow_node(new_obj, store, iterf);
+
             store.setState(new_obj);
           }
         } else {
@@ -324,12 +360,19 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
     iterf.lib.libstate.getState().set({ shelves: [] });
     iterf.nodespace.nodesstates.clear();
     iterf.useReactFlowStore.setState({ nodes: [], edges: [] });
+    iterf.auto_progress();
   };
   const iterf: FuncNodesReactFlowZustandInterface = {
     lib: lib,
     workermanager: undefined,
     workers: create<WorkersState>((set, get) => ({})),
     render_options: create<RenderOptions>((set, get) => ({})),
+    progress_state: create<ProgressState>((set, get) => ({
+      message: "please select worker",
+      status: "info",
+      progress: 0,
+      blocking: false,
+    })),
     update_render_options: (options: RenderOptions) => {
       const current = iterf.render_options.getState();
       const { new_obj, change } = deep_merge(current, options);
@@ -344,6 +387,44 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
     on_edge_action: on_edge_action,
     reactflowRef: null,
     clear_all: clear_all,
+    set_progress: (progress: ProgressState) => {
+      if (progress.message === "") {
+        return iterf.auto_progress();
+      }
+
+      const prev_state = iterf.progress_state.getState();
+      const { new_obj, change } = deep_merge<ProgressState>(
+        prev_state,
+        progress
+      );
+      if (change) {
+        iterf.progress_state.setState(new_obj);
+      }
+    },
+    auto_progress: () => {
+      if (iterf.worker === undefined) {
+        return iterf.set_progress({
+          progress: 0,
+          message: "please select worker",
+          status: "error",
+          blocking: false,
+        });
+      }
+      if (!iterf.worker.is_open) {
+        return iterf.set_progress({
+          progress: 0,
+          message: "connecting to worker",
+          status: "info",
+          blocking: true,
+        });
+      }
+      iterf.set_progress({
+        progress: 1,
+        message: "running",
+        status: "info",
+        blocking: false,
+      });
+    },
   };
   return iterf;
 };

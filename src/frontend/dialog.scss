@@ -15,12 +15,14 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90vw;
-  max-width: 450px;
+  max-width: 85vh;
   max-height: 85vh;
   padding: 25px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--funcnodestextcolor1);
   border: 1px solid var(--funheadercolor);
+  display: flex;
+  flex-direction: column;
 }
 
 .dialogtitle {
@@ -82,4 +84,5 @@
 
 .dialogchildren {
   margin-top: 20px;
+  overflow: auto;
 }

@@ -63,9 +63,11 @@ interface IOType {
   node: string;
   type: SerializedType;
   value: any;
+  fullvalue?: any;
   render_options?: IORenderOptions;
   value_options?: IOValueOptions;
   valuepreview_type?: string;
+  try_get_full_value: () => void;
 }
 
 type OutputRendererType = ({ io }: { io: IOType }) => JSX.Element;

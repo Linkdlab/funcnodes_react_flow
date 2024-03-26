@@ -6,6 +6,7 @@ import { FuncNodesContext } from "../..";
 import { FuncNodesReactFlowZustandInterface } from "../../../state/fnrfzst";
 import { HandleWithPreview, pick_best_io_type } from "./io";
 import {
+  DictOutput,
   InLineOutput,
   SingleValueOutput,
   TableOutput,
@@ -47,6 +48,8 @@ if (
   window.funcnodes.globals.outputrenderer.GlobalOutputrenderer = {
     string: SingleValueOutput,
     table: TableOutput,
+    //dict: DictOutput,
+    //"funcnodes_pandas.dataframe.DataFrameDict": DictOutput,
   };
 }
 
@@ -96,6 +99,9 @@ const NodeOutput = ({ io }: { io: IOType }) => {
           render.typemap[typestring]
         ];
     }
+  }
+  if (OutputhandlePreview === undefined) {
+    OutputhandlePreview = DictOutput;
   }
 
   return (

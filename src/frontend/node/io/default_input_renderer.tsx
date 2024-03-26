@@ -85,6 +85,8 @@ const StringInput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
+  const [tempvalue, setTempValue] = useState(io.value);
+
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
     let new_value: string = e.target.value;
     if (!new_value) new_value = "<NoValue>";
@@ -100,8 +102,9 @@ const StringInput = ({ io }: { io: IOType }) => {
   return (
     <input
       className="nodedatainput"
-      value={io.value}
-      onChange={on_change}
+      value={io.connected ? io.value : tempvalue}
+      onChange={(e) => setTempValue(e.target.value)}
+      onBlur={on_change}
       disabled={io.connected}
     />
   );
