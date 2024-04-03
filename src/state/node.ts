@@ -102,6 +102,11 @@ const assert_full_node = (node: PartialNodeType): NodeType => {
 };
 
 const createNodeStore = (node: NodeType): NodeStore => {
+  // check if node is Object
+
+  if (node.io === undefined) {
+    node.io = {};
+  }
   if (Array.isArray(node.io)) {
     node.io_order = node.io.map((io) => io.id);
     const new_io: { [key: string]: IOType } = {};

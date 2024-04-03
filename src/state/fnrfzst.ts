@@ -147,9 +147,14 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
       case "add":
         if (action.from_remote) {
           let store = ns.get_node(action.node.id, false);
+  
           if (!store) {
-            store = createNodeStore(action.node);
-            ns.nodesstates.set(action.node.id, store);
+            try {
+              store = createNodeStore(action.node);
+              ns.nodesstates.set(action.node.id, store);
+            } catch (e) {
+              return;
+            }
           }
 
           const new_ndoes = [
