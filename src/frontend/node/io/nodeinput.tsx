@@ -41,7 +41,7 @@ const NodeInput = ({ io }: { io: IOType }) => {
   }
 
   const typestring = pick_best_io_type(io.type);
-  console.log("typestring", typestring);
+
   const InputHandlePreview =
     (typestring
       ? window.funcnodes?.globals?.outputrenderer?.GlobalOutputrenderer?.[

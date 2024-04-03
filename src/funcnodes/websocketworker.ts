@@ -9,8 +9,8 @@ class WebSocketWorker extends FuncNodesWorker {
   private _websocket: WebSocket | null = null;
   private reconnectAttempts: number = 0;
   private maxReconnectAttempts: number = 999;
-  private initialTimeout: number = 1000; // Initial reconnect delay in ms
-  private maxTimeout: number = 30000; // Maximum reconnect delay
+  private initialTimeout: number = 200; // Initial reconnect delay in ms
+  private maxTimeout: number = 5000; // Maximum reconnect delay
   private _reconnect: boolean = true;
   constructor(data: WebSocketWorkerProps) {
     super(data);
@@ -102,7 +102,6 @@ class WebSocketWorker extends FuncNodesWorker {
     }
 
     this._websocket.send(JSON.stringify(data));
-    console.log("Sent", data);
   }
 
   async stop() {

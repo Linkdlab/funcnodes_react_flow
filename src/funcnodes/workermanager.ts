@@ -8,8 +8,8 @@ class WorkerManager {
   private ws: WebSocket | null = null;
   private reconnectAttempts: number = 0;
   private maxReconnectAttempts: number = 999;
-  private initialTimeout: number = 1000; // Initial reconnect delay in ms
-  private maxTimeout: number = 10000; // Maximum reconnect delay
+  private initialTimeout: number = 200; // Initial reconnect delay in ms
+  private maxTimeout: number = 2000; // Maximum reconnect delay
   private zustand: FuncNodesReactFlowZustandInterface;
   private connectionTimeout?: NodeJS.Timeout;
   on_setWorker: (worker: FuncNodesWorker | undefined) => void;

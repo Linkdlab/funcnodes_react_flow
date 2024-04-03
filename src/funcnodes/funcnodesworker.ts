@@ -421,7 +421,7 @@ class FuncNodesWorker {
       kwargs: { nid, ioid },
       wait_for_response: true,
     });
-    console.log("Full value", res);
+
     this._zustand.on_node_action({
       type: "update",
       node: {

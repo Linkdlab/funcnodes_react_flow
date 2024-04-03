@@ -83,7 +83,7 @@ const NodeOutput = ({ io }: { io: IOType }) => {
     useContext(FuncNodesContext);
   const render: RenderOptions = fnrf_zst.render_options();
   const typestring = pick_best_io_type(io.type);
-  console.log("typestring", typestring);
+
 
   let OutputhandlePreview = typestring
     ? window.funcnodes?.globals?.outputrenderer?.GlobalOutputrenderer?.[
@@ -91,7 +91,7 @@ const NodeOutput = ({ io }: { io: IOType }) => {
       ]
     : undefined;
 
-  console.log("tyepstring", typestring, "OutputhandlePreview", render.typemap);
+
   if (OutputhandlePreview === undefined && typestring !== undefined) {
     if (render.typemap?.[typestring] !== undefined) {
       OutputhandlePreview =
