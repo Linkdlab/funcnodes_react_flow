@@ -87,7 +87,7 @@ class WorkerManager {
   onmessage(event: string) {
     let msg = JSON.parse(event);
     if (msg.type === "worker_status") {
-      console.log("WorkerManager: worker_status", msg);
+      console.debug("WorkerManager: worker_status", msg);
       const new_state: WorkersState = {};
       for (let worker of msg.active) {
         worker.active = true;

@@ -70,13 +70,6 @@ const NodeInput = ({ io }: { io: IOType }) => {
     render.typemap || {}
   );
 
-  console.log([
-    "typestring",
-    typestring,
-    otypestring,
-    otypestring && render.inputconverter?.[otypestring],
-  ]);
-
   const InputHandlePreview =
     (typestring
       ? window.funcnodes?.globals?.outputrenderer?.GlobalOutputrenderer?.[
