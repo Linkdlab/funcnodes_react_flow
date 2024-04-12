@@ -1,0 +1,68 @@
+.styleelement {
+  &:hover {
+    background-color: var(--funcnodesbackground_light);
+  }
+
+  &:active {
+    background-color: var(--funheadercolor);
+    color: var(--funcnodesbackground1);
+  }
+
+  &:focus {
+    outline: 1px solid var(--funheadercolor);
+  }
+
+  height: 2rem;
+  background-color: var(--funcnodesbackground1);
+  color: var(--funcnodestextcolor1);
+  border-radius: 0.75rem;
+  border: 1px solid var(--funheadercolor);
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.styleddropdown {
+  @extend .styleelement;
+  padding-right: 0.25rem;
+}
+
+.styledbtn {
+  @extend .styleelement;
+  cursor: pointer;
+}
+
+.styledinput {
+  @extend .styleelement;
+
+  :focus {
+    outline: none;
+  }
+}
+input[type="number"].styledinput {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.5;
+  background-color: tr;
+}
+
+.styledcheckbox {
+  @extend .styleelement;
+  height: auto;
+  &:focus {
+    outline: none;
+  }
+  &:after {
+    content: "";
+    background-color: var(--funheadercolor);
+  }
+  &.checked {
+    background-color: var(--funheadercolor);
+    color: var(--funcnodesbackground1);
+  }
+  accent-color: var(--funheadercolor);
+}

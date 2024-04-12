@@ -7,38 +7,49 @@ import "./io.scss";
 import { Handle, HandleProps } from "reactflow";
 import { useState } from "react";
 import CustomDialog from "../../dialog";
-const pick_best_io_type = (iot: SerializedType): string | undefined => {
+const pick_best_io_type = (
+  iot: SerializedType,
+  typemap: { [key: string]: string }
+): [string | undefined, string | undefined] => {
   // check if iot is string
   if (typeof iot === "string") {
-    return iot;
+    if (iot in typemap) {
+      return [typemap[iot], iot];
+    }
+    return [iot, iot];
   }
   if ("allOf" in iot && iot.allOf !== undefined) {
-    return undefined;
+    return [undefined, undefined];
   }
   if ("anyOf" in iot && iot.anyOf !== undefined) {
-    const picks = iot.anyOf.map(pick_best_io_type);
-    if (picks.includes("enum")) {
-      return "enum";
-    }
-    if (picks.includes("float")) {
-      return "float";
-    }
-    if (picks.includes("int")) {
-      return "int";
-    }
-    if (picks.includes("string") || picks.includes("str")) {
-      return "string";
+    const picks = iot.anyOf.map((x) => pick_best_io_type(x, typemap));
+    for (const pick of picks) {
+      switch (pick[0]) {
+        case "bool":
+          return ["bool", pick[1]];
+        case "enum":
+          return ["enum", pick[1]];
+        case "float":
+          return ["float", pick[1]];
+        case "int":
+          return ["int", pick[1]];
+        case "string":
+          return ["string", pick[1]];
+        case "str":
+          return ["string", pick[1]];
+      }
     }
 
-    return undefined;
+    return [undefined, undefined];
   }
   if (!("type" in iot) || iot.type === undefined) {
-    return undefined;
+    return [undefined, undefined];
   }
 
   if (iot.type === "enum") {
-    return "enum";
+    return ["enum", "enum"];
   }
+  return [undefined, undefined];
 };
 
 type HandleWithPreviewProps = {

@@ -1,5 +1,6 @@
 interface RenderOptions {
   typemap?: { [key: string]: string };
+  inputconverter?: { [key: string]: string };
 }
 interface ViewState {
   nodes: { [key: string]: NodeViewState };

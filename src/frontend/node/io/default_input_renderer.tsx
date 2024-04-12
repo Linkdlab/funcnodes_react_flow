@@ -3,7 +3,7 @@ import { FuncNodesReactFlowZustandInterface } from "../../../state";
 
 import { FuncNodesContext } from "../../funcnodesreactflow";
 import CustomColorPicker from "../../utils/colorpicker";
-const BooleanInput = ({ io }: { io: IOType }) => {
+const BooleanInput = ({ io, inputconverter }: InputRendererProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
@@ -16,10 +16,14 @@ const BooleanInput = ({ io }: { io: IOType }) => {
   }, [cRef, indeterminate]);
 
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let new_value: boolean = e.target.checked;
+    try {
+      new_value = inputconverter(e.target.checked);
+    } catch (e) {}
     fnrf_zst.worker?.set_io_value({
       nid: io.node,
       ioid: io.id,
-      value: e.target.checked,
+      value: new_value,
       set_default: io.render_options?.set_default || false,
     });
   };
@@ -27,6 +31,7 @@ const BooleanInput = ({ io }: { io: IOType }) => {
     <input
       ref={cRef}
       type="checkbox"
+      className="styledcheckbox"
       checked={!!io.value}
       onChange={on_change}
       disabled={io.connected}
@@ -35,9 +40,9 @@ const BooleanInput = ({ io }: { io: IOType }) => {
 };
 const NumberInput = ({
   io,
+  inputconverter,
   parser = (n: string) => parseFloat(n),
-}: {
-  io: IOType;
+}: InputRendererProps & {
   parser: (n: string) => number;
 }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
@@ -47,9 +52,13 @@ const NumberInput = ({
 
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
     let new_value: number | string = parser(e.target.value);
+
     if (isNaN(new_value)) {
       new_value = "<NoValue>";
     }
+    try {
+      new_value = inputconverter(new_value);
+    } catch (e) {}
 
     fnrf_zst.worker?.set_io_value({
       nid: io.node,
@@ -62,7 +71,7 @@ const NumberInput = ({
   return (
     <input
       type="number"
-      className="nodedatainput"
+      className="nodedatainput styledinput"
       value={io.connected ? io.value : tempvalue}
       onChange={(e) => setTempValue(e.target.value)}
       onBlur={on_change}
@@ -73,15 +82,15 @@ const NumberInput = ({
   );
 };
 
-const FloatInput = ({ io }: { io: IOType }) => {
-  return NumberInput({ io, parser: parseFloat });
+const FloatInput = ({ io, inputconverter }: InputRendererProps) => {
+  return NumberInput({ io, inputconverter, parser: parseFloat });
 };
 
-const IntegerInput = ({ io }: { io: IOType }) => {
-  return NumberInput({ io, parser: parseInt });
+const IntegerInput = ({ io, inputconverter }: InputRendererProps) => {
+  return NumberInput({ io, inputconverter, parser: parseInt });
 };
 
-const StringInput = ({ io }: { io: IOType }) => {
+const StringInput = ({ io, inputconverter }: InputRendererProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
@@ -89,6 +98,10 @@ const StringInput = ({ io }: { io: IOType }) => {
 
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
     let new_value: string = e.target.value;
+    try {
+      new_value = inputconverter(new_value);
+    } catch (e) {}
+
     if (!new_value) new_value = "<NoValue>";
 
     fnrf_zst.worker?.set_io_value({
@@ -101,7 +114,7 @@ const StringInput = ({ io }: { io: IOType }) => {
 
   return (
     <input
-      className="nodedatainput"
+      className="nodedatainput styledinput"
       value={io.connected ? io.value : tempvalue}
       onChange={(e) => setTempValue(e.target.value)}
       onBlur={on_change}
@@ -116,7 +129,7 @@ const _parse_boolean = (s: string) => !!s;
 const _parse_null = (s: string) => (s === "null" ? null : s);
 
 const get_parser = (datatype: string | null) => {
-  if (datatype === "number") {
+  if (datatype === "nuinputconvertermber") {
     return _parse_number;
   }
   if (datatype === "boolean") {
@@ -130,9 +143,9 @@ const get_parser = (datatype: string | null) => {
 
 const SelectionInput = ({
   io,
+  inputconverter,
   parser,
-}: {
-  io: IOType;
+}: InputRendererProps & {
   parser?(s: string): any;
 }) => {
   let options: (string | number)[] | EnumOf = io.value_options?.options || [];
@@ -184,6 +197,11 @@ const SelectionInput = ({
     // Use the existing parser or get a new one based on the datatype
     const p = parser || get_parser(datatype);
 
+    let new_value: string | number = p(e.target.value);
+    try {
+      new_value = inputconverter(e.target.value);
+    } catch (e) {}
+
     fnrf_zst.worker?.set_io_value({
       nid: io.node,
       ioid: io.id,
@@ -203,7 +221,7 @@ const SelectionInput = ({
       value={v}
       onChange={on_change}
       disabled={io.connected}
-      className="nodedatainput"
+      className="nodedatainput styleddropdown"
     >
       <option value="<NoValue>" disabled>
         select
@@ -217,7 +235,7 @@ const SelectionInput = ({
   );
 };
 
-const ColorInput = ({ io }: { io: IOType }) => {
+const ColorInput = ({ io, inputconverter }: InputRendererProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
@@ -231,6 +249,9 @@ const ColorInput = ({ io }: { io: IOType }) => {
       if (colorconverter[colorspace]) new_value = colorconverter[colorspace]();
       else new_value = colorconverter.hex();
     }
+    try {
+      new_value = new_value;
+    } catch (e) {}
 
     fnrf_zst.worker?.set_io_value({
       nid: io.node,

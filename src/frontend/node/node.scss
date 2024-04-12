@@ -251,3 +251,15 @@ input.nodedatainput {
     outline: none;
   }
 }
+
+.nodedatastyledelement {
+  background-color: var(--node_header_color);
+
+  font-size: 0.5rem;
+  height: 1.5rem;
+}
+
+input.nodedatainput.styledinput,
+select.nodedatainput.styleddropdown {
+  @extend .nodedatastyledelement;
+}

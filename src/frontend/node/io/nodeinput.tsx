@@ -14,7 +14,6 @@ import {
 } from "./default_input_renderer";
 import { SingleValueOutput } from "./default_output_render";
 
-type InputRendererType = ({ io }: { io: IOType }) => JSX.Element;
 const Inputrenderer: {
   [key: string]: InputRendererType;
 } = {};
@@ -32,7 +31,33 @@ register_input_renderer("color", ColorInput);
 register_input_renderer("select", SelectionInput);
 register_input_renderer("enum", SelectionInput);
 
+const INPUTCONVERTER: {
+  [key: string]: (v: any) => any;
+} = {
+  "": (v: any) => v,
+  str_to_json: (v: any) => {
+    return JSON.parse(v);
+  },
+  str_to_list: (v: any) => {
+    try {
+      const a = JSON.parse(v);
+      if (Array.isArray(a)) return a;
+      return [a];
+    } catch (e) {
+      try {
+        return JSON.parse("[" + v + "]");
+      } catch (e) {}
+    }
+
+    throw new Error("Invalid list");
+  },
+};
+
 const NodeInput = ({ io }: { io: IOType }) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+  const render: RenderOptions = fnrf_zst.render_options();
+
   if (io.render_options === undefined) {
     io.render_options = {};
   }
@@ -40,7 +65,17 @@ const NodeInput = ({ io }: { io: IOType }) => {
     io.render_options.set_default = true;
   }
 
-  const typestring = pick_best_io_type(io.type);
+  const [typestring, otypestring] = pick_best_io_type(
+    io.type,
+    render.typemap || {}
+  );
+
+  console.log([
+    "typestring",
+    typestring,
+    otypestring,
+    otypestring && render.inputconverter?.[otypestring],
+  ]);
 
   const InputHandlePreview =
     (typestring
@@ -54,7 +89,8 @@ const NodeInput = ({ io }: { io: IOType }) => {
       ? SelectionInput
       : Inputrenderer[typestring]
     : undefined;
-
+  const inputconverterf: (v: any) => any =
+    INPUTCONVERTER[(otypestring && render.inputconverter?.[otypestring]) ?? ""];
   return (
     <div className="nodeinput">
       <HandleWithPreview
@@ -67,7 +103,7 @@ const NodeInput = ({ io }: { io: IOType }) => {
 
       {Input && (
         <div className="iovaluefield nodrag">
-          <Input io={io} />
+          <Input io={io} inputconverter={inputconverterf} />
         </div>
       )}
       <div className="ioname">{io.name}</div>

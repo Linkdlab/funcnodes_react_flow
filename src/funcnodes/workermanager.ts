@@ -190,9 +190,38 @@ class WorkerManager {
     this.ws.send(JSON.stringify({ type: "set_active", workerid }));
   }
 
-  new_worker() {
+  new_worker({
+    name,
+    reference,
+    copyLib,
+    copyNS,
+  }: {
+    name?: string;
+    reference?: string;
+    copyLib?: boolean;
+    copyNS?: boolean;
+  }) {
+    if (!name) name = undefined;
+    if (!copyLib) copyLib = false;
+    if (!copyNS) copyNS = false;
+    if (!reference) {
+      reference = undefined;
+      copyLib = false;
+      copyNS = false;
+    }
+
     if (this.ws) {
-      this.ws.send("new_worker");
+      this.ws.send(
+        JSON.stringify({
+          type: "new_worker",
+          kwargs: {
+            name,
+            reference,
+            copyLib,
+            copyNS,
+          },
+        })
+      );
     }
   }
 }

@@ -1,7 +1,9 @@
+@import "./layout/htmlelements.scss";
 :root {
   --funheadercolor: #00d9ff; // Dark background color
   --funcnodesbackground1: hsl(243, 26%, 13%); // Dark background color
   --funcnodesbackground2: hsl(245, 22%, 22%); // Dark background color
+  --funcnodesbackground_light: hsl(240, 22%, 38%);
   --containerboarderradius: 1rem;
   --funcnodestextcolor1: #ffffff; // Dark background color
 }
@@ -46,23 +48,16 @@
 }
 
 .workerselect {
-  background-color: var(--funcnodesbackground2);
-  color: var(--funcnodestextcolor1);
-  border-radius: var(--containerboarderradius);
-  border: 1px solid var(--funheadercolor);
   max-width: 140px;
 }
 .workerselectoption {
   &.selected {
-    background-color: var(--funheadercolor);
     color: var(--funcnodestextcolor1);
   }
   &.active {
-    background-color: var(--funcnodesbackground1);
-    color: var(--funcnodestextcolor1);
+    color: green;
   }
   &.inactive {
-    background-color: var(--funcnodesbackground2); // Dark background color
-    color: var(--funcnodestextcolor1);
+    color: red;
   }
 }

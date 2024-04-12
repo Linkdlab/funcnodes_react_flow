@@ -82,8 +82,10 @@ const NodeOutput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
   const render: RenderOptions = fnrf_zst.render_options();
-  const typestring = pick_best_io_type(io.type);
-
+  const [typestring, otypestring] = pick_best_io_type(
+    io.type,
+    render.typemap || {}
+  );
 
   let OutputhandlePreview = typestring
     ? window.funcnodes?.globals?.outputrenderer?.GlobalOutputrenderer?.[
@@ -91,15 +93,6 @@ const NodeOutput = ({ io }: { io: IOType }) => {
       ]
     : undefined;
 
-
-  if (OutputhandlePreview === undefined && typestring !== undefined) {
-    if (render.typemap?.[typestring] !== undefined) {
-      OutputhandlePreview =
-        window.funcnodes?.globals?.outputrenderer?.GlobalOutputrenderer?.[
-          render.typemap[typestring]
-        ];
-    }
-  }
   if (OutputhandlePreview === undefined) {
     OutputhandlePreview = DictOutput;
   }

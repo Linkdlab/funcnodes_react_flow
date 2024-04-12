@@ -24,6 +24,7 @@ interface WorkerRepresentation {
   port: number;
   ssl: boolean;
   active: boolean;
+  name: string | null;
 }
 interface WorkersState {
   [key: string]: WorkerRepresentation;
@@ -147,7 +148,7 @@ const FuncNodesReactFlowZustand = (): FuncNodesReactFlowZustandInterface => {
       case "add":
         if (action.from_remote) {
           let store = ns.get_node(action.node.id, false);
-  
+
           if (!store) {
             try {
               store = createNodeStore(action.node);

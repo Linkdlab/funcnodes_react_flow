@@ -407,12 +407,24 @@ class FuncNodesWorker {
   }
 
   disconnect() {}
+
+  onclose() {
+    this.is_open = false;
+    this._zustand.auto_progress();
+  }
+
   async reconnect() {}
+
   async stop() {
     await this._send_cmd({ cmd: "stop_worker", wait_for_response: false });
-    if (this._zustand.worker === this) {
-      this._zustand.clear_all();
-    }
+    const oldonclose = this.onclose.bind(this);
+    this.onclose = () => {
+      oldonclose();
+      if (this._zustand.worker === this) {
+        this._zustand.clear_all();
+      }
+      this.onclose = oldonclose;
+    };
   }
 
   async get_io_full_value({ nid, ioid }: { nid: string; ioid: string }) {

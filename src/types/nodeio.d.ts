@@ -71,3 +71,12 @@ interface IOType {
 }
 
 type OutputRendererType = ({ io }: { io: IOType }) => JSX.Element;
+
+interface InputRendererProps {
+  io: IOType;
+  inputconverter: (v: any) => any;
+}
+type InputRendererType = ({
+  io,
+  inputconverter,
+}: InputRendererProps) => JSX.Element;

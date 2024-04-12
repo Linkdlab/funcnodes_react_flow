@@ -79,12 +79,13 @@ class WebSocketWorker extends FuncNodesWorker {
     this.reconnectAttempts = 0;
     this.fullsync();
   }
-
   onclose() {
-    this.is_open = false;
-    this._zustand.auto_progress();
-    console.log("Websocket closed,reconnecting");
-    if (this._reconnect) this.auto_reconnect(); // Attempt to reconnect
+    console.log("Websocket closed", this);
+    super.onclose();
+    if (this._reconnect) {
+      console.log("Websocket closed,reconnecting");
+      this.auto_reconnect(); // Attempt to reconnect
+    }
   }
 
   on_ws_error() {
@@ -97,7 +98,7 @@ class WebSocketWorker extends FuncNodesWorker {
   }
 
   async send(data: any) {
-    if (!this._websocket) {
+    if (!this._websocket || this._websocket.readyState !== WebSocket.OPEN) {
       throw new Error("Websocket not connected");
     }
 
@@ -107,7 +108,7 @@ class WebSocketWorker extends FuncNodesWorker {
   async stop() {
     await super.stop();
     this._reconnect = false;
-    this.close();
+    // this.close();
   }
   close() {
     if (this._websocket) this._websocket.close();

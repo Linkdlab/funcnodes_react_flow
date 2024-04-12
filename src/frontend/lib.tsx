@@ -154,6 +154,7 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
       ]}
     >
       <input
+        className="styledinput"
         type="text"
         value={newlib}
         onChange={(e) => {
