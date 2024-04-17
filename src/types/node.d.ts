@@ -1,3 +1,15 @@
+type RenderType = "string" | "number" | "boolean" | "image";
+
+interface DataRenderOptions extends BaseRenderOptions {
+  src?: string;
+  type?: RenderType;
+  preview_type?: string;
+}
+
+interface NodeRenderOptions {
+  data?: DataRenderOptions;
+}
+
 interface NodeType {
   id: string;
   node_name: string;
