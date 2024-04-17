@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-import { NodeStore, RenderType } from "../../state/node";
+import { NodeStore } from "../../state/node";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandIcon from "@mui/icons-material/Expand";
@@ -19,7 +19,8 @@ import { FuncNodesContext } from "..";
 import get_rendertype from "../datarenderer";
 import CustomColorPicker, { HSLColorPicker } from "../utils/colorpicker";
 import { NodeInput, NodeOutput } from "./io";
-
+import { PreviewHandleDataRendererForIo } from "./io/handle_renderer";
+import CustomDialog from "../dialog";
 interface NodeHeaderProps {
   node_data: NodeType;
 }
@@ -61,36 +62,32 @@ interface NodeBodyProps {
 }
 
 const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
-  let value: any = undefined;
-  let rendertype: RenderType = "string";
   const src = node_data.render_options?.data?.src;
-  if (src) {
-    value = node_data.io[src]?.value;
-    //    console.log("src", node_data.io[src]);
-    rendertype =
-      (node_data.render_options?.data?.preview_type as RenderType) ||
-      (node_data.io[src]?.valuepreview_type as RenderType) ||
-      (node_data.render_options?.data?.type as RenderType) ||
-      (node_data.io[src]?.type as RenderType) ||
-      "string";
-  }
 
-  if (value === "<NoValue>") value = undefined;
+  const io: IOType | undefined = node_data.render_options?.data?.src
+    ? node_data.io[node_data.render_options?.data?.src]
+    : undefined;
 
-  const renderoptions = node_data.render_options?.data;
+  const pvhandle = io && PreviewHandleDataRendererForIo(io);
 
-  const datarender = useMemo(() => {
-    if (value === undefined) {
-      return <></>;
-    }
-    return get_rendertype(rendertype)({
-      value,
-      renderoptions: renderoptions,
-    });
-  }, [value, renderoptions]);
-
-  return <div className="nodedatabody nodrag">{datarender}</div>;
+  return (
+    <div className="nodrag">
+      {pvhandle && (
+        <CustomDialog
+          trigger={<div>{pvhandle({ io })}</div>}
+          onOpenChange={(open: boolean) => {
+            if (open) {
+              io?.try_get_full_value();
+            }
+          }}
+        >
+          {pvhandle({ io })}
+        </CustomDialog>
+      )}
+    </div>
+  );
 };
+
 const NodeBody = ({ node_data }: NodeBodyProps) => {
   const inputs = Object.values(node_data.io).filter((io) => io.is_input);
   const outputs = Object.values(node_data.io).filter((io) => !io.is_input);

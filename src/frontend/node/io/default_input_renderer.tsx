@@ -3,6 +3,7 @@ import { FuncNodesReactFlowZustandInterface } from "../../../state";
 
 import { FuncNodesContext } from "../../funcnodesreactflow";
 import CustomColorPicker from "../../utils/colorpicker";
+
 const BooleanInput = ({ io, inputconverter }: InputRendererProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
@@ -50,11 +51,20 @@ const NumberInput = ({
 
   const [tempvalue, setTempValue] = useState(io.value);
 
-  const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let new_value: number | string = parser(e.target.value);
+  useEffect(() => {
+    setTempValue(io.value);
+  }, [io.value]);
+
+  const set_new_value = (new_value: number | string) => {
+    new_value = parser(
+      parseFloat(new_value.toString()).toString() // parse float for e notation
+    );
 
     if (isNaN(new_value)) {
       new_value = "<NoValue>";
+      setTempValue("");
+    } else {
+      setTempValue(new_value.toString());
     }
     try {
       new_value = inputconverter(new_value);
@@ -68,13 +78,50 @@ const NumberInput = ({
     });
   };
 
+  const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    set_new_value(e.target.value);
+  };
+  const v = io.connected ? io.value : tempvalue;
   return (
     <input
-      type="number"
+      type="text"
       className="nodedatainput styledinput"
-      value={io.connected ? io.value : tempvalue}
+      value={v || ""}
       onChange={(e) => setTempValue(e.target.value)}
       onBlur={on_change}
+      onKeyDown={(e) => {
+        // on key up add step to value
+
+        if (e.key === "ArrowUp") {
+          let step = io.render_options?.step || 1;
+          if (e.shiftKey) step *= 10;
+
+          let new_value = (parseFloat(v) || 0) + step;
+          // setTempValue(new_value.toString());
+          set_new_value(new_value);
+          return;
+        }
+
+        // on key down subtract step to value
+        if (e.key === "ArrowDown") {
+          let step = io.render_options?.step || 1;
+          if (e.shiftKey) step *= 10;
+          let new_value = (parseFloat(v) || 0) - step;
+          // setTempValue(new_value.toString());
+          set_new_value(new_value);
+          return;
+        }
+
+        //accept only numbers
+        if (
+          !/^[0-9.eE+-]$/.test(e.key) &&
+          !["Backspace", "ArrowLeft", "ArrowRight", "Delete", "Tab"].includes(
+            e.key
+          )
+        ) {
+          e.preventDefault();
+        }
+      }}
       disabled={io.connected}
       step={io.render_options?.step}
       min={io.value_options?.min}

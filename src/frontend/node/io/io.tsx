@@ -2,11 +2,12 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
+
 import "./io.scss";
 import { Handle, HandleProps } from "reactflow";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import CustomDialog from "../../dialog";
+import { PreviewHandleDataRendererForIo } from "./handle_renderer";
 const pick_best_io_type = (
   iot: SerializedType,
   typemap: { [key: string]: string }
@@ -67,6 +68,9 @@ const HandleWithPreview = ({
   const [locked, setLocked] = useState(false);
   const [opened, setOpened] = useState(false);
 
+  const pvhandle: React.FC<{ io: IOType }> =
+    preview || PreviewHandleDataRendererForIo(io);
+
   return (
     <Tooltip.Provider>
       <Tooltip.Root open={locked || opened} onOpenChange={setOpened}>
@@ -82,7 +86,7 @@ const HandleWithPreview = ({
                 ) : (
                   <LockOpenIcon onClick={() => setLocked(true)} />
                 )}
-                {preview && (
+                {pvhandle && (
                   <CustomDialog
                     trigger={<FullscreenIcon />}
                     onOpenChange={(open: boolean) => {
@@ -92,12 +96,12 @@ const HandleWithPreview = ({
                       setLocked(open);
                     }}
                   >
-                    {preview({ io })}
+                    {pvhandle({ io })}
                   </CustomDialog>
                 )}
               </div>
-              {preview
-                ? preview({ io })
+              {pvhandle
+                ? pvhandle({ io })
                 : `no preview available for "${typestring}"`}
             </div>
             <Tooltip.Arrow className="iotooltipcontentarrow" />

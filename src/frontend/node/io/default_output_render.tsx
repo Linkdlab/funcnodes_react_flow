@@ -3,25 +3,7 @@ import { FuncNodesReactFlowZustandInterface } from "../../../state";
 import { FuncNodesContext } from "../../funcnodesreactflow";
 import { SortableTable } from "../../utils/table";
 import JSONDataDisplay from "../../utils/jsondata";
-
-const SingleValueOutput = ({ io }: { io: IOType }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
-
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = "";
-  } else {
-    value = JSON.stringify(io.value).replace(/\\n/g, "\n"); //respect "\n" in strings
-  }
-
-  return (
-    <div>
-      <pre>{value}</pre>
-    </div>
-  );
-};
+import { Base64ImageRenderer } from "../../datarenderer/images";
 
 const InLineOutput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
@@ -41,26 +23,4 @@ const InLineOutput = ({ io }: { io: IOType }) => {
   return <div>{value}</div>;
 };
 
-const TableOutput = ({ io }: { io: IOType }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
-
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = [];
-  }
-
-  return <SortableTable tabledata={value} />;
-};
-
-const DictOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = {};
-  }
-
-  return <JSONDataDisplay data={io.value} />;
-};
-export { SingleValueOutput, InLineOutput, TableOutput, DictOutput };
+export { InLineOutput };

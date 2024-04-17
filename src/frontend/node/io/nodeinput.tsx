@@ -12,7 +12,6 @@ import {
   SelectionInput,
   ColorInput,
 } from "./default_input_renderer";
-import { SingleValueOutput } from "./default_output_render";
 
 const Inputrenderer: {
   [key: string]: InputRendererType;
@@ -70,13 +69,6 @@ const NodeInput = ({ io }: { io: IOType }) => {
     render.typemap || {}
   );
 
-  const InputHandlePreview =
-    (typestring
-      ? window.funcnodes?.globals?.outputrenderer?.GlobalOutputrenderer?.[
-          typestring
-        ]
-      : SingleValueOutput) || SingleValueOutput;
-
   const Input = typestring
     ? io.value_options?.options
       ? SelectionInput
@@ -90,7 +82,6 @@ const NodeInput = ({ io }: { io: IOType }) => {
         io={io}
         typestring={typestring}
         position={Position.Left}
-        preview={InputHandlePreview}
         type="target"
       />
 
