@@ -1,8 +1,6 @@
 import { Base64ImageRenderer, ImageRenderOptions } from "./images";
 import AnyPlot from "./plotly";
 
-type RenderType = "string" | "number" | "boolean" | "image";
-
 interface BaseRenderOptions {
   type?: RenderType;
 }
@@ -52,4 +50,4 @@ const get_rendertype = (rendertype: string) => {
 };
 
 export default get_rendertype;
-export type { RenderType, RenderOptions, BaseRenderOptions };
+export type { RenderOptions, BaseRenderOptions };

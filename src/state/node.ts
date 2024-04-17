@@ -1,22 +1,7 @@
 import { useStore, create, UseBoundStore, StoreApi } from "zustand";
 import { DeepPartial, deep_merge } from "./";
-import {
-  BaseRenderOptions,
-  RenderOptions,
-  RenderType,
-} from "../frontend/datarenderer";
 
 type PartialIOType = DeepPartial<IOType>;
-
-interface DataRenderOptions extends BaseRenderOptions {
-  src?: string;
-  type?: RenderType;
-  preview_type?: string;
-}
-
-interface NodeRenderOptions {
-  data?: DataRenderOptions;
-}
 
 /**
  * Interface for the NodeActionAdd.
@@ -130,5 +115,4 @@ export type {
   NodeActionAdd,
   NodeActionError,
   PartialIOType,
-  RenderType,
 };
