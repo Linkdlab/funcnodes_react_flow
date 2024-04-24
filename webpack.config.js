@@ -1,9 +1,9 @@
 // webpack.config.js
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const glob = require('glob')
 const { PurgeCSSPlugin } = require('purgecss-webpack-plugin')
+const nodeExternals = require('webpack-node-externals')
 
 const PATHS = {
   src: path.join(__dirname, 'src')
@@ -15,14 +15,15 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'js/bundle.js'
+    filename: 'index.js',
+    libraryTarget: 'umd',
+    library: 'ModuleName'
   },
   performance: {
     maxEntrypointSize: 5 * 1024 * 1024, // 5mb
     maxAssetSize: 5 * 1024 * 1024 // 5mb
   },
-  mode: 'production',
-  //   mode: "development",
+  mode: 'development',
   module: {
     rules: [
       //typescript
@@ -122,13 +123,12 @@ module.exports = {
     // new PurgeCSSPlugin({
     //   paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
     //   whitelistPatterns: [/sm:/, /md:/, /lg:/, /xl:/, /2xl:/, /bg-/, /text-/],
-    //   defaultExtractor: (content) => content.match(/[\w-/:.!]+(?<!:)/g) || [],
-    // }),
-    new HtmlWebpackPlugin({
-      template: './public/index.html'
-    })
+    //   defaultExtractor: (content) => content.match(/[\w-/:.!]+(?<!:)/g) || []
+    // })
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.tsx', '.ts', '.html', '.scss', '.css', '.ttf']
-  }
+  },
+  externals: [nodeExternals()],
+  externalsPresets: { node: true }
 }

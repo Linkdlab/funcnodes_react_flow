@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "module": "esnext",
+    "target": "es5",
+    "module": "CommonJS",
     "lib": ["dom", "dom.iterable", "esnext"],
     "moduleResolution": "node",
     "sourceMap": true,
@@ -11,7 +12,7 @@
     "noImplicitThis": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "noUnusedLocals": true,
+    // "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,8 +22,16 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react"
+    "jsx": "react-jsx"
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "app"]
+  "paths": {
+    "@linkdlab/funcnodes_react_flow": [
+      "node_modules/@linkdlab/funcnodes_react_flow/src"
+    ],
+    "@linkdlab/funcnodes_react_flow/*": [
+      "node_modules/@linkdlab/funcnodes_react_flow/src/*"
+    ]
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "dist", "build"]
 }
