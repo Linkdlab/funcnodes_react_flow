@@ -91,6 +91,7 @@ const deep_merge = <T extends {}>(
       );
       if (didChange) {
         change = true;
+
         // @ts-ignore: Type 'string' cannot be used to index type 'T
         new_obj[key] = mergedObj;
       }

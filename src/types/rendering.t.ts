@@ -1,12 +1,13 @@
-type RenderType = "string" | "number" | "boolean" | "image";
+import { SerializedType } from "../states/nodeio.t";
+
+type RenderType = "string" | "number" | "boolean" | "image" | SerializedType;
 
 interface BaseRenderOptions {
-  type?: RenderType;
+  type: RenderType;
 }
 
 interface DataRenderOptions extends BaseRenderOptions {
   src?: string;
-  type?: RenderType;
   preview_type?: string;
 }
 

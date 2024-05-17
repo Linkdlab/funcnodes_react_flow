@@ -44,7 +44,7 @@ type SerializedType =
 
 interface IORenderOptions extends BaseRenderOptions {
   step?: number;
-  set_default?: boolean;
+  set_default: boolean;
 }
 
 interface IOValueOptions {
@@ -66,7 +66,7 @@ interface IOType {
   type: SerializedType;
   value: any;
   fullvalue?: any;
-  render_options?: IORenderOptions;
+  render_options: IORenderOptions;
   value_options?: IOValueOptions;
   valuepreview_type?: string;
   try_get_full_value: () => void;
@@ -76,7 +76,7 @@ type OutputRendererType = ({ io }: { io: IOType }) => JSX.Element;
 
 interface InputRendererProps {
   io: IOType;
-  inputconverter: (v: any) => any;
+  inputconverter: [(v: any) => any, (v: any) => any];
 }
 type InputRendererType = ({
   io,
