@@ -5,7 +5,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "serve": "webpack-dev-server --mode development --open",
+    "prod":  "webpack build --config=webpack.config.prod.js"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -16,5 +18,9 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
   }
 }

@@ -1,82 +1,50 @@
-import { useContext } from 'react'
+import { useContext } from "react";
 import {
   FuncNodesReactFlowZustandInterface,
-  RenderOptions
-} from '../../../states/fnrfzst.t'
-import { FuncNodesContext } from '../../funcnodesreactflow'
-import { pick_best_io_type } from './io'
-import { SortableTable } from '../../utils/table'
-import JSONDataDisplay from '../../utils/jsondata'
-import { Base64ImageRenderer } from '../../datarenderer/images'
-import { IOType } from '../../../states/nodeio.t'
-import React from 'react'
+  RenderOptions,
+} from "../../../states/fnrfzst.t";
+import { FuncNodesContext } from "../../funcnodesreactflow";
+import { pick_best_io_type } from "./io";
+import { IOType } from "../../../states/nodeio.t";
 
-const TableOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue
-  if (value == undefined) value = io.value
-  if (value === undefined) {
-    value = []
-  }
+import { DataOverlayRendererForIo } from "../../datarenderer/data_renderer_overlay";
 
-  return <SortableTable tabledata={value} />
-}
+import { RenderMappingContext } from "../../datarenderer/rendermappings";
+import { DictOutput } from "../../datarenderer/default_preview_renderer";
 
-const DictOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue
-
-  if (value === undefined) value = io.value
-  if (value === undefined) {
-    value = {}
-  }
-
-  return <JSONDataDisplay data={value} />
-}
-
-const Base64ImageOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue
-  if (value == undefined) value = io.value
-  if (value === undefined) {
-    value = ''
-  }
-
-  return <Base64ImageRenderer value={value} />
-}
-
-const SingleValueOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue
-  if (value == undefined) value = io.value
-  if (value === undefined) {
-    value = ''
-  } else {
-    value = JSON.stringify(io.value).replace(/\\n/g, '\n') //respect "\n" in strings
-  }
-
-  return (
-    <div>
-      <pre>{value}</pre>
-    </div>
-  )
-}
-
-const HandlePreviouGenerators: {
-  [key: string]: ({ io }: { io: IOType }) => JSX.Element
-} = {
-  string: SingleValueOutput,
-  table: TableOutput,
-  image: Base64ImageOutput,
-  dict: DictOutput
-}
-
-const PreviewHandleDataRendererForIo = (io: IOType) => {
+const PreviewHandleDataRendererForIo = (
+  io: IOType
+): [
+  ({ io }: { io: IOType }) => JSX.Element,
+  ({ io }: { io: IOType }) => JSX.Element,
+] => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
-  const render: RenderOptions = fnrf_zst.render_options()
+    useContext(FuncNodesContext);
+  const render: RenderOptions = fnrf_zst.render_options();
 
-  const [typestring] = pick_best_io_type(io.type, render.typemap || {})
+  const [typestring] = pick_best_io_type(io.type, render.typemap || {});
 
-  return typestring && HandlePreviouGenerators[typestring]
-    ? HandlePreviouGenerators[typestring]
-    : DictOutput
-}
+  const { HandlePreviewRenderer, DataPreviewViewRenderer } =
+    useContext(RenderMappingContext);
 
-export { PreviewHandleDataRendererForIo }
+  const overlayhandle = DataOverlayRendererForIo(io);
+
+  if (!typestring) return [DictOutput, overlayhandle];
+
+  if (HandlePreviewRenderer[typestring])
+    return [HandlePreviewRenderer[typestring], overlayhandle];
+
+  if (DataPreviewViewRenderer[typestring])
+    return [DataPreviewViewRenderer[typestring], overlayhandle];
+
+  // console.warn(
+  //   "No preview generator found for type: ",
+  //   typestring,
+  //   "have: ",
+  //   DataPreviewViewRenderer
+  // );
+
+  return [DictOutput, overlayhandle];
+};
+
+export { PreviewHandleDataRendererForIo };

@@ -1,40 +1,40 @@
-import { useContext, useState } from 'react'
-import { FuncNodesReactFlowZustandInterface } from '../../states/fnrfzst.t'
-import { FuncNodesContext } from '../funcnodesreactflow'
+import { useContext, useState } from "react";
+import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
+import { FuncNodesContext } from "../funcnodesreactflow";
 
-import './header.scss'
-import CustomDialog from '../dialog'
-import React from 'react'
+import "./header.scss";
+import CustomDialog from "../dialog";
+import React from "react";
 
 const NewWorkerDialog = ({ trigger }: { trigger: React.ReactNode }) => {
-  const [name, setName] = useState<string>('')
-  const [copyLib, setCopyLib] = useState<boolean>(false)
-  const [copyNS, setCopyNS] = useState<boolean>(false)
+  const [name, setName] = useState<string>("");
+  const [copyLib, setCopyLib] = useState<boolean>(false);
+  const [copyNS, setCopyNS] = useState<boolean>(false);
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
+    useContext(FuncNodesContext);
 
-  const workersstate = fnrf_zst.workers()
+  const workersstate = fnrf_zst.workers();
 
   const [reference, setReference] = useState<{ name: string; uuid: string }>({
-    name: 'None',
-    uuid: ''
-  })
+    name: "None",
+    uuid: "",
+  });
 
-  if (!fnrf_zst.options.useWorkerManager) return null
+  if (!fnrf_zst.options.useWorkerManager) return null;
 
   return (
     <CustomDialog
       trigger={trigger}
-      title='New Worker'
-      description='Please provide a name and select a another worker as interpreter reference'
+      title="New Worker"
+      description="Please provide a name and select a another worker as interpreter reference"
     >
       <div>
         Name:
         <br />
         <input
-          className='styledinput'
+          className="styledinput"
           onChange={(e) => {
-            setName(e.currentTarget.value)
+            setName(e.currentTarget.value);
           }}
           value={name}
         />
@@ -43,17 +43,17 @@ const NewWorkerDialog = ({ trigger }: { trigger: React.ReactNode }) => {
         Reference Worker:
         <br />
         <select
-          className='styleddropdown'
+          className="styleddropdown"
           onChange={(e) => {
-            const uuid = e.target.value
-            const name = e.target.selectedOptions[0].innerText
-            setReference({ name, uuid })
+            const uuid = e.target.value;
+            const name = e.target.selectedOptions[0].innerText;
+            setReference({ name, uuid });
           }}
           value={reference.uuid}
         >
-          <option value=''>None</option>
+          <option value="">None</option>
           {Object.keys(workersstate).map((workerid) => (
-            <option className={''} key={workerid} value={workerid}>
+            <option className={""} key={workerid} value={workerid}>
               {workersstate[workerid].name || workerid}
             </option>
           ))}
@@ -61,27 +61,27 @@ const NewWorkerDialog = ({ trigger }: { trigger: React.ReactNode }) => {
         {reference.uuid && (
           <div>
             <div>
-              Copy Lib:{' '}
+              Copy Lib:{" "}
               <input
-                type='checkbox'
-                className='styledcheckbox'
+                type="checkbox"
+                className="styledcheckbox"
                 checked={copyLib}
                 onChange={(e) => {
-                  setCopyLib(e.currentTarget.checked)
+                  setCopyLib(e.currentTarget.checked);
                 }}
               />
             </div>
             {copyLib && (
               <div>
-                Copy Nodespace{' '}
+                Copy Nodespace{" "}
                 <input
-                  type='checkbox'
-                  className='styledcheckbox'
+                  type="checkbox"
+                  className="styledcheckbox"
                   checked={copyNS}
                   onChange={(e) => {
-                    setCopyNS(e.currentTarget.checked)
+                    setCopyNS(e.currentTarget.checked);
                     if (e.currentTarget.checked) {
-                      setCopyLib(true)
+                      setCopyLib(true);
                     }
                   }}
                 />
@@ -92,14 +92,14 @@ const NewWorkerDialog = ({ trigger }: { trigger: React.ReactNode }) => {
         {name && (
           <div>
             <button
-              className='styledbtn'
+              className="styledbtn"
               onClick={() => {
                 fnrf_zst.workermanager?.new_worker({
                   name,
                   reference: reference.uuid,
                   copyLib,
-                  copyNS
-                })
+                  copyNS,
+                });
               }}
             >
               Create
@@ -108,108 +108,108 @@ const NewWorkerDialog = ({ trigger }: { trigger: React.ReactNode }) => {
         )}
       </div>
     </CustomDialog>
-  )
-}
+  );
+};
 
 const Statusbar = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
-  const progress = fnrf_zst.progress_state()
+    useContext(FuncNodesContext);
+  const progress = fnrf_zst.progress_state();
 
   return (
-    <div className='statusbar'>
+    <div className="statusbar">
       <span
-        className='statusbar-progressbar'
-        style={{ width: Math.min(100, 100 * progress.progress) + '%' }}
+        className="statusbar-progressbar"
+        style={{ width: Math.min(100, 100 * progress.progress) + "%" }}
       ></span>
-      <span className='statusbar-message'>{progress.message}</span>
+      <span className="statusbar-message">{progress.message}</span>
     </div>
-  )
-}
+  );
+};
 
 const FuncnodesHeader = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
+    useContext(FuncNodesContext);
 
-  const workersstate = fnrf_zst.workers()
+  const workersstate = fnrf_zst.workers();
   const onNew = () => {
-    const alert = window.confirm('Are you sure you want to start a new flow?')
+    const alert = window.confirm("Are you sure you want to start a new flow?");
     if (alert) {
-      fnrf_zst.worker?.clear()
+      fnrf_zst.worker?.clear();
     }
-  }
+  };
 
   const onSave = async () => {
-    const data = await fnrf_zst.worker?.save()
-    if (!data) return
+    const data = await fnrf_zst.worker?.save();
+    if (!data) return;
     const blob = new Blob([JSON.stringify(data)], {
-      type: 'application/json'
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'flow.json'
-    a.click()
-    URL.revokeObjectURL(url)
-    a.remove()
-  }
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "flow.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    a.remove();
+  };
 
   const onOpen = async () => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = '.json'
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
     input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0]
-      if (!file) return
-      const reader = new FileReader()
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
       reader.onload = async (e) => {
-        const contents = e.target?.result
-        if (!contents) return
-        const data = JSON.parse(contents as string)
-        await fnrf_zst.worker?.load(data)
-      }
-      reader.readAsText(file)
-    }
-    input.click()
-  }
+        const contents = e.target?.result;
+        if (!contents) return;
+        const data = JSON.parse(contents as string);
+        await fnrf_zst.worker?.load(data);
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
 
   const workerselectchange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const workerid = e.target.value
-    if (workerid === '__select__') return
-    if (!fnrf_zst.workers) return
-    if (!fnrf_zst.workermanager) return
-    if (!workersstate[workerid]) return
+    const workerid = e.target.value;
+    if (workerid === "__select__") return;
+    if (!fnrf_zst.workers) return;
+    if (!fnrf_zst.workermanager) return;
+    if (!workersstate[workerid]) return;
     if (!workersstate[workerid].active) {
       //create popup
       const ans = window.confirm(
-        'this is an inactive worker, selecting it will start it, continue?'
-      )
-      if (!ans) return
+        "this is an inactive worker, selecting it will start it, continue?",
+      );
+      if (!ans) return;
     }
-    fnrf_zst.workermanager.set_active(workerid)
-  }
+    fnrf_zst.workermanager.set_active(workerid);
+  };
 
   return (
-    <div className='funcnodesreactflowheader'>
-      <div className='headerelement'>
+    <div className="funcnodesreactflowheader">
+      <div className="headerelement">
         <Statusbar></Statusbar>
       </div>
 
       {fnrf_zst.options.useWorkerManager && (
-        <div className='headerelement'>
+        <div className="headerelement">
           <select
-            className='workerselect styleddropdown'
-            value={fnrf_zst.worker ? fnrf_zst.worker.uuid : '__select__'}
+            className="workerselect styleddropdown"
+            value={fnrf_zst.worker ? fnrf_zst.worker.uuid : "__select__"}
             onChange={workerselectchange}
           >
-            <option disabled value='__select__'>
+            <option disabled value="__select__">
               Select Worker
             </option>
             {Object.keys(workersstate).map((workerid) => (
               <option
                 className={
-                  'workerselectoption' +
-                  (workersstate[workerid].active ? ' active' : ' inactive')
+                  "workerselectoption" +
+                  (workersstate[workerid].active ? " active" : " inactive")
                 }
                 key={workerid}
                 value={workerid}
@@ -223,24 +223,24 @@ const FuncnodesHeader = () => {
 
       {fnrf_zst.worker && (
         <>
-          <div className='headerelement'>
+          <div className="headerelement">
             <button
-              className='styledbtn'
+              className="styledbtn"
               onClick={() => {
-                if (!fnrf_zst.worker) return
-                fnrf_zst.worker.stop()
+                if (!fnrf_zst.worker) return;
+                fnrf_zst.worker.stop();
               }}
             >
               stop worker
             </button>
           </div>
-          <div className='headerelement'>
+          <div className="headerelement">
             <button
-              className='styledbtn'
+              className="styledbtn"
               onClick={() => {
-                if (!fnrf_zst.worker) return
-                if (!fnrf_zst.workermanager) return console.error('no wm')
-                fnrf_zst.workermanager?.restart_worker(fnrf_zst.worker.uuid)
+                if (!fnrf_zst.worker) return;
+                if (!fnrf_zst.workermanager) return console.error("no wm");
+                fnrf_zst.workermanager?.restart_worker(fnrf_zst.worker.uuid);
               }}
             >
               restart worker
@@ -249,29 +249,29 @@ const FuncnodesHeader = () => {
         </>
       )}
       {fnrf_zst.options.useWorkerManager && (
-        <div className='headerelement'>
+        <div className="headerelement">
           <NewWorkerDialog
-            trigger={<button className='styledbtn'>new worker</button>}
+            trigger={<button className="styledbtn">new worker</button>}
           ></NewWorkerDialog>
         </div>
       )}
-      <div className='headerelement'>
-        <button className='styledbtn' onClick={onNew}>
+      <div className="headerelement">
+        <button className="styledbtn" onClick={onNew}>
           new nodespace
         </button>
       </div>
-      <div className='headerelement'>
-        <button className='styledbtn' onClick={onOpen}>
+      <div className="headerelement">
+        <button className="styledbtn" onClick={onOpen}>
           open
         </button>
       </div>
-      <div className='headerelement'>
-        <button className='styledbtn' onClick={onSave}>
+      <div className="headerelement">
+        <button className="styledbtn" onClick={onSave}>
           save
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FuncnodesHeader
+export default FuncnodesHeader;

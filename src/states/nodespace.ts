@@ -76,7 +76,7 @@ const NodeSpaceZustand =
         if (!store && raise) {
           const keys = nodesstates.keys();
           throw new Error(
-            `Node ${nid} not found, available nodes: ${Array.from(keys)}`
+            `Node ${nid} not found, available nodes: ${Array.from(keys)}`,
           );
         }
         return store;

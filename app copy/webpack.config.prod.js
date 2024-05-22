@@ -32,7 +32,7 @@ module.exports = {
           {
             loader: "ts-loader",
             options: {
-              configFile: "tsconfig.json",
+              configFile: "tsconfig.prod.json",
             },
           },
         ],
@@ -140,6 +140,7 @@ module.exports = {
     // }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+      
     }),
   ],
   resolve: {

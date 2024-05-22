@@ -82,7 +82,7 @@ class WorkerManager {
 
     // Get active worker from window storage
     const active_worker = window.localStorage.getItem(
-      "funcnodes__active_worker"
+      "funcnodes__active_worker",
     );
     if (active_worker) {
       this.set_active(active_worker);
@@ -118,7 +118,7 @@ class WorkerManager {
               url,
               zustand: this.zustand,
               uuid: msg.data.uuid,
-            })
+            }),
         );
       } else {
         console.error("WorkerManager: unknown worker type", msg);
@@ -160,7 +160,7 @@ class WorkerManager {
     // Increase timeout exponentially, capped at maxTimeout
     let timeout = Math.min(
       this.initialTimeout * Math.pow(2, this.reconnectAttempts),
-      this.maxTimeout
+      this.maxTimeout,
     );
     return timeout;
   }
@@ -224,7 +224,7 @@ class WorkerManager {
             copyLib,
             copyNS,
           },
-        })
+        }),
       );
     }
   }

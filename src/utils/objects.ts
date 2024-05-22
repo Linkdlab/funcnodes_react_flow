@@ -63,7 +63,7 @@ function deep_compare_objects(a: any, b: any): boolean {
  */
 const deep_merge = <T extends {}>(
   target: T,
-  source: DeepPartial<T>
+  source: DeepPartial<T>,
 ): {
   new_obj: T;
   change: boolean;
@@ -87,7 +87,7 @@ const deep_merge = <T extends {}>(
       // If both the target and source values are plain objects, merge them
       const { new_obj: mergedObj, change: didChange } = deep_merge(
         targetValue,
-        sourceValue
+        sourceValue,
       );
       if (didChange) {
         change = true;

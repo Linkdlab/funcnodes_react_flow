@@ -1,4 +1,11 @@
+.basicstyleelement {
+  background-color: var(--funcnodesbackground1);
+  color: var(--funcnodestextcolor1);
+  border-radius: 0.75rem;
+  border: 1px solid var(--funheadercolor);
+}
 .styleelement {
+  @extend .basicstyleelement;
   &:hover {
     background-color: var(--funcnodesbackground_light);
   }
@@ -13,10 +20,6 @@
   }
 
   height: 2rem;
-  background-color: var(--funcnodesbackground1);
-  color: var(--funcnodestextcolor1);
-  border-radius: 0.75rem;
-  border: 1px solid var(--funheadercolor);
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
@@ -60,4 +63,79 @@ input[type="number"]::-webkit-outer-spin-button {
     color: var(--funcnodesbackground1);
   }
   accent-color: var(--funheadercolor);
+}
+
+.SliderContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 20px;
+}
+
+.SliderRoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  width: 100%;
+  height: fit-content;
+}
+
+.SliderTrack {
+  background-color: var(--funcnodesbackground1);
+  position: relative;
+  flex-grow: 1;
+  border-radius: 9999px;
+  height: 3px;
+}
+
+.SliderRange {
+  position: absolute;
+  background-color: var(--funheadercolor);
+  border-radius: 9999px;
+  height: 100%;
+}
+
+.SliderThumb {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  box-shadow: 0 2px 5px #00000055;
+  border-radius: 10px;
+}
+.SliderThumb:hover {
+  background-color: #999;
+}
+.SliderThumb:focus {
+  outline: none;
+  box-shadow: 0 0 0 5px #00000055;
+}
+
+.styled-select {
+  &__control {
+    height: 100%;
+    min-height: initial;
+  }
+
+  &__input-container {
+  }
+
+  &__menu-list {
+    max-height: 200px !important;
+    padding-left: 0;
+    height: initial;
+  }
+
+  &__menu {
+    @extend .basicstyleelement;
+    margin-left: -0.5rem;
+  }
+  &__option {
+    &:hover {
+      background-color: var(--funcnodesbackground_light);
+    }
+  }
 }

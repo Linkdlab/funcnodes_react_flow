@@ -1,6 +1,6 @@
-import { EdgeProps, getBezierPath, BaseEdge } from 'reactflow'
-import './edge.scss'
-import React from 'react'
+import { EdgeProps, getBezierPath, BaseEdge } from "reactflow";
+import "./edge.scss";
+import React from "react";
 
 const DefaultEdge = ({
   id,
@@ -19,14 +19,14 @@ const DefaultEdge = ({
     sourcePosition,
     targetX,
     targetY,
-    targetPosition
-  })
+    targetPosition,
+  });
 
   return (
     <>
       <BaseEdge id={id} path={edgePath} {...props} />
     </>
-  )
-}
+  );
+};
 
-export default DefaultEdge
+export default DefaultEdge;

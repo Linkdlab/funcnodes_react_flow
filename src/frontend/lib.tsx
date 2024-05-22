@@ -1,82 +1,83 @@
-import React, { useState, useContext } from 'react'
-import './lib.scss'
+import React, { useState, useContext } from "react";
+import "./lib.scss";
 
-import { FuncNodesReactFlowZustandInterface } from '../states/fnrfzst.t'
-import { MouseEvent } from 'react'
-import { FuncNodesContext } from './index'
-import SearchIcon from '@mui/icons-material/Search'
-import CloseIcon from '@mui/icons-material/Close'
-import ExpandLessIcon from '@mui/icons-material/ExpandLess'
-import CustomDialog from './dialog'
+import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
+import { MouseEvent } from "react";
+import { FuncNodesContext } from "./index";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import CustomDialog from "./dialog";
 import {
   ExternalWorkerClassDep,
   ExternalWorkerDependecies,
   LibNode,
-  Shelf
-} from '../states/lib.t'
+  Shelf,
+} from "../states/lib.t";
 
 const LibraryNode = ({ item }: { item: LibNode }) => {
   const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
+    useContext(FuncNodesContext);
 
   const add_to_flow = () => {
-    zustand.worker?.add_node(item.node_id)
-  }
+    zustand.worker?.add_node(item.node_id);
+  };
 
   const nodeclick = (event: MouseEvent<HTMLDivElement>) => {
     // if double click, add node to graph
     if (event.detail === 2) {
-      add_to_flow()
+      add_to_flow();
     }
-  }
+  };
   return (
-    <div className='libnodeentry' onClick={nodeclick} title={item.description}>
+    <div className="libnodeentry" onClick={nodeclick} title={item.description}>
       {item.node_name || item.node_id}
     </div>
-  )
-}
+  );
+};
 
 const filterShelf = (shelf: Shelf, filter: string): boolean => {
   const hasFilteredNodes =
     shelf.nodes?.some((node) =>
-      node.node_id.toLowerCase().includes(filter.toLowerCase())
-    ) ?? false
+      node.node_id.toLowerCase().includes(filter.toLowerCase()),
+    ) ?? false;
 
   const hasFilteredSubShelves =
-    shelf.subshelves?.some((subShelf) => filterShelf(subShelf, filter)) ?? false
+    shelf.subshelves?.some((subShelf) => filterShelf(subShelf, filter)) ??
+    false;
 
-  return hasFilteredNodes || hasFilteredSubShelves
-}
+  return hasFilteredNodes || hasFilteredSubShelves;
+};
 
 const LibraryShelf = ({ item, filter }: { item: Shelf; filter: string }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleToggle = () => setIsOpen(!isOpen)
+  const handleToggle = () => setIsOpen(!isOpen);
 
   const filterednodes = item.nodes?.filter((node) =>
-    node.node_id.toLowerCase().includes(filter.toLowerCase())
-  )
+    node.node_id.toLowerCase().includes(filter.toLowerCase()),
+  );
 
-  const _isopen = isOpen || filter.length > 0
+  const _isopen = isOpen || filter.length > 0;
   if (!filterShelf(item, filter)) {
-    return <></>
+    return <></>;
   }
 
   return (
-    <div className='shelfcontainer'>
+    <div className="shelfcontainer">
       <div
-        className='shelftitle'
+        className="shelftitle"
         onClick={handleToggle}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
         title={item.description}
       >
-        <div className='shelftitle_text'>{item.name}</div>
-        <div className={'expandicon ' + (_isopen ? 'open' : 'close')}>
+        <div className="shelftitle_text">{item.name}</div>
+        <div className={"expandicon " + (_isopen ? "open" : "close")}>
           <ExpandLessIcon />
         </div>
       </div>
-      <div className={'libnodecontainer ' + (_isopen ? 'open' : 'close')}>
-        <div className='libnodecontainer_inner'>
+      <div className={"libnodecontainer " + (_isopen ? "open" : "close")}>
+        <div className="libnodecontainer_inner">
           {filterednodes && (
             <>
               {filterednodes.map((subItem, idx) => (
@@ -95,179 +96,179 @@ const LibraryShelf = ({ item, filter }: { item: Shelf; filter: string }) => {
       </div>
       <hr />
     </div>
-  )
-}
+  );
+};
 
 const LibFilter = ({
   filter,
-  setFilter
+  setFilter,
 }: {
-  filter: string
-  setFilter: (filter: string) => void
+  filter: string;
+  setFilter: (filter: string) => void;
 }) => {
   // input with left icon
 
   return (
-    <div className='libfilter'>
-      <SearchIcon fontSize='inherit' />
+    <div className="libfilter">
+      <SearchIcon fontSize="inherit" />
       <input
-        type='text'
-        placeholder='Filter'
+        type="text"
+        placeholder="Filter"
         value={filter}
         onChange={(e) => {
-          setFilter(e.target.value)
+          setFilter(e.target.value);
         }}
       />
       {filter && (
         <CloseIcon
-          fontSize='inherit'
+          fontSize="inherit"
           onClick={() => {
-            setFilter('')
+            setFilter("");
           }}
         />
       )}
     </div>
-  )
-}
+  );
+};
 
 const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
-  const [newlib, setNewLib] = useState('')
+  const [newlib, setNewLib] = useState("");
   const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
+    useContext(FuncNodesContext);
   if (!zustand.worker) {
-    return <></>
+    return <></>;
   }
   const add_new_lib = () => {
     if (zustand.worker === undefined) {
-      return
+      return;
     }
-    zustand.worker.add_lib(newlib)
-    setNewLib('')
-  }
+    zustand.worker.add_lib(newlib);
+    setNewLib("");
+  };
   return (
     <CustomDialog
-      title='Add Library'
+      title="Add Library"
       trigger={children}
-      description='Add a new library to the current worker.'
+      description="Add a new library to the current worker."
       buttons={[
         {
-          text: 'add',
+          text: "add",
           onClick: add_new_lib,
-          close: true
-        }
+          close: true,
+        },
       ]}
     >
       <input
-        className='styledinput'
-        type='text'
+        className="styledinput"
+        type="text"
         value={newlib}
         onChange={(e) => {
-          setNewLib(e.target.value)
+          setNewLib(e.target.value);
         }}
       />
     </CustomDialog>
-  )
-}
+  );
+};
 
 const AddExternalWorkerOverLay = ({
-  children
+  children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) => {
-  const [newlib, setNewLib] = useState('')
+  const [newlib, setNewLib] = useState("");
   const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
+    useContext(FuncNodesContext);
   if (!zustand.worker) {
-    return <></>
+    return <></>;
   }
   const add_new_worker = () => {
     if (zustand.worker === undefined) {
-      return
+      return;
     }
-    zustand.worker.add_worker_package(newlib)
-    setNewLib('')
-  }
+    zustand.worker.add_worker_package(newlib);
+    setNewLib("");
+  };
   return (
     <CustomDialog
-      title='Add External Worker'
+      title="Add External Worker"
       trigger={children}
-      description='Add external worker class(es) to the current worker.'
+      description="Add external worker class(es) to the current worker."
       buttons={[
         {
-          text: 'add',
+          text: "add",
           onClick: add_new_worker,
-          close: true
-        }
+          close: true,
+        },
       ]}
     >
       <input
-        className='styledinput'
-        type='text'
+        className="styledinput"
+        type="text"
         value={newlib}
         onChange={(e) => {
-          setNewLib(e.target.value)
+          setNewLib(e.target.value);
         }}
       />
     </CustomDialog>
-  )
-}
+  );
+};
 
 const ExternalWorkerClassEntry = ({
   item,
-  mod
+  mod,
 }: {
-  item: ExternalWorkerClassDep
-  mod: string
+  item: ExternalWorkerClassDep;
+  mod: string;
 }) => {
   const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
+    useContext(FuncNodesContext);
 
   const add_to_flow = () => {
     zustand.worker?.add_external_worker({
       module: mod,
       cls_module: item.module,
-      cls_name: item.class_name
-    })
-  }
+      cls_name: item.class_name,
+    });
+  };
 
   const nodeclick = (event: MouseEvent<HTMLDivElement>) => {
     // if double click, add node to graph
     if (event.detail === 2) {
-      add_to_flow()
+      add_to_flow();
     }
-  }
+  };
   return (
-    <div className='libnodeentry' onClick={nodeclick} title={item.name}>
-      {item.name || item.module + '.' + item.class_name}
+    <div className="libnodeentry" onClick={nodeclick} title={item.name}>
+      {item.name || item.module + "." + item.class_name}
     </div>
-  )
-}
+  );
+};
 const ExternalWorkerShelf = ({
-  externalworkermod
+  externalworkermod,
 }: {
-  externalworkermod: ExternalWorkerDependecies
+  externalworkermod: ExternalWorkerDependecies;
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleToggle = () => setIsOpen(!isOpen)
+  const handleToggle = () => setIsOpen(!isOpen);
 
-  const _isopen = isOpen
+  const _isopen = isOpen;
 
   return (
-    <div className='shelfcontainer'>
+    <div className="shelfcontainer">
       <div
-        className='shelftitle'
+        className="shelftitle"
         onClick={handleToggle}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
         title={externalworkermod.module}
       >
-        <div className='shelftitle_text'>{externalworkermod.module}</div>
-        <div className={'expandicon ' + (_isopen ? 'open' : 'close')}>
+        <div className="shelftitle_text">{externalworkermod.module}</div>
+        <div className={"expandicon " + (_isopen ? "open" : "close")}>
           <ExpandLessIcon />
         </div>
       </div>
-      <div className={'libnodecontainer ' + (_isopen ? 'open' : 'close')}>
-        <div className='libnodecontainer_inner'>
+      <div className={"libnodecontainer " + (_isopen ? "open" : "close")}>
+        <div className="libnodecontainer_inner">
           {externalworkermod.worker_classes.map((subItem, idx) => (
             <ExternalWorkerClassEntry
               key={idx}
@@ -279,41 +280,41 @@ const ExternalWorkerShelf = ({
       </div>
       <hr />
     </div>
-  )
-}
+  );
+};
 
 const Library = () => {
   const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext)
-  const libstate = zustand.lib.libstate()
+    useContext(FuncNodesContext);
+  const libstate = zustand.lib.libstate();
 
-  const [filter, setFilter] = useState('')
-  console.log('libstate', libstate)
+  const [filter, setFilter] = useState("");
+
   return (
-    <div className='libcontainer'>
-      <div className='library'>
-        <div className='libtitle'>Lib</div>
-        <hr className='hr_prominent' />
+    <div className="libcontainer">
+      <div className="library">
+        <div className="libtitle">Lib</div>
+        <hr className="hr_prominent" />
         <LibFilter filter={filter} setFilter={setFilter} />
-        <div className='vscrollcontainer'>
+        <div className="vscrollcontainer">
           {libstate.lib.shelves.map((item, idx) => (
             <LibraryShelf key={idx} item={item} filter={filter} />
           ))}
         </div>
         <hr />
 
-        <div className='addlib'>
+        <div className="addlib">
           <AddLibraryOverLay>
             <button disabled={zustand.worker === undefined}>Add Library</button>
           </AddLibraryOverLay>
         </div>
       </div>
-      <div style={{ paddingTop: '0.5rem' }}></div>
-      <div className='library'>
-        <div className='libtitle'>External Worker</div>
-        <hr className='hr_prominent' />
-        <div className='vscrollcontainer'>
-          {libstate.external_worker.map((item, idx) => (
+      <div style={{ paddingTop: "0.5rem" }}></div>
+      <div className="library">
+        <div className="libtitle">External Worker</div>
+        <hr className="hr_prominent" />
+        <div className="vscrollcontainer">
+          {libstate.external_worker?.map((item, idx) => (
             <ExternalWorkerShelf
               key={idx}
               externalworkermod={item}
@@ -321,7 +322,7 @@ const Library = () => {
           ))}
         </div>
         <hr />
-        <div className='addlib'>
+        <div className="addlib">
           <AddExternalWorkerOverLay>
             <button disabled={zustand.worker === undefined}>
               Add External Worker
@@ -330,8 +331,8 @@ const Library = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Library
-export { LibraryShelf as LibraryItem }
+export default Library;
+export { LibraryShelf as LibraryItem };

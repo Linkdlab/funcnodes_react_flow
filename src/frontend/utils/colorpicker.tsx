@@ -1,298 +1,337 @@
-import React, { useState } from 'react'
-import * as Popover from '@radix-ui/react-popover'
-import convert from 'color-convert'
-import './colorpicker.scss'
+import React, { useEffect, useState } from "react";
+import * as Popover from "@radix-ui/react-popover";
+import convert from "color-convert";
+import "./colorpicker.scss";
 
 const create_color_converter = (
   type: string,
-  data: any[]
+  data: any[],
 ): { [key: string]: () => number[] | string } => {
-  if (!Array.isArray(data)) data = [data]
+  if (!Array.isArray(data)) data = [data];
   if (data[0] === undefined || data[0] === null)
-    return create_color_converter('rgb', [0, 0, 0])
+    return create_color_converter("rgb", [0, 0, 0]);
   // @ts-ignore
-  const source = convert[type]
-  if (!source) throw new Error('Unsupported color type: ' + type)
+  const source = convert[type];
+  if (!source) throw new Error("Unsupported color type: " + type);
 
-  source[type] = () => data
+  source[type] = () => data;
 
-  const checkrgb = source.rgb(data)
-  if (!Array.isArray(checkrgb)) return create_color_converter('rgb', [0, 0, 0])
+  const checkrgb = source.rgb(data);
+  if (!Array.isArray(checkrgb)) return create_color_converter("rgb", [0, 0, 0]);
   if (checkrgb[0] === undefined || checkrgb[0] === null)
-    return create_color_converter('rgb', [0, 0, 0])
+    return create_color_converter("rgb", [0, 0, 0]);
 
-  const checkhsl = source.hsl(data)
-  if (!Array.isArray(checkhsl)) return create_color_converter('rgb', [0, 0, 0])
+  const checkhsl = source.hsl(data);
+  if (!Array.isArray(checkhsl)) return create_color_converter("rgb", [0, 0, 0]);
   if (checkhsl[0] === undefined || checkhsl[0] === null)
-    return create_color_converter('rgb', [0, 0, 0])
+    return create_color_converter("rgb", [0, 0, 0]);
 
-  const converter: { [key: string]: () => number[] | string } = {}
+  const converter: { [key: string]: () => number[] | string } = {};
 
   Object.keys(source).forEach((key) => {
-    const entry = source[key]
+    const entry = source[key];
     //check if entry is a function
-    if (typeof entry === 'function') {
-      converter[key] = () => entry.apply(null, data)
+    if (typeof entry === "function") {
+      converter[key] = () => entry.apply(null, data);
     }
-  })
+  });
 
-  return converter
-}
+  return converter;
+};
 
 const HSLColorPicker = ({
   onChange,
-  colorconverter
+  colorconverter,
+  allow_null = false,
 }: {
-  onChange: (colorconverter: { [key: string]: () => number[] | string }) => void
-  colorconverter: { [key: string]: () => number[] | string }
+  onChange: (
+    colorconverter: {
+      [key: string]: () => number[] | string;
+    } | null,
+  ) => void;
+  colorconverter: { [key: string]: () => number[] | string } | null;
+  allow_null?: boolean;
 }) => {
-  const [converter, setConverter] = useState(colorconverter)
-  const hsl = converter.hsl() as number[]
-  const rgb = converter.rgb() as number[]
-  const hsv = converter.hsv() as number[]
-  const hex = converter.hex() as string
+  if (colorconverter === null && !allow_null)
+    throw new Error("Color converter is null");
+  const [converter, setConverter] = useState(colorconverter);
+  const [hsl, setHsl] = useState([0, 0, 0]);
+  const [rgb, setRgb] = useState([0, 0, 0]);
+  const [hsv, setHsv] = useState([0, 0, 0]);
+  const [hex, setHex] = useState("000");
+  // const hsl = converter.hsl() as number[];
+  // const rgb = converter.rgb() as number[];
+  // const hsv = converter.hsv() as number[];
+  // const hex = converter.hex() as string;
+
+  useEffect(() => {
+    if (!converter) {
+      if (!allow_null) throw new Error("Color converter is null");
+      setRgb([0, 0, 0]);
+      setHsl([0, 0, 0]);
+      setHsv([0, 0, 0]);
+      setHex("");
+      return;
+    }
+    setHsl(converter.hsl() as number[]);
+    setRgb(converter.rgb() as number[]);
+    setHsv(converter.hsv() as number[]);
+    setHex(converter.hex() as string);
+  }, [converter]);
 
   const colorStyle = {
     backgroundColor: `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`,
-    padding: '10px',
-    margin: '10px 0'
-  }
+    padding: "10px",
+    margin: "10px 0",
+  };
 
   return (
-    <div style={{ backgroundColor: 'white' }}>
+    <div style={{ backgroundColor: "white" }}>
       <div style={colorStyle}>Color Preview</div>
-      <div className='colorspace'>
-        <div className='colorspace_title'>RGB</div>
+      <div className="colorspace">
+        <div className="colorspace_title">RGB</div>
         <div></div>
 
         <label>Red</label>
         <input
-          type='range'
-          min='0'
-          max='255'
+          type="range"
+          min="0"
+          max="255"
           value={rgb[0]}
           onChange={(e) => {
-            const newrgb = [parseInt(e.target.value), rgb[1], rgb[2]]
-            const newconverter = create_color_converter('rgb', newrgb)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newrgb = [parseInt(e.target.value), rgb[1], rgb[2]];
+            const newconverter = create_color_converter("rgb", newrgb);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{ background: `linear-gradient(to right, #000, #f00)` }}
         />
 
         <label>Green</label>
         <input
-          type='range'
-          min='0'
-          max='255'
+          type="range"
+          min="0"
+          max="255"
           value={rgb[1]}
           onChange={(e) => {
-            const newrgb = [rgb[0], parseInt(e.target.value), rgb[2]]
-            const newconverter = create_color_converter('rgb', newrgb)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newrgb = [rgb[0], parseInt(e.target.value), rgb[2]];
+            const newconverter = create_color_converter("rgb", newrgb);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{ background: `linear-gradient(to right, #000, #0f0)` }}
         />
 
         <label>Blue</label>
         <input
-          type='range'
-          min='0'
-          max='255'
+          type="range"
+          min="0"
+          max="255"
           value={rgb[2]}
           onChange={(e) => {
-            const newrgb = [rgb[0], rgb[1], parseInt(e.target.value)]
-            const newconverter = create_color_converter('rgb', newrgb)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newrgb = [rgb[0], rgb[1], parseInt(e.target.value)];
+            const newconverter = create_color_converter("rgb", newrgb);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{ background: `linear-gradient(to right, #000, #00f)` }}
         />
       </div>
-      <div className='colorspace'>
-        <div className='colorspace_title'>HSL</div>
+      <div className="colorspace">
+        <div className="colorspace_title">HSL</div>
         <div></div>
 
         <label>Hue</label>
         <input
-          type='range'
-          min='0'
-          max='360'
+          type="range"
+          min="0"
+          max="360"
           value={hsl[0]}
           onChange={(e) => {
-            const newhsl = [parseInt(e.target.value), hsl[1], hsl[2]]
-            const newconverter = create_color_converter('hsl', newhsl)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newhsl = [parseInt(e.target.value), hsl[1], hsl[2]];
+            const newconverter = create_color_converter("hsl", newhsl);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{
-            background: `linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`
+            background: `linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`,
           }}
         />
 
         <label>Saturation</label>
         <input
-          type='range'
-          min='0'
-          max='100'
+          type="range"
+          min="0"
+          max="100"
           value={hsl[1]}
           onChange={(e) => {
-            const newhsl = [hsl[0], parseInt(e.target.value), hsl[2]]
-            const newconverter = create_color_converter('hsl', newhsl)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newhsl = [hsl[0], parseInt(e.target.value), hsl[2]];
+            const newconverter = create_color_converter("hsl", newhsl);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{
-            background: `linear-gradient(to right, #fff, hsl(${hsl[0]}, 100%, 50%))`
+            background: `linear-gradient(to right, #fff, hsl(${hsl[0]}, 100%, 50%))`,
           }}
         />
 
         <label>Lightness</label>
 
         <input
-          type='range'
-          min='0'
-          max='100'
+          type="range"
+          min="0"
+          max="100"
           value={hsl[2]}
           onChange={(e) => {
-            const newhsl = [hsl[0], hsl[1], parseInt(e.target.value)]
-            const newconverter = create_color_converter('hsl', newhsl)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newhsl = [hsl[0], hsl[1], parseInt(e.target.value)];
+            const newconverter = create_color_converter("hsl", newhsl);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{
-            background: `linear-gradient(to right, #000, hsl(${hsl[0]}, 100%, 50%), #fff)`
+            background: `linear-gradient(to right, #000, hsl(${hsl[0]}, 100%, 50%), #fff)`,
           }}
         />
       </div>
 
-      <div className='colorspace'>
-        <div className='colorspace_title'>HSV</div>
+      <div className="colorspace">
+        <div className="colorspace_title">HSV</div>
         <div></div>
 
         <label>Hue</label>
         <input
-          type='range'
-          min='0'
-          max='360'
+          type="range"
+          min="0"
+          max="360"
           value={hsv[0]}
           onChange={(e) => {
-            const newhsv = [parseInt(e.target.value), hsv[1], hsv[2]]
-            const newconverter = create_color_converter('hsv', newhsv)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newhsv = [parseInt(e.target.value), hsv[1], hsv[2]];
+            const newconverter = create_color_converter("hsv", newhsv);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{
-            background: `linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`
+            background: `linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`,
           }}
         />
 
         <label>Saturation</label>
         <input
-          type='range'
-          min='0'
-          max='100'
+          type="range"
+          min="0"
+          max="100"
           value={hsv[1]}
           onChange={(e) => {
-            const newhsv = [hsv[0], parseInt(e.target.value), hsv[2]]
-            const newconverter = create_color_converter('hsv', newhsv)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newhsv = [hsv[0], parseInt(e.target.value), hsv[2]];
+            const newconverter = create_color_converter("hsv", newhsv);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{
-            background: `linear-gradient(to right, #fff, hsl(${hsl[0]}, 100%, 50%))`
+            background: `linear-gradient(to right, #fff, hsl(${hsl[0]}, 100%, 50%))`,
           }}
         />
 
         <label>Value</label>
         <input
-          type='range'
-          min='0'
-          max='100'
+          type="range"
+          min="0"
+          max="100"
           value={hsv[2]}
           onChange={(e) => {
-            const newhsv = [hsv[0], hsv[1], parseInt(e.target.value)]
-            const newconverter = create_color_converter('hsv', newhsv)
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newhsv = [hsv[0], hsv[1], parseInt(e.target.value)];
+            const newconverter = create_color_converter("hsv", newhsv);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
           style={{
-            background: `linear-gradient(to right, #000, hsl(${hsl[0]}, 100%, 50%))`
+            background: `linear-gradient(to right, #000, hsl(${hsl[0]}, 100%, 50%))`,
           }}
         />
       </div>
 
-      <div className='colorspace'>
-        <div className='colorspace_title'>HEX</div>
+      <div className="colorspace">
+        <div className="colorspace_title">HEX</div>
         <div></div>
 
         <input
-          type='text'
+          type="text"
           value={hex}
           onChange={(e) => {
-            const newconverter = create_color_converter('hex', [e.target.value])
-            setConverter(newconverter)
-            onChange(newconverter)
+            const newconverter =
+              e.target.value === ""
+                ? null
+                : create_color_converter("hex", [e.target.value]);
+            setConverter(newconverter);
+            onChange(newconverter);
           }}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 const CustomColorPicker = ({
   inicolordata,
-  inicolorspace = 'hex',
-  onChange
+  inicolorspace = "hex",
+  allow_null = false,
+  onChange,
 }: {
-  inicolordata?: number[] | string | string[]
-  inicolorspace?: string
-  onChange?: (colorconverter: {
-    [key: string]: () => number[] | string
-  }) => void
+  inicolordata?: number[] | string | string[];
+  inicolorspace?: string;
+  allow_null?: boolean;
+  onChange?: (
+    colorconverter: {
+      [key: string]: () => number[] | string;
+    } | null,
+  ) => void;
 }) => {
   if (inicolordata === undefined) {
-    inicolordata = [0, 0, 0]
-    inicolorspace = 'rgb'
+    inicolordata = [0, 0, 0];
+    inicolorspace = "rgb";
   }
-  if (!Array.isArray(inicolordata)) inicolordata = [inicolordata]
+  if (!Array.isArray(inicolordata)) inicolordata = [inicolordata];
 
-  let iniconverter = create_color_converter(inicolorspace, inicolordata)
+  let iniconverter = create_color_converter(inicolorspace, inicolordata);
 
   if (iniconverter.rgb() === undefined)
-    iniconverter = create_color_converter('rgb', [0, 0, 0])
-  const [color, setColor] = useState(iniconverter)
+    iniconverter = create_color_converter("rgb", [0, 0, 0]);
+  const [color, setColor] = useState(iniconverter);
 
-  const innerSetColor = (colorconverter: {
-    [key: string]: () => number[] | string
-  }) => {
-    setColor(colorconverter)
-    if (onChange) onChange(colorconverter)
-  }
+  const innerSetColor = (
+    colorconverter: {
+      [key: string]: () => number[] | string;
+    } | null,
+  ) => {
+    if (colorconverter === null && !allow_null)
+      throw new Error("Color is null");
+    if (colorconverter !== null) setColor(colorconverter);
+    if (onChange) onChange(colorconverter);
+  };
 
   const style = {
-    background: '#' + color.hex(),
-    borderRadius: '0.3rem',
-    width: '2rem',
-    height: '1rem'
-  }
+    background: "#" + color.hex(),
+    borderRadius: "0.3rem",
+    width: "2rem",
+    height: "1rem",
+  };
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
         <button style={style}></button>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content side='left'>
+        <Popover.Content side="left">
           <HSLColorPicker
             onChange={innerSetColor}
             colorconverter={color}
+            allow_null={allow_null}
           ></HSLColorPicker>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
-  )
-}
+  );
+};
 
-export default CustomColorPicker
-export { HSLColorPicker }
+export default CustomColorPicker;
+export { HSLColorPicker };

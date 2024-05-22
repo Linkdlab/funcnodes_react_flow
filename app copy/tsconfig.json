@@ -24,14 +24,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx"
   },
-  "paths": {
-    "@linkdlab/funcnodes_react_flow": [
-      "node_modules/@linkdlab/funcnodes_react_flow/src"
-    ],
-    "@linkdlab/funcnodes_react_flow/*": [
-      "node_modules/@linkdlab/funcnodes_react_flow/src/*"
-    ]
-  },
+
   "include": ["./src/**/*"],
   "exclude": ["node_modules", "dist", "build"]
 }

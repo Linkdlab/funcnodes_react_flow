@@ -43,7 +43,9 @@
     border-radius: 0;
     width: calc(var(--handle_width) * 1px);
 
-    transition: left 0.2s ease-in-out, right 0.2s ease-in-out,
+    transition:
+      left 0.2s ease-in-out,
+      right 0.2s ease-in-out,
       width 0.2s ease-in-out;
     &:hover {
       width: calc(var(--handle_width_hover) * 1px);
@@ -177,7 +179,7 @@
 }
 
 .nodedatabody {
-  overflow: hidden;
+  overflow: auto;
 }
 
 .noderesizecontrol {
@@ -230,6 +232,10 @@
     width: 100%;
   }
 }
+
+.nodeinput > .iovaluefield {
+  overflow: visible;
+}
 .ioname {
   flex-grow: 1;
   flex-shrink: 1;
@@ -257,9 +263,14 @@ input.nodedatainput {
 
   font-size: 0.5rem;
   height: 1.5rem;
+
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 
 input.nodedatainput.styledinput,
-select.nodedatainput.styleddropdown {
+.nodedatainput.styleddropdown {
   @extend .nodedatastyledelement;
+  width: 100%;
 }

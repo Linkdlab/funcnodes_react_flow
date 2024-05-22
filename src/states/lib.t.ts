@@ -1,45 +1,45 @@
-import { UseBoundStore, StoreApi } from 'zustand'
+import { UseBoundStore, StoreApi } from "zustand";
 
 type LibNode = {
-  node_id: string
-  description?: string
-  node_name?: string
-}
+  node_id: string;
+  description?: string;
+  node_name?: string;
+};
 
 type Shelf = {
-  name: string
-  description?: string
-  nodes: LibNode[]
-  subshelves: Shelf[]
-}
+  name: string;
+  description?: string;
+  nodes: LibNode[];
+  subshelves: Shelf[];
+};
 
 type LibType = {
-  shelves: Shelf[]
-}
+  shelves: Shelf[];
+};
 
 interface ExternalWorkerClassDep {
-  module: string
-  class_name: string
-  name: string
+  module: string;
+  class_name: string;
+  name: string;
 }
 interface ExternalWorkerDependecies {
-  module: string
-  worker_classes: ExternalWorkerClassDep[]
+  module: string;
+  worker_classes: ExternalWorkerClassDep[];
 }
 
 interface LibState {
-  lib: LibType
-  external_worker: ExternalWorkerDependecies[]
+  lib: LibType;
+  external_worker?: ExternalWorkerDependecies[];
   set: (state: {
-    lib?: LibType
-    external_worker?: ExternalWorkerDependecies[]
-  }) => void
-  get_lib: () => LibType
-  get_external_worker: () => ExternalWorkerDependecies[]
+    lib?: LibType;
+    external_worker?: ExternalWorkerDependecies[];
+  }) => void;
+  get_lib: () => LibType;
+  get_external_worker: () => ExternalWorkerDependecies[] | undefined;
 }
 
 interface LibZustandInterface {
-  libstate: UseBoundStore<StoreApi<LibState>>
+  libstate: UseBoundStore<StoreApi<LibState>>;
 }
 
 export type {
@@ -49,5 +49,5 @@ export type {
   Shelf,
   LibNode,
   ExternalWorkerClassDep,
-  ExternalWorkerDependecies
-}
+  ExternalWorkerDependecies,
+};

@@ -1,15 +1,15 @@
-import { UseBoundStore, StoreApi } from 'zustand'
-import { Edge, Node, OnNodesChange, OnEdgesChange, OnConnect } from 'reactflow'
+import { UseBoundStore, StoreApi } from "zustand";
+import { Edge, Node, OnNodesChange, OnEdgesChange, OnConnect } from "reactflow";
 
 type RFState = {
-  nodes: Node[]
-  edges: Edge[]
-  onNodesChange: OnNodesChange
-  onEdgesChange: OnEdgesChange
-  onConnect: OnConnect
-}
+  nodes: Node[];
+  edges: Edge[];
+  onNodesChange: OnNodesChange;
+  onEdgesChange: OnEdgesChange;
+  onConnect: OnConnect;
+};
 
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
-type RFStore = UseBoundStore<StoreApi<RFState>>
+type RFStore = UseBoundStore<StoreApi<RFState>>;
 
-export type { RFState, RFStore }
+export type { RFState, RFStore };

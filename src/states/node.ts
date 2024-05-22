@@ -82,7 +82,7 @@ const createNodeStore = (node: NodeType): NodeStore => {
   // check if node is Object
 
   return create<NodeType>((_set, _get) =>
-    assert_full_node(normalize_node(node))
+    assert_full_node(normalize_node(node)),
   );
 };
 export { createNodeStore, assert_full_node, normalize_node };
