@@ -32,13 +32,14 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             fn.worker.worker_manager.assert_worker_manager_running(
                 host=self.server.worker_manager_host,
                 port=self.server.worker_manager_port,
+                ssl=self.server.worker_manager_ssl,
             )
         )
         self.send_response(200)
         self.send_header("Content-type", "text/json")
         self.end_headers()
         self.wfile.write(
-            f"ws://{self.server.worker_manager_host}:{self.server.worker_manager_port}".encode(
+            f"w{'s' if self.server.worker_manager_ssl else ''}://{self.server.worker_manager_host}:{self.server.worker_manager_port}".encode(
                 "utf-8"
             )
         )
@@ -66,6 +67,7 @@ class GracefulHTTPServer(socketserver.TCPServer):
         bind_and_activate=True,
         worker_manager_host: Optional[str] = None,
         worker_manager_port: Optional[int] = None,
+        worker_manager_ssl: Optional[bool] = None,
     ):
         if worker_manager_host is None:
             worker_manager_host = fn.config.CONFIG["worker_manager"]["host"]
@@ -73,6 +75,10 @@ class GracefulHTTPServer(socketserver.TCPServer):
         if worker_manager_port is None:
             worker_manager_port = fn.config.CONFIG["worker_manager"]["port"]
 
+        if worker_manager_ssl is None:
+            worker_manager_ssl = fn.config.CONFIG["worker_manager"].get("ssl", False)
+
+        self.worker_manager_ssl = worker_manager_ssl
         self.worker_manager_host = worker_manager_host
         self.worker_manager_port = worker_manager_port
         super().__init__(server_address, RequestHandlerClass, bind_and_activate)
@@ -96,6 +102,7 @@ def run_server(
     open_browser=True,
     worker_manager_host: Optional[str] = None,
     worker_manager_port: Optional[int] = None,
+    worker_manager_ssl: Optional[bool] = None,
 ):
     import funcnodes as fn
 
@@ -103,6 +110,7 @@ def run_server(
         fn.worker.worker_manager.assert_worker_manager_running(
             host=worker_manager_host,
             port=worker_manager_port,
+            ssl=worker_manager_ssl,
         )
     )
     try:
@@ -113,6 +121,7 @@ def run_server(
             CustomHTTPRequestHandler,
             worker_manager_host=worker_manager_host,
             worker_manager_port=worker_manager_port,
+            worker_manager_ssl=worker_manager_ssl,
         )
         print(f"Serving at port {port}")
         if open_browser:
