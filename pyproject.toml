@@ -10,6 +10,7 @@ python = ">=3.11"
 funcnodes = "*"
 
 [tool.poetry.group.dev.dependencies]
+pytest = "*"
 
 [build-system]
 requires = ["poetry-core"]
