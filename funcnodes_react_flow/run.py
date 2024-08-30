@@ -1,3 +1,4 @@
+from typing import Optional
 import http.server
 import socketserver
 import webbrowser
@@ -5,6 +6,7 @@ import os
 import time
 import threading
 import asyncio
+import funcnodes as fn
 
 PORT = 8029
 
@@ -25,15 +27,18 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_error(405, "Method Not Allowed")
 
     def get_worker_manager(self):
-        import funcnodes as fn
-
         # Implement custom GET handling logic here
-        asyncio.run(fn.worker.worker_manager.assert_worker_manager_running())
+        asyncio.run(
+            fn.worker.worker_manager.assert_worker_manager_running(
+                host=self.server.worker_manager_host,
+                port=self.server.worker_manager_port,
+            )
+        )
         self.send_response(200)
         self.send_header("Content-type", "text/json")
         self.end_headers()
         self.wfile.write(
-            f"ws://{fn.config.CONFIG['worker_manager']['host']}:{fn.config.CONFIG['worker_manager']['port']}".encode(
+            f"ws://{self.server.worker_manager_host}:{self.server.worker_manager_port}".encode(
                 "utf-8"
             )
         )
@@ -54,7 +59,22 @@ class GracefulHTTPServer(socketserver.TCPServer):
     allow_reuse_address = False
     timeout = 5
 
-    def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True):
+    def __init__(
+        self,
+        server_address,
+        RequestHandlerClass,
+        bind_and_activate=True,
+        worker_manager_host: Optional[str] = None,
+        worker_manager_port: Optional[int] = None,
+    ):
+        if worker_manager_host is None:
+            worker_manager_host = fn.config.CONFIG["worker_manager"]["host"]
+
+        if worker_manager_port is None:
+            worker_manager_port = fn.config.CONFIG["worker_manager"]["port"]
+
+        self.worker_manager_host = worker_manager_host
+        self.worker_manager_port = worker_manager_port
         super().__init__(server_address, RequestHandlerClass, bind_and_activate)
         self._is_serving = True
 
@@ -71,14 +91,29 @@ def _open_browser(port, delay=1.0):
     webbrowser.open(f"http://localhost:{port}")
 
 
-def run_server(port=PORT, open_browser=True):
+def run_server(
+    port=PORT,
+    open_browser=True,
+    worker_manager_host: Optional[str] = None,
+    worker_manager_port: Optional[int] = None,
+):
     import funcnodes as fn
 
-    asyncio.run(fn.worker.worker_manager.assert_worker_manager_running())
+    asyncio.run(
+        fn.worker.worker_manager.assert_worker_manager_running(
+            host=worker_manager_host,
+            port=worker_manager_port,
+        )
+    )
     try:
         script_directory = os.path.dirname(os.path.abspath(__file__))
         os.chdir(script_directory)
-        httpd = GracefulHTTPServer(("", port), CustomHTTPRequestHandler)
+        httpd = GracefulHTTPServer(
+            ("", port),
+            CustomHTTPRequestHandler,
+            worker_manager_host=worker_manager_host,
+            worker_manager_port=worker_manager_port,
+        )
         print(f"Serving at port {port}")
         if open_browser:
             threading.Thread(target=_open_browser, args=(port,), daemon=True).start()
