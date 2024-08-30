@@ -39,7 +39,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-type", "text/json")
         self.end_headers()
         self.wfile.write(
-            f"w{'s' if self.server.worker_manager_ssl else ''}://{self.server.worker_manager_host}:{self.server.worker_manager_port}".encode(
+            f"ws{'s' if self.server.worker_manager_ssl else ''}://{self.server.worker_manager_host}:{self.server.worker_manager_port}".encode(
                 "utf-8"
             )
         )
