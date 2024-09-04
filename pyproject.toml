@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "funcnodes_react_flow"
-version = "0.1.8"
+version = "0.1.9"
 description = "funcnodes frontend for react flow"
 authors = ["Julian Kimmig <julian.kimmig@linkdlab.de>"]
 readme = "README.md"
