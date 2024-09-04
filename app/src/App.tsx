@@ -1,29 +1,20 @@
-import './App.css'
-import FuncnodesReactFlow, {
-  WebSocketWorker
-} from '@linkdlab/funcnodes_react_flow'
-import '@linkdlab/funcnodes_react_flow/dist/css/style.css'
+import React from "react";
+import FuncnodesReactFlow from "@linkdlab/funcnodes_react_flow";
 
-function App() {
-  const worker = new WebSocketWorker({
-    url: 'ws://localhost:9382',
-    uuid: '1234'
-  })
+import "@linkdlab/funcnodes_react_flow/../../css/style.css";
+
+const App = () => {
   return (
     <div
-      className='App'
+      className="App"
       style={{
-        height: '98vh',
-        width: '98vw',
-        marginLeft: '1vw',
-        marginTop: '1vh'
+        height: "100vh",
+        width: "100vw",
       }}
     >
-      <FuncnodesReactFlow
-        useWorkerManager={false}
-        default_worker={worker}
-      ></FuncnodesReactFlow>
+      <FuncnodesReactFlow></FuncnodesReactFlow>
     </div>
-  )
-}
-export default App
+  );
+};
+
+export default App;

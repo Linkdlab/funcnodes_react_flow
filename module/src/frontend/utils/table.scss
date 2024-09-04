@@ -1,0 +1,23 @@
+.tablecontainer {
+  overflow: auto;
+  background-color: white;
+  min-height: 20rem;
+}
+.tableHead {
+  color: var(--funheadercolor) !important;
+  background-color: var(--funcnodesbackground1);
+  font-weight: bold !important;
+}
+
+.tableheadercolor {
+  color: inherit !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+}
+
+.indexcol {
+  background-color: var(--funcnodesbackground2);
+  color: var(--funheadercolor) !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+}

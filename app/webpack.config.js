@@ -2,27 +2,21 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const glob = require("glob");
-const { PurgeCSSPlugin } = require("purgecss-webpack-plugin");
-
-const PATHS = {
-  src: path.join(__dirname, "src"),
-};
+// const BundleAnalyzerPlugin =
+//   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
   context: __dirname,
   entry: "./src/index.tsx",
+  target: "web",
 
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "js/bundle.js",
+    filename: "js/[name].js",
   },
-  performance: {
-    maxEntrypointSize: 5 * 1024 * 1024, // 5mb
-    maxAssetSize: 5 * 1024 * 1024, // 5mb
-  },
-  mode: "production",
-  //   mode: "development",
+
+  // mode: "production",
+  mode: "development",
   module: {
     rules: [
       //typescript
@@ -89,28 +83,13 @@ module.exports = {
           },
         ],
       },
-      //images
-      {
-        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "img/[name][ext][query]",
-        },
-      },
-      //fonts
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "fonts/[name][ext][query]",
-        },
-      },
     ],
   },
 
   devServer: {
     static: "./public",
     historyApiFallback: true,
+
     client: {
       overlay: {
         runtimeErrors: (error) => {
@@ -132,14 +111,11 @@ module.exports = {
       filename: "css/style.css",
       chunkFilename: "css/[name].css",
     }),
-    // new PurgeCSSPlugin({
-    //   paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
-    //   whitelistPatterns: [/sm:/, /md:/, /lg:/, /xl:/, /2xl:/, /bg-/, /text-/],
-    //   defaultExtractor: (content) => content.match(/[\w-/:.!]+(?<!:)/g) || [],
-    // }),
+
     new HtmlWebpackPlugin({
       template: "./public/index.html",
     }),
+    // new BundleAnalyzerPlugin(),
   ],
   resolve: {
     extensions: [
@@ -152,5 +128,21 @@ module.exports = {
       ".css",
       ".ttf",
     ],
+    alias: {
+      //Modules: path.resolve(__dirname, "..", "node_modules"),
+      "@linkdlab/funcnodes_react_flow": path.resolve(
+        __dirname,
+        "../module/dist/esm/index.esm.js"
+      ),
+      //   react: require.resolve("react"), // Ensure we use the same React instance
+      //   "react-dom": require.resolve("react-dom"), // Ensure we use the same ReactDom instance
+    },
+    mainFields: ["module", "main"], // Prefers 'module' over 'main' for ES modules
+  },
+
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+    },
   },
 };

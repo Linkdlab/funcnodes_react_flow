@@ -13,3 +13,4 @@
 .pnp.*
 old/*
 /node_modules/
+__pycache__/

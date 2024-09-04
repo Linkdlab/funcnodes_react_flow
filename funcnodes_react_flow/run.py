@@ -7,6 +7,7 @@ import time
 import threading
 import asyncio
 import funcnodes as fn
+import websockets
 
 PORT = 8029
 
@@ -95,6 +96,19 @@ class GracefulHTTPServer(socketserver.TCPServer):
 def _open_browser(port, delay=1.0):
     time.sleep(delay)
     webbrowser.open(f"http://localhost:{port}")
+
+
+async def websocket_handler(websocket, path):
+    async for message in websocket:
+        print(f"Received WebSocket message: {message}")
+        await websocket.send(f"Echo: {message}")
+
+
+def start_websocket_server(port):
+    asyncio.set_event_loop(asyncio.new_event_loop())
+    start_server = websockets.serve(websocket_handler, "localhost", port)
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
 
 
 def run_server(
