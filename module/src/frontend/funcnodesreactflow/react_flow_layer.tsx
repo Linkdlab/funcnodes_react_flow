@@ -10,6 +10,7 @@ import React, {
 
 import ReactFlow, {
   Background,
+  Edge,
   EdgeTypes,
   MiniMap,
   NodeTypes,
@@ -17,6 +18,7 @@ import ReactFlow, {
   useKeyPress,
   useNodes,
   useReactFlow,
+  Node,
 } from "reactflow";
 import { FuncNodesContext } from "..";
 import { useShallow } from "zustand/react/shallow";
@@ -148,6 +150,20 @@ const ReactFlowLayer = () => {
 
   const [menu, setMenu] = useState<ContextMenuProps | null>(null);
 
+  const onSelectionChange = ({
+    nodes,
+    edges,
+  }: {
+    nodes: Node[];
+    edges: Edge[];
+  }) => {
+    const cs = fnrf_zst.local_state.getState();
+    fnrf_zst.local_state.setState({
+      ...cs,
+      selected_nodes: nodes.map((node) => node.id),
+      selected_edges: edges.map((edge) => edge.id),
+    });
+  };
   // const onNodeContextMenu = useCallback(
   //   (event: React.MouseEvent, node: Node) => {
   //     if (!reactflowRef.current) return;
@@ -188,6 +204,7 @@ const ReactFlowLayer = () => {
         minZoom={0.1}
         maxZoom={2}
         fitView
+        onSelectionChange={onSelectionChange}
         ref={reactflowRef}
         //  onNodeContextMenu={onNodeContextMenu}
         onPaneClick={onPaneClick}

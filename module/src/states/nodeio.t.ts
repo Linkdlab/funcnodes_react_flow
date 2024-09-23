@@ -70,6 +70,13 @@ interface IOType {
   value_options?: IOValueOptions;
   valuepreview_type?: string;
   try_get_full_value: undefined | (() => void);
+  hidden: boolean;
+  set_hidden: undefined | ((v: boolean) => void);
+}
+
+interface UpdateableIOOptions {
+  name?: string;
+  hidden?: boolean;
 }
 
 type OutputRendererType = ({ io }: { io: IOType }) => JSX.Element;
@@ -100,4 +107,5 @@ export type {
   InputRendererProps,
   InputRendererType,
   PartialIOType,
+  UpdateableIOOptions,
 };

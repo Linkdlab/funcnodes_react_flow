@@ -80,3 +80,4 @@ const NodeInput = ({ io }: { io: IOType }) => {
 };
 
 export default NodeInput;
+export { INPUTCONVERTER };

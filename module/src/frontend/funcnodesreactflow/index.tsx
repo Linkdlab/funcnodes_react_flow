@@ -13,6 +13,7 @@ import {
   FuncnodesReactHeaderProps,
 } from "../../states/fnrfzst.t";
 import { RenderMappingProvider } from "../datarenderer/rendermappings";
+import { NodeSettings } from "../node";
 
 const FuncNodesContext = createContext<FuncNodesReactFlowZustandInterface>(
   FuncNodesReactFlowZustand({})
@@ -62,6 +63,7 @@ const InnerFuncnodesReactFlow = ({
           <div className="funcnodesreactflowbody">
             <Library></Library>
             <ReactFlowLayer></ReactFlowLayer>
+            <NodeSettings></NodeSettings>
           </div>
         </div>
       </FuncNodesContext.Provider>

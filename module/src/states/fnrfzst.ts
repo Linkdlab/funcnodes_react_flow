@@ -22,6 +22,9 @@ import type {
   RenderOptions,
   WorkersState,
   FuncnodesReactFlowProps,
+  FuncnodesReactFlowLocalSettings,
+  FuncnodesReactFlowViewSettings,
+  FuncnodesReactFlowLocalState,
 } from "./fnrfzst.t";
 import type {
   NodeActionAdd,
@@ -89,6 +92,27 @@ const assert_react_flow_io = (
       fnrf_instance.worker?.get_io_full_value({ nid: io.node, ioid: io.id });
     };
   }
+
+  if (io.hidden === undefined) {
+    io.hidden = false;
+  }
+  if (io.set_hidden === undefined) {
+    io.set_hidden = (v: boolean) => {
+      if (!fnrf_instance) {
+        return;
+      }
+      if (io.node === undefined || io.id === undefined) {
+        return;
+      }
+      fnrf_instance.worker?.update_io_options({
+        nid: io.node,
+        ioid: io.id,
+        options: { hidden: v },
+      });
+    };
+  }
+
+  console.log("ioAAA", io);
 
   return io;
 };
@@ -407,6 +431,27 @@ const FuncNodesReactFlowZustand = ({
     iterf.auto_progress();
   };
   const iterf: FuncNodesReactFlowZustandInterface = {
+    local_settings: create<FuncnodesReactFlowLocalSettings>((_set, _get) => ({
+      view_settings: {
+        expand_node_props: false,
+      },
+      update_view_settings: (settings: FuncnodesReactFlowViewSettings) => {
+        const current = iterf.local_settings.getState().view_settings;
+        const { new_obj, change } = deep_merge(current, settings);
+        if (change) {
+          iterf.local_settings.setState((prev) => ({
+            ...prev,
+            view_settings: new_obj,
+          }));
+        }
+      },
+    })),
+
+    local_state: create<FuncnodesReactFlowLocalState>((_set, _get) => ({
+      selected_nodes: [],
+      selected_edges: [],
+    })),
+
     options: options,
     lib: lib,
     workermanager: undefined,

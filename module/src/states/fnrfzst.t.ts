@@ -99,8 +99,23 @@ interface DevSettings {
   debug: boolean;
 }
 
+interface FuncnodesReactFlowViewSettings {
+  expand_node_props: boolean;
+}
+interface FuncnodesReactFlowLocalSettings {
+  view_settings: FuncnodesReactFlowViewSettings;
+  update_view_settings: (settings: FuncnodesReactFlowViewSettings) => void;
+}
+
+interface FuncnodesReactFlowLocalState {
+  selected_nodes: string[];
+  selected_edges: string[];
+}
+
 interface FuncNodesReactFlowZustandInterface {
   options: FuncnodesReactFlowProps;
+  local_settings: UseBoundStore<StoreApi<FuncnodesReactFlowLocalSettings>>;
+  local_state: UseBoundStore<StoreApi<FuncnodesReactFlowLocalState>>;
   lib: LibZustandInterface;
   workermanager: WorkerManager | undefined;
   workers: UseBoundStore<StoreApi<WorkersState>>;
@@ -140,4 +155,7 @@ export type {
   NodeViewState,
   FuncnodesReactFlowProps,
   FuncnodesReactHeaderProps,
+  FuncnodesReactFlowLocalSettings,
+  FuncnodesReactFlowLocalState,
+  FuncnodesReactFlowViewSettings,
 };

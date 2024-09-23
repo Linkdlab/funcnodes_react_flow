@@ -104,9 +104,10 @@ const NodeBody = ({ node_data }: NodeBodyProps) => {
         <NodeOutput key={io.id} io={io} />
       ))}
       <NodeDataRenderer node_data={node_data} />
-      {inputs.map((io) => (
-        <NodeInput key={io.id} io={io} />
-      ))}
+      {inputs.map((io) => {
+        if (io.hidden) return null;
+        return <NodeInput key={io.id} io={io} />;
+      })}
     </div>
   );
 };
@@ -208,4 +209,4 @@ const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
 };
 
 export default DefaultNode;
-export {};
+export { NodeName };

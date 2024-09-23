@@ -11,6 +11,7 @@ import { deep_merge } from "../utils";
 import { LibType } from "../states/lib.t";
 import { PackedPlugin } from "../plugin";
 import { print_object_size, print_object } from "../utils/debugger";
+import { UpdateableIOOptions } from "../states/nodeio.t";
 type CmdMessage = {
   type: string;
   cmd: string;
@@ -733,6 +734,37 @@ class FuncNodesWorker {
       from_remote: true,
     });
     return res;
+  }
+
+  async update_io_options({
+    nid,
+    ioid,
+    options,
+  }: {
+    nid: string;
+    ioid: string;
+    options: UpdateableIOOptions;
+  }) {
+    console.log("AAA", { nid, ioid, ...options });
+    const res = await this._send_cmd({
+      cmd: "update_io_options",
+      kwargs: { nid, ioid, ...options },
+      wait_for_response: true,
+    });
+    console.log("AAA", res, { nid, ioid, ...options });
+    if (!this._zustand) return res;
+    this._zustand.on_node_action({
+      type: "update",
+      node: {
+        io: {
+          [ioid]: {
+            ...options,
+          },
+        },
+      },
+      id: nid,
+      from_remote: true,
+    });
   }
 
   async get_node_status(nid: string) {

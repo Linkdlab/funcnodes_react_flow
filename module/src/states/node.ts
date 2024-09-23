@@ -19,6 +19,8 @@ const dummy_nodeio: IOType = {
     set_default: true,
     type: "any",
   },
+  set_hidden: undefined,
+  hidden: false,
 };
 const assert_full_nodeio = (io: Partial<IOType>): IOType => {
   if (!io.id) {
