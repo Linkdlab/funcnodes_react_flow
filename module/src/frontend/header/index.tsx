@@ -213,18 +213,31 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
             <option disabled value="__select__">
               Select Worker
             </option>
-            {Object.keys(workersstate).map((workerid) => (
-              <option
-                className={
-                  "workerselectoption" +
-                  (workersstate[workerid].active ? " active" : " inactive")
-                }
-                key={workerid}
-                value={workerid}
-              >
-                {workersstate[workerid].name || workerid}
-              </option>
-            ))}
+            {Object.keys(workersstate)
+              .sort((a, b) => {
+                // First, sort by active status (active workers come first)
+                if (workersstate[a].active && !workersstate[b].active)
+                  return -1;
+                if (!workersstate[a].active && workersstate[b].active) return 1;
+
+                // If both are active or both are inactive, sort by name or ID
+
+                const nameA = workersstate[a].name || a;
+                const nameB = workersstate[b].name || b;
+                return nameA.localeCompare(nameB);
+              })
+              .map((workerid) => (
+                <option
+                  className={
+                    "workerselectoption" +
+                    (workersstate[workerid].active ? " active" : " inactive")
+                  }
+                  key={workerid}
+                  value={workerid}
+                >
+                  {workersstate[workerid].name || workerid}
+                </option>
+              ))}
           </select>
         </div>
       )}
