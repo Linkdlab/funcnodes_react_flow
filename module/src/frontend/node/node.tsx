@@ -100,9 +100,10 @@ const NodeBody = ({ node_data }: NodeBodyProps) => {
 
   return (
     <div className="nodebody">
-      {outputs.map((io) => (
-        <NodeOutput key={io.id} io={io} />
-      ))}
+      {outputs.map((io) => {
+        if (io.hidden) return null;
+        return <NodeOutput key={io.id} io={io} />;
+      })}
       <NodeDataRenderer node_data={node_data} />
       {inputs.map((io) => {
         if (io.hidden) return null;

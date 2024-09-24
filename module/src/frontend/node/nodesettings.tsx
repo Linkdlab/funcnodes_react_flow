@@ -55,9 +55,32 @@ const NodeSettingsInput = ({ io }: { io: IOType }) => {
   );
 };
 
+const NodeSettingsOutput = ({ io }: { io: IOType }) => {
+  return (
+    <div className="nodesettings_component">
+      <div>{io.name}</div>
+      <div>
+        <label>
+          hidden:
+          <input
+            className="styledcheckbox"
+            type="checkbox"
+            disabled={io.connected}
+            onChange={(e) => {
+              io.set_hidden?.(e.target.checked);
+            }}
+            checked={io.hidden}
+          ></input>
+        </label>
+      </div>
+    </div>
+  );
+};
+
 const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
   const node = nodestore();
   const inputs = Object.values(node.io).filter((io) => io.is_input);
+  const outputs = Object.values(node.io).filter((io) => !io.is_input);
 
   return (
     <div>
@@ -73,6 +96,12 @@ const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
         <div>Inputs</div>
         {inputs.map((io) => (
           <NodeSettingsInput io={io} key={io.id} />
+        ))}
+      </div>
+      <div className="nodesettings_section">
+        <div>Outputs</div>
+        {outputs.map((io) => (
+          <NodeSettingsOutput io={io} key={io.id} />
         ))}
       </div>
     </div>
