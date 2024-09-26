@@ -112,8 +112,6 @@ const assert_react_flow_io = (
     };
   }
 
-  console.log("ioAAA", io);
-
   return io;
 };
 const assert_reactflow_node = (

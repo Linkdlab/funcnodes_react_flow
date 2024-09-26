@@ -39,7 +39,7 @@ const LibraryNode = ({ item }: { item: LibNode }) => {
 const filterShelf = (shelf: Shelf, filter: string): boolean => {
   const hasFilteredNodes =
     shelf.nodes?.some((node) =>
-      node.node_id.toLowerCase().includes(filter.toLowerCase()),
+      node.node_id.toLowerCase().includes(filter.toLowerCase())
     ) ?? false;
 
   const hasFilteredSubShelves =
@@ -55,7 +55,7 @@ const LibraryShelf = ({ item, filter }: { item: Shelf; filter: string }) => {
   const handleToggle = () => setIsOpen(!isOpen);
 
   const filterednodes = item.nodes?.filter((node) =>
-    node.node_id.toLowerCase().includes(filter.toLowerCase()),
+    node.node_id.toLowerCase().includes(filter.toLowerCase())
   );
 
   const _isopen = isOpen || filter.length > 0;
@@ -135,9 +135,25 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
   const [newlib, setNewLib] = useState("");
   const zustand: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
+
+  const [availableModules, SetAvailableModules] = useState([]);
+  const update_modules = () => {
+    console.log("get available modules");
+    if (zustand.worker === undefined) {
+      return;
+    }
+
+    zustand.worker.get_available_modules().then((modules) => {
+      console.log("modules", modules);
+      SetAvailableModules(modules);
+    });
+  };
+  console.log("availableModules", availableModules);
+
   if (!zustand.worker) {
     return <></>;
   }
+
   const add_new_lib = () => {
     if (zustand.worker === undefined) {
       return;
@@ -150,6 +166,7 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
       title="Add Library"
       trigger={children}
       description="Add a new library to the current worker."
+      onOpenChange={update_modules}
       buttons={[
         {
           text: "add",

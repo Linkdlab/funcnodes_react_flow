@@ -745,13 +745,12 @@ class FuncNodesWorker {
     ioid: string;
     options: UpdateableIOOptions;
   }) {
-    console.log("AAA", { nid, ioid, ...options });
     const res = await this._send_cmd({
       cmd: "update_io_options",
       kwargs: { nid, ioid, ...options },
       wait_for_response: true,
     });
-    console.log("AAA", res, { nid, ioid, ...options });
+
     if (!this._zustand) return res;
     this._zustand.on_node_action({
       type: "update",
@@ -771,6 +770,14 @@ class FuncNodesWorker {
     const res = await this._send_cmd({
       cmd: "get_node_state",
       kwargs: { nid },
+      wait_for_response: true,
+    });
+    return res;
+  }
+
+  async get_available_modules() {
+    const res = await this._send_cmd({
+      cmd: "get_available_modules",
       wait_for_response: true,
     });
     return res;
