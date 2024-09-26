@@ -1,10 +1,18 @@
 [tool.poetry]
-name = "funcnodes_react_flow"
+name = "funcnodes-react-flow"
 version = "0.1.10"
 description = "funcnodes frontend for react flow"
 authors = ["Julian Kimmig <julian.kimmig@linkdlab.de>"]
 readme = "README.md"
 license = "MIT"
+
+[tool.poetry.urls]
+homepage  = "https://github.com/Linkdlab/funcnodes_react_flow"
+source  = "https://github.com/Linkdlab/funcnodes_react_flow"
+tracker  = "https://github.com/Linkdlab/funcnodes_react_flow/issues"
+download = "https://pypi.org/project/funcnodes-react-flow/#files"
+
+
 
 [tool.poetry.dependencies]
 python = ">=3.11"
