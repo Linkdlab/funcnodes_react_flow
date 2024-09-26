@@ -1,13 +1,14 @@
 [tool.poetry]
 name = "funcnodes_react_flow"
-version = "0.1.9"
+version = "0.1.10"
 description = "funcnodes frontend for react flow"
 authors = ["Julian Kimmig <julian.kimmig@linkdlab.de>"]
 readme = "README.md"
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = ">=3.11"
-funcnodes = "*"
+funcnodes = ">=0.4.11"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
