@@ -637,6 +637,12 @@ class FuncNodesWorker {
         return this._zustand.lib.libstate.getState().set({
           lib: data.result,
         });
+      case "after_remove_shelf":
+        if (!data.result) return;
+        if (!this._zustand) return;
+        return this._zustand.lib.libstate.getState().set({
+          lib: data.result,
+        });
 
       default:
         console.warn("Unhandled nodepsace event", event, data);
@@ -647,6 +653,15 @@ class FuncNodesWorker {
   async add_lib(lib: string) {
     const ans = await this._send_cmd({
       cmd: "add_shelf",
+      kwargs: { src: lib },
+      wait_for_response: false,
+    });
+    return ans;
+  }
+
+  async remove_lib(lib: string) {
+    const ans = await this._send_cmd({
+      cmd: "remove_shelf",
       kwargs: { src: lib },
       wait_for_response: false,
     });

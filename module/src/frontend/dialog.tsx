@@ -14,6 +14,9 @@ interface CustomDialogProps {
     onClick: () => void;
     close?: boolean;
   }[];
+
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
 }
 const CustomDialog = ({
   trigger,
@@ -22,11 +25,21 @@ const CustomDialog = ({
   children,
   closebutton = true,
   onOpenChange,
-
   buttons = [],
+  open,
+  setOpen,
 }: CustomDialogProps) => {
+  const handleOpenChange = (isOpen: boolean) => {
+    if (setOpen) {
+      setOpen(isOpen);
+    }
+    if (onOpenChange) {
+      onOpenChange(isOpen);
+    }
+  };
+
   return (
-    <Dialog.Root onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Overlay className="dialogoverlay" />
