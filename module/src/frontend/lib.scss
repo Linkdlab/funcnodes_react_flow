@@ -123,9 +123,12 @@
     color: var(--funheadercolor);
     opacity: 0.8;
     display: flex;
+    max-width: 100%;
 
     &_text {
       flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

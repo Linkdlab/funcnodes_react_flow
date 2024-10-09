@@ -35,14 +35,25 @@ import type {
   NodeType,
 } from "./node.t";
 import FuncNodesReactPlugin from "../plugin";
-import { ConsoleLogger, DEBUG } from "../utils/logger";
+import { ConsoleLogger, DEBUG, INFO } from "../utils/logger";
 
 const _fill_node_frontend = (
   node: NodeType,
   fnrf_instance?: FuncNodesReactFlowZustandInterface
 ) => {
   const frontend = node.frontend || {};
-  if (!frontend.pos) {
+  if (!frontend.size) {
+    frontend.size = [200, 100];
+  }
+
+  if (
+    !frontend.pos ||
+    frontend.pos.length !== 2 ||
+    isNaN(frontend.pos[0]) ||
+    frontend.pos[0] === null ||
+    isNaN(frontend.pos[1]) ||
+    frontend.pos[1] === null
+  ) {
     if (
       !fnrf_instance ||
       !fnrf_instance.rf_instance ||
@@ -54,16 +65,17 @@ const _fill_node_frontend = (
       const rect = ref.getBoundingClientRect(); // Step 2: Get bounding rectangle
       const centerX = rect.left + rect.width / 2; // Calculate center X
       const centerY = rect.top + rect.height / 2; // Calculate center Y
-      const calcpos = fnrf_instance.rf_instance.screenToFlowPosition({
+      const flowpos = fnrf_instance.rf_instance.screenToFlowPosition({
         x: centerX,
         y: centerY,
       });
-      frontend.pos = [calcpos.x, calcpos.y];
+      frontend.pos = [
+        flowpos.x - frontend.size[0] / 2,
+        flowpos.y - frontend.size[1] / 2,
+      ];
     }
   }
-  if (!frontend.size) {
-    frontend.size = [200, 100];
-  }
+
   if (!frontend.collapsed) {
     frontend.collapsed = false;
   }
@@ -526,7 +538,7 @@ const FuncNodesReactFlowZustand = ({
       debug: true,
     },
 
-    logger: new ConsoleLogger("fn", DEBUG),
+    logger: new ConsoleLogger("fn", INFO),
   };
   return iterf;
 };

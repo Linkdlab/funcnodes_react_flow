@@ -13,6 +13,7 @@ import CustomDialog from "./dialog";
 import {
   ExternalWorkerClassDep,
   ExternalWorkerDependecies,
+  ExternalWorkerInstance,
   LibNode,
   Shelf,
 } from "../states/lib.t";
@@ -282,17 +283,15 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const update_modules = (open: boolean) => {
     if (!open) return;
-    console.log("get available modules");
+
     if (zustand.worker === undefined) {
       return;
     }
 
     zustand.worker.get_available_modules().then((modules) => {
-      console.log("modules", modules);
       SetAvailableModules(modules);
     });
   };
-  console.log("availableModules", availableModules);
 
   if (!zustand.worker) {
     return <></>;
@@ -311,7 +310,7 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
     if (zustand.worker === undefined) {
       return;
     }
-    zustand.worker.add_lib(module.name.replace("-", "_")); // use name as module name
+    zustand.worker.add_lib(module.name); // use name as module name
   };
 
   const add_new_lib_from_installable = (module: availableModule) => {
@@ -319,7 +318,7 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
     if (zustand.worker === undefined) {
       return;
     }
-    zustand.worker.add_lib("pip://" + module.name); // use name as module name
+    zustand.worker.add_lib(module.name); // use name as module name
   };
 
   const remove_lib_from_active = (module: availableModule) => {
@@ -327,7 +326,7 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
     if (zustand.worker === undefined) {
       return;
     }
-    zustand.worker.remove_lib(module.name.replace("-", "_"));
+    zustand.worker.remove_lib(module.name);
   };
 
   // Filter the modules based on the search term, ignoring case
@@ -407,58 +406,137 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const AddExternalWorkerOverLay = ({
-  children,
+const ExternalWorkerInstanceSettings = ({
+  ins,
 }: {
-  children: React.ReactNode;
+  ins: ExternalWorkerInstance;
 }) => {
-  const [newlib, setNewLib] = useState("");
-  const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
-  if (!zustand.worker) {
-    return <></>;
-  }
-  const add_new_worker = () => {
-    if (zustand.worker === undefined) {
-      return;
-    }
-    zustand.worker.add_worker_package(newlib);
-    setNewLib("");
+  const [tempName, setTempName] = useState(ins.name);
+  const fnrz = useContext(FuncNodesContext);
+
+  const stop_instance = () => {
+    if (!fnrz.worker) return;
+    fnrz.worker.remove_external_worker(ins.uuid, ins.nodeclassid);
   };
+
+  const save_instance = () => {
+    if (!fnrz.worker) return;
+    fnrz.worker.update_external_worker(ins.uuid, ins.nodeclassid, {
+      name: tempName,
+    });
+    ins.name = tempName;
+  };
+
   return (
-    <CustomDialog
-      title="Add External Worker"
-      trigger={children}
-      description="Add external worker class(es) to the current worker."
-      buttons={[
-        {
-          text: "add",
-          onClick: add_new_worker,
-          close: true,
-        },
-      ]}
-    >
-      <input
-        className="styledinput"
-        type="text"
-        value={newlib}
-        onChange={(e) => {
-          setNewLib(e.target.value);
-        }}
-      />
-    </CustomDialog>
+    <>
+      <CustomDialog
+        title={ins.name}
+        description={"Settings for" + ins.name}
+        trigger={<div>Settings</div>}
+        buttons={[
+          {
+            text: "Save",
+            onClick: save_instance,
+            close: true,
+          },
+          {
+            text: "Delete",
+            onClick: stop_instance,
+            close: true,
+          },
+        ]}
+      >
+        <div>
+          <div>
+            <label htmlFor="name">Name: </label>
+            <input
+              type="text"
+              name="name"
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              className="styledinput"
+            />
+          </div>
+        </div>
+      </CustomDialog>
+    </>
+  );
+};
+
+const ExternalWorkerInstanceEntry = ({
+  ins,
+  lib,
+  filter = "",
+}: {
+  ins: ExternalWorkerInstance;
+  lib?: Shelf;
+  filter?: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleToggle = () => setIsOpen(!isOpen);
+  const filterednodes = lib.nodes?.filter((node) =>
+    node.node_id.toLowerCase().includes(filter.toLowerCase())
+  );
+  return (
+    <div className="shelfcontainer">
+      <div
+        className="shelftitle"
+        onClick={handleToggle}
+        style={{ cursor: "pointer" }}
+        title={ins.name}
+      >
+        <div className="shelftitle_text">{ins.name}</div>
+        <div className={"expandicon " + (isOpen ? "open" : "close")}>
+          <ExpandLessIcon />
+        </div>
+      </div>
+      <div className={"libnodecontainer " + (isOpen ? "open" : "close")}>
+        <div className="libnodecontainer_inner">
+          {isOpen && (
+            <>
+              <div className="libnodeentry" title={ins.uuid}>
+                <ExternalWorkerInstanceSettings ins={ins} />
+              </div>
+              {lib && (
+                <>
+                  {filterednodes && (
+                    <>
+                      {filterednodes.map((subItem, idx) => (
+                        <LibraryNode key={idx} item={subItem} />
+                      ))}
+                    </>
+                  )}
+                  {lib.subshelves.map((subItem, idx) => (
+                    <LibraryShelf key={idx} item={subItem} filter={filter} />
+                  ))}
+                </>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
 const ExternalWorkerClassEntry = ({
   item,
   mod,
+  lib,
 }: {
   item: ExternalWorkerClassDep;
   mod: string;
+  lib?: Shelf;
 }) => {
   const zustand: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleToggle = () => setIsOpen(!isOpen);
+
+  console.log("ExternalWorkerClassEntry", item, mod);
 
   const add_to_flow = () => {
     zustand.worker?.add_external_worker({
@@ -468,29 +546,67 @@ const ExternalWorkerClassEntry = ({
     });
   };
 
-  const nodeclick = (event: MouseEvent<HTMLDivElement>) => {
+  const click_new_instance = (event: MouseEvent<HTMLDivElement>) => {
     // if double click, add node to graph
     if (event.detail === 2) {
       add_to_flow();
     }
   };
+
+  const title = item.name || item.module + "." + item.class_name;
   return (
-    <div className="libnodeentry" onClick={nodeclick} title={item.name}>
-      {item.name || item.module + "." + item.class_name}
+    <div className="shelfcontainer">
+      <div
+        className="shelftitle"
+        onClick={handleToggle}
+        style={{ cursor: "pointer" }}
+        title={title}
+      >
+        <div className="shelftitle_text">{title}</div>
+        <div className={"expandicon " + (isOpen ? "open" : "close")}>
+          <ExpandLessIcon />
+        </div>
+      </div>
+      <div className={"libnodecontainer " + (isOpen ? "open" : "close")}>
+        <div className="libnodecontainer_inner">
+          {isOpen && (
+            <>
+              <div
+                className="libnodeentry"
+                onClick={click_new_instance}
+                title={item.name}
+              >
+                New Instance
+              </div>
+              {item.instances.map((instance, idx) => (
+                <ExternalWorkerInstanceEntry
+                  key={idx}
+                  ins={instance}
+                  lib={lib?.subshelves.find(
+                    (shelf) => shelf.name === instance.uuid
+                  )}
+                />
+              ))}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 const ExternalWorkerShelf = ({
   externalworkermod,
+  lib,
 }: {
   externalworkermod: ExternalWorkerDependecies;
+  lib?: Shelf;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => setIsOpen(!isOpen);
 
   const _isopen = isOpen;
-
+  console.log("externalworkermod", externalworkermod);
   return (
     <div className="shelfcontainer">
       <div
@@ -511,6 +627,7 @@ const ExternalWorkerShelf = ({
               key={idx}
               item={subItem}
               mod={externalworkermod.module}
+              lib={lib}
             />
           ))}
         </div>
@@ -534,22 +651,15 @@ const Library = () => {
         <hr className="hr_prominent" />
         <LibFilter filter={filter} setFilter={setFilter} />
         <div className="vscrollcontainer">
-          {libstate.lib.shelves.map((item, idx) => (
-            <LibraryShelf key={idx} item={item} filter={filter} />
-          ))}
+          {libstate.lib.shelves.map((item, idx) =>
+            item.name == "_external_worker" ? (
+              <></>
+            ) : (
+              <LibraryShelf key={idx} item={item} filter={filter} />
+            )
+          )}
         </div>
         <hr />
-
-        <div className="addlib">
-          <AddLibraryOverLay>
-            <button disabled={zustand.worker === undefined}>
-              Manage Libaries
-            </button>
-          </AddLibraryOverLay>
-        </div>
-      </div>
-      <div style={{ paddingTop: "0.5rem" }}></div>
-      <div className="library">
         <div className="libtitle">External Worker</div>
         <hr className="hr_prominent" />
         <div className="vscrollcontainer">
@@ -557,17 +667,21 @@ const Library = () => {
             <ExternalWorkerShelf
               key={idx}
               externalworkermod={item}
+              lib={libstate.lib.shelves.find(
+                (shelf) => shelf.name === "_external_worker"
+              )}
             ></ExternalWorkerShelf>
           ))}
         </div>
         <hr />
-        <div className="addlib">
-          <AddExternalWorkerOverLay>
-            <button disabled={zustand.worker === undefined}>
-              Add External Worker
-            </button>
-          </AddExternalWorkerOverLay>
-        </div>
+      </div>
+      <div style={{ paddingTop: "0.5rem" }}></div>
+      <div className="addlib">
+        <AddLibraryOverLay>
+          <button disabled={zustand.worker === undefined}>
+            Manage Libaries
+          </button>
+        </AddLibraryOverLay>
       </div>
     </div>
   );

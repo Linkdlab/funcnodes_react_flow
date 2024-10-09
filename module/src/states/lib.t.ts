@@ -17,10 +17,17 @@ type LibType = {
   shelves: Shelf[];
 };
 
+interface ExternalWorkerInstance {
+  uuid: string;
+  nodeclassid: string;
+  running: boolean;
+  name: string;
+}
 interface ExternalWorkerClassDep {
   module: string;
   class_name: string;
   name: string;
+  instances: ExternalWorkerInstance[];
 }
 interface ExternalWorkerDependecies {
   module: string;
@@ -50,4 +57,5 @@ export type {
   LibNode,
   ExternalWorkerClassDep,
   ExternalWorkerDependecies,
+  ExternalWorkerInstance,
 };
