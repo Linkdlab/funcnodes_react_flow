@@ -71,10 +71,15 @@ const InnerFuncnodesReactFlow = ({
   );
 };
 
+const FUNCNODESREACTFLOW_MAPPER: {
+  [key: string]: FuncNodesReactFlowZustandInterface;
+} = {};
+
 const FuncnodesReactFlow = ({
   useWorkerManager = true,
   default_worker = undefined,
   header = {},
+  id,
 }: FuncnodesReactFlowProps) => {
   if (!useWorkerManager && default_worker === undefined) {
     return (
@@ -85,28 +90,34 @@ const FuncnodesReactFlow = ({
     );
   }
 
-  const fnrf_zst = FuncNodesReactFlowZustand({
-    useWorkerManager,
-    default_worker,
-  });
-
-  if (default_worker) {
-    default_worker.set_zustand(fnrf_zst);
+  if (id === undefined || id === null) {
+    id = "fnrf_" + Math.random().toString(36).substring(7);
   }
 
   // @ts-ignore
   if (window.fnrf_zst === undefined) {
     // @ts-ignore
-    window.fnrf_zst = [];
-  }
-  // add to window.fnrf_zst if not already there
-  // @ts-ignore
-  if (!window.fnrf_zst.includes(fnrf_zst)) {
-    // @ts-ignore
-    window.fnrf_zst.push(fnrf_zst);
+    window.fnrf_zst = FUNCNODESREACTFLOW_MAPPER;
   }
 
-  return <InnerFuncnodesReactFlow fnrf_zst={fnrf_zst} header={header} />;
+  if (FUNCNODESREACTFLOW_MAPPER[id] === undefined) {
+    const fnrf_zst = FuncNodesReactFlowZustand({
+      useWorkerManager,
+      default_worker,
+    });
+    FUNCNODESREACTFLOW_MAPPER[id] = fnrf_zst;
+  }
+
+  if (default_worker) {
+    default_worker.set_zustand(FUNCNODESREACTFLOW_MAPPER[id]);
+  }
+
+  return (
+    <InnerFuncnodesReactFlow
+      fnrf_zst={FUNCNODESREACTFLOW_MAPPER[id]}
+      header={header}
+    />
+  );
 };
 
 export default FuncnodesReactFlow;
