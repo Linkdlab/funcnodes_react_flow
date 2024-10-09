@@ -5,6 +5,7 @@ import {
   JSONMessage,
   NodeSpaceEvent,
   ViewState,
+  WorkerEvent,
 } from "../states/fnrfzst.t";
 import { NodeActionUpdate, NodeType, PartialNodeType } from "../states/node.t"; // Import the missing type
 import { deep_merge } from "../utils";
@@ -389,7 +390,6 @@ class FuncNodesWorker {
     value: any;
     set_default: boolean;
   }) {
-    if (set_default && value == "<NoValue>") set_default = false;
     return this._send_cmd({
       cmd: "set_io_value",
       kwargs: { nid, ioid, value, set_default },
@@ -529,6 +529,29 @@ class FuncNodesWorker {
     throw new Error("Not implemented");
   }
 
+  async recieve_workerevent({ event, data }: WorkerEvent) {
+    switch (event) {
+      case "worker_error":
+        if (!this._zustand) return;
+        return this._zustand.logger.error(data.error);
+      case "update_worker_dependencies":
+        if (!this._zustand) return;
+        return this._zustand.lib.libstate.getState().set({
+          external_worker: data.worker_dependencies,
+        });
+      case "lib_update":
+        await this.sync_lib();
+        return;
+      case "external_worker_update":
+        await this.sync_lib();
+        await this.sync_external_worker();
+        return;
+      default:
+        console.warn("Unhandled worker event", event, data);
+        break;
+    }
+  }
+
   async recieve_nodespace_event({ event, data }: NodeSpaceEvent) {
     print_object_size(data, "Data size for event " + event, this._zustand);
     print_object(data, this._zustand);
@@ -652,8 +675,8 @@ class FuncNodesWorker {
 
   async add_lib(lib: string) {
     const ans = await this._send_cmd({
-      cmd: "add_shelf",
-      kwargs: { src: lib },
+      cmd: "add_package_dependency",
+      kwargs: { name: lib },
       wait_for_response: false,
     });
     return ans;
@@ -661,17 +684,8 @@ class FuncNodesWorker {
 
   async remove_lib(lib: string) {
     const ans = await this._send_cmd({
-      cmd: "remove_shelf",
-      kwargs: { src: lib },
-      wait_for_response: false,
-    });
-    return ans;
-  }
-
-  async add_worker_package(pkg: string) {
-    const ans = await this._send_cmd({
-      cmd: "add_worker_package",
-      kwargs: { src: pkg },
+      cmd: "remove_package_dependency",
+      kwargs: { name: lib },
       wait_for_response: false,
     });
     return ans;
@@ -699,6 +713,9 @@ class FuncNodesWorker {
         if (!this._zustand) return;
         this._zustand.set_progress(data);
         break;
+
+      case "workerevent":
+        return await this.recieve_workerevent(data);
       default:
         console.warn("Unhandled message", data);
         break;
@@ -793,6 +810,30 @@ class FuncNodesWorker {
   async get_available_modules() {
     const res = await this._send_cmd({
       cmd: "get_available_modules",
+      wait_for_response: true,
+    });
+    return res;
+  }
+
+  async update_external_worker(
+    worker_id: string,
+    class_id: string,
+    data: {
+      name?: string;
+    }
+  ) {
+    const res = await this._send_cmd({
+      cmd: "update_external_worker",
+      kwargs: { worker_id, class_id, ...data },
+      wait_for_response: true,
+    });
+    return res;
+  }
+
+  async remove_external_worker(worker_id: string, class_id: string) {
+    const res = await this._send_cmd({
+      cmd: "remove_external_worker",
+      kwargs: { worker_id, class_id },
       wait_for_response: true,
     });
     return res;

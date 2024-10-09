@@ -70,11 +70,19 @@ interface NodeSpaceEvent {
   event: string;
   data: { [key: string]: any };
 }
+
+interface WorkerEvent {
+  type: "workerevent";
+  event: string;
+  data: { [key: string]: any };
+}
+
 type JSONMessage =
   | ProgressStateMessage
   | ResultMessage
   | ErrorMessage
-  | NodeSpaceEvent;
+  | NodeSpaceEvent
+  | WorkerEvent;
 
 interface WorkerRepresentation {
   uuid: string;
@@ -93,6 +101,7 @@ interface FuncnodesReactFlowProps {
   useWorkerManager?: boolean;
   default_worker?: FuncNodesWorker;
   header?: FuncnodesReactHeaderProps;
+  id?: string;
 }
 
 interface DevSettings {
@@ -152,6 +161,7 @@ export type {
   ResultMessage,
   ErrorMessage,
   NodeSpaceEvent,
+  WorkerEvent,
   NodeViewState,
   FuncnodesReactFlowProps,
   FuncnodesReactHeaderProps,
