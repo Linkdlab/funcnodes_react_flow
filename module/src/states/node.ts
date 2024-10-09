@@ -48,7 +48,7 @@ const dummy_node: NodeType = {
   id: "dummy",
   node_name: "dummy",
   frontend: {
-    pos: [0, 0],
+    pos: [NaN, NaN],
     size: [200, 100],
     collapsed: false,
   },
@@ -57,11 +57,13 @@ const dummy_node: NodeType = {
   in_trigger: false,
   io_order: [],
 };
+
+const dummy_node_json = JSON.stringify(dummy_node);
 const assert_full_node = (node: PartialNodeType): NodeType => {
   if (!node.id) {
     throw new Error("Node must have an id");
   }
-
+  const dummy_node = JSON.parse(dummy_node_json);
   const { new_obj } = deep_update(node, dummy_node);
 
   for (const ioid in new_obj.io) {

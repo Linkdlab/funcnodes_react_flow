@@ -4,17 +4,29 @@ import "./index.css";
 
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
 
 // @ts-ignore
 window.AppReact = React;
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+
+const FuncNodes = (id_or_element: string | HTMLElement) => {
+  let id: string;
+  let element: HTMLElement;
+  if (typeof id_or_element === "string") {
+    id = id_or_element;
+    element = document.getElementById(id) as HTMLElement;
+  } else {
+    element = id_or_element;
+    id = element.id;
+  }
+
+  ReactDOM.createRoot(element).render(
+    <React.StrictMode>
+      <App id={id} />
+    </React.StrictMode>
+  );
+};
+
+FuncNodes("root");
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
