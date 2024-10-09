@@ -3,7 +3,7 @@ import FuncnodesReactFlow from "@linkdlab/funcnodes_react_flow";
 
 import "@linkdlab/funcnodes_react_flow/../../css/style.css";
 
-const App = () => {
+const App = ({ id }: { id?: string }) => {
   return (
     <div
       className="App"
@@ -12,7 +12,7 @@ const App = () => {
         width: "100vw",
       }}
     >
-      <FuncnodesReactFlow></FuncnodesReactFlow>
+      <FuncnodesReactFlow id={id}></FuncnodesReactFlow>
     </div>
   );
 };
