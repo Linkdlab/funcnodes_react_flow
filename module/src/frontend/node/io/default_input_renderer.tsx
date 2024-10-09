@@ -63,7 +63,7 @@ const NumberInput = ({
 
   const set_new_value = (new_value: number | string) => {
     new_value = parser(
-      parseFloat(new_value.toString()).toString() // parse float for e notation
+      parseFloat(new_value.toString()).toString() // parse float first for e notation
     );
 
     if (isNaN(new_value)) {
@@ -85,13 +85,16 @@ const NumberInput = ({
     try {
       new_value = inputconverter[0](new_value);
     } catch (e) {}
-
-    fnrf_zst.worker?.set_io_value({
-      nid: io.node,
-      ioid: io.id,
-      value: new_value,
-      set_default: io.render_options.set_default,
-    });
+    fnrf_zst.worker
+      ?.set_io_value({
+        nid: io.node,
+        ioid: io.id,
+        value: new_value,
+        set_default: io.render_options.set_default,
+      })
+      .then((v) => {
+        console.log("set io value done", v);
+      });
   };
 
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
