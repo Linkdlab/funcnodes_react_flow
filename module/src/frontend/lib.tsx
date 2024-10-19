@@ -475,7 +475,7 @@ const ExternalWorkerInstanceEntry = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => setIsOpen(!isOpen);
-  const filterednodes = lib.nodes?.filter((node) =>
+  const filterednodes = lib?.nodes?.filter((node) =>
     node.node_id.toLowerCase().includes(filter.toLowerCase())
   );
   return (

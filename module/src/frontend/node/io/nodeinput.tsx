@@ -75,6 +75,12 @@ const NodeInput = ({ io }: { io: IOType }) => {
         </div>
       )}
       <div className="ioname">{io.name}</div>
+      <HandleWithPreview
+        io={io}
+        typestring={typestring}
+        position={Position.Right}
+        type="source"
+      />
     </div>
   );
 };
