@@ -645,8 +645,29 @@ class FuncNodesWorker {
           trg_nid: data.result[2],
           trg_ioid: data.result[3],
         });
+      case "after_unforward":
+        if (!data.result) return;
+        if (!Array.isArray(data.result)) return;
+        if (data.result.length !== 4) return;
+        if (!this._zustand) return;
+        return this._zustand.on_edge_action({
+          type: "delete",
+          from_remote: true,
+          src_nid: data.result[0],
+          src_ioid: data.result[1],
+          trg_nid: data.result[2],
+          trg_ioid: data.result[3],
+        });
 
       case "after_connect":
+        if (!data.result) return;
+        if (!Array.isArray(data.result)) return;
+        if (data.result.length !== 4) return;
+        return this._recieve_edge_added(
+          ...(data.result as [string, string, string, string])
+        );
+
+      case "after_forward":
         if (!data.result) return;
         if (!Array.isArray(data.result)) return;
         if (data.result.length !== 4) return;

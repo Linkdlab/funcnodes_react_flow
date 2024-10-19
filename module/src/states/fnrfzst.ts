@@ -35,7 +35,7 @@ import type {
   NodeType,
 } from "./node.t";
 import FuncNodesReactPlugin from "../plugin";
-import { ConsoleLogger, DEBUG, INFO } from "../utils/logger";
+import { ConsoleLogger, INFO } from "../utils/logger";
 
 const _fill_node_frontend = (
   node: NodeType,
@@ -340,6 +340,8 @@ const FuncNodesReactFlowZustand = ({
             targetHandle: action.trg_ioid,
             className: "funcnodes-edge animated",
           };
+
+          console.log("Adding edge", new_edge);
 
           rfstore.setState({ edges: [...edges, new_edge] });
           iterf.worker?.get_remote_node_state(action.src_nid);
