@@ -79,7 +79,9 @@ interface UpdateableIOOptions {
   hidden?: boolean;
 }
 
-type OutputRendererType = ({ io }: { io: IOType }) => JSX.Element;
+type OutputRendererProps = { io: IOType };
+
+type OutputRendererType = ({ io }: OutputRendererProps) => JSX.Element;
 
 interface InputRendererProps {
   io: IOType;
@@ -103,6 +105,7 @@ export type {
   IORenderOptions,
   IOValueOptions,
   IOType,
+  OutputRendererProps,
   OutputRendererType,
   InputRendererProps,
   InputRendererType,
