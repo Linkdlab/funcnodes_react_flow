@@ -11,6 +11,7 @@ import {
 } from "../../../states/fnrfzst.t";
 import { IOType } from "../../../states/nodeio.t";
 import React from "react";
+import { RenderMappingContext } from "../../datarenderer/rendermappings";
 
 const NodeOutput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
@@ -18,6 +19,8 @@ const NodeOutput = ({ io }: { io: IOType }) => {
   const render: RenderOptions = fnrf_zst.render_options();
 
   const [typestring] = pick_best_io_type(io.type, render.typemap || {});
+  const { Outputrenderer } = useContext(RenderMappingContext);
+  const Output = typestring ? Outputrenderer[typestring] : undefined;
 
   return (
     <div className="nodeoutput">
@@ -29,10 +32,15 @@ const NodeOutput = ({ io }: { io: IOType }) => {
       />
 
       <div className="ioname">{io.name}</div>
-
-      <div className="iovaluefield">
-        <InLineOutput io={io} typestring={typestring} />
-      </div>
+      {Output ? (
+        <div className="iovaluefield nodrag">
+          <Output io={io} />
+        </div>
+      ) : (
+        <div className="iovaluefield">
+          <InLineOutput io={io} typestring={typestring} />
+        </div>
+      )}
     </div>
   );
 };

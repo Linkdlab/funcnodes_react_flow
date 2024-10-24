@@ -4,7 +4,11 @@ import React, {
   useEffect,
   useReducer,
 } from "react";
-import { IOType, InputRendererType } from "../../states/nodeio.t";
+import {
+  IOType,
+  InputRendererType,
+  OutputRendererType,
+} from "../../states/nodeio.t";
 import {
   FloatInput,
   IntegerInput,
@@ -41,6 +45,9 @@ const _Inputrenderer: {
   enum: SelectionInput,
   bytes: Base64BytesOutput,
 };
+const _Outputrenderer: {
+  [key: string]: OutputRendererType;
+} = {};
 
 type HandlePreviewRendererType = ({ io }: { io: IOType }) => JSX.Element;
 const _HandlePreviewGenerators: {
@@ -84,6 +91,9 @@ interface RenderMappingState {
   Inputrenderer: {
     [key: string]: InputRendererType;
   };
+  Outputrenderer: {
+    [key: string]: OutputRendererType;
+  };
   HandlePreviewRenderer: {
     [key: string]: HandlePreviewRendererType;
   };
@@ -110,6 +120,15 @@ interface extend_input_renderer_action {
   payload: {
     type: string;
     component: InputRendererType;
+  };
+  options?: DispatchOptions;
+}
+
+interface extend_output_renderer_action {
+  type: "EXTEND_OUTPUT_RENDER";
+  payload: {
+    type: string;
+    component: OutputRendererType;
   };
   options?: DispatchOptions;
 }
@@ -160,6 +179,7 @@ interface extend_from_plugin_action {
 
 type renderMappingAction =
   | extend_input_renderer_action
+  | extend_output_renderer_action
   | extend_handle_preview_renderer_action
   | extend_data_overlay_renderer_action
   | extend_data_preview_renderer_action
@@ -168,6 +188,7 @@ type renderMappingAction =
 
 const _initialRenderMappings: RenderMappingState = {
   Inputrenderer: _Inputrenderer,
+  Outputrenderer: _Outputrenderer,
   HandlePreviewRenderer: _HandlePreviewGenerators,
   DataOverlayRenderer: _DataOverlayViewGenerators,
   DataPreviewViewRenderer: _DataPreviewViewRenderer,
@@ -191,6 +212,17 @@ const renderMappingReducer = (
         ...state,
         Inputrenderer: {
           ...state.Inputrenderer,
+          [action.payload.type]: action.payload.component,
+        },
+      };
+    case "EXTEND_OUTPUT_RENDER":
+      if (!overwrite && state.Outputrenderer[action.payload.type]) {
+        return state;
+      }
+      return {
+        ...state,
+        Outputrenderer: {
+          ...state.Outputrenderer,
           [action.payload.type]: action.payload.component,
         },
       };
@@ -245,6 +277,7 @@ const renderMappingReducer = (
 
       const checkpairs = [
         [action.payload.plugin.input_renderers || {}, state.Inputrenderer],
+        [action.payload.plugin.output_renderers || {}, state.Outputrenderer],
         [
           action.payload.plugin.handle_preview_renderers || {},
           state.HandlePreviewRenderer,
@@ -263,13 +296,13 @@ const renderMappingReducer = (
         ],
       ];
 
-      for (const [new_Inputrenderer, old_Inputrenderer] of checkpairs) {
-        if (Object.keys(new_Inputrenderer).length > 0) {
+      for (const [new_renderer, old_renderer] of checkpairs) {
+        if (Object.keys(new_renderer).length > 0) {
           if (overwrite) {
             something_new = true;
           } else {
-            for (const key in new_Inputrenderer) {
-              if (!old_Inputrenderer[key]) {
+            for (const key in new_renderer) {
+              if (!old_renderer[key]) {
                 something_new = true;
                 break;
               }
@@ -283,10 +316,10 @@ const renderMappingReducer = (
         return state;
       }
 
-      for (const [new_Inputrenderer, old_Inputrenderer] of checkpairs) {
-        for (const key in new_Inputrenderer) {
-          if (overwrite || !old_Inputrenderer[key]) {
-            old_Inputrenderer[key] = new_Inputrenderer[key];
+      for (const [new_renderer, old_renderer] of checkpairs) {
+        for (const key in new_renderer) {
+          if (overwrite || !old_renderer[key]) {
+            old_renderer[key] = new_renderer[key];
           }
         }
       }
@@ -313,11 +346,13 @@ const renderMappingReducer = (
  * Context Value:
  * The context value provided by this component includes the following properties and functions:
  * - Inputrenderer: A mapping of input types to their corresponding renderer components.
+ * - Outputrenderer: A mapping of output types to their corresponding renderer components.
  * - HandlePreviewRenderer: A mapping of handle preview types to their corresponding renderer components.
  * - DataOverlayRenderer: A mapping of data overlay types to their corresponding renderer components.
  * - DataPreviewViewRenderer: A mapping of data preview view types to their corresponding renderer components.
  * - DataViewRenderer: A mapping of data view types to their corresponding renderer components.
  * - extendInputRenderMapping: A function to extend the input renderer mapping.
+ * - extendOutputRenderMapping: A function to extend the output renderer mapping.
  * - extendHandlePreviewRenderMapping: A function to extend the handle preview renderer mapping.
  * - extendDataOverlayRenderMapping: A function to extend the data overlay renderer mapping.
  * - extendDataPreviewRenderMapping: A function to extend the data preview view renderer mapping.
@@ -354,6 +389,18 @@ const RenderMappingProvider = ({
   ) => {
     dispatch({
       type: "EXTEND_INPUT_RENDER",
+      payload: { type, component },
+      options,
+    });
+  };
+
+  const extendOutputRenderMapping = (
+    type: string,
+    component: OutputRendererType,
+    options?: DispatchOptions
+  ) => {
+    dispatch({
+      type: "EXTEND_OUTPUT_RENDER",
       payload: { type, component },
       options,
     });
@@ -432,12 +479,14 @@ const RenderMappingProvider = ({
     <RenderMappingContext.Provider
       value={{
         Inputrenderer: state.Inputrenderer,
+        Outputrenderer: state.Outputrenderer,
         HandlePreviewRenderer: state.HandlePreviewRenderer,
         DataOverlayRenderer: state.DataOverlayRenderer,
         DataPreviewViewRenderer: state.DataPreviewViewRenderer,
         DataViewRenderer: state.DataViewRenderer,
         InLineRenderer: state.InLineRenderer,
         extendInputRenderMapping,
+        extendOutputRenderMapping,
         extendHandlePreviewRenderMapping,
         extendDataOverlayRenderMapping,
         extendDataPreviewRenderMapping,
@@ -452,6 +501,7 @@ const RenderMappingProvider = ({
 
 const RenderMappingContext = createContext({
   Inputrenderer: _initialRenderMappings.Inputrenderer,
+  Outputrenderer: _initialRenderMappings.Outputrenderer,
   HandlePreviewRenderer: _initialRenderMappings.HandlePreviewRenderer,
   DataOverlayRenderer: _initialRenderMappings.DataOverlayRenderer,
   DataPreviewViewRenderer: _initialRenderMappings.DataPreviewViewRenderer,
@@ -460,6 +510,11 @@ const RenderMappingContext = createContext({
   extendInputRenderMapping: (
     _type: string,
     _component: InputRendererType,
+    _options: DispatchOptions
+  ) => {},
+  extendOutputRenderMapping: (
+    _type: string,
+    _component: OutputRendererType,
     _options: DispatchOptions
   ) => {},
   extendHandlePreviewRenderMapping: (
@@ -504,6 +559,7 @@ export { RenderMappingContext, RenderMappingProvider, DynamicComponentLoader };
 export type {
   RenderMappingState,
   extend_input_renderer_action,
+  extend_output_renderer_action,
   extend_handle_preview_renderer_action,
   extend_data_overlay_renderer_action,
   extend_data_preview_renderer_action,
