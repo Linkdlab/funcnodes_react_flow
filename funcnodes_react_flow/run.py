@@ -29,20 +29,22 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def get_worker_manager(self):
         # Implement custom GET handling logic here
-        asyncio.run(
-            fn.worker.worker_manager.assert_worker_manager_running(
-                host=self.server.worker_manager_host,
-                port=self.server.worker_manager_port,
-                ssl=self.server.worker_manager_ssl,
+        if self.server.start_worker_manager:
+            asyncio.run(
+                fn.worker.worker_manager.assert_worker_manager_running(
+                    host=self.server.worker_manager_host,
+                    port=self.server.worker_manager_port,
+                    ssl=self.server.worker_manager_ssl,
+                )
             )
-        )
         self.send_response(200)
         self.send_header("Content-type", "text/json")
         self.end_headers()
         self.wfile.write(
-            f"ws{'s' if self.server.worker_manager_ssl else ''}://{self.server.worker_manager_host}:{self.server.worker_manager_port}".encode(
-                "utf-8"
-            )
+            (
+                f"ws{'s' if self.server.worker_manager_ssl else ''}://"
+                f"{self.server.worker_manager_host}:{self.server.worker_manager_port}"
+            ).encode("utf-8")
         )
 
     def handle_custom_post(self):
@@ -69,6 +71,7 @@ class GracefulHTTPServer(socketserver.TCPServer):
         worker_manager_host: Optional[str] = None,
         worker_manager_port: Optional[int] = None,
         worker_manager_ssl: Optional[bool] = None,
+        start_worker_manager=True,
     ):
         if worker_manager_host is None:
             worker_manager_host = fn.config.CONFIG["worker_manager"]["host"]
@@ -79,13 +82,14 @@ class GracefulHTTPServer(socketserver.TCPServer):
         if worker_manager_ssl is None:
             worker_manager_ssl = fn.config.CONFIG["worker_manager"].get("ssl", False)
 
+        self.start_worker_manager = start_worker_manager
         self.worker_manager_ssl = worker_manager_ssl
         self.worker_manager_host = worker_manager_host
         self.worker_manager_port = worker_manager_port
         super().__init__(server_address, RequestHandlerClass, bind_and_activate)
         self._is_serving = True
 
-    def serve_forever(self, poll_interval=0.5):
+    def serve_forever(self):
         while self._is_serving:
             self.handle_request()
 
@@ -117,16 +121,16 @@ def run_server(
     worker_manager_host: Optional[str] = None,
     worker_manager_port: Optional[int] = None,
     worker_manager_ssl: Optional[bool] = None,
+    start_worker_manager=True,
 ):
-    import funcnodes as fn
-
-    asyncio.run(
-        fn.worker.worker_manager.assert_worker_manager_running(
-            host=worker_manager_host,
-            port=worker_manager_port,
-            ssl=worker_manager_ssl,
+    if start_worker_manager:
+        asyncio.run(
+            fn.worker.worker_manager.assert_worker_manager_running(
+                host=worker_manager_host,
+                port=worker_manager_port,
+                ssl=worker_manager_ssl,
+            )
         )
-    )
     try:
         script_directory = os.path.dirname(os.path.abspath(__file__))
         os.chdir(script_directory)
@@ -136,6 +140,7 @@ def run_server(
             worker_manager_host=worker_manager_host,
             worker_manager_port=worker_manager_port,
             worker_manager_ssl=worker_manager_ssl,
+            start_worker_manager=start_worker_manager,
         )
         print(f"Serving at port {port}")
         if open_browser:
@@ -150,7 +155,3 @@ def run_server(
             raise
     except OSError as e:
         print(f"Could not start server at port {port}: {e}")
-
-
-
-

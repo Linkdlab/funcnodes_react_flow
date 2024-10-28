@@ -1,10 +1,6 @@
-from typing import Type
 from .run import run_server
 import funcnodes as fn
 import argparse
-from pprint import pprint
-import sys
-import os
 
 try:
     from setproctitle import setproctitle
