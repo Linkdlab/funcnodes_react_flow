@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "funcnodes-react-flow"
-version = "0.1.15"
+version = "0.2.0"
 description = "funcnodes frontend for react flow"
 authors = ["Julian Kimmig <julian.kimmig@linkdlab.de>"]
 readme = "README.md"
@@ -25,6 +25,10 @@ pre-commit = "*"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.vulture]
+min_confidence = 80
+paths = ["funcnodes_react_flow"]
 
 [tool.poetry.scripts]
 funcnodes_react_flow = 'funcnodes_react_flow.__main__:main'
