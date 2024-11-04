@@ -2,8 +2,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const BundleAnalyzerPlugin =
-//   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
   context: __dirname,
@@ -12,10 +10,11 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "js/[name].js",
+    filename: "static/js/[name].js",
+    chunkFilename: "static/js/[name].[contenthash].js", // Ensure consistent naming for chunks
+    publicPath: "auto", // Add this line
   },
 
-  // mode: "production",
   mode: "development",
   module: {
     rules: [
@@ -36,7 +35,6 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          // "style-loader",
           MiniCssExtractPlugin.loader,
           { loader: "css-loader", options: { importLoaders: 5 } },
           {
@@ -61,7 +59,6 @@ module.exports = {
         sideEffects: true,
         use: [
           MiniCssExtractPlugin.loader,
-          // "style-loader",
           {
             loader: "css-loader",
             options: {
@@ -87,9 +84,20 @@ module.exports = {
   },
 
   devServer: {
-    static: "./public",
+    static: [
+      {
+        directory: path.resolve(__dirname, "public"),
+        publicPath: "/static",
+      },
+      {
+        directory: path.resolve(__dirname, "public"),
+        publicPath: "/",
+      },
+    ],
     historyApiFallback: true,
-
+    headers: {
+      "Cache-Control": "no-store", // Disable caching in development
+    },
     client: {
       overlay: {
         runtimeErrors: (error) => {
@@ -106,16 +114,13 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
-      filename: "css/style.css",
-      chunkFilename: "css/[name].css",
+      filename: "static/css/style.css",
+      chunkFilename: "static/css/[name].css",
     }),
 
     new HtmlWebpackPlugin({
       template: "./public/index.html",
     }),
-    // new BundleAnalyzerPlugin(),
   ],
   resolve: {
     extensions: [
@@ -129,13 +134,10 @@ module.exports = {
       ".ttf",
     ],
     alias: {
-      //Modules: path.resolve(__dirname, "..", "node_modules"),
       "@linkdlab/funcnodes_react_flow": path.resolve(
         __dirname,
         "../module/dist/esm/index.esm.js"
       ),
-      //   react: require.resolve("react"), // Ensure we use the same React instance
-      //   "react-dom": require.resolve("react-dom"), // Ensure we use the same ReactDom instance
     },
     mainFields: ["module", "main"], // Prefers 'module' over 'main' for ES modules
   },
