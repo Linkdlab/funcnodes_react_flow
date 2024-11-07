@@ -1,3 +1,5 @@
+@import "../layout/htmlelements.scss";
+
 .funcnodesreactflowheader {
   display: flex;
   flex-direction: row;
@@ -6,6 +8,7 @@
   position: relative;
   top: 0;
   left: 0;
+  z-index: 1000;
 
   .headerelement {
     height: 100%;
@@ -44,5 +47,30 @@
       color: var(--funheadercolor);
       mix-blend-mode: difference;
     }
+  }
+}
+
+.headermenucontent {
+  @extend .basicstyleelement;
+
+  max-height: 90vh;
+  overflow: auto;
+  padding: 5px;
+  border-radius: 0.25rem;
+}
+
+.headermenuitem {
+  padding: 0 5px;
+  &[data-highlighted] {
+    background-color: var(--funcnodesbackground_light);
+  }
+
+  &[data-state="open"] {
+    background-color: var(--funcnodesbackground_light);
+  }
+
+  &[data-state="checked"] {
+    background-color: var(--funcnodesbackground_light);
+    color: #fff;
   }
 }

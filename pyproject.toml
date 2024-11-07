@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "funcnodes-react-flow"
-version = "0.2.1"
+version = "0.2.2"
 description = "funcnodes frontend for react flow"
 authors = ["Julian Kimmig <julian.kimmig@linkdlab.de>"]
 readme = "README.md"
@@ -16,7 +16,7 @@ download = "https://pypi.org/project/funcnodes-react-flow/#files"
 
 [tool.poetry.dependencies]
 python = ">=3.11"
-funcnodes = ">=0.4.28"
+funcnodes = ">=0.4.35"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
