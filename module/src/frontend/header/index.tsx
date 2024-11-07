@@ -8,8 +8,26 @@ import { FuncNodesContext } from "../funcnodesreactflow";
 import "./header.scss";
 import CustomDialog from "../dialog";
 import React from "react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import {
+  base64ToBlob,
+  downloadBase64,
+  fileDialogToBase64,
+} from "../../utils/data";
 
-const NewWorkerDialog = ({ trigger }: { trigger: React.ReactNode }) => {
+const NewWorkerDialog = ({
+  trigger,
+  setOpen,
+  open,
+}: {
+  trigger?: React.ReactNode;
+  setOpen?: (open: boolean) => void;
+  open?: boolean;
+}) => {
   const [name, setName] = useState<string>("");
   const [copyLib, setCopyLib] = useState<boolean>(false);
   const [copyNS, setCopyNS] = useState<boolean>(false);
@@ -27,6 +45,8 @@ const NewWorkerDialog = ({ trigger }: { trigger: React.ReactNode }) => {
 
   return (
     <CustomDialog
+      setOpen={setOpen}
+      open={open}
       trigger={trigger}
       title="New Worker"
       description="Please provide a name and select a another worker as interpreter reference"
@@ -130,6 +150,172 @@ const Statusbar = () => {
   );
 };
 
+const WorkerMenu = () => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+  const workersstate = fnrf_zst.workers();
+
+  const [isNewWorkerDialogOpen, setNewWorkerDialogOpen] = useState(false);
+
+  const workerselectchange = (workerid: string) => {
+    if (workerid === "__select__") return;
+    if (!fnrf_zst.workers) return;
+    if (!fnrf_zst.workermanager) return;
+    if (!workersstate[workerid]) return;
+    if (!workersstate[workerid].active) {
+      //create popup
+      const ans = window.confirm(
+        "this is an inactive worker, selecting it will start it, continue?"
+      );
+      if (!ans) return;
+    }
+    fnrf_zst.workermanager.set_active(workerid);
+  };
+
+  const exportWorker = async () => {
+    if (!fnrf_zst.worker) return;
+    const data = await fnrf_zst.worker.export();
+    downloadBase64(data, "worker.fnw", "application/zip");
+  };
+
+  const updateWorker = async () => {
+    if (!fnrf_zst.worker) return;
+    // warn dialog
+    const ans = window.confirm(
+      "Updateing the worker might replace the current nodespace, continue?"
+    );
+    if (!ans) return;
+    const data = await fileDialogToBase64(".fnw");
+    fnrf_zst.worker.update_from_export(data);
+  };
+  return (
+    <>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
+          <button className="styledbtn">
+            <Stack direction="row" spacing={1}>
+              <Typography>Worker</Typography> <MenuRoundedIcon />
+            </Stack>
+          </button>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content className="headermenucontent">
+            <DropdownMenu.Group>
+              <DropdownMenu.Sub>
+                <DropdownMenu.SubTrigger className="headermenuitem submenuitem">
+                  <Stack direction="row" spacing={1}>
+                    Select
+                    <ChevronRightIcon />
+                  </Stack>
+                </DropdownMenu.SubTrigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.SubContent
+                    className="headermenucontent"
+                    sideOffset={2}
+                    alignOffset={-5}
+                  >
+                    <DropdownMenu.RadioGroup
+                      value={fnrf_zst.worker?.uuid}
+                      onValueChange={(value) => {
+                        workerselectchange(value);
+                      }}
+                    >
+                      {Object.keys(workersstate)
+                        .sort((a, b) => {
+                          // First, sort by active status (active workers come first)
+                          if (workersstate[a].active && !workersstate[b].active)
+                            return -1;
+                          if (!workersstate[a].active && workersstate[b].active)
+                            return 1;
+
+                          // If both are active or both are inactive, sort by name or ID
+
+                          const nameA = workersstate[a].name || a;
+                          const nameB = workersstate[b].name || b;
+                          return nameA.localeCompare(nameB);
+                        })
+                        .map((workerid) => (
+                          <DropdownMenu.RadioItem
+                            className={
+                              "headermenuitem workerselectoption" +
+                              (workersstate[workerid].active
+                                ? " active"
+                                : " inactive") +
+                              " headermenuitem"
+                            }
+                            key={workerid}
+                            value={workerid}
+                            disabled={workerid === fnrf_zst.worker?.uuid}
+                          >
+                            {workersstate[workerid].name || workerid}
+                          </DropdownMenu.RadioItem>
+                        ))}
+                    </DropdownMenu.RadioGroup>
+                  </DropdownMenu.SubContent>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Sub>
+
+              {fnrf_zst.worker && (
+                <>
+                  <DropdownMenu.Item
+                    className="headermenuitem"
+                    onClick={() => {
+                      if (!fnrf_zst.worker) return;
+                      if (!fnrf_zst.workermanager)
+                        return fnrf_zst.logger.error("no workermanager");
+                      fnrf_zst.workermanager?.restart_worker(
+                        fnrf_zst.worker.uuid
+                      );
+                    }}
+                  >
+                    Restart
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    className="headermenuitem"
+                    onClick={() => {
+                      if (!fnrf_zst.worker) return;
+                      fnrf_zst.worker.stop();
+                    }}
+                  >
+                    Stop
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    className="headermenuitem"
+                    onClick={exportWorker}
+                  >
+                    Export
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    className="headermenuitem"
+                    onClick={updateWorker}
+                  >
+                    Update
+                  </DropdownMenu.Item>
+                </>
+              )}
+              {fnrf_zst.options.useWorkerManager && (
+                <>
+                  <DropdownMenu.Item
+                    className="headermenuitem"
+                    onClick={() => setNewWorkerDialogOpen(true)}
+                  >
+                    New
+                  </DropdownMenu.Item>
+                </>
+              )}
+            </DropdownMenu.Group>
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
+      </DropdownMenu.Root>
+
+      <NewWorkerDialog
+        open={isNewWorkerDialogOpen}
+        setOpen={setNewWorkerDialogOpen}
+      ></NewWorkerDialog>
+    </>
+  );
+};
+
 const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
@@ -202,6 +388,9 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
       <div className="headerelement">
         <Statusbar></Statusbar>
       </div>
+      <div className="headerelement">
+        <WorkerMenu></WorkerMenu>
+      </div>
 
       {fnrf_zst.options.useWorkerManager && (
         <div className="headerelement">
@@ -242,41 +431,6 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
         </div>
       )}
 
-      {fnrf_zst.worker && (
-        <>
-          <div className="headerelement">
-            <button
-              className="styledbtn"
-              onClick={() => {
-                if (!fnrf_zst.worker) return;
-                fnrf_zst.worker.stop();
-              }}
-            >
-              stop worker
-            </button>
-          </div>
-          <div className="headerelement">
-            <button
-              className="styledbtn"
-              onClick={() => {
-                if (!fnrf_zst.worker) return;
-                if (!fnrf_zst.workermanager)
-                  return fnrf_zst.logger.error("no workermanager");
-                fnrf_zst.workermanager?.restart_worker(fnrf_zst.worker.uuid);
-              }}
-            >
-              restart worker
-            </button>
-          </div>
-        </>
-      )}
-      {fnrf_zst.options.useWorkerManager && (
-        <div className="headerelement">
-          <NewWorkerDialog
-            trigger={<button className="styledbtn">new worker</button>}
-          ></NewWorkerDialog>
-        </div>
-      )}
       <div className="headerelement">
         <button className="styledbtn" onClick={onNew}>
           new nodespace

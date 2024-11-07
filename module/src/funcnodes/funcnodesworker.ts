@@ -859,6 +859,24 @@ class FuncNodesWorker {
     });
     return res;
   }
+
+  async export() {
+    const res = await this._send_cmd({
+      cmd: "export_worker",
+      wait_for_response: true,
+    });
+    return res;
+  }
+
+  async update_from_export(data: string) {
+    const res = await this._send_cmd({
+      cmd: "update_from_export",
+      kwargs: { data },
+      wait_for_response: true,
+    });
+    this.stepwise_fullsync();
+    return res;
+  }
 }
 
 export default FuncNodesWorker;
