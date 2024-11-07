@@ -8,6 +8,7 @@ interface CustomDialogProps {
   description?: string | React.ReactNode;
   children: React.ReactNode;
   closebutton?: boolean;
+  modal?: boolean;
   onOpenChange?: (open: boolean) => void;
   buttons?: {
     text: string;
@@ -28,6 +29,7 @@ const CustomDialog = ({
   buttons = [],
   open,
   setOpen,
+  modal = true,
 }: CustomDialogProps) => {
   const handleOpenChange = (isOpen: boolean) => {
     if (setOpen) {
@@ -39,7 +41,7 @@ const CustomDialog = ({
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange} modal={modal}>
       {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Overlay className="dialogoverlay" />
