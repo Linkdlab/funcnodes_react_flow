@@ -90,6 +90,7 @@ interface WorkerRepresentation {
   port: number;
   ssl: boolean;
   active: boolean;
+  open: boolean;
   name: string | null;
 }
 interface WorkersState {

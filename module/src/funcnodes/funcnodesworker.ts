@@ -7,6 +7,7 @@ import {
   ViewState,
   WorkerEvent,
 } from "../states/fnrfzst.t";
+import { create, StoreApi, UseBoundStore } from "zustand";
 import { NodeActionUpdate, NodeType, PartialNodeType } from "../states/node.t"; // Import the missing type
 import { deep_merge } from "../utils";
 import { LibType } from "../states/lib.t";
@@ -26,13 +27,19 @@ interface WorkerProps {
   on_error?: (error: string | Error) => void;
 }
 
+interface FuncNodesWorkerState {
+  is_open: boolean;
+}
+
 class FuncNodesWorker {
   messagePromises: Map<string, any>;
   _zustand?: FuncNodesReactFlowZustandInterface;
   _local_nodeupdates: Map<string, PartialNodeType>;
   _nodeupdatetimer: ReturnType<typeof setTimeout>;
   uuid: string;
-  is_open: boolean;
+
+  state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
+
   on_error: (error: any) => void;
   constructor(data: WorkerProps) {
     this.uuid = data.uuid;
@@ -47,7 +54,9 @@ class FuncNodesWorker {
     this._nodeupdatetimer = setTimeout(() => {
       this.sync_local_node_updates();
     }, 1000);
-    this.is_open = true;
+    this.state = create<FuncNodesWorkerState>((_set, _get) => ({
+      is_open: true,
+    }));
     if (data.zustand) this.set_zustand(data.zustand);
   }
 
@@ -55,6 +64,15 @@ class FuncNodesWorker {
     this._zustand = zustand;
     this._zustand.auto_progress();
     this.stepwise_fullsync();
+  }
+
+  public get is_open(): boolean {
+    return this.state.getState().is_open;
+  }
+  public set is_open(v: boolean) {
+    const state = this.state.getState();
+    state.is_open = v;
+    this.state.setState(state);
   }
 
   async stepwise_fullsync() {
@@ -541,6 +559,9 @@ class FuncNodesWorker {
         });
       case "lib_update":
         await this.sync_lib();
+        return;
+      case "fullsync":
+        await this.stepwise_fullsync();
         return;
       case "external_worker_update":
         await this.sync_lib();

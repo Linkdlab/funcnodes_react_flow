@@ -13,11 +13,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import {
-  base64ToBlob,
-  downloadBase64,
-  fileDialogToBase64,
-} from "../../utils/data";
+import { downloadBase64, fileDialogToBase64 } from "../../utils/data";
 
 const NewWorkerDialog = ({
   trigger,
@@ -153,7 +149,7 @@ const Statusbar = () => {
 const WorkerMenu = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
-  const workersstate = fnrf_zst.workers();
+  const workersstate = fnrf_zst.worker?.state();
 
   const [isNewWorkerDialogOpen, setNewWorkerDialogOpen] = useState(false);
 
@@ -201,61 +197,68 @@ const WorkerMenu = () => {
         <DropdownMenu.Portal>
           <DropdownMenu.Content className="headermenucontent">
             <DropdownMenu.Group>
-              <DropdownMenu.Sub>
-                <DropdownMenu.SubTrigger className="headermenuitem submenuitem">
-                  <Stack direction="row" spacing={1}>
-                    Select
-                    <ChevronRightIcon />
-                  </Stack>
-                </DropdownMenu.SubTrigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.SubContent
-                    className="headermenucontent"
-                    sideOffset={2}
-                    alignOffset={-5}
-                  >
-                    <DropdownMenu.RadioGroup
-                      value={fnrf_zst.worker?.uuid}
-                      onValueChange={(value) => {
-                        workerselectchange(value);
-                      }}
+              {fnrf_zst.options.useWorkerManager && (
+                <DropdownMenu.Sub>
+                  <DropdownMenu.SubTrigger className="headermenuitem submenuitem">
+                    <Stack direction="row" spacing={1}>
+                      Select
+                      <ChevronRightIcon />
+                    </Stack>
+                  </DropdownMenu.SubTrigger>
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.SubContent
+                      className="headermenucontent"
+                      sideOffset={2}
+                      alignOffset={-5}
                     >
-                      {Object.keys(workersstate)
-                        .sort((a, b) => {
-                          // First, sort by active status (active workers come first)
-                          if (workersstate[a].active && !workersstate[b].active)
-                            return -1;
-                          if (!workersstate[a].active && workersstate[b].active)
-                            return 1;
+                      <DropdownMenu.RadioGroup
+                        value={fnrf_zst.worker?.uuid}
+                        onValueChange={(value) => {
+                          workerselectchange(value);
+                        }}
+                      >
+                        {Object.keys(workersstate)
+                          .sort((a, b) => {
+                            // First, sort by active status (active workers come first)
+                            if (
+                              workersstate[a].active &&
+                              !workersstate[b].active
+                            )
+                              return -1;
+                            if (
+                              !workersstate[a].active &&
+                              workersstate[b].active
+                            )
+                              return 1;
 
-                          // If both are active or both are inactive, sort by name or ID
+                            // If both are active or both are inactive, sort by name or ID
 
-                          const nameA = workersstate[a].name || a;
-                          const nameB = workersstate[b].name || b;
-                          return nameA.localeCompare(nameB);
-                        })
-                        .map((workerid) => (
-                          <DropdownMenu.RadioItem
-                            className={
-                              "headermenuitem workerselectoption" +
-                              (workersstate[workerid].active
-                                ? " active"
-                                : " inactive") +
-                              " headermenuitem"
-                            }
-                            key={workerid}
-                            value={workerid}
-                            disabled={workerid === fnrf_zst.worker?.uuid}
-                          >
-                            {workersstate[workerid].name || workerid}
-                          </DropdownMenu.RadioItem>
-                        ))}
-                    </DropdownMenu.RadioGroup>
-                  </DropdownMenu.SubContent>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Sub>
-
-              {fnrf_zst.worker && (
+                            const nameA = workersstate[a].name || a;
+                            const nameB = workersstate[b].name || b;
+                            return nameA.localeCompare(nameB);
+                          })
+                          .map((workerid) => (
+                            <DropdownMenu.RadioItem
+                              className={
+                                "headermenuitem workerselectoption" +
+                                (workersstate[workerid].active
+                                  ? " active"
+                                  : " inactive") +
+                                " headermenuitem"
+                              }
+                              key={workerid}
+                              value={workerid}
+                              disabled={workerid === fnrf_zst.worker?.uuid}
+                            >
+                              {workersstate[workerid].name || workerid}
+                            </DropdownMenu.RadioItem>
+                          ))}
+                      </DropdownMenu.RadioGroup>
+                    </DropdownMenu.SubContent>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Sub>
+              )}
+              {fnrf_zst.worker && fnrf_zst.worker.is_open && (
                 <>
                   <DropdownMenu.Item
                     className="headermenuitem"
@@ -316,16 +319,10 @@ const WorkerMenu = () => {
   );
 };
 
-const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
+const NodeSpaceMenu = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
-  // pserudouse headerprops
-  if (Object.keys(headerprops).length > 0) {
-    fnrf_zst.logger.debug("headerprops", headerprops);
-  }
-
-  const workersstate = fnrf_zst.workers();
   const onNew = () => {
     const alert = window.confirm("Are you sure you want to start a new flow?");
     if (alert) {
@@ -367,21 +364,53 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
     input.click();
   };
 
-  const workerselectchange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const workerid = e.target.value;
-    if (workerid === "__select__") return;
-    if (!fnrf_zst.workers) return;
-    if (!fnrf_zst.workermanager) return;
-    if (!workersstate[workerid]) return;
-    if (!workersstate[workerid].active) {
-      //create popup
-      const ans = window.confirm(
-        "this is an inactive worker, selecting it will start it, continue?"
-      );
-      if (!ans) return;
-    }
-    fnrf_zst.workermanager.set_active(workerid);
-  };
+  return (
+    <>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
+          <button className="styledbtn">
+            <Stack direction="row" spacing={1}>
+              <Typography>Nodespace</Typography> <MenuRoundedIcon />
+            </Stack>
+          </button>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content className="headermenucontent">
+            <DropdownMenu.Group>
+              <DropdownMenu.Item className="headermenuitem" onClick={onNew}>
+                New
+              </DropdownMenu.Item>
+              <DropdownMenu.Item className="headermenuitem" onClick={onSave}>
+                Save
+              </DropdownMenu.Item>
+              <DropdownMenu.Item className="headermenuitem" onClick={onOpen}>
+                Load
+              </DropdownMenu.Item>
+            </DropdownMenu.Group>
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
+      </DropdownMenu.Root>
+    </>
+  );
+};
+
+const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+
+  const workers = fnrf_zst.workers();
+  // pserudouse headerprops
+  if (Object.keys(headerprops).length > 0) {
+    fnrf_zst.logger.debug("headerprops", headerprops);
+  }
+
+  console.log(
+    "NodeSpaceMenu",
+    workers,
+    fnrf_zst.worker,
+    fnrf_zst.worker?.is_open,
+    fnrf_zst.worker && fnrf_zst.worker.is_open
+  );
 
   return (
     <div className="funcnodesreactflowheader">
@@ -391,61 +420,11 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
       <div className="headerelement">
         <WorkerMenu></WorkerMenu>
       </div>
-
-      {fnrf_zst.options.useWorkerManager && (
+      {fnrf_zst.worker && fnrf_zst.worker.is_open && (
         <div className="headerelement">
-          <select
-            className="workerselect styleddropdown"
-            value={fnrf_zst.worker ? fnrf_zst.worker.uuid : "__select__"}
-            onChange={workerselectchange}
-          >
-            <option disabled value="__select__">
-              Select Worker
-            </option>
-            {Object.keys(workersstate)
-              .sort((a, b) => {
-                // First, sort by active status (active workers come first)
-                if (workersstate[a].active && !workersstate[b].active)
-                  return -1;
-                if (!workersstate[a].active && workersstate[b].active) return 1;
-
-                // If both are active or both are inactive, sort by name or ID
-
-                const nameA = workersstate[a].name || a;
-                const nameB = workersstate[b].name || b;
-                return nameA.localeCompare(nameB);
-              })
-              .map((workerid) => (
-                <option
-                  className={
-                    "workerselectoption" +
-                    (workersstate[workerid].active ? " active" : " inactive")
-                  }
-                  key={workerid}
-                  value={workerid}
-                >
-                  {workersstate[workerid].name || workerid}
-                </option>
-              ))}
-          </select>
+          <NodeSpaceMenu></NodeSpaceMenu>
         </div>
       )}
-
-      <div className="headerelement">
-        <button className="styledbtn" onClick={onNew}>
-          new nodespace
-        </button>
-      </div>
-      <div className="headerelement">
-        <button className="styledbtn" onClick={onOpen}>
-          open
-        </button>
-      </div>
-      <div className="headerelement">
-        <button className="styledbtn" onClick={onSave}>
-          save
-        </button>
-      </div>
     </div>
   );
 };
