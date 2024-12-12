@@ -536,8 +536,6 @@ const ExternalWorkerClassEntry = ({
 
   const handleToggle = () => setIsOpen(!isOpen);
 
-  console.log("ExternalWorkerClassEntry", item, mod);
-
   const add_to_flow = () => {
     zustand.worker?.add_external_worker({
       module: mod,
@@ -606,7 +604,7 @@ const ExternalWorkerShelf = ({
   const handleToggle = () => setIsOpen(!isOpen);
 
   const _isopen = isOpen;
-  console.log("externalworkermod", externalworkermod);
+
   return (
     <div className="shelfcontainer">
       <div

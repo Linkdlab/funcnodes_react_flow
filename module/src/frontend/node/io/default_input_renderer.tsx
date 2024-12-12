@@ -85,16 +85,12 @@ const NumberInput = ({
     try {
       new_value = inputconverter[0](new_value);
     } catch (e) {}
-    fnrf_zst.worker
-      ?.set_io_value({
-        nid: io.node,
-        ioid: io.id,
-        value: new_value,
-        set_default: io.render_options.set_default,
-      })
-      .then((v) => {
-        console.log("set io value done", v);
-      });
+    fnrf_zst.worker?.set_io_value({
+      nid: io.node,
+      ioid: io.id,
+      value: new_value,
+      set_default: io.render_options.set_default,
+    });
   };
 
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -149,7 +149,7 @@ const Statusbar = () => {
 const WorkerMenu = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
-  const workersstate = fnrf_zst.worker?.state();
+  const workersstate = fnrf_zst.workers();
 
   const [isNewWorkerDialogOpen, setNewWorkerDialogOpen] = useState(false);
 
@@ -260,19 +260,21 @@ const WorkerMenu = () => {
               )}
               {fnrf_zst.worker && fnrf_zst.worker.is_open && (
                 <>
-                  <DropdownMenu.Item
-                    className="headermenuitem"
-                    onClick={() => {
-                      if (!fnrf_zst.worker) return;
-                      if (!fnrf_zst.workermanager)
-                        return fnrf_zst.logger.error("no workermanager");
-                      fnrf_zst.workermanager?.restart_worker(
-                        fnrf_zst.worker.uuid
-                      );
-                    }}
-                  >
-                    Restart
-                  </DropdownMenu.Item>
+                  {fnrf_zst.workermanager && (
+                    <DropdownMenu.Item
+                      className="headermenuitem"
+                      onClick={() => {
+                        if (!fnrf_zst.worker) return;
+                        if (!fnrf_zst.workermanager)
+                          return fnrf_zst.logger.error("no workermanager");
+                        fnrf_zst.workermanager?.restart_worker(
+                          fnrf_zst.worker.uuid
+                        );
+                      }}
+                    >
+                      Restart
+                    </DropdownMenu.Item>
+                  )}
                   <DropdownMenu.Item
                     className="headermenuitem"
                     onClick={() => {
@@ -398,19 +400,11 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
-  const workers = fnrf_zst.workers();
+  const workerstate = fnrf_zst.workerstate();
   // pserudouse headerprops
   if (Object.keys(headerprops).length > 0) {
     fnrf_zst.logger.debug("headerprops", headerprops);
   }
-
-  console.log(
-    "NodeSpaceMenu",
-    workers,
-    fnrf_zst.worker,
-    fnrf_zst.worker?.is_open,
-    fnrf_zst.worker && fnrf_zst.worker.is_open
-  );
 
   return (
     <div className="funcnodesreactflowheader">
@@ -420,7 +414,7 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
       <div className="headerelement">
         <WorkerMenu></WorkerMenu>
       </div>
-      {fnrf_zst.worker && fnrf_zst.worker.is_open && (
+      {fnrf_zst.worker && workerstate.is_open && (
         <div className="headerelement">
           <NodeSpaceMenu></NodeSpaceMenu>
         </div>
