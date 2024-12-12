@@ -9,10 +9,17 @@ import { IOType } from "./states/nodeio.t";
 import helperfunctions from "./utils/helperfunctions";
 import FuncNodesReactFlowZustand from "./states";
 import ReactDOM from "react-dom/client";
+import { FuncNodesWorker } from "./funcnodes";
 
 export default FuncnodesReactFlow;
 
-const App = ({ id, ws_url }: { id: string; ws_url?: string }) => {
+type FuncNodesAppOptions = {
+  id: string;
+  ws_url?: string;
+  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
+};
+
+const App = ({ id, ws_url, on_sync_complete }: FuncNodesAppOptions) => {
   let useWorkerManager = true;
   let worker = undefined;
   if (ws_url !== undefined) {
@@ -20,6 +27,7 @@ const App = ({ id, ws_url }: { id: string; ws_url?: string }) => {
     worker = new WebSocketWorker({
       url: ws_url,
       uuid: id,
+      on_sync_complete: on_sync_complete,
     });
     const fnrf_zst = FuncNodesReactFlowZustand({
       useWorkerManager: useWorkerManager,
@@ -39,6 +47,7 @@ const App = ({ id, ws_url }: { id: string; ws_url?: string }) => {
         id={id}
         useWorkerManager={useWorkerManager}
         default_worker={worker}
+        on_sync_complete={on_sync_complete}
       ></FuncnodesReactFlow>
     </div>
   );
@@ -46,6 +55,7 @@ const App = ({ id, ws_url }: { id: string; ws_url?: string }) => {
 
 type FuncNodesWebOptions = {
   ws_url?: string;
+  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
 };
 
 const FuncNodes = (
@@ -69,10 +79,15 @@ const FuncNodes = (
 
   ReactDOM.createRoot(element).render(
     <React.StrictMode>
-      <App id={id} ws_url={options.ws_url} />
+      <App
+        id={id}
+        ws_url={options.ws_url}
+        on_sync_complete={options.on_sync_complete}
+      />
     </React.StrictMode>
   );
 };
+
 // @ts-ignore
 window.FuncNodes = FuncNodes;
 

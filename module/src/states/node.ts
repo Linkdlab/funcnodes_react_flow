@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { deep_update } from "../utils";
-import { NodeType, PartialNodeType, NodeStore } from "./node.t";
+import {
+  NodeType,
+  PartialNodeType,
+  NodeStore,
+  NodeProgressState,
+} from "./node.t";
 import { IOType } from "./nodeio.t";
 
 const dummy_nodeio: IOType = {
@@ -44,6 +49,7 @@ const assert_full_nodeio = (io: Partial<IOType>): IOType => {
   return new_obj;
 };
 
+//@ts-ignore
 const dummy_node: NodeType = {
   id: "dummy",
   node_name: "dummy",
@@ -71,6 +77,17 @@ const assert_full_node = (node: PartialNodeType): NodeType => {
     const io = assert_full_nodeio(new_obj.io[ioid]);
     new_obj.io[ioid] = io;
   }
+
+  if (node.progressState === undefined) {
+    new_obj.progressState = create<NodeProgressState>((_set, _get) => {
+      return {
+        label: "idle",
+        total: 0,
+        current: 0,
+      };
+    });
+  }
+
   return new_obj;
 };
 

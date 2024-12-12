@@ -3,6 +3,7 @@ import {
   FullState,
   FuncNodesReactFlowZustandInterface,
   JSONMessage,
+  LargeMessageHint,
   NodeSpaceEvent,
   ViewState,
   WorkerEvent,
@@ -25,6 +26,7 @@ interface WorkerProps {
   zustand?: FuncNodesReactFlowZustandInterface;
   uuid: string;
   on_error?: (error: string | Error) => void;
+  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
 }
 
 interface FuncNodesWorkerState {
@@ -39,6 +41,7 @@ class FuncNodesWorker {
   uuid: string;
 
   state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
+  on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
 
   on_error: (error: any) => void;
   constructor(data: WorkerProps) {
@@ -58,10 +61,18 @@ class FuncNodesWorker {
       is_open: true,
     }));
     if (data.zustand) this.set_zustand(data.zustand);
+
+    if (data.on_sync_complete) {
+      this.on_sync_complete = data.on_sync_complete;
+    } else {
+      this.on_sync_complete = async () => {};
+    }
   }
 
   set_zustand(zustand: FuncNodesReactFlowZustandInterface) {
+    if (zustand === this._zustand) return;
     this._zustand = zustand;
+    zustand.set_worker(this);
     this._zustand.auto_progress();
     this.stepwise_fullsync();
   }
@@ -70,9 +81,7 @@ class FuncNodesWorker {
     return this.state.getState().is_open;
   }
   public set is_open(v: boolean) {
-    const state = this.state.getState();
-    state.is_open = v;
-    this.state.setState(state);
+    this.state.setState({ is_open: v });
   }
 
   async stepwise_fullsync() {
@@ -84,6 +93,8 @@ class FuncNodesWorker {
     await this.sync_funcnodes_plugins();
     await this.sync_nodespace();
     await this.sync_view_state();
+
+    await this.on_sync_complete(this);
   }
 
   async sync_lib() {
@@ -547,6 +558,10 @@ class FuncNodesWorker {
     throw new Error("Not implemented");
   }
 
+  async handle_large_message_hint({}: LargeMessageHint) {
+    throw new Error("handle_large_message_hint not implemented ");
+  }
+
   async recieve_workerevent({ event, data }: WorkerEvent) {
     switch (event) {
       case "worker_error":
@@ -758,6 +773,9 @@ class FuncNodesWorker {
 
       case "workerevent":
         return await this.recieve_workerevent(data);
+
+      case "large_message":
+        return await this.handle_large_message_hint(data);
       default:
         console.warn("Unhandled message", data);
         break;
@@ -901,4 +919,4 @@ class FuncNodesWorker {
 }
 
 export default FuncNodesWorker;
-export type { WorkerProps };
+export type { WorkerProps, FuncNodesWorkerState };

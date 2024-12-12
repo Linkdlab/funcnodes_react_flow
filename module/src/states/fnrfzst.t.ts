@@ -12,6 +12,7 @@ import { EdgeAction } from "./edge.t";
 import { useReactFlow } from "reactflow";
 import FuncNodesReactPlugin from "../plugin";
 import { Logger } from "../utils/logger";
+import { FuncNodesWorkerState } from "../funcnodes/funcnodesworker";
 
 interface RenderOptions {
   typemap?: { [key: string]: string };
@@ -77,12 +78,18 @@ interface WorkerEvent {
   data: { [key: string]: any };
 }
 
+interface LargeMessageHint {
+  type: "large_message";
+  msg_id: string;
+}
+
 type JSONMessage =
   | ProgressStateMessage
   | ResultMessage
   | ErrorMessage
   | NodeSpaceEvent
-  | WorkerEvent;
+  | WorkerEvent
+  | LargeMessageHint;
 
 interface WorkerRepresentation {
   uuid: string;
@@ -103,6 +110,7 @@ interface FuncnodesReactFlowProps {
   default_worker?: FuncNodesWorker;
   header?: FuncnodesReactHeaderProps;
   id?: string;
+  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
 }
 
 interface DevSettings {
@@ -129,7 +137,11 @@ interface FuncNodesReactFlowZustandInterface {
   lib: LibZustandInterface;
   workermanager: WorkerManager | undefined;
   workers: UseBoundStore<StoreApi<WorkersState>>;
+  workerstate: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
   worker: FuncNodesWorker | undefined;
+  set_worker: (worker: FuncNodesWorker | undefined) => void;
+  _unsubscribeFromWorker: (() => void) | undefined;
+
   nodespace: NodeSpaceZustandInterface;
   useReactFlowStore: RFStore;
   render_options: UseBoundStore<StoreApi<RenderOptions>>;
@@ -163,6 +175,7 @@ export type {
   ErrorMessage,
   NodeSpaceEvent,
   WorkerEvent,
+  LargeMessageHint,
   NodeViewState,
   FuncnodesReactFlowProps,
   FuncnodesReactHeaderProps,

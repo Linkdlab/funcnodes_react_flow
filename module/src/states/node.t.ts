@@ -68,6 +68,12 @@ interface NodeRenderOptions {
   data?: DataRenderOptions;
 }
 
+interface NodeProgressState {
+  label: string;
+  total: number;
+  current: number;
+}
+
 interface NodeType {
   id: string;
   node_name: string;
@@ -82,6 +88,7 @@ interface NodeType {
   error?: string;
   render_options?: NodeRenderOptions;
   io_order: string[];
+  progressState: UseBoundStore<StoreApi<NodeProgressState>>;
 }
 
 type PartialNodeType = DeepPartial<NodeType>;
@@ -96,4 +103,5 @@ export type {
   PartialNodeType,
   NodeActionTrigger,
   NodeType,
+  NodeProgressState,
 };
