@@ -1,6 +1,6 @@
 {
   "name": "@linkdlab/funcnodes_react_flow",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Frontend with React Flow for FuncNodes",
   "repository": {
     "type": "git",
