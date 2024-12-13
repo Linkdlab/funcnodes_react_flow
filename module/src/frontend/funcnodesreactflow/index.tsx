@@ -48,7 +48,8 @@ const InnerFuncnodesReactFlow = ({
     }
   }, [workermanageruri]);
 
-  fnrf_zst.worker = worker;
+  fnrf_zst.set_worker(worker);
+
   fnrf_zst.auto_progress();
   // const worker = new WebSocketWorker("ws://localhost:9382", fnrf_zst);
   // fnrf_zst.worker = worker;
@@ -78,6 +79,7 @@ const FUNCNODESREACTFLOW_MAPPER: {
 const FuncnodesReactFlow = ({
   useWorkerManager = true,
   default_worker = undefined,
+  on_sync_complete = undefined,
   header = {},
   id,
 }: FuncnodesReactFlowProps) => {
@@ -104,6 +106,7 @@ const FuncnodesReactFlow = ({
     const fnrf_zst = FuncNodesReactFlowZustand({
       useWorkerManager,
       default_worker,
+      on_sync_complete,
     });
     FUNCNODESREACTFLOW_MAPPER[id] = fnrf_zst;
   }

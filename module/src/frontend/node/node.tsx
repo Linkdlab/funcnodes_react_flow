@@ -13,6 +13,7 @@ import CustomDialog from "../dialog";
 import { IOType } from "../../states/nodeio.t";
 import { BodyDataRendererForIo } from "./body_data_renderer";
 import { DynamicComponentLoader } from "../datarenderer/rendermappings";
+import ProgressBar from "../utils/progressbar";
 
 interface NodeHeaderProps {
   node_data: NodeType;
@@ -146,10 +147,25 @@ const NodeName = ({ node_data }: { node_data: NodeType }) => {
   );
 };
 
+const NodeProgressBar = ({ node_data }: { node_data: NodeType }) => {
+  if (!node_data.progress) return null;
+
+  return (
+    <ProgressBar
+      style={{
+        height: node_data.progress.prefix === "idle" ? "0px" : undefined,
+      }}
+      state={node_data.progress}
+      className="nodeprogress"
+    ></ProgressBar>
+  );
+};
+
 const NodeFooter = ({ node_data }: { node_data: NodeType }) => {
   return (
     <div className="nodefooter">
       {node_data.error && <div className="nodeerror">{node_data.error}</div>}
+      <NodeProgressBar node_data={node_data} />
     </div>
   );
 };

@@ -56,6 +56,16 @@ const dummy_node: NodeType = {
   name: "dummy",
   in_trigger: false,
   io_order: [],
+  progress: {
+    ascii: false,
+    elapsed: 0,
+    initial: 0,
+    n: 0,
+    prefix: "idle",
+    unit: "it",
+    unit_divisor: 1000,
+    unit_scale: false,
+  },
 };
 
 const dummy_node_json = JSON.stringify(dummy_node);
@@ -71,6 +81,7 @@ const assert_full_node = (node: PartialNodeType): NodeType => {
     const io = assert_full_nodeio(new_obj.io[ioid]);
     new_obj.io[ioid] = io;
   }
+
   return new_obj;
 };
 
