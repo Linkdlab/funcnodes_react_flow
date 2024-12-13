@@ -2,6 +2,7 @@ import { UseBoundStore, StoreApi } from "zustand";
 import { DeepPartial } from "../utils";
 import { IOType } from "./nodeio.t";
 import { DataRenderOptions } from "../types/rendering.t";
+import { TqdmState } from "../frontend/utils/progressbar";
 
 /**
  * Interface for the NodeActionAdd.
@@ -82,6 +83,7 @@ interface NodeType {
   error?: string;
   render_options?: NodeRenderOptions;
   io_order: string[];
+  progress: TqdmState;
 }
 
 type PartialNodeType = DeepPartial<NodeType>;

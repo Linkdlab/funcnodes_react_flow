@@ -1,3 +1,4 @@
+import { LargeMessageHint } from "../states/fnrfzst.t";
 import FuncNodesWorker, { WorkerProps } from "./funcnodesworker";
 
 interface WebSocketWorkerProps extends WorkerProps {
@@ -78,6 +79,26 @@ class WebSocketWorker extends FuncNodesWorker {
     );
 
     await this.recieve(json);
+  }
+
+  async handle_large_message_hint({ msg_id }: LargeMessageHint) {
+    // make url from websocket url
+    let url = "http" + this._url.substring(2);
+    //add /msg_id to url to get the large message (url might end with /)
+    if (url[url.length - 1] !== "/") {
+      url += "/";
+    }
+    url += "message/" + msg_id;
+
+    const resp = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    const json = await resp.json();
+    this.recieve(json);
   }
 
   onopen() {

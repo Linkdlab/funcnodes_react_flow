@@ -64,7 +64,7 @@ const KeyHandler = () => {
         if (!fnrf_zst.worker) return <></>;
         if (!edge.source || !edge.target) return <></>;
         if (!edge.sourceHandle || !edge.targetHandle) return <></>;
-        fnrf_zst.worker?.remove_edge({
+        fnrf_zst.worker.remove_edge({
           src_nid: edge.source,
           src_ioid: edge.sourceHandle,
           trg_nid: edge.target,

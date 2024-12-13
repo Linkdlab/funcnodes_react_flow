@@ -22,7 +22,7 @@ class WorkerManager {
     this.zustand = zustand;
     this.workers = {};
     this.on_setWorker = (worker: FuncNodesWorker | undefined) => {
-      this.zustand.worker = worker;
+      this.zustand.set_worker(worker);
     };
     this.connect();
   }
@@ -116,6 +116,7 @@ class WorkerManager {
               url,
               zustand: this.zustand,
               uuid: msg.data.uuid,
+              on_sync_complete: this.zustand.options.on_sync_complete,
             })
         );
       } else {
@@ -146,7 +147,7 @@ class WorkerManager {
     if (this.zustand.worker !== undefined) {
       this.zustand.clear_all();
     }
-    this.zustand.worker = worker;
+    this.zustand.set_worker(worker);
     this.on_setWorker(worker);
   }
 

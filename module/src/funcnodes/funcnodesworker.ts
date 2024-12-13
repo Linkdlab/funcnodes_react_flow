@@ -3,10 +3,12 @@ import {
   FullState,
   FuncNodesReactFlowZustandInterface,
   JSONMessage,
+  LargeMessageHint,
   NodeSpaceEvent,
   ViewState,
   WorkerEvent,
 } from "../states/fnrfzst.t";
+import { create, StoreApi, UseBoundStore } from "zustand";
 import { NodeActionUpdate, NodeType, PartialNodeType } from "../states/node.t"; // Import the missing type
 import { deep_merge } from "../utils";
 import { LibType } from "../states/lib.t";
@@ -24,6 +26,11 @@ interface WorkerProps {
   zustand?: FuncNodesReactFlowZustandInterface;
   uuid: string;
   on_error?: (error: string | Error) => void;
+  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
+}
+
+interface FuncNodesWorkerState {
+  is_open: boolean;
 }
 
 class FuncNodesWorker {
@@ -32,7 +39,10 @@ class FuncNodesWorker {
   _local_nodeupdates: Map<string, PartialNodeType>;
   _nodeupdatetimer: ReturnType<typeof setTimeout>;
   uuid: string;
-  is_open: boolean;
+
+  state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
+  on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
+
   on_error: (error: any) => void;
   constructor(data: WorkerProps) {
     this.uuid = data.uuid;
@@ -47,14 +57,31 @@ class FuncNodesWorker {
     this._nodeupdatetimer = setTimeout(() => {
       this.sync_local_node_updates();
     }, 1000);
-    this.is_open = true;
+    this.state = create<FuncNodesWorkerState>((_set, _get) => ({
+      is_open: true,
+    }));
     if (data.zustand) this.set_zustand(data.zustand);
+
+    if (data.on_sync_complete) {
+      this.on_sync_complete = data.on_sync_complete;
+    } else {
+      this.on_sync_complete = async () => {};
+    }
   }
 
   set_zustand(zustand: FuncNodesReactFlowZustandInterface) {
+    if (zustand === this._zustand) return;
     this._zustand = zustand;
+    zustand.set_worker(this);
     this._zustand.auto_progress();
     this.stepwise_fullsync();
+  }
+
+  public get is_open(): boolean {
+    return this.state.getState().is_open;
+  }
+  public set is_open(v: boolean) {
+    this.state.setState({ is_open: v });
   }
 
   async stepwise_fullsync() {
@@ -66,6 +93,8 @@ class FuncNodesWorker {
     await this.sync_funcnodes_plugins();
     await this.sync_nodespace();
     await this.sync_view_state();
+
+    await this.on_sync_complete(this);
   }
 
   async sync_lib() {
@@ -529,6 +558,10 @@ class FuncNodesWorker {
     throw new Error("Not implemented");
   }
 
+  async handle_large_message_hint({}: LargeMessageHint) {
+    throw new Error("handle_large_message_hint not implemented ");
+  }
+
   async recieve_workerevent({ event, data }: WorkerEvent) {
     switch (event) {
       case "worker_error":
@@ -541,6 +574,9 @@ class FuncNodesWorker {
         });
       case "lib_update":
         await this.sync_lib();
+        return;
+      case "fullsync":
+        await this.stepwise_fullsync();
         return;
       case "external_worker_update":
         await this.sync_lib();
@@ -688,6 +724,23 @@ class FuncNodesWorker {
           lib: data.result,
         });
 
+      case "progress":
+        if (!this._zustand) return;
+        if (data.node) {
+          return this._zustand.on_node_action({
+            type: "update",
+            node: {
+              id: data.node,
+              progress: data.info,
+            },
+            id: data.node,
+            from_remote: true,
+          });
+        }
+        console.warn("Unhandled nodepsace event", event, data);
+
+        break;
+
       default:
         console.warn("Unhandled nodepsace event", event, data);
         break;
@@ -737,6 +790,9 @@ class FuncNodesWorker {
 
       case "workerevent":
         return await this.recieve_workerevent(data);
+
+      case "large_message":
+        return await this.handle_large_message_hint(data);
       default:
         console.warn("Unhandled message", data);
         break;
@@ -880,4 +936,4 @@ class FuncNodesWorker {
 }
 
 export default FuncNodesWorker;
-export type { WorkerProps };
+export type { WorkerProps, FuncNodesWorkerState };

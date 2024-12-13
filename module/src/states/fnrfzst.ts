@@ -36,6 +36,9 @@ import type {
 } from "./node.t";
 import FuncNodesReactPlugin from "../plugin";
 import { ConsoleLogger, INFO } from "../utils/logger";
+import FuncNodesWorker, {
+  FuncNodesWorkerState,
+} from "../funcnodes/funcnodesworker";
 
 const _fill_node_frontend = (
   node: NodeType,
@@ -161,6 +164,7 @@ const assert_reactflow_node = (
 const FuncNodesReactFlowZustand = ({
   useWorkerManager = true,
   default_worker = undefined,
+  on_sync_complete = undefined,
 }: FuncnodesReactFlowProps): FuncNodesReactFlowZustandInterface => {
   /*
   function that should be called when the remote node, e.g. in the python worker is performing an action
@@ -169,6 +173,7 @@ const FuncNodesReactFlowZustand = ({
   const options: FuncnodesReactFlowProps = {
     useWorkerManager: useWorkerManager,
     default_worker: default_worker,
+    on_sync_complete: on_sync_complete,
   };
 
   const _add_node = (action: NodeActionAdd) => {
@@ -209,7 +214,7 @@ const FuncNodesReactFlowZustand = ({
       action.node.error = undefined;
     }
     if (action.from_remote) {
-      const store = ns.get_node(action.id);
+      const store = ns.get_node(action.id, false);
       if (!store) {
         return;
       }
@@ -341,7 +346,7 @@ const FuncNodesReactFlowZustand = ({
             className: "funcnodes-edge animated",
           };
 
-          console.log("Adding edge", new_edge);
+          iterf.logger.info("Adding edge", new_edge);
 
           rfstore.setState({ edges: [...edges, new_edge] });
           iterf.worker?.get_remote_node_state(action.src_nid);
@@ -433,7 +438,7 @@ const FuncNodesReactFlowZustand = ({
 
   const clear_all = () => {
     iterf.worker?.disconnect();
-    iterf.worker = undefined;
+    iterf.set_worker(undefined);
     iterf.workermanager?.setWorker(undefined);
     iterf.lib.libstate
       .getState()
@@ -468,6 +473,10 @@ const FuncNodesReactFlowZustand = ({
     lib: lib,
     workermanager: undefined,
     workers: create<WorkersState>((_set, _get) => ({})),
+    workerstate: create<FuncNodesWorkerState>((_set, _get) => ({
+      is_open: false,
+    })),
+
     render_options: create<RenderOptions>((_set, _get) => ({})),
     progress_state: create<ProgressState>((_set, _get) => ({
       message: "please select worker",
@@ -483,6 +492,30 @@ const FuncNodesReactFlowZustand = ({
       }
     },
     worker: undefined,
+    _unsubscribeFromWorker: undefined,
+    set_worker: (worker: FuncNodesWorker | undefined) => {
+      if (worker === iterf.worker) {
+        return;
+      }
+
+      if (iterf._unsubscribeFromWorker) {
+        iterf._unsubscribeFromWorker();
+        iterf._unsubscribeFromWorker = undefined;
+      }
+
+      // If new worker is provided
+      if (worker) {
+        iterf._unsubscribeFromWorker = worker.state.subscribe((newState) => {
+          iterf.workerstate.setState(newState);
+        });
+
+        iterf.workerstate.setState(worker.state.getState());
+      }
+
+      // Update the reference
+      iterf.worker = worker;
+      worker?.set_zustand(iterf);
+    },
     nodespace: ns,
     useReactFlowStore: rfstore,
     on_node_action: on_node_action,
