@@ -2,6 +2,7 @@ import { UseBoundStore, StoreApi } from "zustand";
 import { DeepPartial } from "../utils";
 import { IOType } from "./nodeio.t";
 import { DataRenderOptions } from "../types/rendering.t";
+import { TqdmState } from "../frontend/utils/progressbar";
 
 /**
  * Interface for the NodeActionAdd.
@@ -68,12 +69,6 @@ interface NodeRenderOptions {
   data?: DataRenderOptions;
 }
 
-interface NodeProgressState {
-  label: string;
-  total: number;
-  current: number;
-}
-
 interface NodeType {
   id: string;
   node_name: string;
@@ -88,7 +83,7 @@ interface NodeType {
   error?: string;
   render_options?: NodeRenderOptions;
   io_order: string[];
-  progressState: UseBoundStore<StoreApi<NodeProgressState>>;
+  progress: TqdmState;
 }
 
 type PartialNodeType = DeepPartial<NodeType>;
@@ -103,5 +98,4 @@ export type {
   PartialNodeType,
   NodeActionTrigger,
   NodeType,
-  NodeProgressState,
 };

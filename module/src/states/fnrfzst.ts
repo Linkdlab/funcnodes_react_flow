@@ -214,7 +214,7 @@ const FuncNodesReactFlowZustand = ({
       action.node.error = undefined;
     }
     if (action.from_remote) {
-      const store = ns.get_node(action.id);
+      const store = ns.get_node(action.id, false);
       if (!store) {
         return;
       }

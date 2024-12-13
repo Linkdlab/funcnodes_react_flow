@@ -724,6 +724,23 @@ class FuncNodesWorker {
           lib: data.result,
         });
 
+      case "progress":
+        if (!this._zustand) return;
+        if (data.node) {
+          return this._zustand.on_node_action({
+            type: "update",
+            node: {
+              id: data.node,
+              progress: data.info,
+            },
+            id: data.node,
+            from_remote: true,
+          });
+        }
+        console.warn("Unhandled nodepsace event", event, data);
+
+        break;
+
       default:
         console.warn("Unhandled nodepsace event", event, data);
         break;

@@ -279,3 +279,24 @@ input.nodedatainput.styledinput,
   @extend .nodedatastyledelement;
   width: 100%;
 }
+
+.nodeprogress {
+  width: 100%;
+  height: 10px;
+  transition: height 0.1s ease;
+  overflow: hidden;
+
+  &-text {
+    text-align: center;
+    color: white;
+    mix-blend-mode: difference;
+  }
+  &-bar {
+    border-radius: 3px;
+  }
+  &-progress {
+    background-color: #b7f50c;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+}
