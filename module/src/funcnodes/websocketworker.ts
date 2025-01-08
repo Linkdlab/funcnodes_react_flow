@@ -126,14 +126,39 @@ class WebSocketWorker extends FuncNodesWorker {
     }
   }
 
+  async send_large_message(jsondata: string) {
+    let url = "http" + this._url.substring(2);
+    //add /msg_id to url to get the large message (url might end with /)
+    if (url[url.length - 1] !== "/") {
+      url += "/";
+    }
+    url += "message/";
+
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsondata,
+    });
+  }
+
   async send(data: any) {
     if (!this._websocket || this._websocket.readyState !== WebSocket.OPEN) {
       this._zustand?.logger.warn("Websocket not connected");
       return;
     }
 
+    const jsonstring = JSON.stringify(data);
+    const datasize = new Blob([jsonstring]).size;
+    if (datasize > 1000000) {
+      // 1MB
+      this._zustand?.logger.info("Data too large, sending in chunks");
+      return await this.send_large_message(jsonstring);
+    }
+
     this._zustand?.logger.debug("Sending data", data);
-    this._websocket.send(JSON.stringify(data));
+    this._websocket.send(jsonstring);
   }
 
   async stop() {
