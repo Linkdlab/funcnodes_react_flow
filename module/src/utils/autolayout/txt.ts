@@ -18,7 +18,7 @@ function fitTextToContainer(
 ): void {
   const {
     maxFontSize = 100, // default maximum font size
-    minFontSize = 8, // default minimum font size
+    minFontSize = 6, // default minimum font size
     decrementFactor = 0.9, // font size decrement step
   } = options;
 

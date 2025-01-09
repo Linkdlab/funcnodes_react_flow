@@ -1,15 +1,29 @@
 import React from "react";
-import FuncnodesReactFlow from "./frontend";
+import FuncnodesReactFlow, { FuncNodesContext } from "./frontend";
 import WebSocketWorker from "./funcnodes/websocketworker";
 import FuncNodesReactPlugin, {
   RendererPlugin,
   RenderPluginFactoryProps,
 } from "./plugin";
-import { IOType } from "./states/nodeio.t";
+import {
+  InputRendererProps,
+  IOType,
+  OutputRendererProps,
+} from "./states/nodeio.t";
 import helperfunctions from "./utils/helperfunctions";
-import FuncNodesReactFlowZustand from "./states";
+import FuncNodesReactFlowZustand, {
+  FuncNodesReactFlowZustandInterface,
+} from "./states";
 import ReactDOM from "react-dom/client";
 import { FuncNodesWorker } from "./funcnodes";
+import {
+  HandlePreviewRendererType,
+  DataOverlayRendererType,
+  DataPreviewViewRendererType,
+  DataViewRendererType,
+} from "./frontend/datarenderer/rendermappings";
+import { NodeType } from "./states/node.t";
+import { ProgressState } from "./states/fnrfzst.t";
 
 export default FuncnodesReactFlow;
 
@@ -106,10 +120,20 @@ export {
   helperfunctions,
   FuncNodesReactFlowZustand,
   FuncNodes,
+  FuncNodesContext,
 };
 export type {
   IOType,
   FuncNodesReactPlugin,
   RendererPlugin,
   RenderPluginFactoryProps,
+  InputRendererProps,
+  OutputRendererProps,
+  FuncNodesReactFlowZustandInterface,
+  HandlePreviewRendererType,
+  DataOverlayRendererType,
+  DataPreviewViewRendererType,
+  DataViewRendererType,
+  NodeType,
+  ProgressState,
 };

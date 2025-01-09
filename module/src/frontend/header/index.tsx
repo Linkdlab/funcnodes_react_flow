@@ -21,7 +21,7 @@ const NewWorkerDialog = ({
   open,
 }: {
   trigger?: React.ReactNode;
-  setOpen?: (open: boolean) => void;
+  setOpen: (open: boolean) => void;
   open?: boolean;
 }) => {
   const [name, setName] = useState<string>("");
@@ -119,6 +119,7 @@ const NewWorkerDialog = ({
                   copyLib,
                   copyNS,
                 });
+                setOpen(false);
               }}
             >
               Create
