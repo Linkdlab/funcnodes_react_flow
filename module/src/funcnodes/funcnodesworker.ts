@@ -558,6 +558,13 @@ class FuncNodesWorker {
     throw new Error("Not implemented");
   }
 
+  async upload_file(
+    _files: File[] | FileList,
+    _onProgressCallback?: (loaded: number, total?: number) => void
+  ): Promise<string[]> {
+    throw new Error("handle_large_message_hint not implemented ");
+  }
+
   async handle_large_message_hint({}: LargeMessageHint) {
     throw new Error("handle_large_message_hint not implemented ");
   }

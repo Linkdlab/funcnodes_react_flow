@@ -576,7 +576,7 @@ THE SOFTWARE.
 
 args, csslib and logging license:
 
-Copyright 2013, the Dart project authors. 
+Copyright 2013, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -610,7 +610,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 async, cli_util, collection, mime, source_map_stack_trace, stream_channel and
 typed_data license:
 
-Copyright 2015, the Dart project authors. 
+Copyright 2015, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -1011,7 +1011,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 coverage, dart_style, dartdoc, glob, http, http_parser, matcher, path, pool,
 pub_semver, source_span, string_scanner, test and watcher license:
 
-Copyright 2014, the Dart project authors. 
+Copyright 2014, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -1070,7 +1070,7 @@ SOFTWARE.
 
 ffi and package_config license:
 
-Copyright 2019, the Dart project authors. 
+Copyright 2019, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -1168,7 +1168,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 frontend_server_client license:
 
-Copyright 2020, the Dart project authors. 
+Copyright 2020, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -1264,7 +1264,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 io, stream_transform and term_glyph license:
 
-Copyright 2017, the Dart project authors. 
+Copyright 2017, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -1395,7 +1395,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 markdown license:
 
-Copyright 2012, the Dart project authors. 
+Copyright 2012, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -1903,7 +1903,7 @@ quiver and retry license:
 
 test_api and test_core license:
 
-Copyright 2018, the Dart project authors. 
+Copyright 2018, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -1936,7 +1936,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 test_descriptor and web_socket_channel license:
 
-Copyright 2016, the Dart project authors. 
+Copyright 2016, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -2064,7 +2064,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 web_socket license:
 
-Copyright 2024, the Dart project authors. 
+Copyright 2024, the Dart project authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -2178,7 +2178,7 @@ Apache License
 
 Version 2.0, January 2004
 
-http://www.apache.org/licenses/ 
+http://www.apache.org/licenses/
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
@@ -2474,4 +2474,3 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
