@@ -1,3 +1,4 @@
+import axios from "axios";
 import { LargeMessageHint } from "../states/fnrfzst.t";
 import FuncNodesWorker, { WorkerProps } from "./funcnodesworker";
 
@@ -81,13 +82,60 @@ class WebSocketWorker extends FuncNodesWorker {
     await this.recieve(json);
   }
 
-  async handle_large_message_hint({ msg_id }: LargeMessageHint) {
-    // make url from websocket url
-    let url = "http" + this._url.substring(2);
-    //add /msg_id to url to get the large message (url might end with /)
+  get http_protocol(): string {
+    return this.secure_url ? "https" : "http";
+  }
+  get secure_url(): boolean {
+    return this._url.startsWith("wss");
+  }
+  get url_wo_protocol(): string {
+    return this._url.substring(this.secure_url ? 6 : 5);
+  }
+  get http_url(): string {
+    var url = this.http_protocol + "://" + this.url_wo_protocol;
+    // add / to url if it does not end with /
     if (url[url.length - 1] !== "/") {
       url += "/";
     }
+    return url;
+  }
+
+  async upload_file(
+    files: File[] | FileList,
+    onProgressCallback?: (loaded: number, total?: number) => void
+  ): Promise<string[]> {
+    const url = `${this.http_url}upload/`;
+    const formdata = new FormData();
+    const fileArray = Array.isArray(files) ? files : Array.from(files);
+    for (const file of fileArray) {
+      formdata.append("file", file, file.webkitRelativePath || file.name);
+    }
+
+    try {
+      const response = await axios.post(url, formdata, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => {
+          if (onProgressCallback) {
+            onProgressCallback(progressEvent.loaded, progressEvent.total);
+          }
+        },
+      });
+
+      // Assuming the server response contains a JSON object with the filename
+      return response.data.files;
+    } catch (error) {
+      throw new Error("Failed to upload file");
+    }
+  }
+
+  async handle_large_message_hint({ msg_id }: LargeMessageHint) {
+    // make url from websocket url
+
+    //add /msg_id to url to get the large message (url might end with /)
+    var url = this.http_url;
+
     url += "message/" + msg_id;
 
     const resp = await fetch(url, {
@@ -133,14 +181,15 @@ class WebSocketWorker extends FuncNodesWorker {
       url += "/";
     }
     url += "message/";
+    console.log(jsondata.length);
 
-    await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: jsondata,
-    });
+    // await fetch(url, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: jsondata,
+    // });
   }
 
   async send(data: any) {
@@ -153,7 +202,7 @@ class WebSocketWorker extends FuncNodesWorker {
     const datasize = new Blob([jsonstring]).size;
     if (datasize > 1000000) {
       // 1MB
-      this._zustand?.logger.info("Data too large, sending in chunks");
+      this._zustand?.logger.info("Data too large, sending via http");
       return await this.send_large_message(jsonstring);
     }
 

@@ -97,17 +97,23 @@ function formatMeter(
 
   const invRate = scaledRate ? 1 / scaledRate : undefined;
 
-  const rateNoInvFmt =
-    (scaledRate ? `${scaledRate.toFixed(2)}` : "?") + unit + "/s";
-  const rateInvFmt = invRate ? `${invRate.toFixed(2)}s/` + unit : "?";
+  const [rateval, ratescale] = scaledRate
+    ? formatSize(scaledRate, unit_divisor)
+    : [undefined, ""];
+  const [invrateval, invratescale] = invRate
+    ? formatSize(invRate, 1000)
+    : [undefined, ""];
+
+  const rateNoInvFmt = (rateval ? rateval : "?") + `${ratescale}${unit}/s`;
+  const rateInvFmt = invrateval ? `${invrateval}${invratescale}s/` + unit : "?";
   const rateFmt = invRate && invRate > 1 ? rateInvFmt : rateNoInvFmt;
 
   const nFmt = unit_scale
-    ? formatSize(scaledN, unit_divisor)
+    ? formatSize(scaledN, unit_divisor).join("")
     : scaledN.toString();
   const totalFmt =
     unit_scale && scaledTotal !== null
-      ? formatSize(scaledTotal, unit_divisor)
+      ? formatSize(scaledTotal, unit_divisor).join("")
       : scaledTotal?.toString() ?? "?";
 
   const remaining =
@@ -137,25 +143,15 @@ function formatInterval(seconds: number): string {
   return `${minutes}:${secs.toString().padStart(2, "0")}`;
 }
 
-function formatSize(value: number, divisor: number): string {
+function formatSize(value: number, divisor: number): [string, string] {
   const units = ["", "K", "M", "G", "T"];
   let unitIndex = 0;
   while (value >= divisor && unitIndex < units.length - 1) {
     value /= divisor;
     unitIndex++;
   }
-  return `${value.toFixed(2)}${units[unitIndex]}`;
+  return [value.toFixed(2), units[unitIndex]];
 }
-
-// function createProgressBar(
-//   fraction: number,
-//   ncols: number | undefined
-// ): string {
-//   const width = ncols ?? 10;
-//   const filled = Math.round(fraction * width);
-//   const empty = width - filled;
-//   return "#".repeat(filled) + "-".repeat(empty);
-// }
 
 const ProgressBar: React.FC<
   ProgressBarProps & React.HTMLAttributes<HTMLDivElement>
@@ -178,7 +174,7 @@ const ProgressBar: React.FC<
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [state]);
 
   console.log("STATE", state);
   const progressPercentage = state.total ? (state.n / state.total) * 100 : 0;
