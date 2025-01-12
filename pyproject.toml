@@ -1,27 +1,29 @@
-[tool.poetry]
+[project]
 name = "funcnodes-react-flow"
-version = "0.3.1"
+version = "0.3.3"
 description = "funcnodes frontend for react flow"
-authors = ["Julian Kimmig <julian.kimmig@linkdlab.de>"]
+authors = [
+{name = "Julian Kimmig", email = "julian.kimmig@linkdlab.de>"}
+]
 readme = "README.md"
 license = "AGPL-3.0"
 classifiers = [
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     ]
 
+requires-python = ">=3.11"
+dependencies = [
+    "funcnodes-core>=0.3.8",
+    "funcnodes>=0.5.6"
+]
 
-[tool.poetry.urls]
+
+[project.urls]
 homepage  = "https://github.com/Linkdlab/funcnodes_react_flow"
 source  = "https://github.com/Linkdlab/funcnodes_react_flow"
 tracker  = "https://github.com/Linkdlab/funcnodes_react_flow/issues"
 download = "https://pypi.org/project/funcnodes-react-flow/#files"
 
-
-
-[tool.poetry.dependencies]
-python = ">=3.11"
-funcnodes = ">=0.5.6"
-funcnodes-core = ">=0.3.8"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
@@ -36,5 +38,5 @@ build-backend = "poetry.core.masonry.api"
 min_confidence = 80
 paths = ["funcnodes_react_flow"]
 
-[tool.poetry.scripts]
+[project.scripts]
 funcnodes_react_flow = 'funcnodes_react_flow.__main__:main'

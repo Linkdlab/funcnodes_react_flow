@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "module",
-    "app"
+    "app",
+    "app_single_worker"
   ],
   "packageManager": "yarn@4.2.2",
   "devDependencies": {
