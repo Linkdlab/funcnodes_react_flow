@@ -100,15 +100,22 @@ class WebSocketWorker extends FuncNodesWorker {
     return url;
   }
 
-  async upload_file(
-    files: File[] | FileList,
-    onProgressCallback?: (loaded: number, total?: number) => void
-  ): Promise<string[]> {
+  async upload_file({
+    files,
+    onProgressCallback,
+    root,
+  }: {
+    files: File[] | FileList;
+    onProgressCallback?: (loaded: number, total?: number) => void;
+    root?: string;
+  }): Promise<string[]> {
     const url = `${this.http_url}upload/`;
     const formdata = new FormData();
     const fileArray = Array.isArray(files) ? files : Array.from(files);
     for (const file of fileArray) {
-      formdata.append("file", file, file.webkitRelativePath || file.name);
+      const subtarget = file.webkitRelativePath || file.name;
+      const target = root ? `${root}/${subtarget}` : subtarget;
+      formdata.append("file", file, target);
     }
 
     try {
@@ -124,7 +131,7 @@ class WebSocketWorker extends FuncNodesWorker {
       });
 
       // Assuming the server response contains a JSON object with the filename
-      return response.data.files;
+      return response.data.file;
     } catch (error) {
       throw new Error("Failed to upload file");
     }

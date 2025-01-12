@@ -17,3 +17,4 @@ __pycache__/
 /.licensecheck
 /.yarn
 /app/dist/
+/app_single_worker/dist/
