@@ -176,7 +176,6 @@ const ProgressBar: React.FC<
     };
   }, [state]);
 
-  console.log("STATE", state);
   const progressPercentage = state.total ? (state.n / state.total) * 100 : 0;
 
   return (
