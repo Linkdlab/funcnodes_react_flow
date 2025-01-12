@@ -100,11 +100,15 @@ class WebSocketWorker extends FuncNodesWorker {
     return url;
   }
 
-  async upload_file(
-    files: File[] | FileList,
-    onProgressCallback?: (loaded: number, total?: number) => void,
-    root?: string
-  ): Promise<string[]> {
+  async upload_file({
+    files,
+    onProgressCallback,
+    root,
+  }: {
+    files: File[] | FileList;
+    onProgressCallback?: (loaded: number, total?: number) => void;
+    root?: string;
+  }): Promise<string[]> {
     const url = `${this.http_url}upload/`;
     const formdata = new FormData();
     const fileArray = Array.isArray(files) ? files : Array.from(files);
