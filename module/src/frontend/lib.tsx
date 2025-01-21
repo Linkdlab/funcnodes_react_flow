@@ -140,67 +140,47 @@ interface availableModule {
   homepage: string;
   source: string;
   version: string;
+  releases: string[];
 }
 
-const ActiveModule = ({
+const _ModuleLinks = ({
   availableModule,
-  on_remove,
 }: {
   availableModule: availableModule;
-  on_remove: (module: availableModule) => void;
 }) => {
   return (
-    <div className="addable-module">
-      <div className="module-name">{availableModule["name"]}</div>
-      <div className="module-links">
-        {availableModule.homepage && (
-          <>
-            <a
-              href={availableModule["homepage"]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Homepage
-            </a>
-          </>
-        )}
-        {availableModule.source && availableModule.homepage && " | "}
-        {availableModule.source && (
-          <>
-            <a
-              href={availableModule["source"]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Source
-            </a>
-          </>
-        )}
-      </div>
-      <div className="module-description">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {availableModule["description"].replace(/\\n/g, "  \n")}
-        </ReactMarkdown>
-      </div>
-
-      <button
-        className="remove-button"
-        onClick={() => {
-          on_remove(availableModule);
-        }}
-      >
-        Remove
-      </button>
+    <div className="module-links">
+      {availableModule.homepage && (
+        <>
+          <a
+            href={availableModule["homepage"]}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Homepage
+          </a>
+        </>
+      )}
+      {availableModule.source && availableModule.homepage && " | "}
+      {availableModule.source && (
+        <>
+          <a
+            href={availableModule["source"]}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Source
+          </a>
+        </>
+      )}
     </div>
   );
 };
 
-const AddableModule = ({
+const _ModuleDescription = ({
   availableModule,
-  on_add,
 }: {
   availableModule: availableModule;
-  on_add: (module: availableModule) => void;
 }) => {
   const [expandedDescription, setExpandedDescription] = useState(false);
   const toggleDescription = () => setExpandedDescription(!expandedDescription);
@@ -213,63 +193,201 @@ const AddableModule = ({
       : availableModule["description"];
 
   return (
+    <div className="module-description">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {expandedDescription
+          ? availableModule["description"].replace(/\\n/g, "  \n")
+          : truncatedDescription.replace(/\\n/g, "  \n")}
+      </ReactMarkdown>
+      {availableModule["description"].length > maxDescriptionLength && (
+        <button onClick={toggleDescription} className="toggle-description">
+          {expandedDescription ? "Show less" : "Show more"}
+        </button>
+      )}
+    </div>
+  );
+};
+
+const _VersionSelector = ({
+  availableModule,
+  on_change,
+}: {
+  availableModule: availableModule;
+  on_change: (release: string) => void;
+}) => {
+  const [selectedRelease, setSelectedRelease] = useState(
+    availableModule.version || "latest"
+  );
+
+  const [selectedRestriction, setSelectedRestriction] = useState(">=");
+
+  const updateSelectedRelease = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const version = e.target.value;
+    setSelectedRelease(version);
+    if (version !== "latest") on_change(selectedRestriction + version);
+    else on_change(version);
+  };
+
+  const updateSelectedRestriction = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedRestriction(e.target.value);
+    if (selectedRelease !== "latest")
+      on_change(e.target.value + selectedRelease);
+  };
+
+  // if availableModule.version is set and not in availableModule.releases, add it to the beginning of the list
+  if (
+    availableModule.releases &&
+    !availableModule.releases.includes(selectedRelease)
+  ) {
+    availableModule.releases.unshift(selectedRelease);
+  }
+  return (
+    <>
+      <select value={selectedRestriction} onChange={updateSelectedRestriction}>
+        <option value=">=">&gt;=</option>
+        <option value="==">==</option>
+        <option value="<=">&lt;=</option>
+      </select>
+      <select onChange={updateSelectedRelease} value={selectedRelease}>
+        {availableModule["releases"] &&
+          availableModule["releases"].map((release: string) => (
+            <option key={release} value={release}>
+              {release}
+            </option>
+          ))}
+      </select>
+    </>
+  );
+};
+
+const ActiveModule = ({
+  availableModule,
+  on_remove,
+  on_update,
+}: {
+  availableModule: availableModule;
+  on_remove: (module: availableModule) => void;
+  on_update: (module: availableModule, release: string) => void;
+}) => {
+  const [selectedRelease, setSelectedRelease] = useState(
+    availableModule.version || "latest"
+  );
+
+  return (
+    <div className="addable-module">
+      <div className="module-name">
+        {availableModule["name"] +
+          (availableModule.version ? ` (${availableModule.version})` : "")}
+      </div>
+      <_ModuleLinks availableModule={availableModule} />
+      <_ModuleDescription availableModule={availableModule} />
+      <div>
+        <_VersionSelector
+          availableModule={availableModule}
+          on_change={setSelectedRelease}
+        />
+        <button
+          className="update-button"
+          disabled={selectedRelease === availableModule.version}
+          onClick={() => {
+            on_update(availableModule, selectedRelease);
+          }}
+        >
+          Update
+        </button>
+        <button
+          className="remove-button"
+          onClick={() => {
+            on_remove(availableModule);
+          }}
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const AddableModule = ({
+  availableModule,
+  on_add,
+}: {
+  availableModule: availableModule;
+  on_add: (module: availableModule, release: string) => void;
+}) => {
+  const [selectedRelease, setSelectedRelease] = useState(
+    availableModule.version || "latest"
+  );
+  return (
+    <div className="addable-module">
+      <div className="module-name">
+        {availableModule["name"] +
+          (availableModule.version ? ` (${availableModule.version})` : "")}
+      </div>
+      <_ModuleLinks availableModule={availableModule} />
+      <_ModuleDescription availableModule={availableModule} />
+      <div>
+        <_VersionSelector
+          availableModule={availableModule}
+          on_change={setSelectedRelease}
+        />
+        <button
+          className="add-button"
+          onClick={() => {
+            on_add(availableModule, selectedRelease);
+          }}
+        >
+          Add
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const InstallableModule = ({
+  availableModule,
+  on_add,
+}: {
+  availableModule: availableModule;
+  on_add: (module: availableModule, release: string) => void;
+}) => {
+  const [selectedRelease, setSelectedRelease] = useState(
+    availableModule.version || "latest"
+  );
+
+  return (
     <div className="addable-module">
       <div className="module-name">{availableModule["name"]}</div>
-      <div className="module-links">
-        {availableModule.homepage && (
-          <>
-            <a
-              href={availableModule["homepage"]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Homepage
-            </a>
-          </>
-        )}
-        {availableModule.source && availableModule.homepage && " | "}
-        {availableModule.source && (
-          <>
-            <a
-              href={availableModule["source"]}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Source
-            </a>
-          </>
-        )}
+      <_ModuleLinks availableModule={availableModule} />
+      <_ModuleDescription availableModule={availableModule} />
+      <div>
+        <_VersionSelector
+          availableModule={availableModule}
+          on_change={setSelectedRelease}
+        />
+        <button
+          className="add-button"
+          onClick={() => {
+            on_add(availableModule, selectedRelease);
+          }}
+        >
+          Add
+        </button>
       </div>
-      <div className="module-description">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {expandedDescription
-            ? availableModule["description"].replace(/\\n/g, "  \n")
-            : truncatedDescription.replace(/\\n/g, "  \n")}
-        </ReactMarkdown>
-        {availableModule["description"].length > maxDescriptionLength && (
-          <button onClick={toggleDescription} className="toggle-description">
-            {expandedDescription ? "Show less" : "Show more"}
-          </button>
-        )}
-      </div>
-
-      <button
-        className="add-button"
-        onClick={() => {
-          on_add(availableModule);
-        }}
-      >
-        Add
-      </button>
     </div>
   );
 };
 
 const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
-  const [newlib, setNewLib] = useState("");
   const [filter, setFilter] = useState(""); // State for the filter input
   const zustand: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
+
+  const [activeExtended, SetActiveExtended] = useState(true);
+  const [availableExtended, SetAvailableExtended] = useState(true);
+  const [installedExtended, SetInstalledExtended] = useState(true);
 
   const [availableModules, SetAvailableModules] = useState<{
     installed: availableModule[];
@@ -289,6 +407,7 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
     }
 
     zustand.worker.get_available_modules().then((modules) => {
+      console.log(modules);
       SetAvailableModules(modules);
     });
   };
@@ -297,28 +416,26 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
     return <></>;
   }
 
-  const add_new_lib = () => {
-    if (zustand.worker === undefined) {
-      return;
-    }
-    zustand.worker.add_lib(newlib);
-    setNewLib("");
-  };
-
-  const add_new_lib_from_installed = (module: availableModule) => {
+  const add_new_lib_from_installed = (
+    module: availableModule,
+    release: string
+  ) => {
     setIsDialogOpen(false);
     if (zustand.worker === undefined) {
       return;
     }
-    zustand.worker.add_lib(module.name); // use name as module name
+    zustand.worker.add_lib(module.name, release); // use name as module name
   };
 
-  const add_new_lib_from_installable = (module: availableModule) => {
+  const add_new_lib_from_installable = (
+    module: availableModule,
+    release: string
+  ) => {
     setIsDialogOpen(false);
     if (zustand.worker === undefined) {
       return;
     }
-    zustand.worker.add_lib(module.name); // use name as module name
+    zustand.worker.add_lib(module.name, release); // use name as module name
   };
 
   const remove_lib_from_active = (module: availableModule) => {
@@ -327,6 +444,14 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
       return;
     }
     zustand.worker.remove_lib(module.name);
+  };
+
+  const update_lib = (module: availableModule, release: string) => {
+    setIsDialogOpen(false);
+    if (zustand.worker === undefined) {
+      return;
+    }
+    zustand.worker.add_lib(module.name, release);
   };
 
   // Filter the modules based on the search term, ignoring case
@@ -349,13 +474,6 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
       onOpenChange={update_modules}
       open={isDialogOpen}
       setOpen={setIsDialogOpen}
-      buttons={[
-        {
-          text: "add",
-          onClick: add_new_lib,
-          close: true,
-        },
-      ]}
     >
       <input
         className="filter-input styledinput"
@@ -368,40 +486,60 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
         className="packagelist"
         style={{ maxHeight: "70%", overflow: "auto" }}
       >
-        {installedModulesFiltered.length > 0 && <h3>Installed</h3>}
-        {installedModulesFiltered.map((item, idx) => (
-          <AddableModule
-            key={idx}
-            availableModule={item}
-            on_add={add_new_lib_from_installed}
-          />
-        ))}
+        {installedModulesFiltered.length > 0 && (
+          <h3
+            onClick={() => {
+              SetInstalledExtended(!installedExtended);
+            }}
+          >
+            Installed
+          </h3>
+        )}
+        {installedExtended &&
+          installedModulesFiltered.map((item, idx) => (
+            <AddableModule
+              key={idx}
+              availableModule={item}
+              on_add={add_new_lib_from_installed}
+            />
+          ))}
 
-        {availableModulesFiltered.length > 0 && <h3>Available</h3>}
-        {availableModulesFiltered.map((item, idx) => (
-          <AddableModule
-            key={idx}
-            availableModule={item}
-            on_add={add_new_lib_from_installable}
-          />
-        ))}
-        {activeModulesFiltered.length > 0 && <h3>Active</h3>}
-        {activeModulesFiltered.map((item, idx) => (
-          <ActiveModule
-            key={idx}
-            availableModule={item}
-            on_remove={remove_lib_from_active}
-          />
-        ))}
+        {availableModulesFiltered.length > 0 && (
+          <h3
+            onClick={() => {
+              SetAvailableExtended(!availableExtended);
+            }}
+          >
+            Available
+          </h3>
+        )}
+        {availableExtended &&
+          availableModulesFiltered.map((item, idx) => (
+            <InstallableModule
+              key={idx}
+              availableModule={item}
+              on_add={add_new_lib_from_installable}
+            />
+          ))}
+        {activeModulesFiltered.length > 0 && (
+          <h3
+            onClick={() => {
+              SetActiveExtended(!activeExtended);
+            }}
+          >
+            Active
+          </h3>
+        )}
+        {activeExtended &&
+          activeModulesFiltered.map((item, idx) => (
+            <ActiveModule
+              key={idx}
+              availableModule={item}
+              on_remove={remove_lib_from_active}
+              on_update={update_lib}
+            />
+          ))}
       </div>
-      <input
-        className="styledinput"
-        type="text"
-        value={newlib}
-        onChange={(e) => {
-          setNewLib(e.target.value);
-        }}
-      />
     </CustomDialog>
   );
 };
