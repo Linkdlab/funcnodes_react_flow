@@ -759,10 +759,10 @@ class FuncNodesWorker {
     }
   }
 
-  async add_lib(lib: string) {
+  async add_lib(lib: string, release: string) {
     const ans = await this._send_cmd({
       cmd: "add_package_dependency",
-      kwargs: { name: lib },
+      kwargs: { name: lib, version: release },
       wait_for_response: false,
     });
     return ans;
