@@ -185,6 +185,17 @@ const WorkerMenu = () => {
     const data = await fileDialogToBase64(".fnw");
     fnrf_zst.worker.update_from_export(data);
   };
+
+  const has_worker_manager =
+    fnrf_zst.options.useWorkerManager && fnrf_zst.workermanager;
+  const show_select =
+    has_worker_manager && Object.keys(workersstate).length > 0;
+
+  const has_worker = fnrf_zst.worker && fnrf_zst.worker.is_open;
+  const worker_restartable = has_worker && has_worker_manager;
+
+  const show = has_worker_manager || has_worker;
+  if (!show) return null;
   return (
     <>
       <DropdownMenu.Root>
@@ -198,7 +209,7 @@ const WorkerMenu = () => {
         <DropdownMenu.Portal>
           <DropdownMenu.Content className="headermenucontent">
             <DropdownMenu.Group>
-              {fnrf_zst.options.useWorkerManager && (
+              {show_select && (
                 <DropdownMenu.Sub>
                   <DropdownMenu.SubTrigger className="headermenuitem submenuitem">
                     <Stack direction="row" spacing={1}>
@@ -259,9 +270,9 @@ const WorkerMenu = () => {
                   </DropdownMenu.Portal>
                 </DropdownMenu.Sub>
               )}
-              {fnrf_zst.worker && fnrf_zst.worker.is_open && (
+              {has_worker && (
                 <>
-                  {fnrf_zst.workermanager && (
+                  {worker_restartable && (
                     <DropdownMenu.Item
                       className="headermenuitem"
                       onClick={() => {
@@ -299,7 +310,7 @@ const WorkerMenu = () => {
                   </DropdownMenu.Item>
                 </>
               )}
-              {fnrf_zst.options.useWorkerManager && (
+              {has_worker_manager && (
                 <>
                   <DropdownMenu.Item
                     className="headermenuitem"

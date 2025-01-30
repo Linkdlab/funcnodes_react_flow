@@ -33,6 +33,12 @@ const InnerFuncnodesReactFlow = ({
 
   useEffect(() => {
     async function fetch_worker_manager() {
+      fnrf_zst.set_progress({
+        progress: 0,
+        message: "connecting to worker manager",
+        status: "info",
+        blocking: true,
+      });
       let response = await fetch("/worker_manager");
       let workerewsuri = await response.text();
       setWorkermanageruri(workerewsuri);
