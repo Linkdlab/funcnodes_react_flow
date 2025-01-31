@@ -928,10 +928,11 @@ class FuncNodesWorker {
     return res;
   }
 
-  async export() {
+  async export({ withFiles = false }: { withFiles: boolean }) {
     const res = await this._send_cmd({
       cmd: "export_worker",
       wait_for_response: true,
+      kwargs: { with_files: withFiles },
     });
     return res;
   }
