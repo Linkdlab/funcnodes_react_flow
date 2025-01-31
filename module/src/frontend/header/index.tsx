@@ -131,6 +131,61 @@ const NewWorkerDialog = ({
   );
 };
 
+const ExportWorkerDialog = ({
+  trigger,
+  setOpen,
+  open,
+}: {
+  trigger?: React.ReactNode;
+  setOpen: (open: boolean) => void;
+  open?: boolean;
+}) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+
+  const [withFiles, setWithFiles] = useState<boolean>(false);
+  const workersstate = fnrf_zst.workers();
+  const workerid = fnrf_zst.worker?.uuid;
+  const name =
+    (workerid ? workersstate[workerid].name : undefined) ||
+    workerid ||
+    "worker";
+
+  const exportWorker = async () => {
+    if (!fnrf_zst.worker) return;
+    const data = await fnrf_zst.worker.export({ withFiles });
+    downloadBase64(data, name + ".fnw", "application/zip");
+    setOpen(false);
+  };
+
+  return (
+    <CustomDialog
+      setOpen={setOpen}
+      open={open}
+      trigger={trigger}
+      title="Export Worker"
+      description="Export the worker as a .fnw file"
+    >
+      <div>
+        <div>
+          <input
+            type="checkbox"
+            className="styledcheckbox"
+            checked={withFiles}
+            onChange={(e) => {
+              setWithFiles(e.currentTarget.checked);
+            }}
+          />
+          Include Files
+        </div>
+        <button className="styledbtn" onClick={exportWorker}>
+          Export
+        </button>
+      </div>
+    </CustomDialog>
+  );
+};
+
 const Statusbar = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
@@ -153,6 +208,7 @@ const WorkerMenu = () => {
   const workersstate = fnrf_zst.workers();
 
   const [isNewWorkerDialogOpen, setNewWorkerDialogOpen] = useState(false);
+  const [isExportWorkerDialogOpen, setExportWorkerDialogOpen] = useState(false);
 
   const workerselectchange = (workerid: string) => {
     if (workerid === "__select__") return;
@@ -167,12 +223,6 @@ const WorkerMenu = () => {
       if (!ans) return;
     }
     fnrf_zst.workermanager.set_active(workerid);
-  };
-
-  const exportWorker = async () => {
-    if (!fnrf_zst.worker) return;
-    const data = await fnrf_zst.worker.export();
-    downloadBase64(data, "worker.fnw", "application/zip");
   };
 
   const updateWorker = async () => {
@@ -298,7 +348,8 @@ const WorkerMenu = () => {
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
                     className="headermenuitem"
-                    onClick={exportWorker}
+                    //onClick={exportWorker}
+                    onClick={() => setExportWorkerDialogOpen(true)}
                   >
                     Export
                   </DropdownMenu.Item>
@@ -329,6 +380,10 @@ const WorkerMenu = () => {
         open={isNewWorkerDialogOpen}
         setOpen={setNewWorkerDialogOpen}
       ></NewWorkerDialog>
+      <ExportWorkerDialog
+        open={isExportWorkerDialogOpen}
+        setOpen={setExportWorkerDialogOpen}
+      ></ExportWorkerDialog>
     </>
   );
 };

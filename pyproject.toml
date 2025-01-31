@@ -14,7 +14,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
     "funcnodes-core>=0.3.8",
-    "funcnodes>=0.5.6"
+    "funcnodes>=0.5.25"
 ]
 
 
