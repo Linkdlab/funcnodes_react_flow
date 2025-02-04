@@ -141,9 +141,7 @@ class WebSocketWorker extends FuncNodesWorker {
     // make url from websocket url
 
     //add /msg_id to url to get the large message (url might end with /)
-    var url = this.http_url;
-
-    url += "message/" + msg_id;
+    const url = this.http_url + "message/" + msg_id;
 
     const resp = await fetch(url, {
       method: "GET",
@@ -182,21 +180,15 @@ class WebSocketWorker extends FuncNodesWorker {
   }
 
   async send_large_message(jsondata: string) {
-    let url = "http" + this._url.substring(2);
-    //add /msg_id to url to get the large message (url might end with /)
-    if (url[url.length - 1] !== "/") {
-      url += "/";
-    }
-    url += "message/";
-    console.log(jsondata.length);
+    const url = `${this.http_url}message/`;
 
-    // await fetch(url, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: jsondata,
-    // });
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsondata,
+    });
   }
 
   async send(data: any) {
