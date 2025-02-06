@@ -147,7 +147,7 @@ const ExportWorkerDialog = ({
   const workersstate = fnrf_zst.workers();
   const workerid = fnrf_zst.worker?.uuid;
   const name =
-    (workerid ? workersstate[workerid].name : undefined) ||
+    (workerid ? workersstate[workerid]?.name : undefined) ||
     workerid ||
     "worker";
 
@@ -303,7 +303,7 @@ const WorkerMenu = () => {
                             <DropdownMenu.RadioItem
                               className={
                                 "headermenuitem workerselectoption" +
-                                (workersstate[workerid].active
+                                (workersstate[workerid]?.active
                                   ? " active"
                                   : " inactive") +
                                 " headermenuitem"
@@ -312,7 +312,7 @@ const WorkerMenu = () => {
                               value={workerid}
                               disabled={workerid === fnrf_zst.worker?.uuid}
                             >
-                              {workersstate[workerid].name || workerid}
+                              {workersstate[workerid]?.name || workerid}
                             </DropdownMenu.RadioItem>
                           ))}
                       </DropdownMenu.RadioGroup>
