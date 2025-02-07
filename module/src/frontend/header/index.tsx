@@ -30,12 +30,12 @@ const NewWorkerDialog = ({
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
-  const workersstate = fnrf_zst.workers();
+  // const workersstate = fnrf_zst.workers();
 
-  const [reference, setReference] = useState<{ name: string; uuid: string }>({
-    name: "None",
-    uuid: "",
-  });
+  // const [reference, setReference] = useState<{ name: string; uuid: string }>({
+  //   name: "None",
+  //   uuid: "",
+  // });
 
   if (!fnrf_zst.options.useWorkerManager) return null;
 
@@ -45,7 +45,7 @@ const NewWorkerDialog = ({
       open={open}
       trigger={trigger}
       title="New Worker"
-      description="Please provide a name and select a another worker as interpreter reference"
+      description="Create a new worker"
     >
       <div>
         Name:
@@ -59,6 +59,7 @@ const NewWorkerDialog = ({
         />
       </div>
       <div>
+        {/* Optional: Slect a another worker as interpreter reference
         Reference Worker:
         <br />
         <select
@@ -107,7 +108,7 @@ const NewWorkerDialog = ({
               </div>
             )}
           </div>
-        )}
+        )} */}
         {name && (
           <div>
             <button
@@ -115,7 +116,7 @@ const NewWorkerDialog = ({
               onClick={() => {
                 fnrf_zst.workermanager?.new_worker({
                   name,
-                  reference: reference.uuid,
+                  // reference: reference.uuid,
                   copyLib,
                   copyNS,
                 });
