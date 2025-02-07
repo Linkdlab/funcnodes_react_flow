@@ -27,7 +27,7 @@ import {
   Base64BytesOutput,
   Base64BytesInLineOutput,
 } from "./default_preview_renderer";
-import RendererPlugin from "../../plugin/rendenderer";
+import RendererPlugin from "../../plugin/renderer";
 
 import FuncNodesReactPlugin from "../../plugin";
 import { FuncNodesReactFlowZustandInterface } from "../../states";
@@ -466,8 +466,8 @@ const RenderMappingProvider = ({
   };
   useEffect(() => {
     for (const plugin in plugins) {
-      const renderplug = plugins[plugin].RendererPlugin;
-      if (renderplug) extendFromPlugin(renderplug);
+      const renderplugin = plugins[plugin].RendererPlugin;
+      if (renderplugin) extendFromPlugin(renderplugin);
       const renderpluginfactory = plugins[plugin].renderpluginfactory;
       if (renderpluginfactory) {
         extendFromPlugin(renderpluginfactory({ React, fnrf_zst }));

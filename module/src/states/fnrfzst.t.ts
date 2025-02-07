@@ -1,7 +1,7 @@
 import { StoreApi, UseBoundStore } from "zustand";
 import { FuncNodesWorker, WorkerManager } from "../funcnodes";
 import {
-  ExternalWorkerDependecies,
+  ExternalWorkerDependencies,
   LibType,
   LibZustandInterface,
 } from "./lib.t";
@@ -39,7 +39,7 @@ interface FullState {
   backend: FullNodeSpaceJSON;
   view: ViewState;
   worker: { [key: string]: string[] };
-  worker_dependencies: ExternalWorkerDependecies[];
+  worker_dependencies: ExternalWorkerDependencies[];
 }
 
 interface ProgressState {

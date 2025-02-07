@@ -6,6 +6,9 @@
     "app",
     "app_single_worker"
   ],
+  "scripts": {
+    "spelling": "npx cspell module/**/*.tsx --words-only -u"
+  },
   "packageManager": "yarn@4.2.2",
   "devDependencies": {
     "@babel/preset-env": "^7.24.6",

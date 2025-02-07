@@ -12,7 +12,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import CustomDialog from "./dialog";
 import {
   ExternalWorkerClassDep,
-  ExternalWorkerDependecies,
+  ExternalWorkerDependencies,
   ExternalWorkerInstance,
   LibNode,
   Shelf,
@@ -734,7 +734,7 @@ const ExternalWorkerShelf = ({
   externalworkermod,
   lib,
 }: {
-  externalworkermod: ExternalWorkerDependecies;
+  externalworkermod: ExternalWorkerDependencies;
   lib?: Shelf;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -815,7 +815,7 @@ const Library = () => {
       <div className="addlib">
         <AddLibraryOverLay>
           <button disabled={zustand.worker === undefined}>
-            Manage Libaries
+            Manage Libraries
           </button>
         </AddLibraryOverLay>
       </div>
