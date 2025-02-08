@@ -11,6 +11,7 @@ import {
   FuncNodesReactFlowZustandInterface,
   FuncnodesReactFlowProps,
   FuncnodesReactHeaderProps,
+  ReactFlowLayerProps,
 } from "../../states/fnrfzst.t";
 import { RenderMappingProvider } from "../datarenderer/rendermappings";
 import { NodeSettings } from "../node";
@@ -22,9 +23,11 @@ const FuncNodesContext = createContext<FuncNodesReactFlowZustandInterface>(
 const InnerFuncnodesReactFlow = ({
   fnrf_zst,
   header,
+  flow,
 }: {
   fnrf_zst: FuncNodesReactFlowZustandInterface;
-  header: FuncnodesReactHeaderProps;
+  header?: FuncnodesReactHeaderProps;
+  flow?: ReactFlowLayerProps;
 }) => {
   const [workermanageruri, setWorkermanageruri] = useState<string>("");
   const [worker, setWorker] = useState<FuncNodesWorker | undefined>(
@@ -69,7 +72,7 @@ const InnerFuncnodesReactFlow = ({
 
           <div className="funcnodesreactflowbody">
             <Library></Library>
-            <ReactFlowLayer></ReactFlowLayer>
+            <ReactFlowLayer {...flow}></ReactFlowLayer>
             <NodeSettings></NodeSettings>
           </div>
         </div>

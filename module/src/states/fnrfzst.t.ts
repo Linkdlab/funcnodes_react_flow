@@ -105,10 +105,17 @@ interface WorkersState {
 }
 
 interface FuncnodesReactHeaderProps {}
+interface ReactFlowLayerProps {
+  minimap?: boolean;
+  static?: boolean;
+  minZoom?: number;
+  maxZoom?: number;
+}
 interface FuncnodesReactFlowProps {
   useWorkerManager?: boolean;
   default_worker?: FuncNodesWorker;
   header?: FuncnodesReactHeaderProps;
+  flow?: ReactFlowLayerProps;
   id?: string;
   on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
 }
@@ -179,6 +186,7 @@ export type {
   NodeViewState,
   FuncnodesReactFlowProps,
   FuncnodesReactHeaderProps,
+  ReactFlowLayerProps,
   FuncnodesReactFlowLocalSettings,
   FuncnodesReactFlowLocalState,
   FuncnodesReactFlowViewSettings,

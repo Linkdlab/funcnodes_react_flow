@@ -21,9 +21,16 @@ import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
   DataViewRendererType,
+  RenderMappingProvider,
 } from "./frontend/datarenderer/rendermappings";
-import { NodeType } from "./states/node.t";
+import { NodeType, PartialNodeType } from "./states/node.t";
 import { ProgressState } from "./states/fnrfzst.t";
+import ReactFlowLayer, {
+  nodeTypes,
+} from "./frontend/funcnodesreactflow/react_flow_layer";
+import { assert_reactflow_node } from "./states/fnrfzst";
+import { assert_full_node, createNodeStore } from "./states/node";
+import { deep_update } from "./utils";
 
 export default FuncnodesReactFlow;
 
@@ -121,6 +128,10 @@ export {
   FuncNodesReactFlowZustand,
   FuncNodes,
   FuncNodesContext,
+  assert_full_node,
+  ReactFlowLayer,
+  RenderMappingProvider,
+  deep_update,
 };
 export type {
   IOType,
@@ -135,5 +146,6 @@ export type {
   DataPreviewViewRendererType,
   DataViewRendererType,
   NodeType,
+  PartialNodeType,
   ProgressState,
 };
