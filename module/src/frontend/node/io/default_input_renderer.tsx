@@ -359,7 +359,7 @@ const SelectionInput = ({
   if (v === undefined) {
     v = "undefined";
   }
-  const default_entry = optionsmap.find((option) => option[1] === v);
+  const default_entry = optionsmap.find((option) => option[1] === v.toString());
 
   let default_value:
     | { value: string; label: string; datatype: string }
