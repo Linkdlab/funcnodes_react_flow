@@ -4,7 +4,8 @@
   "workspaces": [
     "module",
     "app",
-    "app_single_worker"
+    "app_single_worker",
+    "node_builder"
   ],
   "scripts": {
     "spelling": "npx cspell module/**/*.tsx --words-only -u"
