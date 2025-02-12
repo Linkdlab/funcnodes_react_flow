@@ -56,7 +56,7 @@ class FuncNodesWorker {
     this._local_nodeupdates = new Map();
     this._nodeupdatetimer = setTimeout(() => {
       this.sync_local_node_updates();
-    }, 1000);
+    }, 5000);
     this.state = create<FuncNodesWorkerState>((_set, _get) => ({
       is_open: true,
     }));
@@ -511,6 +511,7 @@ class FuncNodesWorker {
       kwargs: kwargs || {},
     };
 
+
     if (wait_for_response) {
       if (retries < 0) retries = 0;
       const wait_for_response_callback = async (): Promise<any> => {
@@ -555,7 +556,7 @@ class FuncNodesWorker {
 
   async send(_data: any) {
     // this is the abstract method that should be implemented by subclasses
-    throw new Error("Not implemented");
+    throw new Error("async send(data: any)  not implemented");
   }
 
   async upload_file({
@@ -567,11 +568,13 @@ class FuncNodesWorker {
     onProgressCallback?: (loaded: number, total?: number) => void;
     root?: string;
   }): Promise<string[]> {
-    throw new Error("handle_large_message_hint not implemented ");
+    throw new Error("upload_file not implemented ");
   }
 
   async handle_large_message_hint({}: LargeMessageHint) {
-    throw new Error("handle_large_message_hint not implemented ");
+    throw new Error(
+      "async handle_large_message_hint({}: LargeMessageHint) not implemented "
+    );
   }
 
   async recieve_workerevent({ event, data }: WorkerEvent) {
