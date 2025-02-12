@@ -30,9 +30,11 @@ const NodeHeader = ({ node_data }: NodeHeaderProps) => {
       id: node_data.id,
     });
   };
-
   return (
-    <div className="nodeheader">
+    <div
+      className="nodeheader"
+      title={node_data.description || node_data.node_name}
+    >
       <div className="nodeheader_element">
         <PlayCircleFilledIcon
           fontSize="inherit"
