@@ -31,25 +31,39 @@ import ReactFlowLayer, {
 import { assert_reactflow_node } from "./states/fnrfzst";
 import { assert_full_node, createNodeStore } from "./states/node";
 import { deep_update } from "./utils";
+import { WorkerProps } from "./funcnodes/funcnodesworker";
 
 export default FuncnodesReactFlow;
 
-type FuncNodesAppOptions = {
-  id: string;
+interface FuncNodesWebOptions {
   ws_url?: string;
+  worker?: FuncNodesWorker;
+  useWorkerManager?: boolean;
   on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
-};
+}
 
-const App = ({ id, ws_url, on_sync_complete }: FuncNodesAppOptions) => {
-  let useWorkerManager = true;
-  let worker = undefined;
-  if (ws_url !== undefined) {
-    useWorkerManager = false;
-    worker = new WebSocketWorker({
-      url: ws_url,
-      uuid: id,
-      on_sync_complete: on_sync_complete,
-    });
+interface FuncNodesAppOptions extends FuncNodesWebOptions {
+  id: string;
+}
+
+const App = ({
+  id,
+  ws_url,
+  on_sync_complete,
+  worker,
+  useWorkerManager,
+}: FuncNodesAppOptions) => {
+  if (worker === undefined) {
+    if (ws_url !== undefined) {
+      useWorkerManager = false;
+      worker = new WebSocketWorker({
+        url: ws_url,
+        uuid: id,
+        on_sync_complete: on_sync_complete,
+      });
+    }
+  }
+  if (worker !== undefined) {
     const fnrf_zst = FuncNodesReactFlowZustand({
       useWorkerManager: useWorkerManager,
       default_worker: worker,
@@ -74,11 +88,6 @@ const App = ({ id, ws_url, on_sync_complete }: FuncNodesAppOptions) => {
   );
 };
 
-type FuncNodesWebOptions = {
-  ws_url?: string;
-  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
-};
-
 const FuncNodes = (
   id_or_element: string | HTMLElement,
   options?: FuncNodesWebOptions
@@ -100,11 +109,7 @@ const FuncNodes = (
 
   ReactDOM.createRoot(element).render(
     <React.StrictMode>
-      <App
-        id={id}
-        ws_url={options.ws_url}
-        on_sync_complete={options.on_sync_complete}
-      />
+      <App id={id} {...options} />
     </React.StrictMode>
   );
 };
@@ -132,6 +137,7 @@ export {
   ReactFlowLayer,
   RenderMappingProvider,
   deep_update,
+  FuncNodesWorker,
 };
 export type {
   IOType,
@@ -148,4 +154,5 @@ export type {
   NodeType,
   PartialNodeType,
   ProgressState,
+  WorkerProps,
 };
