@@ -25,8 +25,8 @@ const NewWorkerDialog = ({
   open?: boolean;
 }) => {
   const [name, setName] = useState<string>("");
-  const [copyLib, setCopyLib] = useState<boolean>(false);
-  const [copyNS, setCopyNS] = useState<boolean>(false);
+  // const [copyLib, setCopyLib] = useState<boolean>(false);
+  // const [copyNS, setCopyNS] = useState<boolean>(false);
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
@@ -117,8 +117,8 @@ const NewWorkerDialog = ({
                 fnrf_zst.workermanager?.new_worker({
                   name,
                   // reference: reference.uuid,
-                  copyLib,
-                  copyNS,
+                  // copyLib,
+                  // copyNS,
                 });
                 setOpen(false);
               }}
@@ -238,7 +238,9 @@ const WorkerMenu = () => {
   };
 
   const has_worker_manager =
-    fnrf_zst.options.useWorkerManager && fnrf_zst.workermanager;
+    fnrf_zst.options.useWorkerManager &&
+    fnrf_zst.workermanager &&
+    fnrf_zst.workermanager.open;
   const show_select =
     has_worker_manager && Object.keys(workersstate).length > 0;
 

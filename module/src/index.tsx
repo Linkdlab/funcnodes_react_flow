@@ -14,7 +14,6 @@ import helperfunctions from "./utils/helperfunctions";
 import FuncNodesReactFlowZustand, {
   FuncNodesReactFlowZustandInterface,
 } from "./states";
-import ReactDOM from "react-dom/client";
 import { FuncNodesWorker } from "./funcnodes";
 import {
   HandlePreviewRendererType,
@@ -24,52 +23,40 @@ import {
   RenderMappingProvider,
 } from "./frontend/datarenderer/rendermappings";
 import { NodeType, PartialNodeType } from "./states/node.t";
-import { ProgressState } from "./states/fnrfzst.t";
-import ReactFlowLayer, {
-  nodeTypes,
-} from "./frontend/funcnodesreactflow/react_flow_layer";
-import { assert_reactflow_node } from "./states/fnrfzst";
-import { assert_full_node, createNodeStore } from "./states/node";
+import { FuncNodesAppOptions, ProgressState } from "./states/fnrfzst.t";
+import ReactFlowLayer from "./frontend/funcnodesreactflow/react_flow_layer";
+import { assert_full_node } from "./states/node";
 import { deep_update } from "./utils";
 import { WorkerProps } from "./funcnodes/funcnodesworker";
-
+import { ConsoleLogger } from "./utils/logger";
 export default FuncnodesReactFlow;
 
-interface FuncNodesWebOptions {
-  ws_url?: string;
-  worker?: FuncNodesWorker;
-  useWorkerManager?: boolean;
-  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
-}
+const FuncNodes = (props: FuncNodesAppOptions) => {
+  const propscopy: FuncNodesAppOptions = { ...props };
+  const logger = new ConsoleLogger(
+    "FuncNodes",
+    propscopy.debug ? "debug" : "info"
+  );
 
-interface FuncNodesAppOptions extends FuncNodesWebOptions {
-  id: string;
-}
-
-const App = ({
-  id,
-  ws_url,
-  on_sync_complete,
-  worker,
-  useWorkerManager,
-}: FuncNodesAppOptions) => {
-  if (worker === undefined) {
-    if (ws_url !== undefined) {
-      useWorkerManager = false;
-      worker = new WebSocketWorker({
-        url: ws_url,
-        uuid: id,
-        on_sync_complete: on_sync_complete,
+  logger.debug("Initalizing FuncNodes with props:", propscopy);
+  if (propscopy.worker === undefined) {
+    if (propscopy.worker_url !== undefined) {
+      propscopy.useWorkerManager = false;
+      propscopy.worker = new WebSocketWorker({
+        url: propscopy.worker_url,
+        uuid: propscopy.id,
+        on_sync_complete: propscopy.on_sync_complete,
       });
     }
   }
-  if (worker !== undefined) {
+  if (propscopy.worker !== undefined) {
     const fnrf_zst = FuncNodesReactFlowZustand({
-      useWorkerManager: useWorkerManager,
-      default_worker: worker,
+      useWorkerManager: propscopy.useWorkerManager,
+      worker: propscopy.worker,
     });
-    worker.set_zustand(fnrf_zst);
+    propscopy.worker.set_zustand(fnrf_zst);
   }
+  logger.debug("Initalizing FuncnodesReactFlow with props:", propscopy);
   return (
     <div
       className="App"
@@ -78,54 +65,10 @@ const App = ({
         width: "100%",
       }}
     >
-      <FuncnodesReactFlow
-        id={id}
-        useWorkerManager={useWorkerManager}
-        default_worker={worker}
-        on_sync_complete={on_sync_complete}
-      ></FuncnodesReactFlow>
+      <FuncnodesReactFlow {...propscopy}></FuncnodesReactFlow>
     </div>
   );
 };
-
-const FuncNodes = (
-  id_or_element: string | HTMLElement,
-  options?: FuncNodesWebOptions
-) => {
-  let id: string;
-  let element: HTMLElement;
-
-  if (options === undefined) {
-    options = {};
-  }
-
-  if (typeof id_or_element === "string") {
-    id = id_or_element;
-    element = document.getElementById(id) as HTMLElement;
-  } else {
-    element = id_or_element;
-    id = element.id;
-  }
-
-  ReactDOM.createRoot(element).render(
-    <React.StrictMode>
-      <App id={id} {...options} />
-    </React.StrictMode>
-  );
-};
-
-// @ts-ignore
-window.FuncNodes = FuncNodes;
-
-// import ReactDOM from "react-dom";
-
-// (async () => {
-//   // @ts-ignore
-//   window.React = await import("react");
-// })();
-// window.ReactDOM = ReactDOM;
-// @ts-ignore
-window.React = React;
 
 export {
   WebSocketWorker,
@@ -155,4 +98,5 @@ export type {
   PartialNodeType,
   ProgressState,
   WorkerProps,
+  FuncNodesAppOptions,
 };

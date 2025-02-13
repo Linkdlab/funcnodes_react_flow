@@ -111,13 +111,25 @@ interface ReactFlowLayerProps {
   minZoom?: number;
   maxZoom?: number;
 }
-interface FuncnodesReactFlowProps {
+
+interface ExposedFuncNodesReactFlowProps {
+  id?: string;
+  debug?: boolean;
+  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
   useWorkerManager?: boolean;
-  default_worker?: FuncNodesWorker;
+}
+
+interface FuncNodesAppOptions extends ExposedFuncNodesReactFlowProps {
+  worker_url?: string;
+  worker?: FuncNodesWorker;
+
+  id: string;
+}
+interface FuncnodesReactFlowProps extends ExposedFuncNodesReactFlowProps {
+  workerManagerUrl?: string;
+  worker?: FuncNodesWorker;
   header?: FuncnodesReactHeaderProps;
   flow?: ReactFlowLayerProps;
-  id?: string;
-  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
 }
 
 interface DevSettings {
@@ -189,5 +201,6 @@ export type {
   ReactFlowLayerProps,
   FuncnodesReactFlowLocalSettings,
   FuncnodesReactFlowLocalState,
+  FuncNodesAppOptions,
   FuncnodesReactFlowViewSettings,
 };

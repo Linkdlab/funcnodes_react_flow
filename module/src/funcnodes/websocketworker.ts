@@ -16,7 +16,10 @@ class WebSocketWorker extends FuncNodesWorker {
   constructor(data: WebSocketWorkerProps) {
     super(data);
     this._url = data.url;
-    this.connect();
+    new Promise((resolve) => {
+      this.connect();
+      resolve(null);
+    });
     if (this._zustand) this._zustand.auto_progress();
   }
 

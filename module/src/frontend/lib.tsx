@@ -402,7 +402,7 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
   const update_modules = (open: boolean) => {
     if (!open) return;
 
-    if (zustand.worker === undefined) {
+    if (zustand.worker === undefined || !zustand.worker.is_open) {
       return;
     }
 

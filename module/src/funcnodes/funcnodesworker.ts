@@ -58,7 +58,7 @@ class FuncNodesWorker {
       this.sync_local_node_updates();
     }, 5000);
     this.state = create<FuncNodesWorkerState>((_set, _get) => ({
-      is_open: true,
+      is_open: false,
     }));
     if (data.zustand) this.set_zustand(data.zustand);
 
@@ -510,7 +510,6 @@ class FuncNodesWorker {
       cmd,
       kwargs: kwargs || {},
     };
-
 
     if (wait_for_response) {
       if (retries < 0) retries = 0;

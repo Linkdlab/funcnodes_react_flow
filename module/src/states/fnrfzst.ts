@@ -163,7 +163,7 @@ const assert_reactflow_node = (
 
 const FuncNodesReactFlowZustand = ({
   useWorkerManager = true,
-  default_worker = undefined,
+  worker = undefined,
   on_sync_complete = undefined,
 }: FuncnodesReactFlowProps): FuncNodesReactFlowZustandInterface => {
   /*
@@ -171,9 +171,9 @@ const FuncNodesReactFlowZustand = ({
   */
 
   const options: FuncnodesReactFlowProps = {
-    useWorkerManager: useWorkerManager,
-    default_worker: default_worker,
-    on_sync_complete: on_sync_complete,
+    useWorkerManager,
+    worker,
+    on_sync_complete,
   };
 
   const _add_node = (action: NodeActionAdd) => {
@@ -537,6 +537,14 @@ const FuncNodesReactFlowZustand = ({
       }
     },
     auto_progress: () => {
+      if (iterf.workermanager !== undefined && !iterf.workermanager.open) {
+        return iterf.set_progress({
+          progress: 0,
+          message: "connecting to worker manager",
+          status: "error",
+          blocking: false,
+        });
+      }
       if (iterf.worker === undefined) {
         return iterf.set_progress({
           progress: 0,

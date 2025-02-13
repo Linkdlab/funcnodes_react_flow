@@ -1,6 +1,6 @@
 {
   "name": "@linkdlab/funcnodes_react_flow",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Frontend with React Flow for FuncNodes",
   "repository": {
     "type": "git",
@@ -15,6 +15,7 @@
   "type": "module",
   "source": "src/index.tsx",
   "main": "dist/umd/index.umd.js",
+  "module": "dist/esm/index.esm.js",
   "types": "dist/types/index.d.ts",
   "style": "dist/css/style.css",
   "files": [
@@ -22,10 +23,9 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit --watch",
-    "watch:esm": "webpack --config webpack.config.esm.cjs --watch --progress",
-    "watch:umd": "webpack --config webpack.config.umd.cjs --watch --progress",
-    "watch:css": "webpack --config webpack.config.css.cjs --watch --progress",
-    "test": "jest"
+    "watch:esm": "webpack --config webpack.config.esm.cjs --watch --progress --mode development",
+    "watch:umd": "webpack --config webpack.config.umd.cjs --watch --progress --mode development",
+    "build": "webpack --config webpack.config.esm.cjs && webpack --config webpack.config.umd.cjs"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -36,12 +36,11 @@
     "@radix-ui/react-dismissable-layer": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
     "@radix-ui/react-popover": "^1.0.7",
+    "@radix-ui/react-slider": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.0.7",
     "axios": "^1.7.9",
     "color-convert": "^2.0.1",
-    "react": "*",
-    "react-dom": "*",
-    "react-json-view-lite": "^1.4.0",
+    "react-json-view-lite": "^2.3.0",
     "react-markdown": "^9.0.1",
     "react-select": "^5.8.0",
     "react-svg": "^16.1.34",
@@ -54,8 +53,6 @@
     "@types/babel__core": "^7",
     "@types/color-convert": "^2",
     "@types/react": "*",
-    "@types/react-dom": "*",
-    "@types/testing-library__jest-dom": "^6.0.0",
     "@types/uuid": "^9.0.8",
     "autoprefixer": "^10.4.19",
     "babel-loader": "^9.1.3",
@@ -64,6 +61,8 @@
     "mini-css-extract-plugin": "^2.9.0",
     "postcss": "^8.4.38",
     "postcss-loader": "^8.1.1",
+    "react": "^19.0",
+    "react-dom": "^19.0",
     "sass": "^1.77.2",
     "sass-loader": "^14.2.1",
     "ts-loader": "^9.5.1",
@@ -72,5 +71,8 @@
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.10.0"
   },
-  "packageManager": "yarn@4.2.2"
+  "peerDependencies": {
+    "react": "^19.0",
+    "react-dom": "^19.0"
+  }
 }
