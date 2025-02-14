@@ -1,8 +1,10 @@
 // webpack.config.js
 const path = require("path");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
+// const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+// const { mode } = require("../module/webpack.config.base.cjs");
 module.exports = {
   context: __dirname,
   entry: "./src/index.tsx",
@@ -10,8 +12,8 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "static/js/fn_no_manager_[name].js",
-    chunkFilename: "static/js/[name].[contenthash].js", // Ensure consistent naming for chunks
+    filename: "static/js/fn_app_[name].js",
+    chunkFilename: "static/js/fn_app_[name].js", // Ensure consistent naming for chunks
     publicPath: "auto", // Add this line
   },
 
@@ -114,13 +116,15 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "static/css/style.css",
-      chunkFilename: "static/css/[name].css",
+      filename: "static/css/fn_app.css",
+      chunkFilename: "static/css/fn_app_[name].css",
     }),
 
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+      chunks: "all",
     }),
+    // new BundleAnalyzerPlugin({ analyzerPort: "auto" }),
   ],
   resolve: {
     extensions: [
@@ -134,17 +138,25 @@ module.exports = {
       ".ttf",
     ],
     alias: {
-      "@linkdlab/funcnodes_react_flow": path.resolve(
+      "@linkdlab/funcnodes_react_flow/dist": path.resolve(
         __dirname,
-        "../module/dist/esm/index.esm.js"
+        "../module/dist"
       ),
+      // "@linkdlab/funcnodes_react_flow": path.resolve(
+      //   __dirname,
+      //   "../module/dist/esm/index.esm.js"
+      // ),
     },
-    mainFields: ["module", "main"], // Prefers 'module' over 'main' for ES modules
+    // mainFields: ["module", "main"], // Prefers 'module' over 'main' for ES modules
   },
 
+  mode: "production",
+
   optimization: {
-    splitChunks: {
-      chunks: "all",
-    },
+    chunkIds: "natural",
+    //   // minimize: true,
+    //   splitChunks: {
+    //     chunks: "all",
+    //   },
   },
 };

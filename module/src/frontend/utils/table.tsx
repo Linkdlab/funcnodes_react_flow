@@ -1,15 +1,16 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-
 import { useMemo, useState } from "react";
 
 import "./table.scss";
 import React from "react";
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableSortLabel,
+  TableBody,
+} from "../assets/mui";
 
 interface TableData {
   columns: string[];
@@ -72,7 +73,7 @@ const SortableTable = ({ tabledata }: { tabledata: TableData }) => {
   // State to manage the sorted column and direction
   const transformed_table_data: TransFormedTableData = useMemo(
     () => transform_table_data(tabledata),
-    [tabledata],
+    [tabledata]
   );
   const [orderDirection, setOrderDirection] = useState<_SD>("asc");
   const [orderBy, setOrderBy] = useState("index");
@@ -111,7 +112,7 @@ const SortableTable = ({ tabledata }: { tabledata: TableData }) => {
   // Sort the rows
   const sortedRows = sortData(
     transformed_table_data.rows,
-    getComparator(orderDirection, orderBy),
+    getComparator(orderDirection, orderBy)
   );
   return (
     <TableContainer className="tablecontainer">

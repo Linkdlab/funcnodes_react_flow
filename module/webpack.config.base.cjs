@@ -1,5 +1,6 @@
 // webpack.config.base.js
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const path = require("path");
 module.exports = {
   entry: "./src/index.tsx",
@@ -79,6 +80,7 @@ module.exports = {
       filename: "../css/style.css",
       chunkFilename: "../css/[name].css",
     }),
+    // new BundleAnalyzerPlugin({ analyzerPort: "auto" }),
   ],
   resolve: {
     extensions: [

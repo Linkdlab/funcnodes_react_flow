@@ -3,13 +3,9 @@ import Select, { ActionMeta, SingleValue } from "react-select";
 
 import "./select.scss";
 
-const CustomSelect = <Option extends { value: string; label: string }>({
-  options,
-  items_per_page,
-  className,
-  defaultValue,
-  onChange,
-}: {
+export interface CustomSelectProps<
+  Option extends { value: string; label: string }
+> {
   options: Option[];
   items_per_page?: number;
   className?: string;
@@ -18,7 +14,15 @@ const CustomSelect = <Option extends { value: string; label: string }>({
     newValue: SingleValue<Option>,
     actionMeta: ActionMeta<Option>
   ) => void;
-}) => {
+}
+
+const CustomSelect = <Option extends { value: string; label: string }>({
+  options,
+  items_per_page,
+  className,
+  defaultValue,
+  onChange,
+}: CustomSelectProps<Option>) => {
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 

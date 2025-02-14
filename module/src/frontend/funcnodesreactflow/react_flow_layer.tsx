@@ -20,7 +20,8 @@ import ReactFlow, {
   useReactFlow,
   Node,
 } from "reactflow";
-import { FuncNodesContext } from "..";
+
+import { FuncNodesContext } from "../funcnodesreactflow";
 import { useShallow } from "zustand/react/shallow";
 import { RFState } from "../../states/reactflow.t";
 import DefaultNode from "../node";

@@ -1,5 +1,7 @@
 import React from "react";
-import FuncnodesReactFlow, { FuncNodesContext } from "./frontend";
+import FuncnodesReactFlow, {
+  FuncNodesContext,
+} from "./frontend/funcnodesreactflow";
 import WebSocketWorker from "./funcnodes/websocketworker";
 import FuncNodesReactPlugin, {
   RendererPlugin,

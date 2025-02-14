@@ -5,10 +5,8 @@ import "./lib.scss";
 
 import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 import { MouseEvent } from "react";
-import { FuncNodesContext } from "./index";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { FuncNodesContext } from "./funcnodesreactflow";
+
 import CustomDialog from "./dialog";
 import {
   ExternalWorkerClassDep,
@@ -17,6 +15,7 @@ import {
   LibNode,
   Shelf,
 } from "../states/lib.t";
+import { CloseIcon, ExpandLessIcon, SearchIcon } from "./assets/mui";
 
 const LibraryNode = ({ item }: { item: LibNode }) => {
   const zustand: FuncNodesReactFlowZustandInterface =

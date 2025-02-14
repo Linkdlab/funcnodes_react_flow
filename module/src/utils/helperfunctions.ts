@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { FuncNodesReactFlowZustandInterface } from "../states";
-import { FuncNodesContext } from "../frontend";
+import { FuncNodesContext } from "../frontend/funcnodesreactflow";
 
 const set_io_value = ({
   nid,

@@ -9,11 +9,8 @@ import "./header.scss";
 import CustomDialog from "../dialog";
 import React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { downloadBase64, fileDialogToBase64 } from "../../utils/data";
+import { ChevronRightIcon, MenuRoundedIcon, Stack, Typography } from "../assets/mui";
 
 const NewWorkerDialog = ({
   trigger,

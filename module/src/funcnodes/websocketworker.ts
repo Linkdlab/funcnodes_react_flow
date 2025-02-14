@@ -82,7 +82,7 @@ class WebSocketWorker extends FuncNodesWorker {
       json
     );
 
-    await this.recieve(json);
+    await this.receive(json);
   }
 
   get http_protocol(): string {
@@ -126,7 +126,7 @@ class WebSocketWorker extends FuncNodesWorker {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        onUploadProgress: (progressEvent) => {
+        onUploadProgress: (progressEvent: any) => {
           if (onProgressCallback) {
             onProgressCallback(progressEvent.loaded, progressEvent.total);
           }
@@ -154,7 +154,7 @@ class WebSocketWorker extends FuncNodesWorker {
       },
     });
     const json = await resp.json();
-    this.recieve(json);
+    this.receive(json);
   }
 
   onopen() {

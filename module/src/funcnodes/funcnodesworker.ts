@@ -213,7 +213,7 @@ class FuncNodesWorker {
       wait_for_response: true,
     })) as NodeType[];
     for (const node of resp) {
-      this._recieve_node_added(node as NodeType);
+      this._receive_node_added(node as NodeType);
     }
 
     const edges = (await this._send_cmd({
@@ -222,7 +222,7 @@ class FuncNodesWorker {
     })) as [string, string, string, string][];
 
     for (const edge of edges) {
-      this._recieve_edge_added(...edge);
+      this._receive_edge_added(...edge);
     }
   }
 
@@ -250,14 +250,14 @@ class FuncNodesWorker {
       if (nodeview[node.id] !== undefined) {
         node.frontend = nodeview[node.id];
       }
-      this._recieve_node_added(node);
+      this._receive_node_added(node);
     }
     for (const edge of resp.backend.edges) {
-      this._recieve_edge_added(...edge);
+      this._receive_edge_added(...edge);
     }
   }
 
-  async _recieve_edge_added(
+  async _receive_edge_added(
     src_nid: string,
     src_ioid: string,
     trg_nid: string,
@@ -284,7 +284,7 @@ class FuncNodesWorker {
       cmd: "add_node",
       kwargs: { id: node_id },
     });
-    this._recieve_node_added(resp as NodeType);
+    this._receive_node_added(resp as NodeType);
   }
 
   async remove_node(node_id: string) {
@@ -294,7 +294,7 @@ class FuncNodesWorker {
     });
   }
 
-  async _recieve_node_added(data: NodeType) {
+  async _receive_node_added(data: NodeType) {
     if (!this._zustand) return;
     this._zustand.on_node_action({
       type: "add",
@@ -576,7 +576,7 @@ class FuncNodesWorker {
     );
   }
 
-  async recieve_workerevent({ event, data }: WorkerEvent) {
+  async receive_workerevent({ event, data }: WorkerEvent) {
     switch (event) {
       case "worker_error":
         if (!this._zustand) return;
@@ -602,7 +602,7 @@ class FuncNodesWorker {
     }
   }
 
-  async recieve_nodespace_event({ event, data }: NodeSpaceEvent) {
+  async receive_nodespace_event({ event, data }: NodeSpaceEvent) {
     print_object_size(data, "Data size for event " + event, this._zustand);
     print_object(data, this._zustand);
     switch (event) {
@@ -680,7 +680,7 @@ class FuncNodesWorker {
         });
 
       case "node_added":
-        return this._recieve_node_added(data.node as NodeType);
+        return this._receive_node_added(data.node as NodeType);
 
       case "after_disconnect":
         if (!data.result) return;
@@ -713,7 +713,7 @@ class FuncNodesWorker {
         if (!data.result) return;
         if (!Array.isArray(data.result)) return;
         if (data.result.length !== 4) return;
-        return this._recieve_edge_added(
+        return this._receive_edge_added(
           ...(data.result as [string, string, string, string])
         );
 
@@ -721,7 +721,7 @@ class FuncNodesWorker {
         if (!data.result) return;
         if (!Array.isArray(data.result)) return;
         if (data.result.length !== 4) return;
-        return this._recieve_edge_added(
+        return this._receive_edge_added(
           ...(data.result as [string, string, string, string])
         );
 
@@ -779,11 +779,11 @@ class FuncNodesWorker {
     return ans;
   }
 
-  async recieve(data: JSONMessage) {
+  async receive(data: JSONMessage) {
     let promise;
     switch (data.type) {
       case "nsevent":
-        return await this.recieve_nodespace_event(data);
+        return await this.receive_nodespace_event(data);
       case "result":
         promise = data.id && this.messagePromises.get(data.id);
         if (promise) {
@@ -803,7 +803,7 @@ class FuncNodesWorker {
         break;
 
       case "workerevent":
-        return await this.recieve_workerevent(data);
+        return await this.receive_workerevent(data);
 
       case "large_message":
         return await this.handle_large_message_hint(data);
