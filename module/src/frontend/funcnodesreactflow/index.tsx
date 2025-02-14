@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import FuncNodesWorker from "../../funcnodes/funcnodesworker";
 import FuncNodesReactFlowZustand from "../../states/fnrfzst";
 import React from "react";
@@ -11,6 +11,7 @@ import {
   FuncNodesReactFlowZustandInterface,
   FuncnodesReactFlowProps,
   FuncnodesReactHeaderProps,
+  ReactFlowLayerProps,
 } from "../../states/fnrfzst.t";
 import { RenderMappingProvider } from "../datarenderer/rendermappings";
 import { NodeSettings } from "../node";
@@ -22,37 +23,19 @@ const FuncNodesContext = createContext<FuncNodesReactFlowZustandInterface>(
 const InnerFuncnodesReactFlow = ({
   fnrf_zst,
   header,
+  flow,
 }: {
   fnrf_zst: FuncNodesReactFlowZustandInterface;
-  header: FuncnodesReactHeaderProps;
+  header?: FuncnodesReactHeaderProps;
+  flow?: ReactFlowLayerProps;
 }) => {
-  const [workermanageruri, setWorkermanageruri] = useState<string>("");
   const [worker, setWorker] = useState<FuncNodesWorker | undefined>(
-    fnrf_zst.options.default_worker
+    fnrf_zst.options.worker
   );
 
-  useEffect(() => {
-    async function fetch_worker_manager() {
-      fnrf_zst.set_progress({
-        progress: 0,
-        message: "connecting to worker manager",
-        status: "info",
-        blocking: true,
-      });
-      let response = await fetch("/worker_manager");
-      let workerewsuri = await response.text();
-      setWorkermanageruri(workerewsuri);
-    }
-    if (fnrf_zst.options.useWorkerManager) fetch_worker_manager();
-  }, []);
-
-  useEffect(() => {
-    if (workermanageruri) {
-      const workermanager = new WorkerManager(workermanageruri, fnrf_zst);
-      workermanager.on_setWorker = setWorker;
-      fnrf_zst.workermanager = workermanager;
-    }
-  }, [workermanageruri]);
+  if (fnrf_zst.workermanager) {
+    fnrf_zst.workermanager.on_setWorker = setWorker;
+  }
 
   fnrf_zst.set_worker(worker);
 
@@ -69,7 +52,7 @@ const InnerFuncnodesReactFlow = ({
 
           <div className="funcnodesreactflowbody">
             <Library></Library>
-            <ReactFlowLayer></ReactFlowLayer>
+            <ReactFlowLayer {...flow}></ReactFlowLayer>
             <NodeSettings></NodeSettings>
           </div>
         </div>
@@ -84,16 +67,27 @@ const FUNCNODESREACTFLOW_MAPPER: {
 
 const FuncnodesReactFlow = ({
   useWorkerManager = true,
-  default_worker = undefined,
+  workerManagerUrl = undefined,
+  worker = undefined,
   on_sync_complete = undefined,
   header = {},
+  debug = false,
   id,
 }: FuncnodesReactFlowProps) => {
-  if (!useWorkerManager && default_worker === undefined) {
+  if (!useWorkerManager && worker === undefined) {
     return (
       <div>
         Error: If you don't use a worker manager, you must provide a default
         worker.
+      </div>
+    );
+  }
+
+  if (useWorkerManager && workerManagerUrl === undefined) {
+    return (
+      <div>
+        Error: If you use a worker manager, you must provide a worker manager
+        url.
       </div>
     );
   }
@@ -111,14 +105,24 @@ const FuncnodesReactFlow = ({
   if (FUNCNODESREACTFLOW_MAPPER[id] === undefined) {
     const fnrf_zst = FuncNodesReactFlowZustand({
       useWorkerManager,
-      default_worker,
+      worker: worker,
       on_sync_complete,
     });
     FUNCNODESREACTFLOW_MAPPER[id] = fnrf_zst;
   }
 
-  if (default_worker) {
-    default_worker.set_zustand(FUNCNODESREACTFLOW_MAPPER[id]);
+  if (worker) {
+    worker.set_zustand(FUNCNODESREACTFLOW_MAPPER[id]);
+  }
+
+  FUNCNODESREACTFLOW_MAPPER[id].options.debug = debug;
+
+  if (useWorkerManager) {
+    const workermanager = new WorkerManager(
+      workerManagerUrl as string,
+      FUNCNODESREACTFLOW_MAPPER[id]
+    );
+    FUNCNODESREACTFLOW_MAPPER[id].workermanager = workermanager;
   }
 
   return (

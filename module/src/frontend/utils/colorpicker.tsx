@@ -5,7 +5,7 @@ import "./colorpicker.scss";
 
 const create_color_converter = (
   type: string,
-  data: any[],
+  data: any[]
 ): { [key: string]: () => number[] | string } => {
   if (!Array.isArray(data)) data = [data];
   if (data[0] === undefined || data[0] === null)
@@ -47,7 +47,7 @@ const HSLColorPicker = ({
   onChange: (
     colorconverter: {
       [key: string]: () => number[] | string;
-    } | null,
+    } | null
   ) => void;
   colorconverter: { [key: string]: () => number[] | string } | null;
   allow_null?: boolean;
@@ -99,10 +99,10 @@ const HSLColorPicker = ({
           max="255"
           value={rgb[0]}
           onChange={(e) => {
-            const newrgb = [parseInt(e.target.value), rgb[1], rgb[2]];
-            const newconverter = create_color_converter("rgb", newrgb);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_rgb = [parseInt(e.target.value), rgb[1], rgb[2]];
+            const new_converter = create_color_converter("rgb", new_rgb);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{ background: `linear-gradient(to right, #000, #f00)` }}
         />
@@ -114,10 +114,10 @@ const HSLColorPicker = ({
           max="255"
           value={rgb[1]}
           onChange={(e) => {
-            const newrgb = [rgb[0], parseInt(e.target.value), rgb[2]];
-            const newconverter = create_color_converter("rgb", newrgb);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_rgb = [rgb[0], parseInt(e.target.value), rgb[2]];
+            const new_converter = create_color_converter("rgb", new_rgb);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{ background: `linear-gradient(to right, #000, #0f0)` }}
         />
@@ -129,10 +129,10 @@ const HSLColorPicker = ({
           max="255"
           value={rgb[2]}
           onChange={(e) => {
-            const newrgb = [rgb[0], rgb[1], parseInt(e.target.value)];
-            const newconverter = create_color_converter("rgb", newrgb);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_rgb = [rgb[0], rgb[1], parseInt(e.target.value)];
+            const new_converter = create_color_converter("rgb", new_rgb);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{ background: `linear-gradient(to right, #000, #00f)` }}
         />
@@ -148,10 +148,10 @@ const HSLColorPicker = ({
           max="360"
           value={hsl[0]}
           onChange={(e) => {
-            const newhsl = [parseInt(e.target.value), hsl[1], hsl[2]];
-            const newconverter = create_color_converter("hsl", newhsl);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_hsl = [parseInt(e.target.value), hsl[1], hsl[2]];
+            const new_converter = create_color_converter("hsl", new_hsl);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{
             background: `linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`,
@@ -165,10 +165,10 @@ const HSLColorPicker = ({
           max="100"
           value={hsl[1]}
           onChange={(e) => {
-            const newhsl = [hsl[0], parseInt(e.target.value), hsl[2]];
-            const newconverter = create_color_converter("hsl", newhsl);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_hsl = [hsl[0], parseInt(e.target.value), hsl[2]];
+            const new_converter = create_color_converter("hsl", new_hsl);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{
             background: `linear-gradient(to right, #fff, hsl(${hsl[0]}, 100%, 50%))`,
@@ -183,10 +183,10 @@ const HSLColorPicker = ({
           max="100"
           value={hsl[2]}
           onChange={(e) => {
-            const newhsl = [hsl[0], hsl[1], parseInt(e.target.value)];
-            const newconverter = create_color_converter("hsl", newhsl);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_hsl = [hsl[0], hsl[1], parseInt(e.target.value)];
+            const new_converter = create_color_converter("hsl", new_hsl);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{
             background: `linear-gradient(to right, #000, hsl(${hsl[0]}, 100%, 50%), #fff)`,
@@ -205,10 +205,10 @@ const HSLColorPicker = ({
           max="360"
           value={hsv[0]}
           onChange={(e) => {
-            const newhsv = [parseInt(e.target.value), hsv[1], hsv[2]];
-            const newconverter = create_color_converter("hsv", newhsv);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_hsv = [parseInt(e.target.value), hsv[1], hsv[2]];
+            const new_converter = create_color_converter("hsv", new_hsv);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{
             background: `linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)`,
@@ -222,10 +222,10 @@ const HSLColorPicker = ({
           max="100"
           value={hsv[1]}
           onChange={(e) => {
-            const newhsv = [hsv[0], parseInt(e.target.value), hsv[2]];
-            const newconverter = create_color_converter("hsv", newhsv);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_hsv = [hsv[0], parseInt(e.target.value), hsv[2]];
+            const new_converter = create_color_converter("hsv", new_hsv);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{
             background: `linear-gradient(to right, #fff, hsl(${hsl[0]}, 100%, 50%))`,
@@ -239,10 +239,10 @@ const HSLColorPicker = ({
           max="100"
           value={hsv[2]}
           onChange={(e) => {
-            const newhsv = [hsv[0], hsv[1], parseInt(e.target.value)];
-            const newconverter = create_color_converter("hsv", newhsv);
-            setConverter(newconverter);
-            onChange(newconverter);
+            const new_hsv = [hsv[0], hsv[1], parseInt(e.target.value)];
+            const new_converter = create_color_converter("hsv", new_hsv);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
           style={{
             background: `linear-gradient(to right, #000, hsl(${hsl[0]}, 100%, 50%))`,
@@ -258,12 +258,12 @@ const HSLColorPicker = ({
           type="text"
           value={hex}
           onChange={(e) => {
-            const newconverter =
+            const new_converter =
               e.target.value === ""
                 ? null
                 : create_color_converter("hex", [e.target.value]);
-            setConverter(newconverter);
-            onChange(newconverter);
+            setConverter(new_converter);
+            onChange(new_converter);
           }}
         />
       </div>
@@ -283,7 +283,7 @@ const CustomColorPicker = ({
   onChange?: (
     colorconverter: {
       [key: string]: () => number[] | string;
-    } | null,
+    } | null
   ) => void;
 }) => {
   if (inicolordata === undefined) {
@@ -301,7 +301,7 @@ const CustomColorPicker = ({
   const innerSetColor = (
     colorconverter: {
       [key: string]: () => number[] | string;
-    } | null,
+    } | null
   ) => {
     if (colorconverter === null && !allow_null)
       throw new Error("Color is null");

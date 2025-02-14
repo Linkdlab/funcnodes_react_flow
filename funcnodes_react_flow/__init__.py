@@ -1,5 +1,9 @@
 from typing import Dict, TypedDict, List
-from .run import run_server  # noqa: F401
+
+try:
+    from .run import run_server  # noqa: F401
+except ImportError:
+    pass
 
 
 class ReactPlugin(TypedDict):

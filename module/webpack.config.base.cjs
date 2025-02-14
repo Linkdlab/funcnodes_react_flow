@@ -1,5 +1,6 @@
 // webpack.config.base.js
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const path = require("path");
 module.exports = {
   entry: "./src/index.tsx",
@@ -79,15 +80,7 @@ module.exports = {
       filename: "../css/style.css",
       chunkFilename: "../css/[name].css",
     }),
-    // new PurgeCSSPlugin({
-    //   paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
-    //   whitelistPatterns: [/sm:/, /md:/, /lg:/, /xl:/, /2xl:/, /bg-/, /text-/],
-    //   defaultExtractor: (content) => content.match(/[\w-/:.!]+(?<!:)/g) || []
-    // })
-    // new ProvidePlugin({
-    //   React: "react",
-    //   ReactDOM: "react-dom",
-    // }),
+    // new BundleAnalyzerPlugin({ analyzerPort: "auto" }),
   ],
   resolve: {
     extensions: [
@@ -107,6 +100,9 @@ module.exports = {
       ),
     },
   },
-  mode: "development",
-  // mode: "production",
+  mode: "production",
+
+  externals: {
+    react: "react",
+  },
 };

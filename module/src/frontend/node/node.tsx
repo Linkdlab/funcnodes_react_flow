@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { NodeStore, NodeType } from "../../states/node.t";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import LanIcon from "@mui/icons-material/Lan";
-import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
+
 import "./node.scss";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
-import { FuncNodesContext } from "..";
+import { FuncNodesContext } from "../funcnodesreactflow";
 import { NodeInput, NodeOutput } from "./io";
 
 import CustomDialog from "../dialog";
@@ -14,6 +12,7 @@ import { IOType } from "../../states/nodeio.t";
 import { BodyDataRendererForIo } from "./body_data_renderer";
 import { DynamicComponentLoader } from "../datarenderer/rendermappings";
 import ProgressBar from "../utils/progressbar";
+import { PlayCircleFilledIcon, LanIcon, ExpandLessIcon } from "../assets/mui";
 
 interface NodeHeaderProps {
   node_data: NodeType;
@@ -30,9 +29,11 @@ const NodeHeader = ({ node_data }: NodeHeaderProps) => {
       id: node_data.id,
     });
   };
-
   return (
-    <div className="nodeheader">
+    <div
+      className="nodeheader"
+      title={node_data.description || node_data.node_name}
+    >
       <div className="nodeheader_element">
         <PlayCircleFilledIcon
           fontSize="inherit"

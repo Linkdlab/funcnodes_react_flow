@@ -20,13 +20,18 @@ import ReactFlow, {
   useReactFlow,
   Node,
 } from "reactflow";
-import { FuncNodesContext } from "..";
+
+import { FuncNodesContext } from "../funcnodesreactflow";
 import { useShallow } from "zustand/react/shallow";
 import { RFState } from "../../states/reactflow.t";
 import DefaultNode from "../node";
 import DefaultEdge from "../edge";
 import { NodeType } from "../../states/node.t";
-import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
+import {
+  FuncNodesReactFlowZustandInterface,
+  ReactFlowLayerProps,
+} from "../../states/fnrfzst.t";
+import { deep_merge } from "../../utils";
 
 // import { useForceGraph } from "../../utils/autolayout";
 
@@ -138,7 +143,11 @@ const ContextMenu = ({
   );
 };
 
-const ReactFlowLayer = () => {
+const ReactFlowLayer = ({ ...props }: ReactFlowLayerProps) => {
+  const fullprops = deep_merge(
+    { minimap: true, static: false, minZoom: 0.1, maxZoom: 5 },
+    props
+  ).new_obj;
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
@@ -164,28 +173,7 @@ const ReactFlowLayer = () => {
       selected_edges: edges.map((edge) => edge.id),
     });
   };
-  // const onNodeContextMenu = useCallback(
-  //   (event: React.MouseEvent, node: Node) => {
-  //     if (!reactflowRef.current) return;
-  //     // Prevent native context menu from showing
-  //     event.preventDefault();
 
-  //     // Calculate position of the context menu. We want to make sure it
-  //     // doesn't get positioned off-screen.
-  //     const pane = reactflowRef.current.getBoundingClientRect();
-  //     const clientX = event.clientX as number;
-  //     const clientY = event.clientY as number;
-  //     setMenu({
-  //       id: node.id,
-  //       top: clientY < pane.height - 200 ? clientY : undefined,
-  //       left: clientX < pane.width - 200 ? clientX : undefined,
-  //       right: clientX >= pane.width - 200 ? pane.width - clientX : undefined,
-  //       bottom:
-  //         clientY >= pane.height - 200 ? pane.height - clientY : undefined,
-  //     });
-  //   },
-  //   [setMenu]
-  // );
   const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
 
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
@@ -201,14 +189,15 @@ const ReactFlowLayer = () => {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
-        minZoom={0.1}
-        maxZoom={2}
+        minZoom={fullprops.minZoom}
+        maxZoom={fullprops.maxZoom}
         fitView
         onSelectionChange={onSelectionChange}
         ref={reactflowRef}
         //  onNodeContextMenu={onNodeContextMenu}
         onPaneClick={onPaneClick}
         //multiSelectionKeyCode="Control"
+        panOnDrag={!fullprops.static}
       >
         <ReactFlowManager />
         <KeyHandler />
@@ -217,12 +206,14 @@ const ReactFlowLayer = () => {
           gap={16} // Distance between grid lines
           size={1} // Thickness of the grid lines
         />
-        <MiniMap
-          nodeStrokeWidth={3}
-          pannable={true}
-          zoomable={true}
-          zoomStep={3}
-        />
+        {fullprops.minimap && (
+          <MiniMap
+            nodeStrokeWidth={3}
+            pannable={!fullprops.static}
+            zoomable={!fullprops.static}
+            zoomStep={3}
+          />
+        )}
         {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
       </ReactFlow>
     </div>
@@ -230,3 +221,4 @@ const ReactFlowLayer = () => {
 };
 
 export default ReactFlowLayer;
+export { nodeTypes };

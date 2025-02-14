@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { FuncNodesContext } from "../..";
+import { FuncNodesContext } from "../../funcnodesreactflow";
 import { Position } from "reactflow";
 import {
   FuncNodesReactFlowZustandInterface,

@@ -5,18 +5,17 @@ import "./lib.scss";
 
 import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 import { MouseEvent } from "react";
-import { FuncNodesContext } from "./index";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { FuncNodesContext } from "./funcnodesreactflow";
+
 import CustomDialog from "./dialog";
 import {
   ExternalWorkerClassDep,
-  ExternalWorkerDependecies,
+  ExternalWorkerDependencies,
   ExternalWorkerInstance,
   LibNode,
   Shelf,
 } from "../states/lib.t";
+import { CloseIcon, ExpandLessIcon, SearchIcon } from "./assets/mui";
 
 const LibraryNode = ({ item }: { item: LibNode }) => {
   const zustand: FuncNodesReactFlowZustandInterface =
@@ -402,7 +401,7 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
   const update_modules = (open: boolean) => {
     if (!open) return;
 
-    if (zustand.worker === undefined) {
+    if (zustand.worker === undefined || !zustand.worker.is_open) {
       return;
     }
 
@@ -734,7 +733,7 @@ const ExternalWorkerShelf = ({
   externalworkermod,
   lib,
 }: {
-  externalworkermod: ExternalWorkerDependecies;
+  externalworkermod: ExternalWorkerDependencies;
   lib?: Shelf;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -815,7 +814,7 @@ const Library = () => {
       <div className="addlib">
         <AddLibraryOverLay>
           <button disabled={zustand.worker === undefined}>
-            Manage Libaries
+            Manage Libraries
           </button>
         </AddLibraryOverLay>
       </div>

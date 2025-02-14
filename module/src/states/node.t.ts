@@ -84,6 +84,7 @@ interface NodeType {
   render_options?: NodeRenderOptions;
   io_order: string[];
   progress: TqdmState;
+  description?: string;
 }
 
 type PartialNodeType = DeepPartial<NodeType>;

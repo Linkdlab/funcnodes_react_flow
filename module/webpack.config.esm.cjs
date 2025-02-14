@@ -12,8 +12,6 @@ module.exports = merge(baseConfig, {
   experiments: {
     outputModule: true,
   },
-  externals: {
-    react: "react",
-    "react-dom": "react-dom",
-  },
+  // Add this to ensure externals are treated as ESM imports:
+  externalsType: "module",
 });

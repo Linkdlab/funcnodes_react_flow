@@ -1,11 +1,6 @@
-from .run import run_server
-import funcnodes as fn
 import argparse
-
-try:
-    from setproctitle import setproctitle
-except ModuleNotFoundError:
-    setproctitle = print
+import os
+import sys
 
 
 def main():
@@ -19,25 +14,33 @@ def main():
       >>> main()
       None
     """
+
     parser = argparse.ArgumentParser(description="Funcnodes React Cli.")
 
     parser.add_argument(
         "--port",
-        default=fn.config.CONFIG["frontend"]["port"],
+        default=None,
         help="Port to run the server on",
         type=int,
     )
     parser.add_argument(
         "--no-browser",
-        action="store_false",
+        action="store_true",
         help="Open the browser after starting the server",
     )
 
     args = parser.parse_args()
+    cmd = sys.executable + " -m funcnodes runserver"
+    if args.port:
+        cmd += f" --port {args.port}"
+    if args.no_browser:
+        cmd += " --no-browser"
 
-    setproctitle("funcnodes_server")
-    run_server(port=args.port, open_browser=args.no_browser)
+    os.system(cmd)
 
+
+#    "@mui/icons-material": "^5.15.18",
+# "@mui/material": "^5.15.18"
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,4 @@
 import * as Tooltip from "@radix-ui/react-tooltip";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-import LockIcon from "@mui/icons-material/Lock";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
 
 import "./io.scss";
 import { Handle, HandleProps } from "reactflow";
@@ -10,6 +7,8 @@ import CustomDialog from "../../dialog";
 import { PreviewHandleDataRendererForIo } from "./handle_renderer";
 import { IOType, SerializedType } from "../../../states/nodeio.t";
 import { DynamicComponentLoader } from "../../datarenderer/rendermappings";
+import { LockIcon, LockOpenIcon, FullscreenIcon } from "../../assets/mui";
+
 const pick_best_io_type = (
   iot: SerializedType,
   typemap: { [key: string]: string }

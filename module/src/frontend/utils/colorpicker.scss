@@ -1,12 +1,12 @@
 .colorspace {
   margin: 0.2rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+
   &_title {
     font-size: 0.7em;
     font-weight: bold;
   }
-
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
 
   & label {
     font-size: 0.7rem;

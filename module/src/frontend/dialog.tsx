@@ -1,7 +1,9 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import CloseIcon from "@mui/icons-material/Close";
+
+
 import "./dialog.scss";
+import { CloseIcon } from "./assets/mui";
 interface CustomDialogProps {
   trigger?: React.ReactNode;
   title?: string;

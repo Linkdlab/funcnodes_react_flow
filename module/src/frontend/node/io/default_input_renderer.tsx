@@ -257,6 +257,18 @@ const get_parser = (datatype: string | null) => {
   return _parse_string;
 };
 
+type SelectionInputOptionType = {
+  value: string;
+  label: string;
+  datatype: string; // Extra property not required by CustomSelect
+};
+
+// const LazyCustomSelect = React.lazy(
+//   async () => await import("../../utils/select")
+// ) as unknown as React.ComponentType<
+//   CustomSelectProps<SelectionInputOptionType>
+// >;
+
 const SelectionInput = ({
   io,
   inputconverter,
@@ -340,18 +352,7 @@ const SelectionInput = ({
       set_default: io.render_options.set_default,
     });
   };
-  const on_change = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    // Find the selected option element
-    const selectedOption = e.target.options[e.target.selectedIndex];
-    // Retrieve the datatype attribute from the selected option
-    const datatype = selectedOption.getAttribute("datatype");
 
-    on_change_value({
-      value: e.target.value,
-      // label: selectedOption.text,
-      datatype: datatype || "string",
-    });
-  };
   let v = io.value;
   if (v === null) {
     v = "null";
@@ -359,7 +360,7 @@ const SelectionInput = ({
   if (v === undefined) {
     v = "undefined";
   }
-  const default_entry = optionsmap.find((option) => option[1] === v);
+  const default_entry = optionsmap.find((option) => option[1] === v.toString());
 
   let default_value:
     | { value: string; label: string; datatype: string }
@@ -371,43 +372,32 @@ const SelectionInput = ({
       datatype: default_entry[2],
     };
   }
-
+  const select_options: SelectionInputOptionType[] = optionsmap.map(
+    (option) => ({
+      value: option[1],
+      label: option[0],
+      datatype: option[2],
+    })
+  );
   return (
+    // <Suspense fallback={<select disabled={true}></select>}>
     <CustomSelect
       className="nodedatainput styleddropdown"
-      options={optionsmap.map((option) => ({
-        value: option[1],
-        label: option[0],
-        datatype: option[2],
-      }))}
+      options={select_options}
       defaultValue={default_value}
       onChange={(newValue) => {
-        if (newValue === null)
-          newValue = {
+        if (newValue === null) {
+          on_change_value({
             value: "<NoValue>",
-            label: "<NoValue>",
+
             datatype: "string",
-          };
+          });
+          return;
+        }
         on_change_value(newValue);
       }}
     />
-  );
-  return (
-    <select
-      value={v}
-      onChange={on_change}
-      disabled={io.connected}
-      className="nodedatainput styleddropdown"
-    >
-      <option value="<NoValue>" disabled>
-        select
-      </option>
-      {optionsmap.map((option) => (
-        <option key={option[0]} value={option[1]} datatype={option[2]}>
-          {option[0]}
-        </option>
-      ))}
-    </select>
+    // </Suspense>
   );
 };
 
