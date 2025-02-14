@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { JSX, useContext } from "react";
 import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
@@ -16,7 +16,7 @@ const BodyDataRendererForIo = (
   io: IOType
 ): [
   ({ io }: { io: IOType }) => JSX.Element,
-  ({ io }: { io: IOType }) => JSX.Element,
+  ({ io }: { io: IOType }) => JSX.Element
 ] => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);

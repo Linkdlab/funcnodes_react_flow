@@ -1,7 +1,7 @@
 import { StoreApi, UseBoundStore } from "zustand";
 import { FuncNodesWorker, WorkerManager } from "../funcnodes";
 import {
-  ExternalWorkerDependecies,
+  ExternalWorkerDependencies,
   LibType,
   LibZustandInterface,
 } from "./lib.t";
@@ -39,7 +39,7 @@ interface FullState {
   backend: FullNodeSpaceJSON;
   view: ViewState;
   worker: { [key: string]: string[] };
-  worker_dependencies: ExternalWorkerDependecies[];
+  worker_dependencies: ExternalWorkerDependencies[];
 }
 
 interface ProgressState {
@@ -105,12 +105,31 @@ interface WorkersState {
 }
 
 interface FuncnodesReactHeaderProps {}
-interface FuncnodesReactFlowProps {
-  useWorkerManager?: boolean;
-  default_worker?: FuncNodesWorker;
-  header?: FuncnodesReactHeaderProps;
+interface ReactFlowLayerProps {
+  minimap?: boolean;
+  static?: boolean;
+  minZoom?: number;
+  maxZoom?: number;
+}
+
+interface ExposedFuncNodesReactFlowProps {
   id?: string;
+  debug?: boolean;
   on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
+  useWorkerManager?: boolean;
+}
+
+interface FuncNodesAppOptions extends ExposedFuncNodesReactFlowProps {
+  worker_url?: string;
+  worker?: FuncNodesWorker;
+
+  id: string;
+}
+interface FuncnodesReactFlowProps extends ExposedFuncNodesReactFlowProps {
+  workerManagerUrl?: string;
+  worker?: FuncNodesWorker;
+  header?: FuncnodesReactHeaderProps;
+  flow?: ReactFlowLayerProps;
 }
 
 interface DevSettings {
@@ -179,7 +198,9 @@ export type {
   NodeViewState,
   FuncnodesReactFlowProps,
   FuncnodesReactHeaderProps,
+  ReactFlowLayerProps,
   FuncnodesReactFlowLocalSettings,
   FuncnodesReactFlowLocalState,
+  FuncNodesAppOptions,
   FuncnodesReactFlowViewSettings,
 };

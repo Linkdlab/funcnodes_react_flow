@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { RenderType } from "../../types/rendering.t";
 import {
   Base64ImageRenderer,

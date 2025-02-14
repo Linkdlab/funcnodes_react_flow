@@ -12,9 +12,8 @@
 #!.yarn/cache
 .pnp.*
 old/*
-/node_modules/
+**/node_modules/
 __pycache__/
 /.licensecheck
 /.yarn
-/app/dist/
-/app_single_worker/dist/
+/**/dist/

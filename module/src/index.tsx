@@ -1,5 +1,7 @@
 import React from "react";
-import FuncnodesReactFlow, { FuncNodesContext } from "./frontend";
+import FuncnodesReactFlow, {
+  FuncNodesContext,
+} from "./frontend/funcnodesreactflow";
 import WebSocketWorker from "./funcnodes/websocketworker";
 import FuncNodesReactPlugin, {
   RendererPlugin,
@@ -14,41 +16,49 @@ import helperfunctions from "./utils/helperfunctions";
 import FuncNodesReactFlowZustand, {
   FuncNodesReactFlowZustandInterface,
 } from "./states";
-import ReactDOM from "react-dom/client";
 import { FuncNodesWorker } from "./funcnodes";
 import {
   HandlePreviewRendererType,
   DataOverlayRendererType,
   DataPreviewViewRendererType,
   DataViewRendererType,
+  RenderMappingProvider,
 } from "./frontend/datarenderer/rendermappings";
-import { NodeType } from "./states/node.t";
-import { ProgressState } from "./states/fnrfzst.t";
-
+import { NodeType, PartialNodeType } from "./states/node.t";
+import { FuncNodesAppOptions, ProgressState } from "./states/fnrfzst.t";
+import ReactFlowLayer from "./frontend/funcnodesreactflow/react_flow_layer";
+import { assert_full_node } from "./states/node";
+import { deep_update } from "./utils";
+import { WorkerProps } from "./funcnodes/funcnodesworker";
+import { ConsoleLogger } from "./utils/logger";
 export default FuncnodesReactFlow;
 
-type FuncNodesAppOptions = {
-  id: string;
-  ws_url?: string;
-  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
-};
+const FuncNodes = (props: FuncNodesAppOptions) => {
+  const propscopy: FuncNodesAppOptions = { ...props };
+  const logger = new ConsoleLogger(
+    "FuncNodes",
+    propscopy.debug ? "debug" : "info"
+  );
 
-const App = ({ id, ws_url, on_sync_complete }: FuncNodesAppOptions) => {
-  let useWorkerManager = true;
-  let worker = undefined;
-  if (ws_url !== undefined) {
-    useWorkerManager = false;
-    worker = new WebSocketWorker({
-      url: ws_url,
-      uuid: id,
-      on_sync_complete: on_sync_complete,
-    });
-    const fnrf_zst = FuncNodesReactFlowZustand({
-      useWorkerManager: useWorkerManager,
-      default_worker: worker,
-    });
-    worker.set_zustand(fnrf_zst);
+  logger.debug("Initalizing FuncNodes with props:", propscopy);
+  if (propscopy.worker === undefined) {
+    if (propscopy.worker_url !== undefined) {
+      propscopy.useWorkerManager = false;
+      propscopy.worker = new WebSocketWorker({
+        url: propscopy.worker_url,
+        uuid: propscopy.id,
+        on_sync_complete: propscopy.on_sync_complete,
+      });
+    }
   }
+  if (propscopy.worker !== undefined) {
+    const fnrf_zst = FuncNodesReactFlowZustand({
+      useWorkerManager: propscopy.useWorkerManager,
+      worker: propscopy.worker,
+    });
+    propscopy.worker.set_zustand(fnrf_zst);
+  }
+  logger.debug("Initalizing FuncnodesReactFlow with props:", propscopy);
   return (
     <div
       className="App"
@@ -57,63 +67,10 @@ const App = ({ id, ws_url, on_sync_complete }: FuncNodesAppOptions) => {
         width: "100%",
       }}
     >
-      <FuncnodesReactFlow
-        id={id}
-        useWorkerManager={useWorkerManager}
-        default_worker={worker}
-        on_sync_complete={on_sync_complete}
-      ></FuncnodesReactFlow>
+      <FuncnodesReactFlow {...propscopy}></FuncnodesReactFlow>
     </div>
   );
 };
-
-type FuncNodesWebOptions = {
-  ws_url?: string;
-  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
-};
-
-const FuncNodes = (
-  id_or_element: string | HTMLElement,
-  options?: FuncNodesWebOptions
-) => {
-  let id: string;
-  let element: HTMLElement;
-
-  if (options === undefined) {
-    options = {};
-  }
-
-  if (typeof id_or_element === "string") {
-    id = id_or_element;
-    element = document.getElementById(id) as HTMLElement;
-  } else {
-    element = id_or_element;
-    id = element.id;
-  }
-
-  ReactDOM.createRoot(element).render(
-    <React.StrictMode>
-      <App
-        id={id}
-        ws_url={options.ws_url}
-        on_sync_complete={options.on_sync_complete}
-      />
-    </React.StrictMode>
-  );
-};
-
-// @ts-ignore
-window.FuncNodes = FuncNodes;
-
-// import ReactDOM from "react-dom";
-
-// (async () => {
-//   // @ts-ignore
-//   window.React = await import("react");
-// })();
-// window.ReactDOM = ReactDOM;
-// @ts-ignore
-window.React = React;
 
 export {
   WebSocketWorker,
@@ -121,6 +78,11 @@ export {
   FuncNodesReactFlowZustand,
   FuncNodes,
   FuncNodesContext,
+  assert_full_node,
+  ReactFlowLayer,
+  RenderMappingProvider,
+  deep_update,
+  FuncNodesWorker,
 };
 export type {
   IOType,
@@ -135,5 +97,8 @@ export type {
   DataPreviewViewRendererType,
   DataViewRendererType,
   NodeType,
+  PartialNodeType,
   ProgressState,
+  WorkerProps,
+  FuncNodesAppOptions,
 };

@@ -9,11 +9,8 @@ import "./header.scss";
 import CustomDialog from "../dialog";
 import React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { downloadBase64, fileDialogToBase64 } from "../../utils/data";
+import { ChevronRightIcon, MenuRoundedIcon, Stack, Typography } from "../assets/mui";
 
 const NewWorkerDialog = ({
   trigger,
@@ -25,17 +22,17 @@ const NewWorkerDialog = ({
   open?: boolean;
 }) => {
   const [name, setName] = useState<string>("");
-  const [copyLib, setCopyLib] = useState<boolean>(false);
-  const [copyNS, setCopyNS] = useState<boolean>(false);
+  // const [copyLib, setCopyLib] = useState<boolean>(false);
+  // const [copyNS, setCopyNS] = useState<boolean>(false);
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
-  const workersstate = fnrf_zst.workers();
+  // const workersstate = fnrf_zst.workers();
 
-  const [reference, setReference] = useState<{ name: string; uuid: string }>({
-    name: "None",
-    uuid: "",
-  });
+  // const [reference, setReference] = useState<{ name: string; uuid: string }>({
+  //   name: "None",
+  //   uuid: "",
+  // });
 
   if (!fnrf_zst.options.useWorkerManager) return null;
 
@@ -45,7 +42,7 @@ const NewWorkerDialog = ({
       open={open}
       trigger={trigger}
       title="New Worker"
-      description="Please provide a name and select a another worker as interpreter reference"
+      description="Create a new worker"
     >
       <div>
         Name:
@@ -59,6 +56,7 @@ const NewWorkerDialog = ({
         />
       </div>
       <div>
+        {/* Optional: Slect a another worker as interpreter reference
         Reference Worker:
         <br />
         <select
@@ -107,7 +105,7 @@ const NewWorkerDialog = ({
               </div>
             )}
           </div>
-        )}
+        )} */}
         {name && (
           <div>
             <button
@@ -115,9 +113,9 @@ const NewWorkerDialog = ({
               onClick={() => {
                 fnrf_zst.workermanager?.new_worker({
                   name,
-                  reference: reference.uuid,
-                  copyLib,
-                  copyNS,
+                  // reference: reference.uuid,
+                  // copyLib,
+                  // copyNS,
                 });
                 setOpen(false);
               }}
@@ -147,7 +145,7 @@ const ExportWorkerDialog = ({
   const workersstate = fnrf_zst.workers();
   const workerid = fnrf_zst.worker?.uuid;
   const name =
-    (workerid ? workersstate[workerid].name : undefined) ||
+    (workerid ? workersstate[workerid]?.name : undefined) ||
     workerid ||
     "worker";
 
@@ -237,7 +235,9 @@ const WorkerMenu = () => {
   };
 
   const has_worker_manager =
-    fnrf_zst.options.useWorkerManager && fnrf_zst.workermanager;
+    fnrf_zst.options.useWorkerManager &&
+    fnrf_zst.workermanager &&
+    fnrf_zst.workermanager.open;
   const show_select =
     has_worker_manager && Object.keys(workersstate).length > 0;
 
@@ -303,7 +303,7 @@ const WorkerMenu = () => {
                             <DropdownMenu.RadioItem
                               className={
                                 "headermenuitem workerselectoption" +
-                                (workersstate[workerid].active
+                                (workersstate[workerid]?.active
                                   ? " active"
                                   : " inactive") +
                                 " headermenuitem"
@@ -312,7 +312,7 @@ const WorkerMenu = () => {
                               value={workerid}
                               disabled={workerid === fnrf_zst.worker?.uuid}
                             >
-                              {workersstate[workerid].name || workerid}
+                              {workersstate[workerid]?.name || workerid}
                             </DropdownMenu.RadioItem>
                           ))}
                       </DropdownMenu.RadioGroup>

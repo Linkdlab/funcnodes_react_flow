@@ -26,6 +26,11 @@ class WorkerManager {
     };
     this.connect();
   }
+
+  get open() {
+    return this.ws?.readyState === WebSocket.OPEN;
+  }
+
   private connect(): void {
     this.zustand.set_progress({
       progress: 0,

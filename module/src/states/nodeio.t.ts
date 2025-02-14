@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { BaseRenderOptions } from "../types/rendering.t";
 import { DeepPartial } from "../utils";
 interface AllOf {

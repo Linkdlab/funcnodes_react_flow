@@ -10,7 +10,7 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "static/js/fn_no_manager_[name].js",
+    filename: "static/js/node_builder[name].js",
     chunkFilename: "static/js/[name].[contenthash].js", // Ensure consistent naming for chunks
     publicPath: "auto", // Add this line
   },

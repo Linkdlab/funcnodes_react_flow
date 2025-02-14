@@ -29,20 +29,20 @@ interface ExternalWorkerClassDep {
   name: string;
   instances: ExternalWorkerInstance[];
 }
-interface ExternalWorkerDependecies {
+interface ExternalWorkerDependencies {
   module: string;
   worker_classes: ExternalWorkerClassDep[];
 }
 
 interface LibState {
   lib: LibType;
-  external_worker?: ExternalWorkerDependecies[];
+  external_worker?: ExternalWorkerDependencies[];
   set: (state: {
     lib?: LibType;
-    external_worker?: ExternalWorkerDependecies[];
+    external_worker?: ExternalWorkerDependencies[];
   }) => void;
   get_lib: () => LibType;
-  get_external_worker: () => ExternalWorkerDependecies[] | undefined;
+  get_external_worker: () => ExternalWorkerDependencies[] | undefined;
 }
 
 interface LibZustandInterface {
@@ -56,6 +56,6 @@ export type {
   Shelf,
   LibNode,
   ExternalWorkerClassDep,
-  ExternalWorkerDependecies,
+  ExternalWorkerDependencies,
   ExternalWorkerInstance,
 };

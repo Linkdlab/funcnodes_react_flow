@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 import { Position } from "reactflow";
-import { FuncNodesContext } from "../..";
+import { FuncNodesContext } from "../../funcnodesreactflow";
 
 import { HandleWithPreview, pick_best_io_type } from "./io";
 import { InLineOutput } from "./default_output_render";

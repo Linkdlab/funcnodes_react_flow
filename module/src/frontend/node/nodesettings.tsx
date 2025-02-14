@@ -1,7 +1,6 @@
 import React from "react";
 import "./nodesettings.scss";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+
 import { FuncNodesContext } from "../funcnodesreactflow";
 import { NodeStore } from "../../states/node.t";
 import { NodeName } from "./node";
@@ -13,6 +12,7 @@ import { RenderMappingContext } from "../datarenderer/rendermappings";
 import { SelectionInput } from "./io/default_input_renderer";
 import { INPUTCONVERTER } from "./io/nodeinput";
 import { RenderOptions } from "../../states/fnrfzst.t";
+import { ChevronLeftIcon, ChevronRightIcon } from "../assets/mui";
 
 const NodeSettingsInput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
