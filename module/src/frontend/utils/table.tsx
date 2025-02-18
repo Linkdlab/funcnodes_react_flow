@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
 import "./table.scss";
-import React from "react";
+import * as React from "react";
 import {
   TableContainer,
   Table,

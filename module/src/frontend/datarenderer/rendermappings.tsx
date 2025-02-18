@@ -1,10 +1,5 @@
-import React, {
-  JSX,
-  ReactElement,
-  createContext,
-  useEffect,
-  useReducer,
-} from "react";
+import * as React from "react";
+import { JSX, ReactElement, createContext, useEffect, useReducer } from "react";
 import {
   IOType,
   InputRendererType,

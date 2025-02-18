@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import FuncnodesReactFlow, {
   DEFAULT_FN_PROPS,
   FuncNodesContext,

@@ -2,7 +2,8 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 
 import "./io.scss";
 import { Handle, HandleProps } from "reactflow";
-import React, { useState } from "react";
+import * as React from "react";
+import { useState } from "react";
 import CustomDialog from "../../dialog";
 import { PreviewHandleDataRendererForIo } from "./handle_renderer";
 import { IOType, SerializedType } from "../../../states/nodeio.t";

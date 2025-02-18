@@ -7,7 +7,7 @@ import { FuncNodesContext } from "../funcnodesreactflow";
 
 import "./header.scss";
 import CustomDialog from "../dialog";
-import React from "react";
+import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { downloadBase64, fileDialogToBase64 } from "../../utils/data";
 import {

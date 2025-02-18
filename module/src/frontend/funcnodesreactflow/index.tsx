@@ -1,7 +1,8 @@
+import * as React from "react";
 import { createContext, useState } from "react";
 import FuncNodesWorker from "../../funcnodes/funcnodesworker";
 import FuncNodesReactFlowZustand from "../../states/fnrfzst";
-import React from "react";
+
 import { WorkerManager } from "../../funcnodes";
 
 import FuncnodesHeader from "../header";

@@ -4,7 +4,7 @@ import { FuncNodesReactFlowZustandInterface } from "../../../states/fnrfzst.t";
 import { FuncNodesContext } from "../../funcnodesreactflow";
 import CustomColorPicker from "../../utils/colorpicker";
 import { EnumOf, InputRendererProps } from "../../../states/nodeio.t";
-import React from "react";
+import * as React from "react";
 
 import * as Slider from "@radix-ui/react-slider";
 import * as ToolTip from "@radix-ui/react-tooltip";

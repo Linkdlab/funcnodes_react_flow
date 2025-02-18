@@ -3,8 +3,8 @@ declare global {
     FuncNodes: any;
   }
 }
+import * as React from "react";
 import FuncNodes, { FuncnodesReactFlowProps } from "./index";
-import React from "react";
 import { createRoot } from "react-dom/client";
 
 const FuncNodesRenderer = (

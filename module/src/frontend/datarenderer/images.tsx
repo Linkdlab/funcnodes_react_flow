@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { ReactSVG } from "react-svg";
 import { BaseRenderOptions } from ".";
 interface ImageRenderOptions extends BaseRenderOptions {

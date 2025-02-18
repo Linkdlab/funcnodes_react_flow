@@ -19,7 +19,7 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 
-// import React, { Suspense } from "react";
+// import * as React, { Suspense } from "react";
 
 // const lazyImport = (path: string) => {
 //   const Component = React.lazy(() => import(path));

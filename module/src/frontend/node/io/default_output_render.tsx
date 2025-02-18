@@ -1,5 +1,6 @@
 import { IOType } from "../../../states/nodeio.t";
-import React, { useContext } from "react";
+import * as React from "react";
+import { useContext } from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 
 const InLineOutput = ({

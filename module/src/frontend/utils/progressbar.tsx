@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import * as React from "react";
+import { useEffect, useRef } from "react";
 import { fitTextToContainer } from "../../utils/autolayout/txt";
 /**
  * Interface representing the state of a tqdm progress bar.
