@@ -15,9 +15,11 @@ import { dts } from "rollup-plugin-dts";
 import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
+const peers = Object.keys(pkg.peerDependencies || {});
+
 const moduleConfig = {
   input: "src/index.tsx",
-  external: ["react", "react-dom"],
+  external: peers ,
   onwarn(warning, warn) {
     if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
       return
@@ -32,6 +34,8 @@ const moduleConfig = {
       entries: [
       ],
     }),
+    commonjs({
+    }),
     resolve({browser: true,}),
     json(),
     scssloader({
@@ -41,11 +45,13 @@ const moduleConfig = {
     nodePolyfills(),
     babel({
       babelHelpers: 'bundled',
-      presets: ["@babel/preset-react"] ,
+      presets: ["@babel/preset-react",{
+        "runtime": "automatic"
+      }] ,
       exclude: /node_modules/,
 
     }),
-    commonjs(),
+
     production&&terser(),
   ],
 
@@ -104,7 +110,8 @@ const bundleConfig={
 }
 
 export default [
-  moduleConfig,
   dtsConfig,
   bundleConfig,
+  moduleConfig,
+
 ];
