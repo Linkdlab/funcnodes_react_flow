@@ -274,7 +274,7 @@ const WorkerMenu = () => {
                   </DropdownMenu.SubTrigger>
                   <DropdownMenu.Portal>
                     <DropdownMenu.SubContent
-                      className="headermenucontent"
+                      className="headermenucontent funcnodescontainer"
                       sideOffset={2}
                       alignOffset={-5}
                     >
