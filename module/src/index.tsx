@@ -102,6 +102,7 @@ export {
   RenderMappingProvider,
   deep_update,
   FuncNodesWorker,
+  FuncnodesReactFlow,
 };
 export type {
   IOType,
