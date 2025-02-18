@@ -1,4 +1,5 @@
 import "reactflow/dist/style.css";
+import "../layout/htmlelements.scss";
 import "./funcnodesreactflow.scss";
 import React, {
   useCallback,
@@ -31,7 +32,6 @@ import {
   FuncNodesReactFlowZustandInterface,
   ReactFlowLayerProps,
 } from "../../states/fnrfzst.t";
-import { deep_merge } from "../../utils";
 
 // import { useForceGraph } from "../../utils/autolayout";
 
@@ -143,11 +143,7 @@ const ContextMenu = ({
   );
 };
 
-const ReactFlowLayer = ({ ...props }: ReactFlowLayerProps) => {
-  const fullprops = deep_merge(
-    { minimap: true, static: false, minZoom: 0.1, maxZoom: 5 },
-    props
-  ).new_obj;
+const ReactFlowLayer = (props: ReactFlowLayerProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
@@ -189,15 +185,15 @@ const ReactFlowLayer = ({ ...props }: ReactFlowLayerProps) => {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
-        minZoom={fullprops.minZoom}
-        maxZoom={fullprops.maxZoom}
+        minZoom={props.minZoom}
+        maxZoom={props.maxZoom}
         fitView
         onSelectionChange={onSelectionChange}
         ref={reactflowRef}
         //  onNodeContextMenu={onNodeContextMenu}
         onPaneClick={onPaneClick}
         //multiSelectionKeyCode="Control"
-        panOnDrag={!fullprops.static}
+        panOnDrag={!props.static}
       >
         <ReactFlowManager />
         <KeyHandler />
@@ -206,11 +202,11 @@ const ReactFlowLayer = ({ ...props }: ReactFlowLayerProps) => {
           gap={16} // Distance between grid lines
           size={1} // Thickness of the grid lines
         />
-        {fullprops.minimap && (
+        {props.minimap && (
           <MiniMap
             nodeStrokeWidth={3}
-            pannable={!fullprops.static}
-            zoomable={!fullprops.static}
+            pannable={!props.static}
+            zoomable={!props.static}
             zoomStep={3}
           />
         )}

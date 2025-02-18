@@ -31,7 +31,7 @@ import {
 import RendererPlugin from "../../plugin/renderer";
 
 import FuncNodesReactPlugin from "../../plugin";
-import { FuncNodesReactFlowZustandInterface } from "../../states";
+import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 
 const _Inputrenderer: {
   [key: string]: InputRendererType;

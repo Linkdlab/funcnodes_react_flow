@@ -778,7 +778,10 @@ const Library = () => {
   const libstate = zustand.lib.libstate();
 
   const [filter, setFilter] = useState("");
-
+  const isopen =
+    zustand.worker?.state((s) => {
+      return s.is_open;
+    }) ?? false;
   return (
     <div className="libcontainer">
       <div className="library">
@@ -811,13 +814,13 @@ const Library = () => {
         <hr />
       </div>
       <div style={{ paddingTop: "0.5rem" }}></div>
-      <div className="addlib">
-        <AddLibraryOverLay>
-          <button disabled={zustand.worker === undefined}>
-            Manage Libraries
-          </button>
-        </AddLibraryOverLay>
-      </div>
+      {isopen && (
+        <div className="addlib">
+          <AddLibraryOverLay>
+            <button>Manage Libraries</button>
+          </AddLibraryOverLay>
+        </div>
+      )}
     </div>
   );
 };

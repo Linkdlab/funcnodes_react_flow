@@ -1,7 +1,6 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 
-
 import "./dialog.scss";
 import { CloseIcon } from "./assets/mui";
 interface CustomDialogProps {
@@ -46,8 +45,8 @@ const CustomDialog = ({
     <Dialog.Root open={open} onOpenChange={handleOpenChange} modal={modal}>
       {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
-        <Dialog.Overlay className="dialogoverlay" />
-        <Dialog.Content className="dialogconent">
+        <Dialog.Overlay className="dialogoverlay funcnodescontainer" />
+        <Dialog.Content className="dialogconent funcnodescontainer ">
           {title && (
             <Dialog.Title className="dialogtitle">{title}</Dialog.Title>
           )}

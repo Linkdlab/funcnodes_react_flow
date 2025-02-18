@@ -6,7 +6,7 @@ import { NodeStore } from "../../states/node.t";
 import { NodeName } from "./node";
 import { IOType } from "../..";
 import { pick_best_io_type } from "./io/io";
-import { FuncNodesReactFlowZustandInterface } from "../../states";
+import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 
 import { RenderMappingContext } from "../datarenderer/rendermappings";
 import { SelectionInput } from "./io/default_input_renderer";

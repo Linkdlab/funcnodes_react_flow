@@ -161,19 +161,15 @@ const assert_reactflow_node = (
   return extendedNode;
 };
 
-const FuncNodesReactFlowZustand = ({
-  useWorkerManager = true,
-  worker = undefined,
-  on_sync_complete = undefined,
-}: FuncnodesReactFlowProps): FuncNodesReactFlowZustandInterface => {
+const FuncNodesReactFlowZustand = (
+  props: FuncnodesReactFlowProps
+): FuncNodesReactFlowZustandInterface => {
   /*
   function that should be called when the remote node, e.g. in the python worker is performing an action
   */
 
   const options: FuncnodesReactFlowProps = {
-    useWorkerManager,
-    worker,
-    on_sync_complete,
+    ...props,
   };
 
   const _add_node = (action: NodeActionAdd) => {

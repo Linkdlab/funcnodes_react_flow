@@ -77,6 +77,7 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
     <div className="nodrag nodedatabody">
       {pvhandle && io && (
         <CustomDialog
+          title={io.full_id}
           trigger={
             <div>{<DynamicComponentLoader component={pvhandle} io={io} />}</div>
           }

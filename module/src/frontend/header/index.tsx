@@ -10,7 +10,12 @@ import CustomDialog from "../dialog";
 import React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { downloadBase64, fileDialogToBase64 } from "../../utils/data";
-import { ChevronRightIcon, MenuRoundedIcon, Stack, Typography } from "../assets/mui";
+import {
+  ChevronRightIcon,
+  MenuRoundedIcon,
+  Stack,
+  Typography,
+} from "../assets/mui";
 
 const NewWorkerDialog = ({
   trigger,
@@ -257,7 +262,7 @@ const WorkerMenu = () => {
           </button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
-          <DropdownMenu.Content className="headermenucontent">
+          <DropdownMenu.Content className="headermenucontent funcnodescontainer">
             <DropdownMenu.Group>
               {show_select && (
                 <DropdownMenu.Sub>
@@ -444,7 +449,7 @@ const NodeSpaceMenu = () => {
           </button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
-          <DropdownMenu.Content className="headermenucontent">
+          <DropdownMenu.Content className="headermenucontent funcnodescontainer">
             <DropdownMenu.Group>
               <DropdownMenu.Item className="headermenuitem" onClick={onNew}>
                 New
@@ -478,13 +483,17 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
       <div className="headerelement">
         <Statusbar></Statusbar>
       </div>
-      <div className="headerelement">
-        <WorkerMenu></WorkerMenu>
-      </div>
-      {fnrf_zst.worker && workerstate.is_open && (
-        <div className="headerelement">
-          <NodeSpaceMenu></NodeSpaceMenu>
-        </div>
+      {headerprops.showmenu && (
+        <>
+          <div className="headerelement">
+            <WorkerMenu></WorkerMenu>
+          </div>
+          {fnrf_zst.worker && workerstate.is_open && (
+            <div className="headerelement">
+              <NodeSpaceMenu></NodeSpaceMenu>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

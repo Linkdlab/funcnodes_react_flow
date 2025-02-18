@@ -90,6 +90,7 @@ const HandleWithPreview = ({
                 )}
                 {overlayhandle && (
                   <CustomDialog
+                    title={io.full_id}
                     trigger={<FullscreenIcon />}
                     onOpenChange={(open: boolean) => {
                       if (open) {

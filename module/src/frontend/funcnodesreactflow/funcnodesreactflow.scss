@@ -1,4 +1,3 @@
-@use "../layout/htmlelements.scss";
 :root {
   --funheadercolor: #00d9ff; // Dark background color
   --funcnodesbackground1: hsl(243, 26%, 13%); // Dark background color
@@ -8,6 +7,18 @@
   --funcnodestextcolor1: #ffffff; // Dark background color
 }
 
+.funcnodescontainer {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  & code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+      monospace;
+  }
+}
 .funcnodesreactflowcontainer {
   width: 100%;
   height: 100%;
