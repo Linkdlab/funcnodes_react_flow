@@ -122,7 +122,7 @@ const InnerFuncnodesReactFlow = ({
             {worker && <NodeSettings></NodeSettings>}
           </div>
           <div className="funcnodesflaotingmenu">
-            {!isFullscreen && (
+            {!isFullscreen && flow.allowExpand && (
               <SmoothExpandComponent.Trigger>
                 <SmoothExpandComponent.Expanded>
                   <CloseFullscreenIcon />
@@ -132,9 +132,14 @@ const InnerFuncnodesReactFlow = ({
                 </SmoothExpandComponent.Collapsed>
               </SmoothExpandComponent.Trigger>
             )}
-            <div onClick={handleToggleFullscreen} style={{ cursor: "pointer" }}>
-              {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-            </div>
+            {flow.allowFullScreen && (
+              <div
+                onClick={handleToggleFullscreen}
+                style={{ cursor: "pointer" }}
+              >
+                {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+              </div>
+            )}
           </div>
         </SmoothExpandComponent>
       </FuncNodesContext.Provider>
@@ -160,6 +165,8 @@ const DEFAULT_FLOW_PROPS: ReactFlowLayerProps = {
   static: false,
   minZoom: 0.1,
   maxZoom: 5,
+  allowFullScreen: true,
+  allowExpand: true,
 };
 
 const DEFAULT_FN_PROPS: FuncnodesReactFlowProps = {

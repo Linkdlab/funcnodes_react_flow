@@ -117,6 +117,8 @@ interface ReactFlowLayerProps {
   static: boolean;
   minZoom: number;
   maxZoom: number;
+  allowFullScreen: boolean;
+  allowExpand: boolean;
 }
 
 interface FuncnodesReactFlowProps {
