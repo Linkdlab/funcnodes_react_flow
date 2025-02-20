@@ -52,7 +52,15 @@ const filterShelf = (shelf: Shelf, filter: string): boolean => {
   return hasFilteredNodes || hasFilteredSubShelves;
 };
 
-const LibraryShelf = ({ item, filter }: { item: Shelf; filter: string }) => {
+const LibraryShelf = ({
+  item,
+  filter,
+  parentkey,
+}: {
+  item: Shelf;
+  filter: string;
+  parentkey: string;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => setIsOpen(!isOpen);
@@ -83,15 +91,20 @@ const LibraryShelf = ({ item, filter }: { item: Shelf; filter: string }) => {
         <div className="libnodecontainer_inner">
           {filterednodes && (
             <>
-              {filterednodes.map((subItem, idx) => (
-                <LibraryNode key={idx} item={subItem} />
+              {filterednodes.map((subItem) => (
+                <LibraryNode key={subItem.node_id} item={subItem} />
               ))}
             </>
           )}
           {item.subshelves && (
             <>
-              {item.subshelves.map((subItem, idx) => (
-                <LibraryShelf key={idx} item={subItem} filter={filter} />
+              {item.subshelves.map((subItem) => (
+                <LibraryShelf
+                  key={parentkey + subItem.name}
+                  item={subItem}
+                  filter={filter}
+                  parentkey={parentkey + subItem.name}
+                />
               ))}
             </>
           )}
@@ -495,9 +508,9 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
           </h3>
         )}
         {installedExtended &&
-          installedModulesFiltered.map((item, idx) => (
+          installedModulesFiltered.map((item) => (
             <AddableModule
-              key={idx}
+              key={item.name + item.source}
               availableModule={item}
               on_add={add_new_lib_from_installed}
             />
@@ -513,9 +526,9 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
           </h3>
         )}
         {availableExtended &&
-          availableModulesFiltered.map((item, idx) => (
+          availableModulesFiltered.map((item) => (
             <InstallableModule
-              key={idx}
+              key={item.name + item.source}
               availableModule={item}
               on_add={add_new_lib_from_installable}
             />
@@ -530,9 +543,9 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
           </h3>
         )}
         {activeExtended &&
-          activeModulesFiltered.map((item, idx) => (
+          activeModulesFiltered.map((item) => (
             <ActiveModule
-              key={idx}
+              key={item.name + item.source}
               availableModule={item}
               on_remove={remove_lib_from_active}
               on_update={update_lib}
@@ -604,10 +617,12 @@ const ExternalWorkerInstanceEntry = ({
   ins,
   lib,
   filter = "",
+  parentkey,
 }: {
   ins: ExternalWorkerInstance;
   lib?: Shelf;
   filter?: string;
+  parentkey: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -639,13 +654,18 @@ const ExternalWorkerInstanceEntry = ({
                 <>
                   {filterednodes && (
                     <>
-                      {filterednodes.map((subItem, idx) => (
-                        <LibraryNode key={idx} item={subItem} />
+                      {filterednodes.map((subItem) => (
+                        <LibraryNode key={subItem.node_id} item={subItem} />
                       ))}
                     </>
                   )}
-                  {lib.subshelves.map((subItem, idx) => (
-                    <LibraryShelf key={idx} item={subItem} filter={filter} />
+                  {lib.subshelves.map((subItem) => (
+                    <LibraryShelf
+                      key={parentkey + subItem.name}
+                      item={subItem}
+                      filter={filter}
+                      parentkey={parentkey + subItem.name}
+                    />
                   ))}
                 </>
               )}
@@ -713,13 +733,14 @@ const ExternalWorkerClassEntry = ({
               >
                 New Instance
               </div>
-              {item.instances.map((instance, idx) => (
+              {item.instances.map((instance) => (
                 <ExternalWorkerInstanceEntry
-                  key={idx}
+                  key={instance.uuid}
                   ins={instance}
                   lib={lib?.subshelves.find(
                     (shelf) => shelf.name === instance.uuid
                   )}
+                  parentkey={instance.uuid}
                 />
               ))}
             </>
@@ -757,9 +778,9 @@ const ExternalWorkerShelf = ({
       </div>
       <div className={"libnodecontainer " + (_isopen ? "open" : "close")}>
         <div className="libnodecontainer_inner">
-          {externalworkermod.worker_classes.map((subItem, idx) => (
+          {externalworkermod.worker_classes.map((subItem) => (
             <ExternalWorkerClassEntry
-              key={idx}
+              key={subItem.module + subItem.class_name}
               item={subItem}
               mod={externalworkermod.module}
               lib={lib}
@@ -789,11 +810,16 @@ const Library = () => {
         <hr className="hr_prominent" />
         <LibFilter filter={filter} setFilter={setFilter} />
         <div className="vscrollcontainer">
-          {libstate.lib.shelves.map((item, idx) =>
+          {libstate.lib.shelves.map((item) =>
             item.name == "_external_worker" ? (
               <></>
             ) : (
-              <LibraryShelf key={idx} item={item} filter={filter} />
+              <LibraryShelf
+                key={item.name}
+                item={item}
+                filter={filter}
+                parentkey={item.name}
+              />
             )
           )}
         </div>
@@ -801,9 +827,9 @@ const Library = () => {
         <div className="libtitle">External Worker</div>
         <hr className="hr_prominent" />
         <div className="vscrollcontainer">
-          {libstate.external_worker?.map((item, idx) => (
+          {libstate.external_worker?.map((item) => (
             <ExternalWorkerShelf
-              key={idx}
+              key={item.module}
               externalworkermod={item}
               lib={libstate.lib.shelves.find(
                 (shelf) => shelf.name === "_external_worker"
