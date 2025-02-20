@@ -110,8 +110,8 @@ const bundleConfig={
 }
 
 export default [
-  dtsConfig,
   bundleConfig,
+  dtsConfig,
   moduleConfig,
 
 ];
