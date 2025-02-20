@@ -88,7 +88,10 @@ function fileDialogToBase64(accept?: string): Promise<string> {
   return fileDialogToFile(accept).then(FileToBase64);
 }
 
-async function remoteUrlToBase64(url: string, remove_prefix = true) {
+async function remoteUrlToBase64(
+  url: string,
+  remove_prefix = true
+): Promise<string> {
   try {
     // Fetch the content from the URL
     const response = await fetch(url);
@@ -104,7 +107,7 @@ async function remoteUrlToBase64(url: string, remove_prefix = true) {
     const blob = await response.blob();
 
     // Convert Blob to Base64 using FileReader
-    const base64 = await new Promise((resolve, reject) => {
+    const base64 = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result;
@@ -115,7 +118,7 @@ async function remoteUrlToBase64(url: string, remove_prefix = true) {
         if (remove_prefix) {
           resolve((result as string).split(",")[1]); // Remove the data prefix if specified
         } else {
-          resolve(result);
+          resolve(result as string);
         }
       };
       reader.onerror = () => reject(reader.error);

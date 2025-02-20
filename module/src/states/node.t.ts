@@ -46,6 +46,7 @@ interface NodeActionError extends BaseNodeAction {
   type: "error";
   errortype: string;
   error: string;
+  tb?: string;
 }
 
 interface NodeActionTrigger extends BaseNodeAction {

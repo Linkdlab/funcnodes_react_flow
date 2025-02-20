@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { FuncNodesReactFlowZustandInterface } from "../states";
+import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 import { FuncNodesContext } from "../frontend/funcnodesreactflow";
 
 const set_io_value = ({

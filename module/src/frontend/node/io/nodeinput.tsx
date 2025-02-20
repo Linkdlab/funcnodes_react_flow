@@ -8,7 +8,7 @@ import {
 import { HandleWithPreview, pick_best_io_type } from "./io";
 import { SelectionInput } from "./default_input_renderer";
 import { IOType } from "../../../states/nodeio.t";
-import React from "react";
+import * as React from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 
 const INPUTCONVERTER: {

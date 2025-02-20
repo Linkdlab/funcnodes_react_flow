@@ -5,6 +5,16 @@ type DeepPartial<T> = T extends object
     }
   : T;
 
+// A helper type to keep track of recursion depth.
+type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+// A depth-limited DeepPartial type (here limited to 5 levels deep)
+type LimitedDeepPartial<T, D extends number = 10> = D extends 0
+  ? T
+  : T extends object
+  ? { [K in keyof T]?: LimitedDeepPartial<T[K], Prev[D]> }
+  : T;
+
 /**
  * Checks if the given item is a plain object.
  * @param item The item to check.
@@ -112,7 +122,7 @@ const deep_merge = <T extends {}>(
  * @returns An object containing the updated target object (new_obj) and a boolean indicating if there was a change (change).
  */
 const deep_update = <T extends {}>(
-  target: DeepPartial<T>,
+  target: LimitedDeepPartial<T>,
   source: T
 ): {
   new_obj: T;
@@ -169,4 +179,4 @@ const deep_update = <T extends {}>(
 };
 
 export { deep_merge, deep_update, deep_compare_objects };
-export type { DeepPartial };
+export type { DeepPartial, LimitedDeepPartial };

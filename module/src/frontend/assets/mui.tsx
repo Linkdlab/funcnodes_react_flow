@@ -18,8 +18,11 @@ import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 
-// import React, { Suspense } from "react";
+// import * as React, { Suspense } from "react";
 
 // const lazyImport = (path: string) => {
 //   const Component = React.lazy(() => import(path));
@@ -76,6 +79,9 @@ export {
   ChevronLeftIcon,
   CloseIcon,
   SearchIcon,
+  FullscreenExitIcon,
+  CloseFullscreenIcon,
+  OpenInFullIcon,
   Typography,
   Stack,
   Table,
