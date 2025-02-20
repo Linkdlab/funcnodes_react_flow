@@ -1,6 +1,6 @@
 import * as React from "react";
 import RendererPlugin from "./renderer";
-import { FuncNodesReactFlowZustandInterface } from "../states";
+import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 
 type RenderPluginFactoryProps = {
   React: typeof React;

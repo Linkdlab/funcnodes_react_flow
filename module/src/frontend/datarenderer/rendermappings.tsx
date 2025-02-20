@@ -1,10 +1,5 @@
-import React, {
-  JSX,
-  ReactElement,
-  createContext,
-  useEffect,
-  useReducer,
-} from "react";
+import * as React from "react";
+import { JSX, ReactElement, createContext, useEffect, useReducer } from "react";
 import {
   IOType,
   InputRendererType,
@@ -31,7 +26,7 @@ import {
 import RendererPlugin from "../../plugin/renderer";
 
 import FuncNodesReactPlugin from "../../plugin";
-import { FuncNodesReactFlowZustandInterface } from "../../states";
+import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 
 const _Inputrenderer: {
   [key: string]: InputRendererType;

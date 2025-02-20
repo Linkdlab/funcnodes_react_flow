@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import convert from "color-convert";
+import * as convert from "color-convert";
 import "./colorpicker.scss";
 
 const create_color_converter = (

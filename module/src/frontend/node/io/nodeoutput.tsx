@@ -10,7 +10,7 @@ import {
   FuncNodesReactFlowZustandInterface,
 } from "../../../states/fnrfzst.t";
 import { IOType } from "../../../states/nodeio.t";
-import React from "react";
+import * as React from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 
 const NodeOutput = ({ io }: { io: IOType }) => {

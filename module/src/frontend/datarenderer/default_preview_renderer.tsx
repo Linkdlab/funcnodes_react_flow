@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { IOType } from "../../states/nodeio.t";
 import JSONDataDisplay from "../utils/jsondata";
 import { SortableTable } from "../utils/table";

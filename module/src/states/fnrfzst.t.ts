@@ -104,32 +104,36 @@ interface WorkersState {
   [key: string]: WorkerRepresentation;
 }
 
-interface FuncnodesReactHeaderProps {}
+interface FuncnodesReactHeaderProps {
+  show: boolean;
+  showmenu: boolean;
+}
+
+interface ReactFlowLibraryProps {
+  show: boolean;
+}
 interface ReactFlowLayerProps {
-  minimap?: boolean;
-  static?: boolean;
-  minZoom?: number;
-  maxZoom?: number;
+  minimap: boolean;
+  static: boolean;
+  minZoom: number;
+  maxZoom: number;
+  allowFullScreen: boolean;
+  allowExpand: boolean;
 }
 
-interface ExposedFuncNodesReactFlowProps {
-  id?: string;
-  debug?: boolean;
-  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
-  useWorkerManager?: boolean;
-}
-
-interface FuncNodesAppOptions extends ExposedFuncNodesReactFlowProps {
-  worker_url?: string;
-  worker?: FuncNodesWorker;
-
+interface FuncnodesReactFlowProps {
   id: string;
-}
-interface FuncnodesReactFlowProps extends ExposedFuncNodesReactFlowProps {
-  workerManagerUrl?: string;
+  debug: boolean;
+  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
+  useWorkerManager: boolean;
+  show_library: boolean;
   worker?: FuncNodesWorker;
-  header?: FuncnodesReactHeaderProps;
-  flow?: ReactFlowLayerProps;
+  header: FuncnodesReactHeaderProps;
+  flow: ReactFlowLayerProps;
+  library: ReactFlowLibraryProps;
+  worker_url?: string;
+  fnw_url?: string;
+  workermanager_url?: string;
 }
 
 interface DevSettings {
@@ -201,6 +205,6 @@ export type {
   ReactFlowLayerProps,
   FuncnodesReactFlowLocalSettings,
   FuncnodesReactFlowLocalState,
-  FuncNodesAppOptions,
   FuncnodesReactFlowViewSettings,
+  ReactFlowLibraryProps,
 };

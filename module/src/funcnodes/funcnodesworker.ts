@@ -9,11 +9,16 @@ import {
   WorkerEvent,
 } from "../states/fnrfzst.t";
 import { create, StoreApi, UseBoundStore } from "zustand";
-import { NodeActionUpdate, NodeType, PartialNodeType } from "../states/node.t"; // Import the missing type
+import {
+  NodeActionError,
+  NodeActionUpdate,
+  NodeType,
+  PartialNodeType,
+} from "../states/node.t"; // Import the missing type
 import { deep_merge } from "../utils";
 import { LibType } from "../states/lib.t";
 import { PackedPlugin } from "../plugin";
-import { print_object_size, print_object } from "../utils/debugger";
+
 import { UpdateableIOOptions } from "../states/nodeio.t";
 type CmdMessage = {
   type: string;
@@ -603,8 +608,6 @@ class FuncNodesWorker {
   }
 
   async receive_nodespace_event({ event, data }: NodeSpaceEvent) {
-    print_object_size(data, "Data size for event " + event, this._zustand);
-    print_object(data, this._zustand);
     switch (event) {
       case "after_set_value":
         if (!this._zustand) return;
@@ -668,8 +671,9 @@ class FuncNodesWorker {
           errortype: "trigger",
           error: data.error,
           id: data.node,
+          tb: data.tb,
           from_remote: true,
-        });
+        } as NodeActionError);
 
       case "node_removed":
         if (!this._zustand) return;

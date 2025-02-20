@@ -1,6 +1,6 @@
 import { EdgeProps, getBezierPath, BaseEdge } from "reactflow";
 import "./edge.scss";
-import React from "react";
+import * as React from "react";
 
 const DefaultEdge = ({
   id,

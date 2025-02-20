@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import * as React from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { NodeStore, NodeType } from "../../states/node.t";
 
@@ -77,6 +78,7 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
     <div className="nodrag nodedatabody">
       {pvhandle && io && (
         <CustomDialog
+          title={io.full_id}
           trigger={
             <div>{<DynamicComponentLoader component={pvhandle} io={io} />}</div>
           }

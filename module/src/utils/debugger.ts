@@ -1,4 +1,4 @@
-import { FuncNodesReactFlowZustandInterface } from "../states";
+import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 
 const print_object_size = (
   obj: any,

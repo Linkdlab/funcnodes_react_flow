@@ -161,19 +161,15 @@ const assert_reactflow_node = (
   return extendedNode;
 };
 
-const FuncNodesReactFlowZustand = ({
-  useWorkerManager = true,
-  worker = undefined,
-  on_sync_complete = undefined,
-}: FuncnodesReactFlowProps): FuncNodesReactFlowZustandInterface => {
+const FuncNodesReactFlowZustand = (
+  props: FuncnodesReactFlowProps
+): FuncNodesReactFlowZustandInterface => {
   /*
   function that should be called when the remote node, e.g. in the python worker is performing an action
   */
 
   const options: FuncnodesReactFlowProps = {
-    useWorkerManager,
-    worker,
-    on_sync_complete,
+    ...props,
   };
 
   const _add_node = (action: NodeActionAdd) => {
@@ -191,6 +187,9 @@ const FuncNodesReactFlowZustand = ({
       }
 
       const node = store.getState();
+
+      iterf.logger.info("Add node", node.id, node.name);
+
       const new_ndoes = [
         ...rfstate.nodes,
         assert_reactflow_node(node, store, iterf),
@@ -261,6 +260,7 @@ const FuncNodesReactFlowZustand = ({
   };
 
   const _delete_node = (action: NodeActionDelete) => {
+    iterf.logger.info("Deleting node", action.id);
     if (action.from_remote) {
       rfstore.getState().onNodesChange([
         {
@@ -359,6 +359,7 @@ const FuncNodesReactFlowZustand = ({
         if (action.from_remote) {
           const edges = rfstate.edges;
           const del_edge_id = generate_edge_id(action);
+          iterf.logger.info("Deleting edge", del_edge_id);
           const new_edges = edges.filter((edge) => edge.id !== del_edge_id);
           rfstore.setState({ edges: new_edges });
           iterf.worker?.get_remote_node_state(action.src_nid);
