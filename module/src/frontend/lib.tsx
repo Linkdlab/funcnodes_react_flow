@@ -407,7 +407,6 @@ const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
     }
 
     zustand.worker.get_available_modules().then((modules) => {
-      console.log(modules);
       SetAvailableModules(modules);
     });
   };

@@ -7,6 +7,7 @@ import {
   createContext,
   forwardRef,
   useContext,
+  useImperativeHandle,
 } from "react";
 
 import "./smoothexpand.scss";
@@ -35,14 +36,16 @@ type SmoothExpandComponentProps = HTMLAttributes<HTMLDivElement> & {
   vtime?: number;
   hdelay?: number;
   vdelay?: number;
+  asChild?: boolean; // render as child element
 };
 
 const SmoothExpandComponent = forwardRef<
   HTMLDivElement,
   SmoothExpandComponentProps
 >((props, forwardedRef) => {
+  const { asChild, children, className, style, ...rest } = props;
   const [isExpanded, setIsExpanded] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [preExpandBounds, setPreExpandBounds] = useState<
     [number, number, number, number] | null
   >(null);
@@ -52,12 +55,11 @@ const SmoothExpandComponent = forwardRef<
   const hdelay = props.hdelay || 0;
   const vdelay = props.vdelay || 200;
 
-  // Use the forwarded ref if provided, otherwise fallback to our own.
-  const ref = (forwardedRef as React.RefObject<HTMLDivElement>) || containerRef;
+  useImperativeHandle(forwardedRef, () => ref.current as HTMLDivElement, []);
 
   const expand = async () => {
     // Expand process:
-
+    if (!ref.current) return;
     // reset everything to initial state
     ref.current.style.transition = `none`;
     ref.current.style.position = "";
@@ -122,6 +124,7 @@ const SmoothExpandComponent = forwardRef<
 
   const collapse = async () => {
     // Collapse process:
+    if (!ref.current) return;
     if (!preExpandBounds) return; // Ensure we have the original bounds.
     // Set up transition properties for the collapse.
     const style: React.CSSProperties = {
@@ -184,17 +187,48 @@ const SmoothExpandComponent = forwardRef<
     }
   };
 
+  // Render inner element using asChild if true.
+  // Render inner element using asChild if true.
+  let innerContent;
+  if (asChild && React.isValidElement(children)) {
+    const childElement = children as React.ReactElement<any>;
+    const mergedClassName = [
+      childElement.props.className,
+      className,
+      "smooth-expand",
+      isExpanded ? "smooth-expand-expanded" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    const mergedStyle = {
+      ...childElement.props.style,
+      ...style,
+      ...inlineStyles,
+    };
+    innerContent = React.cloneElement(childElement, {
+      ref: ref,
+      className: mergedClassName,
+      style: mergedStyle,
+      ...rest,
+    });
+  } else {
+    innerContent = (
+      <div
+        ref={ref}
+        {...rest}
+        className={`smooth-expand ${
+          isExpanded ? "smooth-expand-expanded" : ""
+        } ${className || ""}`}
+        style={{ ...style, ...inlineStyles }}
+      >
+        {children}
+      </div>
+    );
+  }
+
   const content = (
     <SmoothExpandContext.Provider value={{ isExpanded, toggleExpand }}>
-      <div
-        {...props}
-        ref={ref}
-        className={`smooth-expand ${isExpanded ? "smooth-expand-expanded" : ""}
-        ${props.className || ""}`}
-        style={inlineStyles || {}}
-      >
-        {props.children}
-      </div>
+      {innerContent}
     </SmoothExpandContext.Provider>
   );
 

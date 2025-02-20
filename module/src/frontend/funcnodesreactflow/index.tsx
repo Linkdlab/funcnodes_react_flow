@@ -26,20 +26,7 @@ import {
   CloseFullscreenIcon,
 } from "../assets/mui";
 import SmoothExpandComponent from "../layout/smoothexpand";
-
-// Extend HTMLElement to include vendor-prefixed methods
-interface ExtendedHTMLElement extends HTMLDivElement {
-  mozRequestFullScreen?: () => Promise<void>;
-  webkitRequestFullscreen?: () => Promise<void>;
-  msRequestFullscreen?: () => Promise<void>;
-}
-
-// Extend Document to include vendor-prefixed methods
-interface ExtendedDocument extends Document {
-  mozCancelFullScreen?: () => Promise<void>;
-  webkitExitFullscreen?: () => Promise<void>;
-  msExitFullscreen?: () => Promise<void>;
-}
+import FullScreenComponent from "../layout/fullscreenelement";
 
 const InnerFuncnodesReactFlow = ({
   fnrf_zst,
@@ -56,49 +43,9 @@ const InnerFuncnodesReactFlow = ({
     fnrf_zst.options.worker
   );
 
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const containerRef = React.useRef<ExtendedHTMLElement>(null);
-
   if (fnrf_zst.workermanager) {
     fnrf_zst.workermanager.on_setWorker = setWorker;
   }
-
-  const handleToggleFullscreen = async () => {
-    if (!containerRef.current) return;
-    console.log("toggle fullscreen");
-    if (!isFullscreen) {
-      // Request fullscreen on the container element
-      if (containerRef.current.requestFullscreen) {
-        await containerRef.current.requestFullscreen();
-      } else if (containerRef.current.mozRequestFullScreen) {
-        /* Firefox */
-        await containerRef.current.mozRequestFullScreen();
-      } else if (containerRef.current.webkitRequestFullscreen) {
-        /* Chrome, Safari & Opera */
-        await containerRef.current.webkitRequestFullscreen();
-      } else if (containerRef.current.msRequestFullscreen) {
-        /* IE/Edge */
-        await containerRef.current.msRequestFullscreen();
-      }
-      setIsFullscreen(true);
-    } else {
-      // Exit fullscreen mode
-      setIsFullscreen(false);
-      const doc = document as ExtendedDocument;
-      if (doc.exitFullscreen) {
-        await doc.exitFullscreen();
-      } else if (doc.mozCancelFullScreen) {
-        /* Firefox */
-        await doc.mozCancelFullScreen();
-      } else if (doc.webkitExitFullscreen) {
-        /* Chrome, Safari and Opera */
-        await doc.webkitExitFullscreen();
-      } else if (doc.msExitFullscreen) {
-        /* IE/Edge */
-        await doc.msExitFullscreen();
-      }
-    }
-  };
 
   fnrf_zst.set_worker(worker);
 
@@ -110,37 +57,42 @@ const InnerFuncnodesReactFlow = ({
   return (
     <RenderMappingProvider plugins={plugins} fnrf_zst={fnrf_zst}>
       <FuncNodesContext.Provider value={fnrf_zst}>
-        <SmoothExpandComponent
-          className="funcnodesreactflowcontainer funcnodescontainer"
-          ref={containerRef}
-        >
-          {header.show && <FuncnodesHeader {...header}></FuncnodesHeader>}
+        <SmoothExpandComponent asChild>
+          <FullScreenComponent asChild>
+            <div className="funcnodesreactflowcontainer funcnodescontainer">
+              {header.show && <FuncnodesHeader {...header}></FuncnodesHeader>}
 
-          <div className="funcnodesreactflowbody">
-            {worker && library.show && <Library></Library>}
-            <ReactFlowLayer {...flow}></ReactFlowLayer>
-            {worker && <NodeSettings></NodeSettings>}
-          </div>
-          <div className="funcnodesflaotingmenu">
-            {!isFullscreen && flow.allowExpand && (
-              <SmoothExpandComponent.Trigger>
-                <SmoothExpandComponent.Expanded>
-                  <CloseFullscreenIcon />
-                </SmoothExpandComponent.Expanded>
-                <SmoothExpandComponent.Collapsed>
-                  <OpenInFullIcon />
-                </SmoothExpandComponent.Collapsed>
-              </SmoothExpandComponent.Trigger>
-            )}
-            {flow.allowFullScreen && (
-              <div
-                onClick={handleToggleFullscreen}
-                style={{ cursor: "pointer" }}
-              >
-                {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+              <div className="funcnodesreactflowbody">
+                {worker && library.show && <Library></Library>}
+                <ReactFlowLayer {...flow}></ReactFlowLayer>
+                {worker && <NodeSettings></NodeSettings>}
               </div>
-            )}
-          </div>
+              <div className="funcnodesflaotingmenu">
+                <FullScreenComponent.OutFullScreen>
+                  {flow.allowExpand && (
+                    <SmoothExpandComponent.Trigger>
+                      <SmoothExpandComponent.Expanded>
+                        <CloseFullscreenIcon />
+                      </SmoothExpandComponent.Expanded>
+                      <SmoothExpandComponent.Collapsed>
+                        <OpenInFullIcon />
+                      </SmoothExpandComponent.Collapsed>
+                    </SmoothExpandComponent.Trigger>
+                  )}
+                </FullScreenComponent.OutFullScreen>
+                {flow.allowFullScreen && (
+                  <FullScreenComponent.Trigger>
+                    <FullScreenComponent.OutFullScreen>
+                      <FullscreenIcon />
+                    </FullScreenComponent.OutFullScreen>
+                    <FullScreenComponent.InFullScreen>
+                      <FullscreenExitIcon />
+                    </FullScreenComponent.InFullScreen>
+                  </FullScreenComponent.Trigger>
+                )}
+              </div>
+            </div>
+          </FullScreenComponent>
         </SmoothExpandComponent>
       </FuncNodesContext.Provider>
     </RenderMappingProvider>
