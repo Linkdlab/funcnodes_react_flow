@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
 
 declare global {
@@ -18,9 +18,8 @@ import {
   deep_update,
   RenderMappingProvider,
 } from "@linkdlab/funcnodes_react_flow";
-
 import "reactflow/dist/style.css";
-import "@linkdlab/funcnodes_react_flow/../../css/style.css";
+import "@linkdlab/funcnodes_react_flow/dist/style.css";
 
 const NodeRenderer = ({
   state,
