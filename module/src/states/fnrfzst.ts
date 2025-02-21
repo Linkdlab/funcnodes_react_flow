@@ -182,6 +182,7 @@ const FuncNodesReactFlowZustand = (
           store = createNodeStore(action.node);
           ns.nodesstates.set(action.node.id, store);
         } catch (e) {
+          iterf.logger.error(`Failed to create node store ${e}`);
           return;
         }
       }
