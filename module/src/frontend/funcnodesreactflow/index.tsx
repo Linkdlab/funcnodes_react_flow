@@ -121,6 +121,7 @@ const DEFAULT_FLOW_PROPS: ReactFlowLayerProps = {
   maxZoom: 5,
   allowFullScreen: true,
   allowExpand: true,
+  showNodeSettings: true,
 };
 
 const DEFAULT_FN_PROPS: FuncnodesReactFlowProps = {
