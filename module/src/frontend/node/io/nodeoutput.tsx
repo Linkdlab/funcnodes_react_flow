@@ -23,7 +23,7 @@ const NodeOutput = ({ io }: { io: IOType }) => {
   const Output = typestring ? Outputrenderer[typestring] : undefined;
 
   return (
-    <div className="nodeoutput">
+    <div className="nodeoutput" {...{ "data-type": typestring }}>
       <HandleWithPreview
         io={io}
         typestring={typestring}
