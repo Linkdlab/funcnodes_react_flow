@@ -65,7 +65,9 @@ const InnerFuncnodesReactFlow = ({
               <div className="funcnodesreactflowbody">
                 {worker && library.show && <Library></Library>}
                 <ReactFlowLayer {...flow}></ReactFlowLayer>
-                {worker && <NodeSettings></NodeSettings>}
+                {worker && flow.showNodeSettings && (
+                  <NodeSettings></NodeSettings>
+                )}
               </div>
               <div className="funcnodesflaotingmenu">
                 <FullScreenComponent.OutFullScreen>

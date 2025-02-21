@@ -119,6 +119,7 @@ interface ReactFlowLayerProps {
   maxZoom: number;
   allowFullScreen: boolean;
   allowExpand: boolean;
+  showNodeSettings: boolean;
 }
 
 interface FuncnodesReactFlowProps {
