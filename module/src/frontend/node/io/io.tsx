@@ -78,7 +78,7 @@ const HandleWithPreview = ({
     <Tooltip.Provider>
       <Tooltip.Root open={locked || opened} onOpenChange={setOpened}>
         <Tooltip.Trigger asChild>
-          <Handle id={io.id} {...props} />
+          <Handle id={io.id} {...{ "data-type": typestring }} {...props} />
         </Tooltip.Trigger>
         <Tooltip.Portal>
           <Tooltip.Content className={"iotooltipcontent"} sideOffset={5}>

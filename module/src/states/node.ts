@@ -78,6 +78,9 @@ const assert_full_node = (node: PartialNodeType): NodeType => {
 
   for (const ioid in new_obj.io) {
     if (new_obj.io[ioid] === undefined) continue;
+    if (new_obj.io[ioid].id === undefined) {
+      new_obj.io[ioid].id = ioid;
+    }
     const io = assert_full_nodeio(new_obj.io[ioid]);
     new_obj.io[ioid] = io;
   }

@@ -1,17 +1,5 @@
 @charset "UTF-8";
 :root {
-  --funcnodesedgecolor: #7bb3ec;
-}
-
-.funcnodes-edge .react-flow__edge-path {
-  stroke: var(--funcnodesedgecolor);
-  stroke-width: 2px;
-}
-.funcnodes-edge.selected .react-flow__edge-path {
-  stroke: #11ff00;
-}
-
-:root {
   --expandtime: 0.3s;
   --libnodebgcolor: #48465f;
   --libnodebgcolor_hover: #6a6698;
@@ -342,6 +330,18 @@
 .dialogchildren {
   margin-top: 20px;
   overflow: auto;
+}
+
+:root {
+  --funcnodesedgecolor: #7bb3ec;
+}
+
+.funcnodes-edge .react-flow__edge-path {
+  stroke: var(--funcnodesedgecolor);
+  stroke-width: 2px;
+}
+.funcnodes-edge.selected .react-flow__edge-path {
+  stroke: #11ff00;
 }
 
 /* this gets exported as style.css and can be used for the default theming */
@@ -832,14 +832,6 @@
   top: 100%;
 }
 
-.smooth-expand-expanded {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-}
-
 .basicstyleelement, .headermenucontent, .styled-select__menu, .styleelement, .styledcheckbox, .styledinput, .styledbtn, .styleddropdown {
   background-color: var(--funcnodesbackground1);
   color: var(--funcnodestextcolor1);
@@ -967,6 +959,14 @@ input[type=number]::-webkit-outer-spin-button {
 button {
   font-family: inherit;
   font-size: inherit;
+}
+
+.smooth-expand-expanded {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
 }
 
 :root {
@@ -1114,120 +1114,6 @@ button {
 .headermenuitem[data-state=checked] {
   background-color: var(--funcnodesbackground_light);
   color: #fff;
-}
-
-.nodesettings_container {
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-}
-.nodesettings_expander {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 3px 3px;
-}
-.nodesettings_content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 0 5px;
-  overflow: auto;
-  transition: width 0.5s;
-}
-.nodesettings_content.expanded {
-  width: 250px;
-}
-.nodesettings_content.collapsed {
-  width: 0;
-}
-.nodesettings_section {
-  margin-bottom: 10px;
-  margin-left: 0.5rem;
-}
-.nodesettings_component {
-  margin-bottom: 0.5rem;
-  margin-left: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.tablecontainer {
-  overflow: auto;
-  background-color: white;
-  min-height: 20rem;
-}
-
-.tableHead {
-  color: var(--funheadercolor) !important;
-  background-color: var(--funcnodesbackground1);
-  font-weight: bold !important;
-}
-
-.tableheadercolor {
-  color: inherit !important;
-  font-family: inherit !important;
-  font-weight: inherit !important;
-}
-
-.indexcol {
-  background-color: var(--funcnodesbackground2);
-  color: var(--funheadercolor) !important;
-  font-family: inherit !important;
-  font-weight: inherit !important;
-}
-
-.styled-select__control {
-  height: 100%;
-  min-height: initial;
-  min-width: 10px;
-}
-.styled-select__menu-list {
-  max-height: 200px;
-}
-.styled-select__single-value {
-  text-align: start;
-}
-.styled-select__option {
-  text-align: start;
-  padding: 2px 5px;
-}
-.styled-select__option:hover {
-  cursor: pointer;
-}
-
-.colorspace {
-  margin: 0.2rem;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-}
-.colorspace_title {
-  font-size: 0.7em;
-  font-weight: bold;
-}
-.colorspace label {
-  font-size: 0.7rem;
-}
-.colorspace input {
-  font-size: 0.7rem;
-  max-height: 0.7rem;
-}
-.colorspace input[type=range] {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  -webkit-appearance: none;
-  background-color: #666;
-  height: 0.7rem;
-  border-radius: 5px;
-}
-.colorspace input[type=range]::-webkit-slider-thumb, .colorspace input[type=range]::-webkit-range-thumb, .colorspace input[type=range]::-moz-range-thumb {
-  width: 0.7rem;
-  height: 0.7rem;
-  background-color: #cc1c1c;
-  border-radius: 50%;
-  cursor: pointer;
 }
 
 :root {
@@ -1497,6 +1383,120 @@ input.nodedatainput.styledinput,
   background-color: #b7f50c;
   border-radius: 3px;
   transition: width 0.3s ease;
+}
+
+.nodesettings_container {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.nodesettings_expander {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 3px 3px;
+}
+.nodesettings_content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0 5px;
+  overflow: auto;
+  transition: width 0.5s;
+}
+.nodesettings_content.expanded {
+  width: 250px;
+}
+.nodesettings_content.collapsed {
+  width: 0;
+}
+.nodesettings_section {
+  margin-bottom: 10px;
+  margin-left: 0.5rem;
+}
+.nodesettings_component {
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tablecontainer {
+  overflow: auto;
+  background-color: white;
+  min-height: 20rem;
+}
+
+.tableHead {
+  color: var(--funheadercolor) !important;
+  background-color: var(--funcnodesbackground1);
+  font-weight: bold !important;
+}
+
+.tableheadercolor {
+  color: inherit !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+}
+
+.indexcol {
+  background-color: var(--funcnodesbackground2);
+  color: var(--funheadercolor) !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+}
+
+.styled-select__control {
+  height: 100%;
+  min-height: initial;
+  min-width: 10px;
+}
+.styled-select__menu-list {
+  max-height: 200px;
+}
+.styled-select__single-value {
+  text-align: start;
+}
+.styled-select__option {
+  text-align: start;
+  padding: 2px 5px;
+}
+.styled-select__option:hover {
+  cursor: pointer;
+}
+
+.colorspace {
+  margin: 0.2rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.colorspace_title {
+  font-size: 0.7em;
+  font-weight: bold;
+}
+.colorspace label {
+  font-size: 0.7rem;
+}
+.colorspace input {
+  font-size: 0.7rem;
+  max-height: 0.7rem;
+}
+.colorspace input[type=range] {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-appearance: none;
+  background-color: #666;
+  height: 0.7rem;
+  border-radius: 5px;
+}
+.colorspace input[type=range]::-webkit-slider-thumb, .colorspace input[type=range]::-webkit-range-thumb, .colorspace input[type=range]::-moz-range-thumb {
+  width: 0.7rem;
+  height: 0.7rem;
+  background-color: #cc1c1c;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 s slideUpAndFade from {

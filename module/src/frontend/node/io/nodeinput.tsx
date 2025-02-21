@@ -61,7 +61,7 @@ const NodeInput = ({ io }: { io: IOType }) => {
   const inputconverterf: [(v: any) => any, (v: any) => any] =
     INPUTCONVERTER[(otypestring && render.inputconverter?.[otypestring]) ?? ""];
   return (
-    <div className="nodeinput">
+    <div className="nodeinput" {...{ "data-type": typestring }}>
       <HandleWithPreview
         io={io}
         typestring={typestring}
@@ -70,7 +70,7 @@ const NodeInput = ({ io }: { io: IOType }) => {
       />
 
       {Input && (
-        <div className="iovaluefield nodrag">
+        <div className="iovaluefield nodrag" {...{ "data-type": typestring }}>
           <Input io={io} inputconverter={inputconverterf} />
         </div>
       )}
