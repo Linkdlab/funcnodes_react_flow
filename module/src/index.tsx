@@ -36,8 +36,9 @@ import { WorkerProps } from "./funcnodes/funcnodesworker";
 import { ConsoleLogger } from "./utils/logger";
 import { remoteUrlToBase64 } from "./utils/data";
 import { v4 as uuidv4 } from "uuid";
+import { LimitedDeepPartial } from "./utils/objects";
 
-const FuncNodes = (props: Partial<FuncnodesReactFlowProps>) => {
+const FuncNodes = (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => {
   const logger = new ConsoleLogger("FuncNodes", props.debug ? "debug" : "info");
 
   logger.debug("Initalizing FuncNodes with props:", props);
@@ -53,7 +54,7 @@ const FuncNodes = (props: Partial<FuncnodesReactFlowProps>) => {
       fullprops.worker = new WebSocketWorker({
         url: props.worker_url,
         uuid: fullprops.id,
-        on_sync_complete: props.on_sync_complete,
+        on_sync_complete: fullprops.on_sync_complete,
       });
     }
   }
