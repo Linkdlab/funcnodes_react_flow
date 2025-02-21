@@ -111,7 +111,7 @@ type Prev = [
 ];
 
 // A depth-limited DeepPartial type (here limited to 5 levels deep)
-type LimitedDeepPartial<T, D extends number = 99> = D extends 0
+type LimitedDeepPartial<T, D extends number = 10> = D extends 0
   ? T
   : T extends object
   ? { [K in keyof T]?: LimitedDeepPartial<T[K], Prev[D]> }
