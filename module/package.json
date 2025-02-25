@@ -1,6 +1,6 @@
 {
   "name": "@linkdlab/funcnodes_react_flow",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "description": "Frontend with React Flow for FuncNodes",
   "repository": {
     "type": "git",
@@ -23,11 +23,11 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit --watch",
-    "watch:esm": "webpack --config webpack.config.esm.cjs --watch --progress",
-    "watch:umd": "webpack --config webpack.config.umd.cjs --watch --progress",
-    "build": "webpack --config webpack.config.esm.cjs && webpack --config webpack.config.umd.cjs",
-    "buildrollup": "rollup -c  --bundleConfigAsCjs",
-    "watchrollup": "rollup -c -w  --bundleConfigAsCjs "
+    "watchwp:esm": "webpack --config webpack.config.esm.cjs --watch --progress",
+    "watchwp:umd": "webpack --config webpack.config.umd.cjs --watch --progress",
+    "buildwp": "webpack --config webpack.config.esm.cjs && webpack --config webpack.config.umd.cjs",
+    "build": "rollup -c  --bundleConfigAsCjs",
+    "watch": "rollup -c -w  --bundleConfigAsCjs "
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

@@ -5,6 +5,7 @@
   --funcnodesbackground_light: hsl(240, 22%, 38%);
   --containerboarderradius: 1rem;
   --funcnodestextcolor1: #ffffff; // Dark background color
+  --funcnodes-z-index: 1000;
 }
 
 .funcnodescontainer {
@@ -22,6 +23,8 @@
 .funcnodesreactflowcontainer {
   width: 100%;
   height: 100%;
+  flex-grow: 1;
+  z-index: var(--funcnodes-z-index);
   background-color: var(--funcnodesbackground1); // Dark background color
   position: relative;
   display: flex;
@@ -77,8 +80,16 @@
   position: absolute;
   right: 0;
   padding: 10px;
-  z-index: 1001;
+  z-index: 2;
   display: flex;
   flex-direction: row;
   margin-right: 10px;
+}
+
+.FuncnodesApp {
+  height: 100%;
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }

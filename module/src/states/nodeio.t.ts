@@ -44,7 +44,6 @@ type SerializedType =
   | TypeOf;
 
 interface IORenderOptions extends BaseRenderOptions {
-  step?: number;
   set_default: boolean;
 }
 

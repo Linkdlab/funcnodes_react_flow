@@ -155,7 +155,7 @@ const NumberInput = ({
         // on key up add step to value
 
         if (e.key === "ArrowUp") {
-          let step = io.render_options.step || 1;
+          let step = io.value_options?.step || 1;
           if (e.shiftKey) step *= 10;
 
           let new_value = (parseFloat(v) || 0) + step;
@@ -166,7 +166,7 @@ const NumberInput = ({
 
         // on key down subtract step to value
         if (e.key === "ArrowDown") {
-          let step = io.render_options.step || 1;
+          let step = io.value_options?.step || 1;
           if (e.shiftKey) step *= 10;
           let new_value = (parseFloat(v) || 0) - step;
           // setTempValue(new_value.toString());
@@ -185,7 +185,7 @@ const NumberInput = ({
         }
       }}
       disabled={io.connected}
-      step={io.render_options.step}
+      step={io.value_options?.step}
       min={io.value_options?.min}
       max={io.value_options?.max}
     />

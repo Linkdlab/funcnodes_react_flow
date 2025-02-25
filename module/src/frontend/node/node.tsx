@@ -172,36 +172,38 @@ const NodeFooter = ({ node_data }: { node_data: NodeType }) => {
     </div>
   );
 };
-/**
- * A generic function to deeply merge two objects of type T.
- *
- * @param {T} target - The target object to be merged.
- * @param {DeepPartial<T>} source - The source object to merge into the target. All properties of this object are optional.
- *
- * @returns {Object} An object containing the merged object (new_obj) and a boolean indicating if there was a change (change).
- *
- * @throws {Type 'string' cannot be used to index type 'T'} This error is ignored using the @ts-ignore directive because we are dynamically accessing properties of a generic type T.
- */
+
+export const useDefaultNodeInjection = (storedata: NodeType) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface =
+    useContext(FuncNodesContext);
+  const [visualTrigger, setVisualTrigger] = useState(false);
+
+  // Call a hook when the node is mounted.
+  useEffect(() => {
+    fnrf_zst.worker?.call_hooks("node_mounted", storedata.id);
+  }, [fnrf_zst.worker, storedata.id]);
+
+  // Manage visual trigger state based on the node's in_trigger flag.
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    if (storedata.in_trigger && !visualTrigger) {
+      setVisualTrigger(true);
+    } else if (visualTrigger) {
+      timeoutId = setTimeout(() => setVisualTrigger(false), 200);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [storedata.in_trigger, visualTrigger]);
+
+  return { visualTrigger };
+};
+
 const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
   // Use the NodeStore to get the data for the node.
   const storedata = data.UseNodeStore();
 
   const collapsed = storedata.frontend.collapsed || false;
 
-  const [visualTrigger, setVisualTrigger] = useState(false);
-
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    // When in_trigger becomes true, set visualTrigger to true immediately
-    if (storedata.in_trigger) {
-      setVisualTrigger(true);
-    } else if (visualTrigger) {
-      // When in_trigger becomes false, wait for a minimum duration before setting visualTrigger to false
-      timeoutId = setTimeout(() => setVisualTrigger(false), 200); // 50ms or any other duration you see fit
-    }
-
-    return () => clearTimeout(timeoutId); // Cleanup timeout on component unmount or state changes
-  }, [storedata.in_trigger, visualTrigger]);
+  const { visualTrigger } = useDefaultNodeInjection(storedata);
 
   return (
     <>
