@@ -53,6 +53,10 @@ class FuncNodesWorker {
   state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
   on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
   _hooks: Map<string, ((p: HookProperties) => Promise<void>)[]> = new Map();
+  _ns_event_intercepts: Map<
+    string,
+    ((event: NodeSpaceEvent) => Promise<NodeSpaceEvent>)[]
+  > = new Map();
 
   on_error: (error: any) => void;
   constructor(data: WorkerProps) {
@@ -116,6 +120,32 @@ class FuncNodesWorker {
       }
     }
     await Promise.all(promises);
+  }
+
+  add_ns_event_intercept(
+    hook: string,
+    callback: (event: NodeSpaceEvent) => Promise<NodeSpaceEvent>
+  ): () => void {
+    const hooks = this._ns_event_intercepts.get(hook) || [];
+    hooks.push(callback);
+    this._ns_event_intercepts.set(hook, hooks);
+
+    const remover = () => {
+      const hooks = this._ns_event_intercepts.get(hook) || [];
+      const idx = hooks.indexOf(callback);
+      if (idx >= 0) {
+        hooks.splice(idx, 1);
+      }
+    };
+    return remover;
+  }
+
+  async intercept_ns_event(event: NodeSpaceEvent) {
+    let newevent = event;
+    for (const h of this._ns_event_intercepts.get(event.event) || []) {
+      newevent = await h(newevent);
+    }
+    return newevent;
   }
 
   public get is_open(): boolean {
@@ -343,7 +373,6 @@ class FuncNodesWorker {
       id: data.id,
       from_remote: true,
     });
-    this.call_hooks("node_added", { node: data.id });
   }
 
   add_edge({
@@ -659,7 +688,9 @@ class FuncNodesWorker {
     }
   }
 
-  async receive_nodespace_event({ event, data }: NodeSpaceEvent) {
+  async receive_nodespace_event(ns_event: NodeSpaceEvent) {
+    const { event, data } = await this.intercept_ns_event(ns_event);
+
     switch (event) {
       case "after_set_value":
         if (!this._zustand) return;

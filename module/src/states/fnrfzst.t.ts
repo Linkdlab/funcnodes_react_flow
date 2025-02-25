@@ -180,6 +180,7 @@ interface FuncNodesReactFlowZustandInterface {
   add_plugin: (name: string, plugin: FuncNodesReactPlugin) => void;
   reactflowRef: HTMLDivElement | null;
   clear_all: () => void;
+  center_node: (node_id: string | string[]) => void;
   dev_settings: DevSettings;
   logger: Logger;
 }
