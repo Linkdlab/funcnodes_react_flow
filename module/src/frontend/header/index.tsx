@@ -261,124 +261,118 @@ const WorkerMenu = () => {
             </Stack>
           </button>
         </DropdownMenu.Trigger>
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content className="headermenucontent funcnodescontainer">
-            <DropdownMenu.Group>
-              {show_select && (
-                <DropdownMenu.Sub>
-                  <DropdownMenu.SubTrigger className="headermenuitem submenuitem">
-                    <Stack direction="row" spacing={1}>
-                      Select
-                      <ChevronRightIcon />
-                    </Stack>
-                  </DropdownMenu.SubTrigger>
-                  <DropdownMenu.Portal>
-                    <DropdownMenu.SubContent
-                      className="headermenucontent funcnodescontainer"
-                      sideOffset={2}
-                      alignOffset={-5}
-                    >
-                      <DropdownMenu.RadioGroup
-                        value={fnrf_zst.worker?.uuid}
-                        onValueChange={(value) => {
-                          workerselectchange(value);
-                        }}
-                      >
-                        {Object.keys(workersstate)
-                          .sort((a, b) => {
-                            // First, sort by active status (active workers come first)
-                            if (
-                              workersstate[a].active &&
-                              !workersstate[b].active
-                            )
-                              return -1;
-                            if (
-                              !workersstate[a].active &&
-                              workersstate[b].active
-                            )
-                              return 1;
+        {/* <DropdownMenu.Portal> */}
+        <DropdownMenu.Content className="headermenucontent funcnodescontainer">
+          <DropdownMenu.Group>
+            {show_select && (
+              <DropdownMenu.Sub>
+                <DropdownMenu.SubTrigger className="headermenuitem submenuitem">
+                  <Stack direction="row" spacing={1}>
+                    Select
+                    <ChevronRightIcon />
+                  </Stack>
+                </DropdownMenu.SubTrigger>
+                {/* <DropdownMenu.Portal> */}
+                <DropdownMenu.SubContent
+                  className="headermenucontent funcnodescontainer"
+                  sideOffset={2}
+                  alignOffset={-5}
+                >
+                  <DropdownMenu.RadioGroup
+                    value={fnrf_zst.worker?.uuid}
+                    onValueChange={(value) => {
+                      workerselectchange(value);
+                    }}
+                  >
+                    {Object.keys(workersstate)
+                      .sort((a, b) => {
+                        // First, sort by active status (active workers come first)
+                        if (workersstate[a].active && !workersstate[b].active)
+                          return -1;
+                        if (!workersstate[a].active && workersstate[b].active)
+                          return 1;
 
-                            // If both are active or both are inactive, sort by name or ID
+                        // If both are active or both are inactive, sort by name or ID
 
-                            const nameA = workersstate[a].name || a;
-                            const nameB = workersstate[b].name || b;
-                            return nameA.localeCompare(nameB);
-                          })
-                          .map((workerid) => (
-                            <DropdownMenu.RadioItem
-                              className={
-                                "headermenuitem workerselectoption" +
-                                (workersstate[workerid]?.active
-                                  ? " active"
-                                  : " inactive") +
-                                " headermenuitem"
-                              }
-                              key={workerid}
-                              value={workerid}
-                              disabled={workerid === fnrf_zst.worker?.uuid}
-                            >
-                              {workersstate[workerid]?.name || workerid}
-                            </DropdownMenu.RadioItem>
-                          ))}
-                      </DropdownMenu.RadioGroup>
-                    </DropdownMenu.SubContent>
-                  </DropdownMenu.Portal>
-                </DropdownMenu.Sub>
-              )}
-              {has_worker && (
-                <>
-                  {worker_restartable && (
-                    <DropdownMenu.Item
-                      className="headermenuitem"
-                      onClick={() => {
-                        if (!fnrf_zst.worker) return;
-                        if (!fnrf_zst.workermanager)
-                          return fnrf_zst.logger.error("no workermanager");
-                        fnrf_zst.workermanager?.restart_worker(
-                          fnrf_zst.worker.uuid
-                        );
-                      }}
-                    >
-                      Restart
-                    </DropdownMenu.Item>
-                  )}
+                        const nameA = workersstate[a].name || a;
+                        const nameB = workersstate[b].name || b;
+                        return nameA.localeCompare(nameB);
+                      })
+                      .map((workerid) => (
+                        <DropdownMenu.RadioItem
+                          className={
+                            "headermenuitem workerselectoption" +
+                            (workersstate[workerid]?.active
+                              ? " active"
+                              : " inactive") +
+                            " headermenuitem"
+                          }
+                          key={workerid}
+                          value={workerid}
+                          disabled={workerid === fnrf_zst.worker?.uuid}
+                        >
+                          {workersstate[workerid]?.name || workerid}
+                        </DropdownMenu.RadioItem>
+                      ))}
+                  </DropdownMenu.RadioGroup>
+                </DropdownMenu.SubContent>
+                {/* </DropdownMenu.Portal> */}
+              </DropdownMenu.Sub>
+            )}
+            {has_worker && (
+              <>
+                {worker_restartable && (
                   <DropdownMenu.Item
                     className="headermenuitem"
                     onClick={() => {
                       if (!fnrf_zst.worker) return;
-                      fnrf_zst.worker.stop();
+                      if (!fnrf_zst.workermanager)
+                        return fnrf_zst.logger.error("no workermanager");
+                      fnrf_zst.workermanager?.restart_worker(
+                        fnrf_zst.worker.uuid
+                      );
                     }}
                   >
-                    Stop
+                    Restart
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    className="headermenuitem"
-                    //onClick={exportWorker}
-                    onClick={() => setExportWorkerDialogOpen(true)}
-                  >
-                    Export
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    className="headermenuitem"
-                    onClick={updateWorker}
-                  >
-                    Update
-                  </DropdownMenu.Item>
-                </>
-              )}
-              {has_worker_manager && (
-                <>
-                  <DropdownMenu.Item
-                    className="headermenuitem"
-                    onClick={() => setNewWorkerDialogOpen(true)}
-                  >
-                    New
-                  </DropdownMenu.Item>
-                </>
-              )}
-            </DropdownMenu.Group>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
+                )}
+                <DropdownMenu.Item
+                  className="headermenuitem"
+                  onClick={() => {
+                    if (!fnrf_zst.worker) return;
+                    fnrf_zst.worker.stop();
+                  }}
+                >
+                  Stop
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  className="headermenuitem"
+                  //onClick={exportWorker}
+                  onClick={() => setExportWorkerDialogOpen(true)}
+                >
+                  Export
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  className="headermenuitem"
+                  onClick={updateWorker}
+                >
+                  Update
+                </DropdownMenu.Item>
+              </>
+            )}
+            {has_worker_manager && (
+              <>
+                <DropdownMenu.Item
+                  className="headermenuitem"
+                  onClick={() => setNewWorkerDialogOpen(true)}
+                >
+                  New
+                </DropdownMenu.Item>
+              </>
+            )}
+          </DropdownMenu.Group>
+        </DropdownMenu.Content>
+        {/* </DropdownMenu.Portal> */}
       </DropdownMenu.Root>
 
       <NewWorkerDialog
@@ -448,21 +442,21 @@ const NodeSpaceMenu = () => {
             </Stack>
           </button>
         </DropdownMenu.Trigger>
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content className="headermenucontent funcnodescontainer">
-            <DropdownMenu.Group>
-              <DropdownMenu.Item className="headermenuitem" onClick={onNew}>
-                New
-              </DropdownMenu.Item>
-              <DropdownMenu.Item className="headermenuitem" onClick={onSave}>
-                Save
-              </DropdownMenu.Item>
-              <DropdownMenu.Item className="headermenuitem" onClick={onOpen}>
-                Load
-              </DropdownMenu.Item>
-            </DropdownMenu.Group>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
+        {/* <DropdownMenu.Portal> */}
+        <DropdownMenu.Content className="headermenucontent funcnodescontainer">
+          <DropdownMenu.Group>
+            <DropdownMenu.Item className="headermenuitem" onClick={onNew}>
+              New
+            </DropdownMenu.Item>
+            <DropdownMenu.Item className="headermenuitem" onClick={onSave}>
+              Save
+            </DropdownMenu.Item>
+            <DropdownMenu.Item className="headermenuitem" onClick={onOpen}>
+              Load
+            </DropdownMenu.Item>
+          </DropdownMenu.Group>
+        </DropdownMenu.Content>
+        {/* </DropdownMenu.Portal> */}
       </DropdownMenu.Root>
     </>
   );

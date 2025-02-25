@@ -80,13 +80,7 @@ const FuncNodes = (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => {
 
   logger.debug("Initalizing FuncnodesReactFlow with props:", fullprops);
   return (
-    <div
-      className="App"
-      style={{
-        height: "100%",
-        width: "100%",
-      }}
-    >
+    <div className="FuncnodesApp">
       <FuncnodesReactFlow {...fullprops}></FuncnodesReactFlow>
     </div>
   );

@@ -38,6 +38,11 @@ interface FuncNodesWorkerState {
   is_open: boolean;
 }
 
+interface HookProperties {
+  worker: FuncNodesWorker;
+  data: any;
+}
+
 class FuncNodesWorker {
   messagePromises: Map<string, any>;
   _zustand?: FuncNodesReactFlowZustandInterface;
@@ -47,6 +52,11 @@ class FuncNodesWorker {
 
   state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
   on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
+  _hooks: Map<string, ((p: HookProperties) => Promise<void>)[]> = new Map();
+  _ns_event_intercepts: Map<
+    string,
+    ((event: NodeSpaceEvent) => Promise<NodeSpaceEvent>)[]
+  > = new Map();
 
   on_error: (error: any) => void;
   constructor(data: WorkerProps) {
@@ -80,6 +90,62 @@ class FuncNodesWorker {
     zustand.set_worker(this);
     this._zustand.auto_progress();
     this.stepwise_fullsync();
+  }
+
+  add_hook(
+    hook: string,
+    callback: (p: HookProperties) => Promise<void>
+  ): () => void {
+    const hooks = this._hooks.get(hook) || [];
+    hooks.push(callback);
+    this._hooks.set(hook, hooks);
+
+    const remover = () => {
+      const hooks = this._hooks.get(hook) || [];
+      const idx = hooks.indexOf(callback);
+      if (idx >= 0) {
+        hooks.splice(idx, 1);
+      }
+    };
+    return remover;
+  }
+
+  async call_hooks(hook: string, data?: any) {
+    const promises = [];
+    for (const h of this._hooks.get(hook) || []) {
+      const p = h({ worker: this, data: data });
+      // check if the hook is async
+      if (p instanceof Promise) {
+        promises.push(p);
+      }
+    }
+    await Promise.all(promises);
+  }
+
+  add_ns_event_intercept(
+    hook: string,
+    callback: (event: NodeSpaceEvent) => Promise<NodeSpaceEvent>
+  ): () => void {
+    const hooks = this._ns_event_intercepts.get(hook) || [];
+    hooks.push(callback);
+    this._ns_event_intercepts.set(hook, hooks);
+
+    const remover = () => {
+      const hooks = this._ns_event_intercepts.get(hook) || [];
+      const idx = hooks.indexOf(callback);
+      if (idx >= 0) {
+        hooks.splice(idx, 1);
+      }
+    };
+    return remover;
+  }
+
+  async intercept_ns_event(event: NodeSpaceEvent) {
+    let newevent = event;
+    for (const h of this._ns_event_intercepts.get(event.event) || []) {
+      newevent = await h(newevent);
+    }
+    return newevent;
   }
 
   public get is_open(): boolean {
@@ -497,6 +563,14 @@ class FuncNodesWorker {
     return res;
   }
 
+  async get_runstate() {
+    const res = await this._send_cmd({
+      cmd: "get_runstate",
+      wait_for_response: true,
+    });
+    return res;
+  }
+
   async _send_cmd({
     cmd,
     kwargs,
@@ -601,13 +675,22 @@ class FuncNodesWorker {
         await this.sync_lib();
         await this.sync_external_worker();
         return;
+
+      case "starting":
+        this.call_hooks("starting");
+        return;
+      case "stopping":
+        this.call_hooks("stopping");
+        return;
       default:
         console.warn("Unhandled worker event", event, data);
         break;
     }
   }
 
-  async receive_nodespace_event({ event, data }: NodeSpaceEvent) {
+  async receive_nodespace_event(ns_event: NodeSpaceEvent) {
+    const { event, data } = await this.intercept_ns_event(ns_event);
+
     switch (event) {
       case "after_set_value":
         if (!this._zustand) return;
@@ -677,14 +760,17 @@ class FuncNodesWorker {
 
       case "node_removed":
         if (!this._zustand) return;
-        return this._zustand.on_node_action({
+        this._zustand.on_node_action({
           type: "delete",
           id: data.node,
           from_remote: true,
         });
+        this.call_hooks("node_removed", { node: data.node });
+        return;
 
       case "node_added":
-        return this._receive_node_added(data.node as NodeType);
+        this._receive_node_added(data.node as NodeType);
+        return;
 
       case "after_disconnect":
         if (!data.result) return;

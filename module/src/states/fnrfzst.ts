@@ -197,14 +197,16 @@ const FuncNodesReactFlowZustand = (
       ];
       rfstore.setState({ nodes: new_ndoes });
 
-      // wait 200 ms then set the full value of all ios
-
       for (const io in action.node.io) {
         const ioid = action.node.io[io].id;
         if (ioid !== undefined) {
           iterf.worker?.get_io_value({ nid: action.node.id, ioid: ioid });
         }
       }
+
+      setTimeout(() => {
+        iterf.worker?.call_hooks("node_added", { node: node.id });
+      }, 0);
     }
   };
 
@@ -373,7 +375,7 @@ const FuncNodesReactFlowZustand = (
     }
   };
   /*
-  on_node_cahnge is called by react flow when a note change event is fired
+  on_node_change is called by react flow when a note change event is fired
   should update the local state if something changed
   */
   const on_node_change = (nodechange: NodeChange[]) => {
@@ -449,6 +451,22 @@ const FuncNodesReactFlowZustand = (
     iterf.useReactFlowStore.setState({ nodes: [], edges: [] });
     iterf.auto_progress();
   };
+
+  const center_node = (node_id: string | string[]) => {
+    if (!iterf.rf_instance) {
+      return;
+    }
+    node_id = Array.isArray(node_id) ? node_id : [node_id];
+
+    const nodes = iterf.useReactFlowStore
+      .getState()
+      .nodes.filter((node) => node_id.includes(node.id));
+
+    if (nodes.length > 0) {
+      iterf.rf_instance?.fitView({ padding: 0.2, nodes });
+    }
+  };
+
   const iterf: FuncNodesReactFlowZustandInterface = {
     local_settings: create<FuncnodesReactFlowLocalSettings>((_set, _get) => ({
       view_settings: {
@@ -524,6 +542,7 @@ const FuncNodesReactFlowZustand = (
     on_edge_action: on_edge_action,
     reactflowRef: null,
     clear_all: clear_all,
+    center_node: center_node,
     set_progress: (progress: ProgressState) => {
       if (progress.message === "") {
         return iterf.auto_progress();
