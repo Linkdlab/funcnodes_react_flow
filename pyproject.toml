@@ -1,6 +1,6 @@
 [project]
 name = "funcnodes-react-flow"
-version = "0.3.12"
+version = "0.3.13"
 description = "funcnodes frontend for react flow"
 authors = [
 {name = "Julian Kimmig", email = "julian.kimmig@linkdlab.de>"}
@@ -13,7 +13,7 @@ classifiers = [
 
 requires-python = ">=3.11"
 dependencies = [
-    "funcnodes-core>=0.3.8",
+    "funcnodes-core>=0.3.41",
     "funcnodes>=0.5.25; sys_platform != 'emscripten'"
 ]
 
@@ -41,3 +41,7 @@ paths = ["funcnodes_react_flow"]
 
 [project.scripts]
 funcnodes_react_flow = 'funcnodes_react_flow.__main__:main'
+
+
+[project.entry-points."funcnodes.module"]
+plugin_setup = "funcnodes_react_flow.plugin_setup:setup"
