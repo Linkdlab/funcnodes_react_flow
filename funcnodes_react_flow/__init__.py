@@ -1,22 +1,10 @@
-from typing import Dict, TypedDict, List
+from typing import TypedDict, List
 
 try:
     from .run import run_server  # noqa: F401
 except ImportError:
     pass
-
-
-class ReactPlugin(TypedDict):
-    """
-    A typed dictionary for a React plugin.
-
-    Attributes:
-      js (list[str]): A list of JavaScript files.
-    """
-
-    js: list[str]
-    css: list[str]
-    module: str
+from .plugin_setup import ReactPlugin, setup, FUNCNODES_REACT_PLUGIN
 
 
 class ExpandedReactPlugin(TypedDict):
@@ -32,20 +20,6 @@ class ExpandedReactPlugin(TypedDict):
     css: List[bytes]
 
 
-FUNCNODES_REACT_PLUGIN: Dict[str, ReactPlugin] = {}
-
-
-def add_react_plugin(name: str, plugin: ReactPlugin):
-    """
-    Add a React plugin to the FUNCNODES_REACT_PLUGIN dictionary.
-
-    Args:
-      name (str): The name of the plugin.
-      plugin (ReactPlugin): The plugin to add.
-    """
-    FUNCNODES_REACT_PLUGIN[str(name)] = plugin
-
-
 def get_react_plugin_content(key: str) -> ExpandedReactPlugin:
     """
     Get the content of a React plugin.
@@ -57,6 +31,9 @@ def get_react_plugin_content(key: str) -> ExpandedReactPlugin:
       str: The content of the plugin.
     """
     key = str(key)
+
+    if key not in FUNCNODES_REACT_PLUGIN:
+        raise ValueError(f"React plugin {key} not found")
 
     with open(FUNCNODES_REACT_PLUGIN[key]["module"], "rb") as f:
         module = f.read()
@@ -71,3 +48,15 @@ def get_react_plugin_content(key: str) -> ExpandedReactPlugin:
             with open(css, "rb") as f:
                 resp["css"].append(f.read())
     return resp
+
+
+setup()
+
+
+__all__ = [
+    "run_server",
+    "ReactPlugin",
+    "FUNCNODES_REACT_PLUGIN",
+    "get_react_plugin_content",
+    "ReactPlugin",
+]
