@@ -381,14 +381,14 @@ markers = {main = "sys_platform != \"emscripten\""}
 
 [[package]]
 name = "exposedfunctionality"
-version = "0.3.19"
+version = "0.3.20"
 description = "tool to expose functionalities to multiple tools"
 optional = false
 python-versions = ">=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "exposedfunctionality-0.3.19-py3-none-any.whl", hash = "sha256:37bc91a584484026758aed59bd0cdbcfd329ec59cd06feb4faac90e1a7a1a3bb"},
-    {file = "exposedfunctionality-0.3.19.tar.gz", hash = "sha256:2cb66db24aba8478adafb914473ec8c18e612d998b43bf1af25ce7c9290c6706"},
+    {file = "exposedfunctionality-0.3.20-py3-none-any.whl", hash = "sha256:aa009389ebf7230493f2b960acd2d5142145eae9fc8f2f679bca9eaa8d1e53c1"},
+    {file = "exposedfunctionality-0.3.20.tar.gz", hash = "sha256:f45bfc747177a9306c2c53893818910b32e264246a961ad605202d37bcdbf674"},
 ]
 
 [package.dependencies]
@@ -580,19 +580,19 @@ funcnodes-core = ">=0.3.9"
 
 [[package]]
 name = "funcnodes-core"
-version = "0.3.27"
+version = "0.3.41"
 description = "core package for funcnodes"
 optional = false
 python-versions = ">=3.11"
 groups = ["main", "dev"]
 files = [
-    {file = "funcnodes_core-0.3.27-py3-none-any.whl", hash = "sha256:e1a039b1b2ddf46ecdb67d8100b712a3acf5a3967013873ce3a234004384a7f4"},
-    {file = "funcnodes_core-0.3.27.tar.gz", hash = "sha256:fbc4ce9d01126ebc28b285578b444969bfb32617a18347b873776c7c04502252"},
+    {file = "funcnodes_core-0.3.41-py3-none-any.whl", hash = "sha256:e34aa0a87efa2db54a657d7e463091f00b058767dbc030ba23bcb76d35b614da"},
+    {file = "funcnodes_core-0.3.41.tar.gz", hash = "sha256:e74e3bf7007efb52ae04999756dba2b4ce829b06bc5cc1d09606f8ded068dbfa"},
 ]
 
 [package.dependencies]
 dill = "*"
-exposedfunctionality = ">=0.3.11"
+exposedfunctionality = ">=0.3.20"
 python-dotenv = "*"
 setuptools = "*"
 tqdm = "*"
@@ -1685,4 +1685,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11"
-content-hash = "edfa82e4304c68b33abc5c78bbda112dee8d1ff1ceb914986ed69f405815580a"
+content-hash = "911cbebb0a073ddc6b9316041d8a51ee99dae29675eb5a095296d36fb85bce1e"
