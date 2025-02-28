@@ -1,39 +1,50 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as convert from "color-convert";
-import "./colorpicker.scss";
+import { FuncNodesContext } from "../funcnodesreactflow";
 
 const create_color_converter = (
   type: string,
-  data: any[]
+  inputData: number[] | string[]
 ): { [key: string]: () => number[] | string } => {
-  if (!Array.isArray(data)) data = [data];
-  if (data[0] === undefined || data[0] === null)
+  const data = Array.isArray(inputData) ? inputData : [inputData];
+  if (data[0] === undefined || data[0] === null) {
     return create_color_converter("rgb", [0, 0, 0]);
+  }
+
   // @ts-ignore
   const source = convert[type];
   if (!source) throw new Error("Unsupported color type: " + type);
 
+  // necessary to add the identity function to the source object
   source[type] = () => data;
 
-  const checkrgb = source.rgb(data);
-  if (!Array.isArray(checkrgb)) return create_color_converter("rgb", [0, 0, 0]);
-  if (checkrgb[0] === undefined || checkrgb[0] === null)
+  // Validate conversion outputs
+  const validConversion = (fn: (...args: any[]) => any) => {
+    const result = fn(...data);
+    return Array.isArray(result) ? result[0] != null : result;
+  };
+  if (!validConversion(source.rgb) || !validConversion(source.hsl)) {
     return create_color_converter("rgb", [0, 0, 0]);
-
-  const checkhsl = source.hsl(data);
-  if (!Array.isArray(checkhsl)) return create_color_converter("rgb", [0, 0, 0]);
-  if (checkhsl[0] === undefined || checkhsl[0] === null)
-    return create_color_converter("rgb", [0, 0, 0]);
+  }
 
   const converter: { [key: string]: () => number[] | string } = {};
-
   Object.keys(source).forEach((key) => {
-    const entry = source[key];
-    //check if entry is a function
-    if (typeof entry === "function") {
-      converter[key] = () => entry.apply(null, data);
+    const fn = source[key];
+    if (typeof fn === "function") {
+      converter[key] = () => {
+        // For the original type, simply return the base data
+        if (key === type) return data;
+        return fn(...data);
+      };
     }
   });
 
@@ -60,10 +71,6 @@ const HSLColorPicker = ({
   const [rgb, setRgb] = useState([0, 0, 0]);
   const [hsv, setHsv] = useState([0, 0, 0]);
   const [hex, setHex] = useState("000");
-  // const hsl = converter.hsl() as number[];
-  // const rgb = converter.rgb() as number[];
-  // const hsv = converter.hsv() as number[];
-  // const hex = converter.hex() as string;
 
   useEffect(() => {
     if (!converter) {
@@ -272,62 +279,182 @@ const HSLColorPicker = ({
   );
 };
 
-const CustomColorPicker = ({
-  inicolordata,
-  inicolorspace = "hex",
-  allow_null = false,
-  onChange,
-}: {
+// const CustomColorPicker = ({
+//   inicolordata,
+//   inicolorspace = "hex",
+//   allow_null = false,
+//   onChange,
+// }: {
+//   inicolordata?: number[] | string | string[];
+//   inicolorspace?: string;
+//   allow_null?: boolean;
+//   onChange?: (
+//     colorconverter: {
+//       [key: string]: () => number[] | string;
+//     } | null
+//   ) => void;
+// }) => {
+//   if (inicolordata === undefined) {
+//     inicolordata = [0, 0, 0];
+//     inicolorspace = "rgb";
+//   }
+//   if (!Array.isArray(inicolordata)) inicolordata = [inicolordata];
+
+//   let iniconverter = create_color_converter(inicolorspace, inicolordata);
+
+//   if (iniconverter.rgb() === undefined)
+//     iniconverter = create_color_converter("rgb", [0, 0, 0]);
+//   const [color, setColor] = useState(iniconverter);
+//   const fnrf_zst = React.useContext(FuncNodesContext);
+//   const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
+
+//   const innerSetColor = (
+//     colorconverter: {
+//       [key: string]: () => number[] | string;
+//     } | null
+//   ) => {
+//     if (colorconverter === null && !allow_null)
+//       throw new Error("Color is null");
+//     if (colorconverter !== null) setColor(colorconverter);
+//     if (onChange) onChange(colorconverter);
+//   };
+
+//   const style = {
+//     background: "#" + color.hex(),
+//     borderRadius: "0.3rem",
+//     width: "2rem",
+//     height: "1rem",
+//   };
+
+//   return (
+//     <Popover.Root>
+//       <Popover.Trigger asChild>
+//         <button style={style}></button>
+//       </Popover.Trigger>
+//       <Popover.Portal container={portal}>
+//         <Popover.Content side="left" className="iotooltipcontent">
+//           <HSLColorPicker
+//             onChange={innerSetColor}
+//             colorconverter={color}
+//             allow_null={allow_null}
+//           ></HSLColorPicker>
+//         </Popover.Content>
+//       </Popover.Portal>
+//     </Popover.Root>
+//   );
+// };
+
+interface CustomColorPickerProps {
   inicolordata?: number[] | string | string[];
   inicolorspace?: string;
   allow_null?: boolean;
+  delay?: number; // delay in milliseconds (default is 1000ms)
   onChange?: (
-    colorconverter: {
-      [key: string]: () => number[] | string;
-    } | null
+    converter: { [key: string]: () => number[] | string } | null
   ) => void;
+}
+
+const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
+  inicolordata,
+  inicolorspace,
+  allow_null = false,
+  delay = 1000,
+  onChange,
 }) => {
-  if (inicolordata === undefined) {
-    inicolordata = [0, 0, 0];
-    inicolorspace = "rgb";
-  }
-  if (!Array.isArray(inicolordata)) inicolordata = [inicolordata];
+  // Use local variables rather than mutating props.
+  const initialColorData =
+    inicolordata !== undefined ? inicolordata : [0, 0, 0];
+  const initialColorSpace =
+    inicolordata === undefined ? "rgb" : inicolorspace || "hex";
 
-  let iniconverter = create_color_converter(inicolorspace, inicolordata);
+  // Ensure initialColorData is an array.
+  const normalizedColorData = Array.isArray(initialColorData)
+    ? initialColorData
+    : [initialColorData];
 
-  if (iniconverter.rgb() === undefined)
-    iniconverter = create_color_converter("rgb", [0, 0, 0]);
-  const [color, setColor] = useState(iniconverter);
+  // Memoize the initial converter to avoid re-creating on each render.
+  const initialConverter = useMemo(() => {
+    let conv = create_color_converter(initialColorSpace, normalizedColorData);
+    // Fallback to black if conversion fails.
+    if (conv.rgb() === undefined) {
+      conv = create_color_converter("rgb", [0, 0, 0]);
+    }
+    return conv;
+  }, [initialColorSpace, normalizedColorData]);
 
-  const innerSetColor = (
-    colorconverter: {
-      [key: string]: () => number[] | string;
-    } | null
-  ) => {
-    if (colorconverter === null && !allow_null)
-      throw new Error("Color is null");
-    if (colorconverter !== null) setColor(colorconverter);
-    if (onChange) onChange(colorconverter);
-  };
+  const [color, setColor] = useState(initialConverter);
 
-  const style = {
-    background: "#" + color.hex(),
-    borderRadius: "0.3rem",
-    width: "2rem",
-    height: "1rem",
-  };
+  // Update internal state when external props change.
+  useEffect(() => {
+    // Use JSON.stringify for a simple deep comparison on arrays/strings.
+    const data = inicolordata !== undefined ? inicolordata : [0, 0, 0];
+    const space = inicolordata === undefined ? "rgb" : inicolorspace || "hex";
+    const normData = Array.isArray(data) ? data : [data];
+    let newConverter = create_color_converter(space, normData);
+    if (newConverter.rgb() === undefined) {
+      newConverter = create_color_converter("rgb", [0, 0, 0]);
+    }
+    setColor(newConverter);
+  }, [JSON.stringify(inicolordata), inicolorspace]);
+
+  const fnrf_zst = useContext(FuncNodesContext);
+  const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
+
+  // useRef to store the debounce timer.
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced onChange: clear any existing timer and schedule a new one.
+  const innerSetColor = useCallback(
+    (colorconverter: { [key: string]: () => number[] | string } | null) => {
+      if (colorconverter === null && !allow_null)
+        throw new Error("Color is null");
+
+      // Update local state immediately.
+      if (colorconverter !== null) setColor(colorconverter);
+
+      // Clear any existing timer.
+      if (timerRef.current) clearTimeout(timerRef.current);
+      // Set up a new timer to call onChange after the specified delay.
+      if (onChange) {
+        timerRef.current = setTimeout(() => {
+          onChange(colorconverter);
+          timerRef.current = null;
+        }, delay);
+      }
+    },
+    [allow_null, onChange, delay]
+  );
+
+  // Clean up the timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  // Memoize button style to prevent unnecessary renders.
+  const buttonStyle = useMemo(
+    () => ({
+      background: "#" + color.hex(),
+      borderRadius: "0.3rem",
+      width: "2rem",
+      height: "1rem",
+    }),
+    [color]
+  );
+
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button style={style}></button>
+        <button style={buttonStyle} />
       </Popover.Trigger>
-      <Popover.Portal>
-        <Popover.Content side="left">
+      <Popover.Portal container={portal}>
+        <Popover.Content side="left" className="iotooltipcontent">
           <HSLColorPicker
             onChange={innerSetColor}
             colorconverter={color}
             allow_null={allow_null}
-          ></HSLColorPicker>
+          />
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
