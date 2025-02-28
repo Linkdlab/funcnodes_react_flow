@@ -1,6 +1,6 @@
 // import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
+// import Typography from "@mui/material/Typography";
+// import Stack from "@mui/material/Stack";
 // import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 // import LockOpenIcon from "@mui/icons-material/LockOpen";
 // import LockIcon from "@mui/icons-material/Lock";
@@ -82,8 +82,8 @@ export {
   // FullscreenExitIcon,
   // CloseFullscreenIcon,
   // OpenInFullIcon,
-  Typography,
-  Stack,
+  // Typography,
+  // Stack,
   Table,
   TableBody,
   TableCell,
