@@ -8,6 +8,13 @@
   --funcnodes-z-index: 1000;
 }
 
+.bg1 {
+  background-color: var(--funcnodesbackground1);
+}
+.bg2 {
+  background-color: var(--funcnodesbackground2);
+}
+
 .funcnodescontainer {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",

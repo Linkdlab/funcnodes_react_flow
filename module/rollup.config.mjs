@@ -1,7 +1,9 @@
 
 import scssloader from "rollup-plugin-scss";
+// import sassloader from 'rollup-plugin-sass';
 import json from '@rollup/plugin-json';
 import resolve from "@rollup/plugin-node-resolve";
+// import postcss from 'rollup-plugin-postcss'
 import commonjs from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
 import alias from "@rollup/plugin-alias";
@@ -38,10 +40,13 @@ const moduleConfig = {
     }),
     resolve({browser: true,}),
     json(),
-    scssloader({
-      fileName: "style.css",
-      sass: sass,
-    }),
+    // scssloader({
+    //   fileName: "style.css",
+    //   sass: sass,
+    // }),
+    // sassloader({
+    //   api: 'modern'
+    // }),
     nodePolyfills(),
     babel({
       babelHelpers: 'bundled',
@@ -69,16 +74,33 @@ const moduleConfig = {
       sourcemap: true,
       assetFileNames: "[name][extname]",
     },
-    {
-      file: path.resolve(__dirname, pkg.style),
-      format: "esm",
-      sourcemap: false,
-      assetFileNames: "[name][extname]",
-      plugins: [],
-    },
   ]
 
 }
+
+const styleConfig = {
+  input: "src/index.scss",
+  plugins: [
+      scssloader({
+        fileName: "style.css",
+        sass: sass,
+        outputStyle: production?"compressed":undefined,
+      }),
+  ],
+  output:[
+    {
+      file: path.resolve(__dirname, pkg.style),
+      sourcemap: false,
+
+    },
+    {
+      file: path.resolve(__dirname, "public","style.css"),
+      sourcemap: false,
+
+    },
+  ]
+}
+
 const dtsConfig={
   input: moduleConfig.input,
   output: [{ file: path.resolve(__dirname, pkg.types), format: "es" }],
@@ -110,6 +132,7 @@ const bundleConfig={
 }
 
 export default [
+  styleConfig,
   bundleConfig,
   dtsConfig,
   moduleConfig,

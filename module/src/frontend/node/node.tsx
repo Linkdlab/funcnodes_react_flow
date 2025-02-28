@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 
 import { NodeStore, NodeType } from "../../states/node.t";
 
-import "./node.scss";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 import { FuncNodesContext } from "../funcnodesreactflow";
 import { NodeInput, NodeOutput } from "./io";
@@ -13,7 +12,8 @@ import { IOType } from "../../states/nodeio.t";
 import { BodyDataRendererForIo } from "./body_data_renderer";
 import { DynamicComponentLoader } from "../datarenderer/rendermappings";
 import ProgressBar from "../utils/progressbar";
-import { PlayCircleFilledIcon, LanIcon, ExpandLessIcon } from "../assets/mui";
+import { PlayCircleFilledIcon, LanIcon } from "../assets/fontawsome";
+import { ExpandLessIcon } from "../assets/fontawsome";
 
 interface NodeHeaderProps {
   node_data: NodeType;
@@ -75,12 +75,17 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
     : [undefined, undefined];
 
   return (
-    <div className="nodrag nodedatabody">
+    <div
+      className="nodrag nodedatabody"
+      data-src={node_data.render_options?.data?.src || ""}
+    >
       {pvhandle && io && (
         <CustomDialog
           title={io.full_id}
           trigger={
-            <div>{<DynamicComponentLoader component={pvhandle} io={io} />}</div>
+            <div className="nodedatabutton">
+              {<DynamicComponentLoader component={pvhandle} io={io} />}
+            </div>
           }
           onOpenChange={(open: boolean) => {
             if (open) {
@@ -201,7 +206,7 @@ const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
   // Use the NodeStore to get the data for the node.
   const storedata = data.UseNodeStore();
 
-  const collapsed = storedata.frontend.collapsed || false;
+  const collapsed = storedata.properties["frontend:collapsed"] || false;
 
   const { visualTrigger } = useDefaultNodeInjection(storedata);
 
