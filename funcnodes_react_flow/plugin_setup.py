@@ -26,7 +26,6 @@ def add_react_plugin(module: ModuleType, plugin: ReactPlugin):
       name (str): The name of the plugin.
       plugin (ReactPlugin): The plugin to add.
     """
-    plugin["module"] = module.__file__
     FUNCNODES_REACT_PLUGIN[str(module)] = plugin
 
 
