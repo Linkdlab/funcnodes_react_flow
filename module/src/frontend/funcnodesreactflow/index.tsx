@@ -69,7 +69,15 @@ const InnerFuncnodesReactFlow = ({
       <FuncNodesContext.Provider value={fnrf_zst}>
         <SmoothExpandComponent asChild>
           <FullScreenComponent asChild>
-            <SizeContextContainer style={{ height: "100%", width: "100%" }}>
+            <SizeContextContainer
+              style={{
+                height: "100%",
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+              }}
+            >
               <div
                 ref={ref}
                 className="funcnodesreactflowcontainer funcnodescontainer"
