@@ -1,3 +1,4 @@
+from types import ModuleType
 from typing import Dict
 from funcnodes_core import plugins
 
@@ -17,7 +18,7 @@ class ReactPlugin(plugins.BasePlugin):
 FUNCNODES_REACT_PLUGIN: Dict[str, ReactPlugin] = {}
 
 
-def add_react_plugin(name: str, plugin: ReactPlugin):
+def add_react_plugin(module: ModuleType, plugin: ReactPlugin):
     """
     Add a React plugin to the FUNCNODES_REACT_PLUGIN dictionary.
 
@@ -25,7 +26,8 @@ def add_react_plugin(name: str, plugin: ReactPlugin):
       name (str): The name of the plugin.
       plugin (ReactPlugin): The plugin to add.
     """
-    FUNCNODES_REACT_PLUGIN[str(name)] = plugin
+    plugin["module"] = module.__file__
+    FUNCNODES_REACT_PLUGIN[str(module)] = plugin
 
 
 def plugin_function(installed_module: plugins.InstalledModule):
