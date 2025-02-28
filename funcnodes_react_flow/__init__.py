@@ -35,9 +35,13 @@ def get_react_plugin_content(key: str) -> ExpandedReactPlugin:
     if key not in FUNCNODES_REACT_PLUGIN:
         raise ValueError(f"React plugin {key} not found")
 
+    if FUNCNODES_REACT_PLUGIN[key]["module"]:
+        with open(FUNCNODES_REACT_PLUGIN[key]["module"], "rb") as f:
+            module = f.read()
+
     resp: ExpandedReactPlugin = {
         "js": [],
-        "module": FUNCNODES_REACT_PLUGIN[key]["module"],
+        "module": module,
         "css": [],
     }
     if "js" in FUNCNODES_REACT_PLUGIN[key]:

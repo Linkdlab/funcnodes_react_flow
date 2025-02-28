@@ -1,6 +1,6 @@
 [project]
 name = "funcnodes-react-flow"
-version = "0.3.16"
+version = "0.3.17"
 description = "funcnodes frontend for react flow"
 authors = [
 {name = "Julian Kimmig", email = "julian.kimmig@linkdlab.de>"}
