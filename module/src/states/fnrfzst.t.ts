@@ -142,7 +142,8 @@ interface DevSettings {
 }
 
 interface FuncnodesReactFlowViewSettings {
-  expand_node_props: boolean;
+  expand_node_props?: boolean;
+  expand_lib?: boolean;
 }
 interface FuncnodesReactFlowLocalSettings {
   view_settings: FuncnodesReactFlowViewSettings;
@@ -152,6 +153,7 @@ interface FuncnodesReactFlowLocalSettings {
 interface FuncnodesReactFlowLocalState {
   selected_nodes: string[];
   selected_edges: string[];
+  funcnodescontainerRef: HTMLDivElement | null;
 }
 
 interface FuncNodesReactFlowZustandInterface {
@@ -179,6 +181,7 @@ interface FuncNodesReactFlowZustandInterface {
   plugins: UseBoundStore<StoreApi<{ [key: string]: FuncNodesReactPlugin }>>;
   add_plugin: (name: string, plugin: FuncNodesReactPlugin) => void;
   reactflowRef: HTMLDivElement | null;
+
   clear_all: () => void;
   center_node: (node_id: string | string[]) => void;
   dev_settings: DevSettings;

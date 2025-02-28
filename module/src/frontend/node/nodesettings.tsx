@@ -1,6 +1,4 @@
 import * as React from "react";
-import "./nodesettings.scss";
-
 import { FuncNodesContext } from "../funcnodesreactflow";
 import { NodeStore } from "../../states/node.t";
 import { NodeName } from "./node";
@@ -12,7 +10,8 @@ import { RenderMappingContext } from "../datarenderer/rendermappings";
 import { SelectionInput } from "./io/default_input_renderer";
 import { INPUTCONVERTER } from "./io/nodeinput";
 import { RenderOptions } from "../../states/fnrfzst.t";
-import { ChevronLeftIcon, ChevronRightIcon } from "../assets/mui";
+
+import { ExpandingContainer } from "../layout/components";
 
 const NodeSettingsInput = ({ io }: { io: IOType }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
@@ -83,7 +82,7 @@ const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
   const outputs = Object.values(node.io).filter((io) => !io.is_input);
 
   return (
-    <div>
+    <div className="nodesettings_content">
       <div className="nodesettings_section">
         <div className="nodesettings_component">
           <div>Name</div>
@@ -140,31 +139,44 @@ const NodeSettings = () => {
   };
 
   return (
-    <div className="nodesettings_container">
-      <div className="nodesettings_expander">
-        {expanded ? (
-          <ChevronRightIcon
-            onClick={() => {
-              set_expand_node_props(false);
-            }}
-          />
-        ) : (
-          <ChevronLeftIcon
-            onClick={() => {
-              set_expand_node_props(true);
-            }}
-          />
-        )}
-      </div>
-      <div
-        className={
-          "nodesettings_content " + (expanded ? "expanded" : "collapsed")
-        }
-      >
-        {expanded && <CurrentNodeSettingsWrapper></CurrentNodeSettingsWrapper>}
-      </div>
-    </div>
+    <ExpandingContainer
+      maxSize="300px"
+      direction="left"
+      expanded={expanded === undefined ? false : expanded}
+      containerClassName={`pos-right pos-top bg1 h-12`}
+      className="nodesettings_content"
+      onExpandChange={set_expand_node_props}
+    >
+      <CurrentNodeSettingsWrapper></CurrentNodeSettingsWrapper>
+    </ExpandingContainer>
   );
+
+  // return (
+  //   <div className="nodesettings_container">
+  //     <div className="nodesettings_expander">
+  //       {expanded ? (
+  //         <ChevronRightIcon
+  //           onClick={() => {
+  //             set_expand_node_props(false);
+  //           }}
+  //         />
+  //       ) : (
+  //         <ChevronLeftIcon
+  //           onClick={() => {
+  //             set_expand_node_props(true);
+  //           }}
+  //         />
+  //       )}
+  //     </div>
+  //     <div
+  //       className={
+  //         "nodesettings_content " + (expanded ? "expanded" : "collapsed")
+  //       }
+  //     >
+  //       {expanded && <CurrentNodeSettingsWrapper></CurrentNodeSettingsWrapper>}
+  //     </div>
+  //   </div>
+  // );
 };
 
 export default NodeSettings;

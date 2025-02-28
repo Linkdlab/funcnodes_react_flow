@@ -26,8 +26,9 @@
     border: 2px solid #ffffff00;
     font-size: 0.5rem;
     width: auto;
-    max-width: 200px;
+    max-width: 250px;
     min-width: 100px;
+    max-height: 500px;
     &.selected {
       border-color: #ffffff99;
     }
@@ -89,6 +90,7 @@
   display: flex;
   // padding: 2px;
   box-sizing: border-box;
+  max-height: inherit;
 
   &.intrigger {
     & .nodeheader {
@@ -173,11 +175,20 @@
 }
 
 .nodebody {
-  flex-grow: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .nodedatabody {
   overflow: auto;
+  flex: 1;
+  display: flex;
+}
+
+.nodedatabutton {
+  flex: 1;
 }
 
 .noderesizecontrol {

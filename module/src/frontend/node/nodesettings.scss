@@ -1,19 +1,4 @@
 .nodesettings {
-  &_container {
-    min-height: 100%;
-    display: flex;
-    flex-direction: row;
-  }
-  &_expander {
-    min-height: 100%;
-    // center the icon
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 3px 3px;
-  }
-
   &_content {
     display: flex;
     flex-direction: column;
@@ -27,9 +12,6 @@
     &.collapsed {
       width: 0;
     }
-
-    // animation for expanding/collapsing
-    transition: width 0.5s;
   }
 
   &_section {

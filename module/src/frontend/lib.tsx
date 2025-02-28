@@ -2,7 +2,6 @@ import * as React from "react";
 import { useState, useContext } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import "./lib.scss";
 
 import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 import { MouseEvent } from "react";
@@ -16,7 +15,12 @@ import {
   LibNode,
   Shelf,
 } from "../states/lib.t";
-import { CloseIcon, ExpandLessIcon, SearchIcon } from "./assets/mui";
+import { SearchIcon } from "./assets/fontawsome";
+import { CloseIcon, ExpandLessIcon } from "./assets/fontawsome";
+import {
+  currentBreakpointSmallerThan,
+  ExpandingContainer,
+} from "./layout/components";
 
 const LibraryNode = ({ item }: { item: LibNode }) => {
   const zustand: FuncNodesReactFlowZustandInterface =
@@ -798,56 +802,79 @@ const Library = () => {
     useContext(FuncNodesContext);
   const libstate = zustand.lib.libstate();
 
+  const fnrf_zst = React.useContext(FuncNodesContext);
+  const expanded = fnrf_zst.local_settings(
+    (state) => state.view_settings.expand_lib
+  );
+
+  const update_view_settings = fnrf_zst.local_settings(
+    (state) => state.update_view_settings
+  );
+
+  const set_expand_lib = (expand: boolean) => {
+    update_view_settings({ expand_lib: expand });
+  };
+
+  const on_small_screen = currentBreakpointSmallerThan("m");
+
   const [filter, setFilter] = useState("");
-  const isopen =
+  const worker_isopen =
     zustand.worker?.state((s) => {
       return s.is_open;
     }) ?? false;
   return (
-    <div className="libcontainer">
-      <div className="library">
-        <div className="libtitle">Lib</div>
-        <hr className="hr_prominent" />
-        <LibFilter filter={filter} setFilter={setFilter} />
-        <div className="vscrollcontainer">
-          {libstate.lib.shelves.map((item) =>
-            item.name == "_external_worker" ? (
-              <></>
-            ) : (
-              <LibraryShelf
-                key={item.name}
-                item={item}
-                filter={filter}
-                parentkey={item.name}
-              />
-            )
-          )}
+    <ExpandingContainer
+      maxSize={on_small_screen ? "100%" : "300px"}
+      direction={on_small_screen ? "down" : "right"}
+      containerClassName={`pos-left pos-top bg1 h-12`}
+      onExpandChange={set_expand_lib}
+      expanded={expanded === undefined ? true : expanded}
+    >
+      <div className="libcontainer">
+        <div className="library">
+          <div className="libtitle">Lib</div>
+          <hr className="hr_prominent" />
+          <LibFilter filter={filter} setFilter={setFilter} />
+          <div className="vscrollcontainer">
+            {libstate.lib.shelves.map((item) =>
+              item.name == "_external_worker" ? (
+                <></>
+              ) : (
+                <LibraryShelf
+                  key={item.name}
+                  item={item}
+                  filter={filter}
+                  parentkey={item.name}
+                />
+              )
+            )}
+          </div>
+          <hr />
+          <div className="libtitle">External Worker</div>
+          <hr className="hr_prominent" />
+          <div className="vscrollcontainer">
+            {libstate.external_worker?.map((item) => (
+              <ExternalWorkerShelf
+                key={item.module}
+                externalworkermod={item}
+                lib={libstate.lib.shelves.find(
+                  (shelf) => shelf.name === "_external_worker"
+                )}
+              ></ExternalWorkerShelf>
+            ))}
+          </div>
+          <hr />
         </div>
-        <hr />
-        <div className="libtitle">External Worker</div>
-        <hr className="hr_prominent" />
-        <div className="vscrollcontainer">
-          {libstate.external_worker?.map((item) => (
-            <ExternalWorkerShelf
-              key={item.module}
-              externalworkermod={item}
-              lib={libstate.lib.shelves.find(
-                (shelf) => shelf.name === "_external_worker"
-              )}
-            ></ExternalWorkerShelf>
-          ))}
-        </div>
-        <hr />
+        <div style={{ paddingTop: "0.5rem" }}></div>
+        {worker_isopen && (
+          <div className="addlib">
+            <AddLibraryOverLay>
+              <button>Manage Libraries</button>
+            </AddLibraryOverLay>
+          </div>
+        )}
       </div>
-      <div style={{ paddingTop: "0.5rem" }}></div>
-      {isopen && (
-        <div className="addlib">
-          <AddLibraryOverLay>
-            <button>Manage Libraries</button>
-          </AddLibraryOverLay>
-        </div>
-      )}
-    </div>
+    </ExpandingContainer>
   );
 };
 
