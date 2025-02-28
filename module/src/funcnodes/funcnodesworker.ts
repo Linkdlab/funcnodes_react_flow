@@ -20,6 +20,7 @@ import { LibType } from "../states/lib.t";
 import { PackedPlugin } from "../plugin";
 
 import { UpdateableIOOptions } from "../states/nodeio.t";
+import { update_nodeview } from "../states/node";
 type CmdMessage = {
   type: string;
   cmd: string;
@@ -262,12 +263,12 @@ class FuncNodesWorker {
     const nodeview = resp.nodes;
     if (nodeview) {
       for (const nodeid in nodeview) {
-        const nodev = nodeview[nodeid];
+        const partnode: PartialNodeType = {};
+        update_nodeview(partnode, nodeview[nodeid]);
+
         this._zustand.on_node_action({
           type: "update",
-          node: {
-            frontend: nodev,
-          },
+          node: partnode,
           id: nodeid,
           from_remote: true,
         });
@@ -319,7 +320,7 @@ class FuncNodesWorker {
     const nodeview = resp.view.nodes;
     for (const node of resp.backend.nodes) {
       if (nodeview[node.id] !== undefined) {
-        node.frontend = nodeview[node.id];
+        update_nodeview(node, nodeview[node.id]);
       }
       this._receive_node_added(node);
     }

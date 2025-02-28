@@ -4,19 +4,13 @@ import {
   FuncnodesReactHeaderProps,
 } from "../../states/fnrfzst.t";
 import { FuncNodesContext } from "../funcnodesreactflow";
-
-import "./header.scss";
 import CustomDialog from "../dialog";
 import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { downloadBase64, fileDialogToBase64 } from "../../utils/data";
-import {
-  ChevronRightIcon,
-  MenuRoundedIcon,
-  Stack,
-  Typography,
-} from "../assets/mui";
-
+import { MenuRoundedIcon, ChevronRightIcon } from "../assets/fontawsome";
+import { development } from "../../utils/debugger";
+import { FloatContainer } from "../layout/components";
 const NewWorkerDialog = ({
   trigger,
   setOpen,
@@ -240,9 +234,10 @@ const WorkerMenu = () => {
   };
 
   const has_worker_manager =
-    fnrf_zst.options.useWorkerManager &&
-    fnrf_zst.workermanager &&
-    fnrf_zst.workermanager.open;
+    (fnrf_zst.options.useWorkerManager &&
+      fnrf_zst.workermanager &&
+      fnrf_zst.workermanager.open) ||
+    development;
   const show_select =
     has_worker_manager && Object.keys(workersstate).length > 0;
 
@@ -256,9 +251,9 @@ const WorkerMenu = () => {
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <button className="styledbtn">
-            <Stack direction="row" spacing={1}>
-              <Typography>Worker</Typography> <MenuRoundedIcon />
-            </Stack>
+            <FloatContainer direction="row">
+              Worker <MenuRoundedIcon />
+            </FloatContainer>
           </button>
         </DropdownMenu.Trigger>
         {/* <DropdownMenu.Portal> */}
@@ -267,10 +262,10 @@ const WorkerMenu = () => {
             {show_select && (
               <DropdownMenu.Sub>
                 <DropdownMenu.SubTrigger className="headermenuitem submenuitem">
-                  <Stack direction="row" spacing={1}>
+                  <FloatContainer direction="row">
                     Select
                     <ChevronRightIcon />
-                  </Stack>
+                  </FloatContainer>
                 </DropdownMenu.SubTrigger>
                 {/* <DropdownMenu.Portal> */}
                 <DropdownMenu.SubContent
@@ -437,9 +432,9 @@ const NodeSpaceMenu = () => {
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <button className="styledbtn">
-            <Stack direction="row" spacing={1}>
-              <Typography>Nodespace</Typography> <MenuRoundedIcon />
-            </Stack>
+            <FloatContainer direction="row">
+              Nodespace <MenuRoundedIcon />
+            </FloatContainer>
           </button>
         </DropdownMenu.Trigger>
         {/* <DropdownMenu.Portal> */}
@@ -473,23 +468,29 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
   }
 
   return (
-    <div className="funcnodesreactflowheader">
-      <div className="headerelement">
+    <FloatContainer className="funcnodesreactflowheader" direction="row" wrap>
+      <FloatContainer
+        className="headerelement m-w-6"
+        grow={{
+          "": true,
+          m: false,
+        }}
+      >
         <Statusbar></Statusbar>
-      </div>
-      {headerprops.showmenu && (
-        <>
+      </FloatContainer>
+      {(headerprops.showmenu || development) && (
+        <FloatContainer direction="row" wrap>
           <div className="headerelement">
             <WorkerMenu></WorkerMenu>
           </div>
-          {fnrf_zst.worker && workerstate.is_open && (
+          {((fnrf_zst.worker && workerstate.is_open) || development) && (
             <div className="headerelement">
               <NodeSpaceMenu></NodeSpaceMenu>
             </div>
           )}
-        </>
+        </FloatContainer>
       )}
-    </div>
+    </FloatContainer>
   );
 };
 

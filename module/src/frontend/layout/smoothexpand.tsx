@@ -10,7 +10,6 @@ import {
   useImperativeHandle,
 } from "react";
 
-import "./smoothexpand.scss";
 
 interface SmoothExpandContextType {
   isExpanded: boolean;

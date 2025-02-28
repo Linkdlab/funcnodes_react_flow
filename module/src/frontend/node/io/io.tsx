@@ -1,6 +1,5 @@
-import * as Tooltip from "@radix-ui/react-tooltip";
-
-import "./io.scss";
+// import * as Tooltip from "@radix-ui/react-tooltip";
+import * as Popover from "@radix-ui/react-popover";
 import { Handle, HandleProps } from "reactflow";
 import * as React from "react";
 import { useState } from "react";
@@ -8,7 +7,9 @@ import CustomDialog from "../../dialog";
 import { PreviewHandleDataRendererForIo } from "./handle_renderer";
 import { IOType, SerializedType } from "../../../states/nodeio.t";
 import { DynamicComponentLoader } from "../../datarenderer/rendermappings";
-import { LockIcon, LockOpenIcon, FullscreenIcon } from "../../assets/mui";
+import { LockIcon, LockOpenIcon } from "../../assets/fontawsome";
+import { FullscreenIcon } from "../../assets/fontawsome";
+import { FuncNodesContext } from "../../funcnodesreactflow";
 
 const pick_best_io_type = (
   iot: SerializedType,
@@ -69,57 +70,55 @@ const HandleWithPreview = ({
 }: HandleWithPreviewProps) => {
   const [locked, setLocked] = useState(false);
   const [opened, setOpened] = useState(false);
+  const fnrf_zst = React.useContext(FuncNodesContext);
 
   const [pvhandle, overlayhandle] = io
     ? PreviewHandleDataRendererForIo(io)
     : [undefined, undefined];
 
+  const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
+
   return (
-    <Tooltip.Provider>
-      <Tooltip.Root open={locked || opened} onOpenChange={setOpened}>
-        <Tooltip.Trigger asChild>
-          <Handle id={io.id} {...{ "data-type": typestring }} {...props} />
-        </Tooltip.Trigger>
-        <Tooltip.Portal>
-          <Tooltip.Content className={"iotooltipcontent"} sideOffset={5}>
-            <div className="iotooltip_container">
-              <div className="iotooltip_header">
-                {locked ? (
-                  <LockIcon onClick={() => setLocked(false)} />
-                ) : (
-                  <LockOpenIcon onClick={() => setLocked(true)} />
-                )}
-                {overlayhandle && (
-                  <CustomDialog
-                    title={io.full_id}
-                    trigger={<FullscreenIcon />}
-                    onOpenChange={(open: boolean) => {
-                      if (open) {
-                        if (io.try_get_full_value) io.try_get_full_value();
-                      }
-                      setLocked(open);
-                    }}
-                  >
-                    {
-                      <DynamicComponentLoader
-                        component={overlayhandle}
-                        io={io}
-                      />
-                    }
-                  </CustomDialog>
-                )}
-              </div>
-              {pvhandle ? (
-                <DynamicComponentLoader component={pvhandle} io={io} />
+    // <Tooltip.Provider>
+    <Popover.Root open={locked || opened} onOpenChange={setOpened}>
+      <Popover.Trigger asChild>
+        <Handle id={io.id} {...{ "data-type": typestring }} {...props} />
+      </Popover.Trigger>
+      <Popover.Portal container={portal}>
+        <Popover.Content className={"iotooltipcontent"} sideOffset={5}>
+          <div className="iotooltip_container">
+            <div className="iotooltip_header">
+              {locked ? (
+                <LockIcon onClick={() => setLocked(false)} />
               ) : (
-                `no preview available for "${typestring}"`
+                <LockOpenIcon onClick={() => setLocked(true)} />
+              )}
+              {overlayhandle && (
+                <CustomDialog
+                  title={io.full_id}
+                  trigger={<FullscreenIcon />}
+                  onOpenChange={(open: boolean) => {
+                    if (open) {
+                      if (io.try_get_full_value) io.try_get_full_value();
+                    }
+                    setLocked(open);
+                  }}
+                >
+                  {<DynamicComponentLoader component={overlayhandle} io={io} />}
+                </CustomDialog>
               )}
             </div>
-            <Tooltip.Arrow className="iotooltipcontentarrow" />
-          </Tooltip.Content>
-        </Tooltip.Portal>
-      </Tooltip.Root>
-    </Tooltip.Provider>
+            {pvhandle ? (
+              <DynamicComponentLoader component={pvhandle} io={io} />
+            ) : (
+              `no preview available for "${typestring}"`
+            )}
+          </div>
+          <Popover.Arrow className="iotooltipcontentarrow" />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+    // </Tooltip.Provider>
   );
 };
 export { pick_best_io_type, HandleWithPreview };

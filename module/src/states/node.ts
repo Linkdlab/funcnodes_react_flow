@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { deep_update } from "../utils";
 import { NodeType, PartialNodeType, NodeStore } from "./node.t";
 import { IOType } from "./nodeio.t";
+import { NodeViewState } from "./fnrfzst.t";
 
 const dummy_nodeio: IOType = {
   id: "dummy",
@@ -47,10 +48,10 @@ const assert_full_nodeio = (io: Partial<IOType>): IOType => {
 const dummy_node: NodeType = {
   id: "dummy",
   node_name: "dummy",
-  frontend: {
-    pos: [NaN, NaN],
-    size: [200, 100],
-    collapsed: false,
+  properties: {
+    "frontend:size": [200, 100],
+    "frontend:pos": [NaN, NaN],
+    "frontend:collapsed": false,
   },
   io: {},
   name: "dummy",
@@ -66,6 +67,17 @@ const dummy_node: NodeType = {
     unit_divisor: 1000,
     unit_scale: false,
   },
+};
+
+const update_nodeview = (
+  node: PartialNodeType,
+  view: Partial<NodeViewState>
+): void => {
+  node.properties = node.properties || {};
+  if (view.pos) node.properties["frontend:pos"] = view.pos;
+  if (view.size) node.properties["frontend:size"] = view.size;
+  if (view.collapsed !== undefined)
+    node.properties["frontend:collapsed"] = !!view.collapsed; // convert to boolean
 };
 
 const dummy_node_json = JSON.stringify(dummy_node);
@@ -132,4 +144,4 @@ const createNodeStore = (node: NodeType): NodeStore => {
     assert_full_node(normalize_node(node))
   );
 };
-export { createNodeStore, assert_full_node, normalize_node };
+export { createNodeStore, assert_full_node, normalize_node, update_nodeview };

@@ -1,6 +1,6 @@
 [project]
 name = "funcnodes-react-flow"
-version = "0.3.13"
+version = "0.3.14"
 description = "funcnodes frontend for react flow"
 authors = [
 {name = "Julian Kimmig", email = "julian.kimmig@linkdlab.de>"}
@@ -14,6 +14,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
     "funcnodes-core>=0.3.41",
+    "funcnodes-worker>=0.2.1",
     "funcnodes>=0.5.25; sys_platform != 'emscripten'"
 ]
 

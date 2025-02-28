@@ -70,11 +70,19 @@ interface NodeRenderOptions {
   data?: DataRenderOptions;
 }
 
+interface NodeProperties {
+  "frontend:size": [number, number];
+  "frontend:pos": [number, number];
+  "frontend:collapsed": boolean;
+  // allow for any other properties
+  [key: string]: any;
+}
+
 interface NodeType {
   id: string;
   node_name: string;
   io: { [key: string]: IOType };
-  frontend: {
+  frontend?: {
     pos: [number, number];
     size: [number, number];
     collapsed: boolean;
@@ -86,6 +94,7 @@ interface NodeType {
   io_order: string[];
   progress: TqdmState;
   description?: string;
+  properties: NodeProperties;
 }
 
 type PartialNodeType = DeepPartial<NodeType>;
@@ -100,4 +109,5 @@ export type {
   PartialNodeType,
   NodeActionTrigger,
   NodeType,
+  NodeProperties,
 };

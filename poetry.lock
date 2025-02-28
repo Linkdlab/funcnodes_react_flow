@@ -163,6 +163,18 @@ files = [
 ]
 
 [[package]]
+name = "asynctoolkit"
+version = "0.1.3"
+description = "Add your description here"
+optional = false
+python-versions = ">=3.10"
+groups = ["main", "dev"]
+files = [
+    {file = "asynctoolkit-0.1.3-py3-none-any.whl", hash = "sha256:09e86077ce42cd360bdfbd16b1ee5b973a90240a2341aa88ffa4086437309a43"},
+    {file = "asynctoolkit-0.1.3.tar.gz", hash = "sha256:e221c54ed30d8cf3989df84ce27ec825009f7d5511347901aa9c734420980f16"},
+]
+
+[[package]]
 name = "attrs"
 version = "23.2.0"
 description = "Classes Without Boilerplate"
@@ -580,14 +592,14 @@ funcnodes-core = ">=0.3.9"
 
 [[package]]
 name = "funcnodes-core"
-version = "0.3.41"
+version = "0.3.44"
 description = "core package for funcnodes"
 optional = false
 python-versions = ">=3.11"
 groups = ["main", "dev"]
 files = [
-    {file = "funcnodes_core-0.3.41-py3-none-any.whl", hash = "sha256:e34aa0a87efa2db54a657d7e463091f00b058767dbc030ba23bcb76d35b614da"},
-    {file = "funcnodes_core-0.3.41.tar.gz", hash = "sha256:e74e3bf7007efb52ae04999756dba2b4ce829b06bc5cc1d09606f8ded068dbfa"},
+    {file = "funcnodes_core-0.3.44-py3-none-any.whl", hash = "sha256:6f37357831aeaa0c622ac291902cda867b8a47ac5bf1e73b4b5a81df787b78e6"},
+    {file = "funcnodes_core-0.3.44.tar.gz", hash = "sha256:8e94a6ce96ba5462385ce9af58dd2169954a99f19319b1bd90f5e55bd1f617de"},
 ]
 
 [package.dependencies]
@@ -615,20 +627,21 @@ toml = ">=0.10.2"
 
 [[package]]
 name = "funcnodes-worker"
-version = "0.1.4"
+version = "0.2.1"
 description = "Worker package for FuncNodes"
 optional = false
 python-versions = ">=3.11"
 groups = ["main", "dev"]
 files = [
-    {file = "funcnodes_worker-0.1.4-py3-none-any.whl", hash = "sha256:e7777a7d746a6b6069011ebedac63194227b6d9443ca4d2f7062dd3d1ad53007"},
-    {file = "funcnodes_worker-0.1.4.tar.gz", hash = "sha256:77b1b76df74423e51c7bafed800e44bd31f6624247a39affc5dea4ccc68c0425"},
+    {file = "funcnodes_worker-0.2.1-py3-none-any.whl", hash = "sha256:da5c608f04639345980c4b8ed498768776bf5d3875e9c9e7eb8a4a2e22cf4889"},
+    {file = "funcnodes_worker-0.2.1.tar.gz", hash = "sha256:e25debba5f5593cbefd2097289a3398cb6b7cadd3582f6a340500a126452c171"},
 ]
 
 [package.dependencies]
 aiohttp = {version = "*", optional = true, markers = "extra == \"http\""}
 aiohttp_cors = {version = "*", optional = true, markers = "extra == \"http\""}
-funcnodes-core = ">=0.3.27"
+asynctoolkit = ">=0.1.1"
+funcnodes-core = ">=0.3.43"
 pip = ">=25.0.1"
 requests = {version = "*", optional = true, markers = "extra == \"http\""}
 subprocess-monitor = {version = ">=0.2.0", optional = true, markers = "extra == \"subprocess-monitor\""}
@@ -1685,4 +1698,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11"
-content-hash = "911cbebb0a073ddc6b9316041d8a51ee99dae29675eb5a095296d36fb85bce1e"
+content-hash = "ac6fa804e4f59b5fb3fc51f4ecf52aebf09d4c2a7530bcd8949826f566df2158"

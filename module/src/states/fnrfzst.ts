@@ -44,25 +44,26 @@ const _fill_node_frontend = (
   node: NodeType,
   fnrf_instance?: FuncNodesReactFlowZustandInterface
 ) => {
-  const frontend = node.frontend || {};
-  if (!frontend.size) {
-    frontend.size = [200, 100];
+  const nodeprops = node.properties || {};
+  if (!nodeprops["frontend:size"]) {
+    nodeprops["frontend:size"] = [200, 100];
   }
 
+  const frontend_pos = nodeprops["frontend:pos"];
   if (
-    !frontend.pos ||
-    frontend.pos.length !== 2 ||
-    isNaN(frontend.pos[0]) ||
-    frontend.pos[0] === null ||
-    isNaN(frontend.pos[1]) ||
-    frontend.pos[1] === null
+    !frontend_pos ||
+    frontend_pos.length !== 2 ||
+    isNaN(frontend_pos[0]) ||
+    frontend_pos[0] === null ||
+    isNaN(frontend_pos[1]) ||
+    frontend_pos[1] === null
   ) {
     if (
       !fnrf_instance ||
       !fnrf_instance.rf_instance ||
       fnrf_instance.reactflowRef === null
     ) {
-      frontend.pos = [0, 0];
+      nodeprops["frontend:pos"] = [0, 0];
     } else {
       const ref = fnrf_instance.reactflowRef;
       const rect = ref.getBoundingClientRect(); // Step 2: Get bounding rectangle
@@ -72,17 +73,17 @@ const _fill_node_frontend = (
         x: centerX,
         y: centerY,
       });
-      frontend.pos = [
-        flowpos.x - frontend.size[0] / 2,
-        flowpos.y - frontend.size[1] / 2,
+      nodeprops["frontend:pos"] = [
+        flowpos.x - nodeprops["frontend:size"][0] / 2,
+        flowpos.y - nodeprops["frontend:size"][0] / 2,
       ];
     }
   }
 
-  if (!frontend.collapsed) {
-    frontend.collapsed = false;
+  if (!nodeprops["frontend:collapsed"]) {
+    nodeprops["frontend:collapsed"] = false;
   }
-  node.frontend = frontend;
+  node.properties = nodeprops;
 };
 
 const assert_react_flow_io = (
@@ -148,8 +149,8 @@ const assert_reactflow_node = (
 
   const extendedNode: NodeType & RFNode = {
     position: {
-      x: node.frontend.pos[0],
-      y: node.frontend.pos[1],
+      x: node.properties["frontend:pos"][0],
+      y: node.properties["frontend:pos"][1],
     },
     data: {
       UseNodeStore: store,
@@ -387,7 +388,9 @@ const FuncNodesReactFlowZustand = (
               type: "update",
               id: change.id,
               node: {
-                frontend: { pos: [change.position.x, change.position.y] },
+                properties: {
+                  "frontend:pos": [change.position.x, change.position.y],
+                },
               },
               from_remote: false,
             });
@@ -399,8 +402,11 @@ const FuncNodesReactFlowZustand = (
               type: "update",
               id: change.id,
               node: {
-                frontend: {
-                  size: [change.dimensions.width, change.dimensions.height],
+                properties: {
+                  "frontend:size": [
+                    change.dimensions.width,
+                    change.dimensions.height,
+                  ],
                 },
               },
               from_remote: false,
@@ -469,9 +475,7 @@ const FuncNodesReactFlowZustand = (
 
   const iterf: FuncNodesReactFlowZustandInterface = {
     local_settings: create<FuncnodesReactFlowLocalSettings>((_set, _get) => ({
-      view_settings: {
-        expand_node_props: false,
-      },
+      view_settings: {},
       update_view_settings: (settings: FuncnodesReactFlowViewSettings) => {
         const current = iterf.local_settings.getState().view_settings;
         const { new_obj, change } = deep_merge(current, settings);
@@ -487,6 +491,7 @@ const FuncNodesReactFlowZustand = (
     local_state: create<FuncnodesReactFlowLocalState>((_set, _get) => ({
       selected_nodes: [],
       selected_edges: [],
+      funcnodescontainerRef: null,
     })),
 
     options: options,

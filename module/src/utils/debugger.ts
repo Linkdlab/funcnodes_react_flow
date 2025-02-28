@@ -1,5 +1,8 @@
 import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 
+const development: boolean =
+  !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+
 const print_object_size = (
   obj: any,
   message: string,
@@ -27,4 +30,4 @@ const print_object = (
   }
 };
 
-export { print_object_size, print_object };
+export { print_object_size, print_object, development };
