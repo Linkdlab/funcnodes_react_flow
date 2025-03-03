@@ -9,7 +9,7 @@ import { NodeInput, NodeOutput } from "./io";
 
 import CustomDialog from "../dialog";
 import { IOType } from "../../states/nodeio.t";
-import { BodyDataRendererForIo } from "./body_data_renderer";
+import { useBodyDataRendererForIo } from "./body_data_renderer";
 import { DynamicComponentLoader } from "../datarenderer/rendermappings";
 import ProgressBar from "../utils/progressbar";
 import { PlayCircleFilledIcon, LanIcon } from "../assets/fontawsome";
@@ -70,9 +70,7 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
     ? node_data.io[node_data.render_options?.data?.src]
     : undefined;
 
-  const [pvhandle, overlayhandle] = io
-    ? BodyDataRendererForIo(io)
-    : [undefined, undefined];
+  const [pvhandle, overlayhandle] = useBodyDataRendererForIo(io);
 
   return (
     <div
@@ -93,7 +91,9 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
             }
           }}
         >
-          {<DynamicComponentLoader component={overlayhandle} io={io} />}
+          {overlayhandle && (
+            <DynamicComponentLoader component={overlayhandle} io={io} />
+          )}
         </CustomDialog>
       )}
     </div>

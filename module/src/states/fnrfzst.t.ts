@@ -83,13 +83,18 @@ interface LargeMessageHint {
   msg_id: string;
 }
 
+interface PongMessage {
+  type: "pong";
+}
+
 type JSONMessage =
   | ProgressStateMessage
   | ResultMessage
   | ErrorMessage
   | NodeSpaceEvent
   | WorkerEvent
-  | LargeMessageHint;
+  | LargeMessageHint
+  | PongMessage;
 
 interface WorkerRepresentation {
   uuid: string;
@@ -184,6 +189,7 @@ interface FuncNodesReactFlowZustandInterface {
 
   clear_all: () => void;
   center_node: (node_id: string | string[]) => void;
+  center_all: () => void;
   dev_settings: DevSettings;
   logger: Logger;
 }

@@ -160,6 +160,10 @@ interface availableModule {
   releases: string[];
 }
 
+type Restriction = ">=" | "==" | "<=" | "<" | ">";
+const POSSIBLE_Restrictions: Restriction[] = [">=", "==", "<=", "<", ">"];
+const _DEFAULT_Restriction: Restriction = ">=";
+
 const _ModuleLinks = ({
   availableModule,
 }: {
@@ -236,7 +240,8 @@ const _VersionSelector = ({
     availableModule.version || "latest"
   );
 
-  const [selectedRestriction, setSelectedRestriction] = useState(">=");
+  const [selectedRestriction, setSelectedRestriction] =
+    useState<Restriction>(_DEFAULT_Restriction);
 
   const updateSelectedRelease = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const version = e.target.value;
@@ -248,7 +253,9 @@ const _VersionSelector = ({
   const updateSelectedRestriction = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setSelectedRestriction(e.target.value);
+    if (e.target.value === selectedRestriction) return;
+    if (!POSSIBLE_Restrictions.includes(e.target.value as Restriction)) return;
+    setSelectedRestriction(e.target.value as Restriction);
     if (selectedRelease !== "latest")
       on_change(e.target.value + selectedRelease);
   };
@@ -263,9 +270,11 @@ const _VersionSelector = ({
   return (
     <>
       <select value={selectedRestriction} onChange={updateSelectedRestriction}>
-        <option value=">=">&gt;=</option>
-        <option value="==">==</option>
-        <option value="<=">&lt;=</option>
+        {POSSIBLE_Restrictions.map((restriction) => (
+          <option key={restriction} value={restriction}>
+            {restriction}
+          </option>
+        ))}
       </select>
       <select onChange={updateSelectedRelease} value={selectedRelease}>
         {availableModule["releases"] &&
@@ -289,7 +298,7 @@ const ActiveModule = ({
   on_update: (module: availableModule, release: string) => void;
 }) => {
   const [selectedRelease, setSelectedRelease] = useState(
-    availableModule.version || "latest"
+    _DEFAULT_Restriction + availableModule.version || "latest"
   );
 
   return (
@@ -335,8 +344,9 @@ const AddableModule = ({
   on_add: (module: availableModule, release: string) => void;
 }) => {
   const [selectedRelease, setSelectedRelease] = useState(
-    availableModule.version || "latest"
+    _DEFAULT_Restriction + availableModule.version || "latest"
   );
+
   return (
     <div className="addable-module">
       <div className="module-name">
@@ -371,7 +381,7 @@ const InstallableModule = ({
   on_add: (module: availableModule, release: string) => void;
 }) => {
   const [selectedRelease, setSelectedRelease] = useState(
-    availableModule.version || "latest"
+    _DEFAULT_Restriction + availableModule.version || "latest"
   );
 
   return (
