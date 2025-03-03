@@ -4,7 +4,7 @@ import { Handle, HandleProps } from "reactflow";
 import * as React from "react";
 import { useState } from "react";
 import CustomDialog from "../../dialog";
-import { PreviewHandleDataRendererForIo } from "./handle_renderer";
+import { usePreviewHandleDataRendererForIo } from "./handle_renderer";
 import { IOType, SerializedType } from "../../../states/nodeio.t";
 import { DynamicComponentLoader } from "../../datarenderer/rendermappings";
 import { LockIcon, LockOpenIcon } from "../../assets/fontawsome";
@@ -72,9 +72,7 @@ const HandleWithPreview = ({
   const [opened, setOpened] = useState(false);
   const fnrf_zst = React.useContext(FuncNodesContext);
 
-  const [pvhandle, overlayhandle] = io
-    ? PreviewHandleDataRendererForIo(io)
-    : [undefined, undefined];
+  const [pvhandle, overlayhandle] = usePreviewHandleDataRendererForIo(io);
 
   const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
 

@@ -7,27 +7,28 @@ import { IOType } from "../../states/nodeio.t";
 import { FuncNodesContext } from "../funcnodesreactflow";
 import { pick_best_io_type } from "./io/io";
 
-import { DataOverlayRendererForIo } from "../datarenderer/data_renderer_overlay";
+import { useDataOverlayRendererForIo } from "../datarenderer/data_renderer_overlay";
 
 import { RenderMappingContext } from "../datarenderer/rendermappings";
 import { DictOutput } from "../datarenderer/default_preview_renderer";
 
-const BodyDataRendererForIo = (
-  io: IOType
+const useBodyDataRendererForIo = (
+  io?: IOType
 ): [
-  ({ io }: { io: IOType }) => JSX.Element,
-  ({ io }: { io: IOType }) => JSX.Element
+  (({ io }: { io: IOType }) => JSX.Element) | undefined,
+  (({ io }: { io: IOType }) => JSX.Element) | undefined
 ] => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
-  const render: RenderOptions = fnrf_zst.render_options();
-
-  const [typestring] = pick_best_io_type(io.type, render.typemap || {});
-
-  const overlayhandle = DataOverlayRendererForIo(io);
-
+  const overlayhandle = useDataOverlayRendererForIo(io);
   const { DataPreviewViewRenderer, DataViewRenderer } =
     useContext(RenderMappingContext);
+
+  const render: RenderOptions = fnrf_zst.render_options();
+
+  if (io === undefined) return [undefined, overlayhandle];
+
+  const [typestring] = pick_best_io_type(io.type, render.typemap || {});
 
   if (!typestring) return [DictOutput, overlayhandle];
 
@@ -40,4 +41,4 @@ const BodyDataRendererForIo = (
   return [DictOutput, overlayhandle];
 };
 
-export { BodyDataRendererForIo };
+export { useBodyDataRendererForIo };
