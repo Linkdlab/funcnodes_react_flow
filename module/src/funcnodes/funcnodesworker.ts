@@ -1101,17 +1101,27 @@ class FuncNodesWorker {
   }
 
   async update_from_export(data: string) {
-    const res = await this._send_cmd({
-      cmd: "update_from_export",
-      kwargs: { data },
-      wait_for_response: true,
-      response_timeout: 10 * 60 * 1000, // 10 minutes
-      unique: true,
-    });
-    this.stepwise_fullsync().then(() => {
+    const centerhook = this.add_hook("node_added", async ({}) => {
       this._zustand?.center_all();
     });
-    return res;
+    try {
+      const res = await this._send_cmd({
+        cmd: "update_from_export",
+        kwargs: { data },
+        wait_for_response: true,
+        response_timeout: 10 * 60 * 1000, // 10 minutes
+        unique: true,
+      });
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      });
+      await this.stepwise_fullsync();
+      return res;
+    } finally {
+      centerhook();
+    }
   }
 }
 
