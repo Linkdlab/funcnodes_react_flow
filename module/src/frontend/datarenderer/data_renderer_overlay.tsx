@@ -10,19 +10,20 @@ import { pick_best_io_type } from "../node/io/io";
 import { RenderMappingContext } from "./rendermappings";
 import { DictOutput } from "./default_preview_renderer";
 
-const DataOverlayRendererForIo = (
-  io: IOType
-): (({ io }: { io: IOType }) => JSX.Element) => {
+const useDataOverlayRendererForIo = (
+  io?: IOType
+): (({ io }: { io: IOType }) => JSX.Element) | undefined => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
+  const { DataOverlayRenderer, DataPreviewViewRenderer } =
+    useContext(RenderMappingContext);
+
+  if (io === undefined) return undefined;
   const render: RenderOptions = fnrf_zst.render_options();
 
   const [typestring] = pick_best_io_type(io.type, render.typemap || {});
 
   if (!typestring) return DictOutput;
-
-  const { DataOverlayRenderer, DataPreviewViewRenderer } =
-    useContext(RenderMappingContext);
 
   if (DataOverlayRenderer[typestring]) return DataOverlayRenderer[typestring];
 
@@ -32,4 +33,4 @@ const DataOverlayRendererForIo = (
   return DictOutput;
 };
 
-export { DataOverlayRendererForIo };
+export { useDataOverlayRendererForIo };

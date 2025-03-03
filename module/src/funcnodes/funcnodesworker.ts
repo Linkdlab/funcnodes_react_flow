@@ -50,6 +50,7 @@ class FuncNodesWorker {
   _local_nodeupdates: Map<string, PartialNodeType>;
   _nodeupdatetimer: ReturnType<typeof setTimeout>;
   uuid: string;
+  _responsive: boolean;
 
   state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
   on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
@@ -58,6 +59,9 @@ class FuncNodesWorker {
     string,
     ((event: NodeSpaceEvent) => Promise<NodeSpaceEvent>)[]
   > = new Map();
+
+  _last_pong: number;
+  _unique_cmd_outs: { [key: string]: Promise<any> } = {};
 
   on_error: (error: any) => void;
   constructor(data: WorkerProps) {
@@ -83,6 +87,28 @@ class FuncNodesWorker {
     } else {
       this.on_sync_complete = async () => {};
     }
+
+    this._responsive = false;
+    this._last_pong = Date.now() - 1000 * 60 * 60; // set the last pong to 1 hour ago
+    // send a ping message every 1 seconds
+    setInterval(() => {
+      if (!this.is_open) return;
+      this.send({ type: "ping" });
+    }, 1000);
+
+    // regular check if the last pong is less than 5 seconds ago
+    setInterval(() => {
+      if (Date.now() - this._last_pong > 5000) {
+        this._responsive = false;
+      } else {
+        this._responsive = true;
+      }
+    }, 5000);
+  }
+
+  _receive_pong() {
+    this._last_pong = Date.now();
+    this._responsive = true;
   }
 
   set_zustand(zustand: FuncNodesReactFlowZustandInterface) {
@@ -176,6 +202,7 @@ class FuncNodesWorker {
       cmd: "get_library",
       wait_for_response: true,
       retries: 2,
+      unique: true,
     });
 
     this._zustand.lib.libstate.getState().set({
@@ -189,6 +216,7 @@ class FuncNodesWorker {
     const resp = await this._send_cmd({
       cmd: "get_worker_dependencies",
       wait_for_response: true,
+      unique: true,
     });
     this._zustand.lib.libstate.getState().set({
       external_worker: resp as any,
@@ -201,6 +229,7 @@ class FuncNodesWorker {
     const resp = (await this._send_cmd({
       cmd: "get_plugin_keys",
       wait_for_response: true,
+      unique: true,
       kwargs: { type: "react" },
     })) as string[];
     for (const key of resp) {
@@ -208,6 +237,7 @@ class FuncNodesWorker {
         cmd: "get_plugin",
         wait_for_response: true,
         kwargs: { key, type: "react" },
+        unique: true,
       });
       if (plugin.js) {
         for (const js of plugin.js) {
@@ -255,6 +285,7 @@ class FuncNodesWorker {
     const resp = (await this._send_cmd({
       cmd: "view_state",
       wait_for_response: true,
+      unique: true,
     })) as ViewState;
 
     if (resp.renderoptions)
@@ -283,6 +314,7 @@ class FuncNodesWorker {
       cmd: "get_nodes",
       kwargs: { with_frontend: true },
       wait_for_response: true,
+      unique: true,
     })) as NodeType[];
     for (const node of resp) {
       this._receive_node_added(node as NodeType);
@@ -291,6 +323,7 @@ class FuncNodesWorker {
     const edges = (await this._send_cmd({
       cmd: "get_edges",
       wait_for_response: true,
+      unique: true,
     })) as [string, string, string, string][];
 
     for (const edge of edges) {
@@ -304,7 +337,10 @@ class FuncNodesWorker {
     let resp: FullState;
     while (true) {
       try {
-        resp = (await this._send_cmd({ cmd: "full_state" })) as FullState;
+        resp = (await this._send_cmd({
+          cmd: "full_state",
+          unique: true,
+        })) as FullState;
         break;
       } catch (e) {
         this._zustand.logger.error("Error in fullsync", e);
@@ -499,11 +535,15 @@ class FuncNodesWorker {
   }
 
   clear() {
-    return this._send_cmd({ cmd: "clear" });
+    return this._send_cmd({ cmd: "clear", unique: true });
   }
 
   save() {
-    return this._send_cmd({ cmd: "save", wait_for_response: true });
+    return this._send_cmd({
+      cmd: "save",
+      wait_for_response: true,
+      unique: true,
+    });
   }
 
   load(data: any) {
@@ -568,6 +608,7 @@ class FuncNodesWorker {
     const res = await this._send_cmd({
       cmd: "get_runstate",
       wait_for_response: true,
+      unique: true,
     });
     return res;
   }
@@ -578,12 +619,14 @@ class FuncNodesWorker {
     wait_for_response = true,
     response_timeout = 5000,
     retries = 2,
+    unique = false,
   }: {
     cmd: string;
     kwargs?: any;
     wait_for_response?: boolean;
     response_timeout?: number;
     retries?: number;
+    unique?: boolean;
   }) {
     const msg: CmdMessage = {
       type: "cmd",
@@ -591,7 +634,19 @@ class FuncNodesWorker {
       kwargs: kwargs || {},
     };
 
+    await new Promise<void>(async (resolve) => {
+      if (this._responsive) return resolve();
+      const interval = setInterval(() => {
+        if (this._responsive) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+    });
     if (wait_for_response) {
+      if (unique && this._unique_cmd_outs[msg.cmd] !== undefined) {
+        return this._unique_cmd_outs[msg.cmd];
+      }
       if (retries < 0) retries = 0;
       const wait_for_response_callback = async (): Promise<any> => {
         let response;
@@ -620,15 +675,24 @@ class FuncNodesWorker {
             response = await promise;
             break;
           } catch (e) {
-            if (retries === 0) throw e;
+            if (retries === 0) {
+              delete this._unique_cmd_outs[msg.cmd];
+              throw e;
+            }
             retries -= 1;
             continue;
           }
         }
+        delete this._unique_cmd_outs[msg.cmd];
+
         return response;
       };
 
-      return wait_for_response_callback();
+      const awaiter = wait_for_response_callback();
+
+      if (unique) this._unique_cmd_outs[msg.cmd] = awaiter;
+
+      return awaiter;
     }
     return this.send(msg);
   }
@@ -872,7 +936,12 @@ class FuncNodesWorker {
 
   async receive(data: JSONMessage) {
     let promise;
+    this._last_pong = Date.now();
+    this._responsive = true;
     switch (data.type) {
+      case "pong":
+        this._receive_pong();
+        return;
       case "nsevent":
         return await this.receive_nodespace_event(data);
       case "result":
@@ -993,6 +1062,7 @@ class FuncNodesWorker {
     const res = await this._send_cmd({
       cmd: "get_available_modules",
       wait_for_response: true,
+      unique: true,
     });
     return res;
   }
@@ -1031,13 +1101,27 @@ class FuncNodesWorker {
   }
 
   async update_from_export(data: string) {
-    const res = await this._send_cmd({
-      cmd: "update_from_export",
-      kwargs: { data },
-      wait_for_response: true,
+    const centerhook = this.add_hook("node_added", async ({}) => {
+      this._zustand?.center_all();
     });
-    this.stepwise_fullsync();
-    return res;
+    try {
+      const res = await this._send_cmd({
+        cmd: "update_from_export",
+        kwargs: { data },
+        wait_for_response: true,
+        response_timeout: 10 * 60 * 1000, // 10 minutes
+        unique: true,
+      });
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      });
+      await this.stepwise_fullsync();
+      return res;
+    } finally {
+      centerhook();
+    }
   }
 }
 

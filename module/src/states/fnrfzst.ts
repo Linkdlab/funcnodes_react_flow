@@ -548,6 +548,10 @@ const FuncNodesReactFlowZustand = (
     reactflowRef: null,
     clear_all: clear_all,
     center_node: center_node,
+    center_all: () => {
+      console.log("center all", iterf.rf_instance);
+      iterf.rf_instance?.fitView({ padding: 0.2 });
+    },
     set_progress: (progress: ProgressState) => {
       if (progress.message === "") {
         return iterf.auto_progress();
