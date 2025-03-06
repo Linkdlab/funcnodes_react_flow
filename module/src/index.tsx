@@ -22,6 +22,7 @@ import {
   DataPreviewViewRendererType,
   DataViewRendererType,
   RenderMappingProvider,
+  RenderMappingContext,
 } from "./frontend/datarenderer/rendermappings";
 import { NodeType, PartialNodeType } from "./states/node.t";
 import {
@@ -37,6 +38,7 @@ import { ConsoleLogger } from "./utils/logger";
 import { remoteUrlToBase64 } from "./utils/data";
 import { v4 as uuidv4 } from "uuid";
 import { LimitedDeepPartial } from "./utils/objects";
+import { NodeContext } from "./frontend/node/node";
 
 const FuncNodes = (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => {
   const logger = new ConsoleLogger("FuncNodes", props.debug ? "debug" : "info");
@@ -98,6 +100,8 @@ export {
   deep_update,
   FuncNodesWorker,
   FuncnodesReactFlow,
+  NodeContext,
+  RenderMappingContext,
 };
 export type {
   IOType,
