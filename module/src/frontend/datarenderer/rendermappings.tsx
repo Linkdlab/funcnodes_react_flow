@@ -28,7 +28,7 @@ import RendererPlugin from "../../plugin/renderer";
 import FuncNodesReactPlugin from "../../plugin";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 import { NodeType } from "../../states/node.t";
-import { NodeContext } from "../node/node";
+import { NodeContext, NodeContextType } from "../node/node";
 
 const _Inputrenderer: {
   [key: string]: InputRendererType | undefined;
@@ -89,6 +89,13 @@ const _NodeRenderer: {
   [key: string]: NodeRendererType | undefined;
 } = {};
 
+type NodeHooksType = (({
+  nodecontext,
+}: {
+  nodecontext: NodeContextType;
+}) => void)[];
+const _NodeHooks: { [key: string]: NodeHooksType | undefined } = {};
+
 type NodeContextExtenderType = ({ node_data }: { node_data: NodeType }) => {
   [key: string]: any;
 };
@@ -123,6 +130,9 @@ interface RenderMappingState {
   };
   NodeRenderer: {
     [key: string]: NodeRendererType | undefined;
+  };
+  NodeHooks: {
+    [key: string]: NodeHooksType | undefined;
   };
 }
 
@@ -210,6 +220,15 @@ interface extend_node_renderer_action {
   options?: DispatchOptions;
 }
 
+interface extend_node_hooks_action {
+  type: "EXTEND_NODE_HOOKS";
+  payload: {
+    type: string;
+    component: NodeHooksType;
+  };
+  options?: DispatchOptions;
+}
+
 type renderMappingAction =
   | extend_input_renderer_action
   | extend_output_renderer_action
@@ -219,7 +238,8 @@ type renderMappingAction =
   | extend_data_view_renderer_action
   | extend_from_plugin_action
   | extend_node_context_extender_action
-  | extend_node_renderer_action;
+  | extend_node_renderer_action
+  | extend_node_hooks_action;
 
 const _initialRenderMappings: RenderMappingState = {
   Inputrenderer: _Inputrenderer,
@@ -231,6 +251,7 @@ const _initialRenderMappings: RenderMappingState = {
   InLineRenderer: _InLineGenerators,
   NodeContextExtenders: _NodeContextExtenders,
   NodeRenderer: _NodeRenderer,
+  NodeHooks: _NodeHooks,
 };
 
 const renderMappingReducer = (
@@ -331,6 +352,17 @@ const renderMappingReducer = (
           [action.payload.type]: action.payload.component,
         },
       };
+    case "EXTEND_NODE_HOOKS":
+      if (!overwrite && state.NodeHooks[action.payload.type]) {
+        return state;
+      }
+      return {
+        ...state,
+        NodeHooks: {
+          ...state.NodeHooks,
+          [action.payload.type]: action.payload.component,
+        },
+      };
     case "EXTEND_FROM_PLUGIN":
       let something_new = false;
 
@@ -358,6 +390,7 @@ const renderMappingReducer = (
           state.NodeContextExtenders,
         ],
         [action.payload.plugin.node_renderers || {}, state.NodeRenderer],
+        [action.payload.plugin.node_hooks || {}, state.NodeHooks],
       ];
 
       for (const [new_renderer, old_renderer] of checkpairs) {
@@ -542,6 +575,18 @@ const RenderMappingProvider = ({
     });
   };
 
+  const extendNodeHooks = (
+    type: string,
+    component: NodeHooksType,
+    options?: DispatchOptions
+  ) => {
+    dispatch({
+      type: "EXTEND_NODE_HOOKS",
+      payload: { type, component },
+      options,
+    });
+  };
+
   const extendFromPlugin = (
     plugin: RendererPlugin,
     options?: DispatchOptions
@@ -575,6 +620,7 @@ const RenderMappingProvider = ({
         InLineRenderer: state.InLineRenderer,
         NodeContextExtenders: state.NodeContextExtenders,
         NodeRenderer: state.NodeRenderer,
+        NodeHooks: state.NodeHooks,
         extendInputRenderMapping,
         extendOutputRenderMapping,
         extendHandlePreviewRenderMapping,
@@ -583,6 +629,7 @@ const RenderMappingProvider = ({
         extendDataViewRenderMapping,
         extendNodeContextExtender,
         extendNodeRenderer,
+        extendNodeHooks,
         extendFromPlugin,
       }}
     >
@@ -601,6 +648,7 @@ const RenderMappingContext = createContext({
   InLineRenderer: _initialRenderMappings.InLineRenderer,
   NodeContextExtenders: _initialRenderMappings.NodeContextExtenders,
   NodeRenderer: _initialRenderMappings.NodeRenderer,
+  NodeHooks: _initialRenderMappings.NodeHooks,
   extendInputRenderMapping: (
     _type: string,
     _component: InputRendererType,
@@ -641,6 +689,11 @@ const RenderMappingContext = createContext({
     _component: NodeRendererType,
     _options: DispatchOptions
   ) => {},
+  extendNodeHooks: (
+    _type: string,
+    _component: NodeHooksType,
+    _options: DispatchOptions
+  ) => {},
   extendFromPlugin: (_plugin: RendererPlugin, _options: DispatchOptions) => {},
 });
 
@@ -669,6 +722,9 @@ export type {
   extend_data_preview_renderer_action,
   extend_data_view_renderer_action,
   extend_from_plugin_action,
+  extend_node_context_extender_action,
+  extend_node_renderer_action,
+  extend_node_hooks_action,
   renderMappingAction,
   HandlePreviewRendererType,
   DataOverlayRendererType,
@@ -676,4 +732,5 @@ export type {
   DataViewRendererType,
   NodeRendererType,
   NodeContextExtenderType,
+  NodeHooksType,
 };

@@ -186,6 +186,27 @@ export const useDefaultNodeInjection = (storedata: NodeType) => {
     useContext(FuncNodesContext);
   const [visualTrigger, setVisualTrigger] = useState(false);
 
+  const renderplugins = useContext(RenderMappingContext);
+
+  //load context
+  const nodeContextExtender =
+    renderplugins.NodeContextExtenders[storedata.node_id];
+  const additionalContext =
+    nodeContextExtender?.({ node_data: storedata }) || {};
+
+  const nodecontext = {
+    ...additionalContext,
+    node_data: storedata,
+  };
+
+  //load hooks
+  const nodeHooks = renderplugins.NodeHooks[storedata.node_id];
+  for (const hook of nodeHooks || []) {
+    hook({ nodecontext: nodecontext });
+  }
+
+  // node_hooks
+
   // Call a hook when the node is mounted.
   useEffect(() => {
     fnrf_zst.worker?.call_hooks("node_mounted", storedata.id);
@@ -202,7 +223,7 @@ export const useDefaultNodeInjection = (storedata: NodeType) => {
     return () => clearTimeout(timeoutId);
   }, [storedata.in_trigger, visualTrigger]);
 
-  return { visualTrigger };
+  return { visualTrigger, nodecontext };
 };
 
 interface NodeContextType {
@@ -214,20 +235,10 @@ const NodeContext = React.createContext<NodeContextType | null>(null);
 const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
   // Use the NodeStore to get the data for the node.
   const storedata = data.UseNodeStore();
-  const renderplugins = useContext(RenderMappingContext);
 
   const collapsed = storedata.properties["frontend:collapsed"] || false;
 
-  const { visualTrigger } = useDefaultNodeInjection(storedata);
-
-  const nodeContextExtender =
-    renderplugins.NodeContextExtenders[storedata.node_id];
-  const additionalContext =
-    nodeContextExtender?.({ node_data: storedata }) || {};
-  const nodecontext = {
-    ...additionalContext,
-    node_data: storedata,
-  };
+  const { visualTrigger, nodecontext } = useDefaultNodeInjection(storedata);
 
   return (
     <NodeContext.Provider value={nodecontext}>

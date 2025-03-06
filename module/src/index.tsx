@@ -38,7 +38,7 @@ import { ConsoleLogger } from "./utils/logger";
 import { remoteUrlToBase64 } from "./utils/data";
 import { v4 as uuidv4 } from "uuid";
 import { LimitedDeepPartial } from "./utils/objects";
-import { NodeContext } from "./frontend/node/node";
+import { NodeContext, NodeContextType } from "./frontend/node/node";
 
 const FuncNodes = (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => {
   const logger = new ConsoleLogger("FuncNodes", props.debug ? "debug" : "info");
@@ -120,4 +120,5 @@ export type {
   ProgressState,
   WorkerProps,
   FuncnodesReactFlowProps,
+  NodeContextType,
 };

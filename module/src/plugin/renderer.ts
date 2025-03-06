@@ -7,6 +7,7 @@ import {
   DataViewRendererType,
   NodeRendererType,
   NodeContextExtenderType,
+  NodeHooksType,
 } from "../frontend/datarenderer/rendermappings";
 import { InputRendererType, OutputRendererType } from "../states/nodeio.t";
 ("../states/nodeio.t");
@@ -20,6 +21,7 @@ interface RendererPlugin {
   data_view_renderers?: { [key: string]: DataViewRendererType };
   node_renderers?: { [key: string]: NodeRendererType };
   node_context_extenders?: { [key: string]: NodeContextExtenderType };
+  node_hooks?: { [key: string]: NodeHooksType };
 }
 
 export default RendererPlugin;
