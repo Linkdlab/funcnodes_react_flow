@@ -10,7 +10,10 @@ import { NodeInput, NodeOutput } from "./io";
 import CustomDialog from "../dialog";
 import { IOType } from "../../states/nodeio.t";
 import { useBodyDataRendererForIo } from "./body_data_renderer";
-import { DynamicComponentLoader } from "../datarenderer/rendermappings";
+import {
+  DynamicComponentLoader,
+  RenderMappingContext,
+} from "../datarenderer/rendermappings";
 import ProgressBar from "../utils/progressbar";
 import { PlayCircleFilledIcon, LanIcon } from "../assets/fontawsome";
 import { ExpandLessIcon } from "../assets/fontawsome";
@@ -202,16 +205,32 @@ export const useDefaultNodeInjection = (storedata: NodeType) => {
   return { visualTrigger };
 };
 
+interface NodeContextType {
+  node_data: NodeType;
+  [key: string]: any;
+}
+const NodeContext = React.createContext<NodeContextType | null>(null);
+
 const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
   // Use the NodeStore to get the data for the node.
   const storedata = data.UseNodeStore();
+  const renderplugins = useContext(RenderMappingContext);
 
   const collapsed = storedata.properties["frontend:collapsed"] || false;
 
   const { visualTrigger } = useDefaultNodeInjection(storedata);
 
+  const nodeContextExtender =
+    renderplugins.NodeContextExtenders[storedata.node_id];
+  const additionalContext =
+    nodeContextExtender?.({ node_data: storedata }) || {};
+  const nodecontext = {
+    ...additionalContext,
+    node_data: storedata,
+  };
+
   return (
-    <>
+    <NodeContext.Provider value={nodecontext}>
       {/* <NodeResizeControl
         minWidth={100}
         minHeight={100}
@@ -231,9 +250,10 @@ const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
         {collapsed ? null : <NodeBody node_data={storedata} />}
         <NodeFooter node_data={storedata} />
       </div>
-    </>
+    </NodeContext.Provider>
   );
 };
 
 export default DefaultNode;
-export { NodeName };
+export { NodeName, NodeContext };
+export type { NodeContextType };

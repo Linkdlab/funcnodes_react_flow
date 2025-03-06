@@ -80,6 +80,7 @@ interface NodeProperties {
 
 interface NodeType {
   id: string;
+  node_id: string;
   node_name: string;
   io: { [key: string]: IOType };
   frontend?: {

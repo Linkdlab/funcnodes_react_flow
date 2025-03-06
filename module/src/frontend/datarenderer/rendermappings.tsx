@@ -27,9 +27,11 @@ import RendererPlugin from "../../plugin/renderer";
 
 import FuncNodesReactPlugin from "../../plugin";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
+import { NodeType } from "../../states/node.t";
+import { NodeContext } from "../node/node";
 
 const _Inputrenderer: {
-  [key: string]: InputRendererType;
+  [key: string]: InputRendererType | undefined;
 } = {
   float: FloatInput,
   int: IntegerInput,
@@ -42,32 +44,32 @@ const _Inputrenderer: {
   bytes: Base64BytesOutput,
 };
 const _Outputrenderer: {
-  [key: string]: OutputRendererType;
+  [key: string]: OutputRendererType | undefined;
 } = {};
 
 type HandlePreviewRendererType = ({ io }: { io: IOType }) => JSX.Element;
 const _HandlePreviewGenerators: {
-  [key: string]: HandlePreviewRendererType;
+  [key: string]: HandlePreviewRendererType | undefined;
 } = {
   bytes: Base64BytesOutput,
 };
 
 type InLineRendererType = ({ io }: { io: IOType }) => string;
 const _InLineGenerators: {
-  [key: string]: InLineRendererType;
+  [key: string]: InLineRendererType | undefined;
 } = {
   bytes: Base64BytesInLineOutput,
 };
 
 type DataOverlayRendererType = ({ io }: { io: IOType }) => JSX.Element;
 const _DataOverlayViewGenerators: {
-  [key: string]: DataOverlayRendererType;
+  [key: string]: DataOverlayRendererType | undefined;
 } = {};
 
 type DataPreviewViewRendererType = ({ io }: { io: IOType }) => JSX.Element;
 
 const _DataPreviewViewRenderer: {
-  [key: string]: DataPreviewViewRendererType;
+  [key: string]: DataPreviewViewRendererType | undefined;
 } = {
   string: SingleValueOutput,
   table: TableOutput,
@@ -78,32 +80,49 @@ const _DataPreviewViewRenderer: {
 };
 
 type DataViewRendererType = ({ io }: { io: IOType }) => JSX.Element;
-
 const _DataViewRenderer: {
-  [key: string]: DataViewRendererType;
+  [key: string]: DataViewRendererType | undefined;
+} = {};
+
+type NodeRendererType = ({ node_data }: { node_data: NodeType }) => JSX.Element;
+const _NodeRenderer: {
+  [key: string]: NodeRendererType | undefined;
+} = {};
+
+type NodeContextExtenderType = ({ node_data }: { node_data: NodeType }) => {
+  [key: string]: any;
+};
+const _NodeContextExtenders: {
+  [key: string]: NodeContextExtenderType | undefined;
 } = {};
 
 interface RenderMappingState {
   Inputrenderer: {
-    [key: string]: InputRendererType;
+    [key: string]: InputRendererType | undefined;
   };
   Outputrenderer: {
-    [key: string]: OutputRendererType;
+    [key: string]: OutputRendererType | undefined;
   };
   HandlePreviewRenderer: {
-    [key: string]: HandlePreviewRendererType;
+    [key: string]: HandlePreviewRendererType | undefined;
   };
   DataOverlayRenderer: {
-    [key: string]: DataOverlayRendererType;
+    [key: string]: DataOverlayRendererType | undefined;
   };
   DataPreviewViewRenderer: {
-    [key: string]: DataPreviewViewRendererType;
+    [key: string]: DataPreviewViewRendererType | undefined;
   };
   DataViewRenderer: {
-    [key: string]: DataViewRendererType;
+    [key: string]: DataViewRendererType | undefined;
   };
   InLineRenderer: {
-    [key: string]: InLineRendererType;
+    [key: string]: InLineRendererType | undefined;
+  };
+  NodeContextExtenders: {
+    [key: string]: NodeContextExtenderType | undefined;
+  };
+  NodeRenderer: {
+    [key: string]: NodeRendererType | undefined;
   };
 }
 
@@ -173,6 +192,24 @@ interface extend_from_plugin_action {
   options?: DispatchOptions;
 }
 
+interface extend_node_context_extender_action {
+  type: "EXTEND_NODE_CONTEXT_EXTENDER";
+  payload: {
+    type: string;
+    component: NodeContextExtenderType;
+  };
+  options?: DispatchOptions;
+}
+
+interface extend_node_renderer_action {
+  type: "EXTEND_NODE_RENDERER";
+  payload: {
+    type: string;
+    component: NodeRendererType;
+  };
+  options?: DispatchOptions;
+}
+
 type renderMappingAction =
   | extend_input_renderer_action
   | extend_output_renderer_action
@@ -180,7 +217,9 @@ type renderMappingAction =
   | extend_data_overlay_renderer_action
   | extend_data_preview_renderer_action
   | extend_data_view_renderer_action
-  | extend_from_plugin_action;
+  | extend_from_plugin_action
+  | extend_node_context_extender_action
+  | extend_node_renderer_action;
 
 const _initialRenderMappings: RenderMappingState = {
   Inputrenderer: _Inputrenderer,
@@ -190,6 +229,8 @@ const _initialRenderMappings: RenderMappingState = {
   DataPreviewViewRenderer: _DataPreviewViewRenderer,
   DataViewRenderer: _DataViewRenderer,
   InLineRenderer: _InLineGenerators,
+  NodeContextExtenders: _NodeContextExtenders,
+  NodeRenderer: _NodeRenderer,
 };
 
 const renderMappingReducer = (
@@ -268,6 +309,28 @@ const renderMappingReducer = (
           [action.payload.type]: action.payload.component,
         },
       };
+    case "EXTEND_NODE_CONTEXT_EXTENDER":
+      if (!overwrite && state.NodeContextExtenders[action.payload.type]) {
+        return state;
+      }
+      return {
+        ...state,
+        NodeContextExtenders: {
+          ...state.NodeContextExtenders,
+          [action.payload.type]: action.payload.component,
+        },
+      };
+    case "EXTEND_NODE_RENDERER":
+      if (!overwrite && state.NodeRenderer[action.payload.type]) {
+        return state;
+      }
+      return {
+        ...state,
+        NodeRenderer: {
+          ...state.NodeRenderer,
+          [action.payload.type]: action.payload.component,
+        },
+      };
     case "EXTEND_FROM_PLUGIN":
       let something_new = false;
 
@@ -290,6 +353,11 @@ const renderMappingReducer = (
           action.payload.plugin.data_view_renderers || {},
           state.DataViewRenderer,
         ],
+        [
+          action.payload.plugin.node_context_extenders || {},
+          state.NodeContextExtenders,
+        ],
+        [action.payload.plugin.node_renderers || {}, state.NodeRenderer],
       ];
 
       for (const [new_renderer, old_renderer] of checkpairs) {
@@ -450,6 +518,30 @@ const RenderMappingProvider = ({
     });
   };
 
+  const extendNodeContextExtender = (
+    type: string,
+    component: NodeContextExtenderType,
+    options?: DispatchOptions
+  ) => {
+    dispatch({
+      type: "EXTEND_NODE_CONTEXT_EXTENDER",
+      payload: { type, component },
+      options,
+    });
+  };
+
+  const extendNodeRenderer = (
+    type: string,
+    component: NodeRendererType,
+    options?: DispatchOptions
+  ) => {
+    dispatch({
+      type: "EXTEND_NODE_RENDERER",
+      payload: { type, component },
+      options,
+    });
+  };
+
   const extendFromPlugin = (
     plugin: RendererPlugin,
     options?: DispatchOptions
@@ -466,7 +558,7 @@ const RenderMappingProvider = ({
       if (renderplugin) extendFromPlugin(renderplugin);
       const renderpluginfactory = plugins[plugin].renderpluginfactory;
       if (renderpluginfactory) {
-        extendFromPlugin(renderpluginfactory({ React, fnrf_zst }));
+        extendFromPlugin(renderpluginfactory({ React, fnrf_zst, NodeContext }));
       }
     }
   }, [plugins]);
@@ -481,12 +573,16 @@ const RenderMappingProvider = ({
         DataPreviewViewRenderer: state.DataPreviewViewRenderer,
         DataViewRenderer: state.DataViewRenderer,
         InLineRenderer: state.InLineRenderer,
+        NodeContextExtenders: state.NodeContextExtenders,
+        NodeRenderer: state.NodeRenderer,
         extendInputRenderMapping,
         extendOutputRenderMapping,
         extendHandlePreviewRenderMapping,
         extendDataOverlayRenderMapping,
         extendDataPreviewRenderMapping,
         extendDataViewRenderMapping,
+        extendNodeContextExtender,
+        extendNodeRenderer,
         extendFromPlugin,
       }}
     >
@@ -503,6 +599,8 @@ const RenderMappingContext = createContext({
   DataPreviewViewRenderer: _initialRenderMappings.DataPreviewViewRenderer,
   DataViewRenderer: _initialRenderMappings.DataViewRenderer,
   InLineRenderer: _initialRenderMappings.InLineRenderer,
+  NodeContextExtenders: _initialRenderMappings.NodeContextExtenders,
+  NodeRenderer: _initialRenderMappings.NodeRenderer,
   extendInputRenderMapping: (
     _type: string,
     _component: InputRendererType,
@@ -531,6 +629,16 @@ const RenderMappingContext = createContext({
   extendDataViewRenderMapping: (
     _type: string,
     _component: DataViewRendererType,
+    _options: DispatchOptions
+  ) => {},
+  extendNodeContextExtender: (
+    _type: string,
+    _component: NodeContextExtenderType,
+    _options: DispatchOptions
+  ) => {},
+  extendNodeRenderer: (
+    _type: string,
+    _component: NodeRendererType,
     _options: DispatchOptions
   ) => {},
   extendFromPlugin: (_plugin: RendererPlugin, _options: DispatchOptions) => {},
@@ -566,4 +674,6 @@ export type {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
   DataViewRendererType,
+  NodeRendererType,
+  NodeContextExtenderType,
 };

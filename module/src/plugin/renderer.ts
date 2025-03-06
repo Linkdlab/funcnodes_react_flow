@@ -5,6 +5,8 @@ import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
   DataViewRendererType,
+  NodeRendererType,
+  NodeContextExtenderType,
 } from "../frontend/datarenderer/rendermappings";
 import { InputRendererType, OutputRendererType } from "../states/nodeio.t";
 ("../states/nodeio.t");
@@ -16,6 +18,8 @@ interface RendererPlugin {
   data_overlay_renderers?: { [key: string]: DataOverlayRendererType };
   data_preview_renderers?: { [key: string]: DataPreviewViewRendererType };
   data_view_renderers?: { [key: string]: DataViewRendererType };
+  node_renderers?: { [key: string]: NodeRendererType };
+  node_context_extenders?: { [key: string]: NodeContextExtenderType };
 }
 
 export default RendererPlugin;

@@ -47,6 +47,7 @@ const assert_full_nodeio = (io: Partial<IOType>): IOType => {
 
 const dummy_node: NodeType = {
   id: "dummy",
+  node_id: "dummy",
   node_name: "dummy",
   properties: {
     "frontend:size": [200, 100],
