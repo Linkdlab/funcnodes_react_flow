@@ -9,39 +9,6 @@ interface NodeSpaceZustandInterface {
   nodesstates: Map<string, NodeStore>;
 
   get_node: (nid: string, raise?: boolean) => NodeStore | undefined;
-
-  // A function to add a new node to the nodesstates Map. It takes a NodeType object as a parameter.
-  // add_node: ({
-  //   node,
-  //   from_remote,
-  // }: {
-  //   node: NodeType;
-  //   from_remote: boolean;
-  // }) => void;
-
-  // // A function to update an existing node in the nodesstates Map.
-  // // It takes a node id (string) and a PartialNodeType object (which contains the properties to be updated) as parameters.
-  // update_node: ({
-  //   nid,
-  //   node,
-  //   from_remote,
-  // }: {
-  //   nid: string;
-  //   node: PartialNodeType;
-  //   from_remote: boolean;
-  // }) => void;
-
-  // set_value: ({
-  //   node,
-  //   io,
-  //   value,
-  //   set_default,
-  // }: {
-  //   node: string;
-  //   io: string;
-  //   value: any;
-  //   set_default?: boolean | undefined;
-  // }) => void;
 }
 
 /**

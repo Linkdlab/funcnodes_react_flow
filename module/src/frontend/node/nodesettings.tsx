@@ -150,33 +150,6 @@ const NodeSettings = () => {
       <CurrentNodeSettingsWrapper></CurrentNodeSettingsWrapper>
     </ExpandingContainer>
   );
-
-  // return (
-  //   <div className="nodesettings_container">
-  //     <div className="nodesettings_expander">
-  //       {expanded ? (
-  //         <ChevronRightIcon
-  //           onClick={() => {
-  //             set_expand_node_props(false);
-  //           }}
-  //         />
-  //       ) : (
-  //         <ChevronLeftIcon
-  //           onClick={() => {
-  //             set_expand_node_props(true);
-  //           }}
-  //         />
-  //       )}
-  //     </div>
-  //     <div
-  //       className={
-  //         "nodesettings_content " + (expanded ? "expanded" : "collapsed")
-  //       }
-  //     >
-  //       {expanded && <CurrentNodeSettingsWrapper></CurrentNodeSettingsWrapper>}
-  //     </div>
-  //   </div>
-  // );
 };
 
 export default NodeSettings;
