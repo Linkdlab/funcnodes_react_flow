@@ -10,8 +10,10 @@ import FuncNodesReactPlugin, {
 } from "./plugin";
 import {
   InputRendererProps,
+  InputRendererType,
   IOType,
   OutputRendererProps,
+  OutputRendererType,
 } from "./states/nodeio.t";
 import helperfunctions from "./utils/helperfunctions";
 import FuncNodesReactFlowZustand from "./states";
@@ -23,15 +25,26 @@ import {
   DataViewRendererType,
   RenderMappingProvider,
   RenderMappingContext,
+  NodeContextExtenderType,
+  NodeRendererType,
+  NodeHooksType,
+  InLineRendererType,
+  DataOverlayRendererProps,
+  DataPreviewViewRendererProps,
+  DataViewRendererProps,
+  HandlePreviewRendererProps,
+  InLineRendererProps,
+  NodeContextExtenderProps,
+  NodeHooksProps,
+  NodeRendererProps,
 } from "./frontend/datarenderer/rendermappings";
-import { NodeType, PartialNodeType } from "./states/node.t";
+import { NodeType, PartialSerializedNodeType } from "./states/node.t";
 import {
   FuncnodesReactFlowProps,
   FuncNodesReactFlowZustandInterface,
   ProgressState,
 } from "./states/fnrfzst.t";
 import ReactFlowLayer from "./frontend/funcnodesreactflow/react_flow_layer";
-import { assert_full_node } from "./states/node";
 import { deep_update } from "./utils";
 import { WorkerProps } from "./funcnodes/funcnodesworker";
 import { ConsoleLogger } from "./utils/logger";
@@ -94,7 +107,6 @@ export {
   helperfunctions,
   FuncNodesReactFlowZustand,
   FuncNodesContext,
-  assert_full_node,
   ReactFlowLayer,
   RenderMappingProvider,
   deep_update,
@@ -111,14 +123,30 @@ export type {
   InputRendererProps,
   OutputRendererProps,
   FuncNodesReactFlowZustandInterface,
-  HandlePreviewRendererType,
-  DataOverlayRendererType,
-  DataPreviewViewRendererType,
-  DataViewRendererType,
-  NodeType,
-  PartialNodeType,
+  PartialSerializedNodeType as PartialNodeType,
+  PartialSerializedNodeType,
   ProgressState,
   WorkerProps,
+  NodeType,
   FuncnodesReactFlowProps,
   NodeContextType,
+  NodeContextExtenderType,
+  NodeHooksType,
+  NodeRendererType,
+  InLineRendererType,
+  DataViewRendererType,
+  DataPreviewViewRendererType,
+  DataOverlayRendererType,
+  HandlePreviewRendererType,
+  OutputRendererType,
+  InputRendererType,
+  // Props
+  HandlePreviewRendererProps,
+  DataOverlayRendererProps,
+  DataPreviewViewRendererProps,
+  DataViewRendererProps,
+  NodeRendererProps,
+  NodeContextExtenderProps,
+  NodeHooksProps,
+  InLineRendererProps,
 };

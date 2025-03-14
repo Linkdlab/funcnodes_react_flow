@@ -46,39 +46,47 @@ const _Inputrenderer: {
 const _Outputrenderer: {
   [key: string]: OutputRendererType | undefined;
 } = {};
-
+interface HandlePreviewRendererProps {
+  iostore: IOStore;
+}
 type HandlePreviewRendererType = ({
   iostore,
-}: {
-  iostore: IOStore;
-}) => JSX.Element;
+}: HandlePreviewRendererProps) => JSX.Element;
 const _HandlePreviewGenerators: {
   [key: string]: HandlePreviewRendererType | undefined;
 } = {
   bytes: Base64BytesOutput,
 };
 
-type InLineRendererType = ({ iostore }: { iostore: IOStore }) => string;
+interface InLineRendererProps {
+  iostore: IOStore;
+}
+
+type InLineRendererType = ({ iostore }: InLineRendererProps) => string;
 const _InLineGenerators: {
   [key: string]: InLineRendererType | undefined;
 } = {
   bytes: Base64BytesInLineOutput,
 };
 
+interface DataOverlayRendererProps {
+  iostore: IOStore;
+}
+
 type DataOverlayRendererType = ({
   iostore,
-}: {
-  iostore: IOStore;
-}) => JSX.Element;
+}: DataOverlayRendererProps) => JSX.Element;
 const _DataOverlayViewGenerators: {
   [key: string]: DataOverlayRendererType | undefined;
 } = {};
 
+interface DataPreviewViewRendererProps {
+  iostore: IOStore;
+}
+
 type DataPreviewViewRendererType = ({
   iostore,
-}: {
-  iostore: IOStore;
-}) => JSX.Element;
+}: DataPreviewViewRendererProps) => JSX.Element;
 
 const _DataPreviewViewRenderer: {
   [key: string]: DataPreviewViewRendererType | undefined;
@@ -91,24 +99,32 @@ const _DataPreviewViewRenderer: {
   bytes: Base64BytesOutput,
 };
 
-type DataViewRendererType = ({ iostore }: { iostore: IOStore }) => JSX.Element;
+interface DataViewRendererProps {
+  iostore: IOStore;
+}
+type DataViewRendererType = ({ iostore }: DataViewRendererProps) => JSX.Element;
 const _DataViewRenderer: {
   [key: string]: DataViewRendererType | undefined;
 } = {};
 
-type NodeRendererType = ({ node_data }: { node_data: NodeType }) => JSX.Element;
+interface NodeRendererProps {
+  node_data: NodeType;
+}
+type NodeRendererType = ({ node_data }: NodeRendererProps) => JSX.Element;
 const _NodeRenderer: {
   [key: string]: NodeRendererType | undefined;
 } = {};
 
-type NodeHooksType = (({
-  nodecontext,
-}: {
+type NodeHooksProps = {
   nodecontext: NodeContextType;
-}) => void)[];
+};
+type NodeHooksType = (({ nodecontext }: NodeHooksProps) => void)[];
 const _NodeHooks: { [key: string]: NodeHooksType | undefined } = {};
 
-type NodeContextExtenderType = ({ node_data }: { node_data: NodeType }) => {
+interface NodeContextExtenderProps {
+  node_data: NodeType;
+}
+type NodeContextExtenderType = ({ node_data }: NodeContextExtenderProps) => {
   [key: string]: any;
 };
 const _NodeContextExtenders: {
@@ -738,6 +754,7 @@ export type {
   extend_node_renderer_action,
   extend_node_hooks_action,
   renderMappingAction,
+  //types
   HandlePreviewRendererType,
   DataOverlayRendererType,
   DataPreviewViewRendererType,
@@ -745,4 +762,14 @@ export type {
   NodeRendererType,
   NodeContextExtenderType,
   NodeHooksType,
+  InLineRendererType,
+  //props
+  HandlePreviewRendererProps,
+  DataOverlayRendererProps,
+  DataPreviewViewRendererProps,
+  DataViewRendererProps,
+  NodeRendererProps,
+  NodeContextExtenderProps,
+  NodeHooksProps,
+  InLineRendererProps,
 };
