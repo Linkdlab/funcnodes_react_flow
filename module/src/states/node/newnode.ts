@@ -181,6 +181,9 @@ const createIOStore = (
   io: SerializedIOType
 ): IOStore => {
   let iostore: IOStore;
+  if (nodestore === undefined) {
+    throw new Error("nodestore is undefined");
+  }
   iostore = {
     _state: create<IOType>((_set, _get) => assert_full_nodeio(fnrfz, io)),
     use: () => {
@@ -258,11 +261,7 @@ const createNodeStore = (
   node: SerializedNodeType
 ): NodeStore => {
   // check if node is Object
-  let nodestore: NodeStore;
-  nodestore = {
-    _state: create<NodeType>((_set, _get) => {
-      return assert_full_node(nodestore, fnrfz, normalize_node(node));
-    }),
+  const _nodestore: Omit<NodeStore, "_state"> = {
     use: () => {
       return nodestore._state();
     },
@@ -276,6 +275,10 @@ const createNodeStore = (
       update_node(nodestore._state, new_state);
     },
   };
+  const nodestore = _nodestore as NodeStore;
+  nodestore._state = create<NodeType>((_set, _get) => {
+    return assert_full_node(nodestore, fnrfz, normalize_node(node));
+  });
 
   return nodestore;
 };
