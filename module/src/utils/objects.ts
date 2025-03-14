@@ -182,10 +182,10 @@ const deep_merge = <T extends {}>(
 } => {
   let change = false;
   if (!isPlainObject(target)) {
-    throw new Error("Target must be a plain object");
+    throw new Error("Target must be a plain object not" + typeof target);
   }
   if (!isPlainObject(source)) {
-    throw new Error("Source must be a plain object");
+    throw new Error("Source must be a plain object not" + typeof source);
   }
   const new_obj: T = { ...target };
 
@@ -280,5 +280,37 @@ const deep_update = <T extends {}>(
   return { new_obj, change };
 };
 
-export { deep_merge, deep_update, deep_compare_objects };
+function printDiff(obj1: any, obj2: any, path = ""): void {
+  // Check keys in obj1
+  for (const key in obj1) {
+    const currentPath = path ? `${path}.${key}` : key;
+    if (!(key in obj2)) {
+      console.log(`Key '${currentPath}' exists only in the first object.`);
+    } else {
+      const val1 = obj1[key];
+      const val2 = obj2[key];
+      if (isPlainObject(val1) && isPlainObject(val2)) {
+        // Recurse into nested objects
+        printDiff(val1, val2, currentPath);
+      } else if (val1 !== val2) {
+        console.log(`Difference at '${currentPath}': ${val1} vs ${val2}`);
+      }
+    }
+  }
+  // Check keys in obj2 that are missing in obj1
+  for (const key in obj2) {
+    const currentPath = path ? `${path}.${key}` : key;
+    if (!(key in obj1)) {
+      console.log(`Key '${currentPath}' exists only in the second object.`);
+    }
+  }
+}
+
+export {
+  deep_merge,
+  deep_update,
+  deep_compare_objects,
+  printDiff,
+  isPlainObject,
+};
 export type { DeepPartial, LimitedDeepPartial };

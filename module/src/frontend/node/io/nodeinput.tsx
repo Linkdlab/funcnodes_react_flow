@@ -7,7 +7,7 @@ import {
 } from "../../../states/fnrfzst.t";
 import { HandleWithPreview, pick_best_io_type } from "./io";
 import { SelectionInput } from "./default_input_renderer";
-import { IOType } from "../../../states/nodeio.t";
+import { IOStore } from "../../../states/nodeio.t";
 import * as React from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 
@@ -42,11 +42,13 @@ const INPUTCONVERTER: {
   ],
 };
 
-const NodeInput = ({ io }: { io: IOType }) => {
+const NodeInput = ({ iostore }: { iostore: IOStore }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
   const render: RenderOptions = fnrf_zst.render_options();
 
+  const io = iostore.use();
+  console.log("render_input", io.name);
   const [typestring, otypestring] = pick_best_io_type(
     io.render_options.type,
     render.typemap || {}
@@ -60,10 +62,11 @@ const NodeInput = ({ io }: { io: IOType }) => {
 
   const inputconverterf: [(v: any) => any, (v: any) => any] =
     INPUTCONVERTER[(otypestring && render.inputconverter?.[otypestring]) ?? ""];
+  if (io.hidden) return null;
   return (
     <div className="nodeinput" {...{ "data-type": typestring }}>
       <HandleWithPreview
-        io={io}
+        iostore={iostore}
         typestring={typestring}
         position={Position.Left}
         type="target"
@@ -71,12 +74,12 @@ const NodeInput = ({ io }: { io: IOType }) => {
 
       {Input && (
         <div className="iovaluefield nodrag" {...{ "data-type": typestring }}>
-          <Input io={io} inputconverter={inputconverterf} />
+          <Input iostore={iostore} inputconverter={inputconverterf} />
         </div>
       )}
       <div className="ioname">{io.name}</div>
       <HandleWithPreview
-        io={io}
+        iostore={iostore}
         typestring={typestring}
         position={Position.Right}
         type="source"

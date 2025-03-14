@@ -118,7 +118,7 @@ const ContextMenu = ({
 
   const nodestore = fnrf_zst.nodespace.get_node(id, false);
   if (!nodestore) return <> </>;
-  const node: NodeType = nodestore();
+  const node: NodeType = nodestore.use();
 
   return (
     <div

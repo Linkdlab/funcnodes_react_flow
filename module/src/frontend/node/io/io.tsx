@@ -5,7 +5,7 @@ import * as React from "react";
 import { useState } from "react";
 import CustomDialog from "../../dialog";
 import { usePreviewHandleDataRendererForIo } from "./handle_renderer";
-import { IOType, SerializedType } from "../../../states/nodeio.t";
+import { IOStore, IOType, SerializedType } from "../../../states/nodeio.t";
 import { DynamicComponentLoader } from "../../datarenderer/rendermappings";
 import { LockIcon, LockOpenIcon } from "../../assets/fontawsome";
 import { FullscreenIcon } from "../../assets/fontawsome";
@@ -57,13 +57,13 @@ const pick_best_io_type = (
 };
 
 type HandleWithPreviewProps = {
-  io: IOType;
+  iostore: IOStore;
   typestring: string | undefined;
   preview?: React.FC<{ io: IOType }>;
 } & HandleProps;
 
 const HandleWithPreview = ({
-  io,
+  iostore,
   typestring,
   preview,
   ...props
@@ -71,6 +71,7 @@ const HandleWithPreview = ({
   const [locked, setLocked] = useState(false);
   const [opened, setOpened] = useState(false);
   const fnrf_zst = React.useContext(FuncNodesContext);
+  const io = iostore.use();
 
   const [pvhandle, overlayhandle] = usePreviewHandleDataRendererForIo(io);
 
@@ -102,12 +103,17 @@ const HandleWithPreview = ({
                     setLocked(open);
                   }}
                 >
-                  {<DynamicComponentLoader component={overlayhandle} io={io} />}
+                  {
+                    <DynamicComponentLoader
+                      component={overlayhandle}
+                      iostore={iostore}
+                    />
+                  }
                 </CustomDialog>
               )}
             </div>
             {pvhandle ? (
-              <DynamicComponentLoader component={pvhandle} io={io} />
+              <DynamicComponentLoader component={pvhandle} iostore={iostore} />
             ) : (
               `no preview available for "${typestring}"`
             )}

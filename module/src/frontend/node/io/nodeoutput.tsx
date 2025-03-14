@@ -9,23 +9,28 @@ import {
   RenderOptions,
   FuncNodesReactFlowZustandInterface,
 } from "../../../states/fnrfzst.t";
-import { IOType } from "../../../states/nodeio.t";
+import { IOStore } from "../../../states/nodeio.t";
 import * as React from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 
-const NodeOutput = ({ io }: { io: IOType }) => {
+const NodeOutput = ({ iostore }: { iostore: IOStore }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
   const render: RenderOptions = fnrf_zst.render_options();
 
+  const io = iostore.use();
+  console.log("render_output");
+
   const [typestring] = pick_best_io_type(io.type, render.typemap || {});
   const { Outputrenderer } = useContext(RenderMappingContext);
   const Output = typestring ? Outputrenderer[typestring] : undefined;
-
+  if (io.hidden) {
+    return null;
+  }
   return (
     <div className="nodeoutput" {...{ "data-type": typestring }}>
       <HandleWithPreview
-        io={io}
+        iostore={iostore}
         typestring={typestring}
         position={Position.Right}
         type="source"
@@ -38,7 +43,7 @@ const NodeOutput = ({ io }: { io: IOType }) => {
         </div>
       ) : (
         <div className="iovaluefield">
-          <InLineOutput io={io} typestring={typestring} />
+          <InLineOutput iostore={iostore} typestring={typestring} />
         </div>
       )}
     </div>

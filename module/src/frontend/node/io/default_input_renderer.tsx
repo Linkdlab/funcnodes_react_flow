@@ -10,11 +10,13 @@ import * as Slider from "@radix-ui/react-slider";
 import * as ToolTip from "@radix-ui/react-tooltip";
 import CustomSelect from "../../utils/select";
 
-const BooleanInput = ({ io, inputconverter }: InputRendererProps) => {
+const BooleanInput = ({ iostore, inputconverter }: InputRendererProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
+  const { preview } = iostore.valuestore();
+  const io = iostore.use();
 
-  const indeterminate = io.value === undefined;
+  const indeterminate = preview === undefined;
   const cRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ const BooleanInput = ({ io, inputconverter }: InputRendererProps) => {
     try {
       new_value = inputconverter[0](e.target.checked);
     } catch (e) {}
+
     fnrf_zst.worker?.set_io_value({
       nid: io.node,
       ioid: io.id,
@@ -39,14 +42,14 @@ const BooleanInput = ({ io, inputconverter }: InputRendererProps) => {
       ref={cRef}
       type="checkbox"
       className="styledcheckbox booleaninput"
-      checked={!!inputconverter[1](io.value)}
+      checked={!!inputconverter[1](preview)}
       onChange={on_change}
       disabled={io.connected}
     />
   );
 };
 const NumberInput = ({
-  io,
+  iostore,
   inputconverter,
   parser = (n: string) => parseFloat(n),
 }: InputRendererProps & {
@@ -55,11 +58,14 @@ const NumberInput = ({
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
-  const [tempvalue, setTempValue] = useState(inputconverter[1](io.value));
+  const { preview } = iostore.valuestore();
+  const io = iostore.use();
+
+  const [tempvalue, setTempValue] = useState(inputconverter[1](preview));
 
   useEffect(() => {
-    setTempValue(inputconverter[1](io.value));
-  }, [io.value]);
+    setTempValue(inputconverter[1](preview));
+  }, [preview]);
 
   const set_new_value = (new_value: number | string) => {
     new_value = parser(
@@ -96,7 +102,7 @@ const NumberInput = ({
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
     set_new_value(e.target.value);
   };
-  let v = io.connected ? inputconverter[1](io.value) : tempvalue;
+  let v = io.connected ? inputconverter[1](preview) : tempvalue;
   if (v === undefined) v = io.value_options?.min;
   if (v === undefined) v = io.value_options?.max;
   if (v === undefined) v = "";
@@ -192,23 +198,27 @@ const NumberInput = ({
   );
 };
 
-const FloatInput = ({ io, inputconverter }: InputRendererProps) => {
-  return NumberInput({ io, inputconverter, parser: parseFloat });
+const FloatInput = ({ iostore, inputconverter }: InputRendererProps) => {
+  return NumberInput({ iostore, inputconverter, parser: parseFloat });
 };
 
-const IntegerInput = ({ io, inputconverter }: InputRendererProps) => {
-  return NumberInput({ io, inputconverter, parser: parseInt });
+const IntegerInput = ({ iostore, inputconverter }: InputRendererProps) => {
+  return NumberInput({ iostore, inputconverter, parser: parseInt });
 };
 
-const StringInput = ({ io, inputconverter }: InputRendererProps) => {
+const StringInput = ({ iostore, inputconverter }: InputRendererProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
-  const [tempvalue, setTempValue] = useState(inputconverter[1](io.value));
+  const { preview, full } = iostore.valuestore();
+  const io = iostore.use();
+  const display = full === undefined ? preview : full;
+
+  const [tempvalue, setTempValue] = useState(inputconverter[1](display));
 
   useEffect(() => {
-    setTempValue(inputconverter[1](io.value));
-  }, [io.value]);
+    setTempValue(inputconverter[1](display));
+  }, [display]);
 
   const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
     let new_value: string = e.target.value;
@@ -226,7 +236,7 @@ const StringInput = ({ io, inputconverter }: InputRendererProps) => {
     });
   };
 
-  let v = io.connected ? inputconverter[1](io.value) : tempvalue;
+  let v = io.connected ? inputconverter[1](display) : tempvalue;
   if (v === undefined || v === null) v = "";
   return (
     <input
@@ -270,12 +280,16 @@ type SelectionInputOptionType = {
 // >;
 
 const SelectionInput = ({
-  io,
+  iostore,
   inputconverter,
   parser,
 }: InputRendererProps & {
   parser?(s: string): any;
 }) => {
+  const io = iostore.use();
+  const { preview, full } = iostore.valuestore();
+  const display = full === undefined ? preview : full;
+
   let options: (string | number)[] | EnumOf | any =
     io.value_options?.options || [];
 
@@ -353,7 +367,7 @@ const SelectionInput = ({
     });
   };
 
-  let v = io.value;
+  let v = display;
   if (v === null) {
     v = "null";
   }
@@ -401,9 +415,12 @@ const SelectionInput = ({
   );
 };
 
-const ColorInput = ({ io }: InputRendererProps) => {
+const ColorInput = ({ iostore }: InputRendererProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
+  const io = iostore.use();
+  const { preview, full } = iostore.valuestore();
+  const display = full === undefined ? preview : full;
 
   const colorspace = io.value_options?.colorspace || "hex";
 
@@ -440,7 +457,7 @@ const ColorInput = ({ io }: InputRendererProps) => {
   return (
     <CustomColorPicker
       onChange={on_change}
-      inicolordata={io.value}
+      inicolordata={display}
       allow_null={allow_null}
       inicolorspace={colorspace}
     />

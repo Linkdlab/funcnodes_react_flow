@@ -1,7 +1,7 @@
 import LibZustand from "./lib";
 import NodeSpaceZustand from "./nodespace";
-import { assert_full_node, createNodeStore, normalize_node } from "./node";
-import { PartialIOType } from "./nodeio.t";
+import { createNodeStore } from "./node/newnode";
+
 import reactflowstore from "./reactflow";
 import {
   Node as RFNode,
@@ -39,6 +39,7 @@ import { ConsoleLogger, INFO } from "../utils/logger";
 import FuncNodesWorker, {
   FuncNodesWorkerState,
 } from "../funcnodes/funcnodesworker";
+import { RFNodeDataPass } from "../frontend/node/node";
 
 const _fill_node_frontend = (
   node: NodeType,
@@ -86,75 +87,27 @@ const _fill_node_frontend = (
   node.properties = nodeprops;
 };
 
-const assert_react_flow_io = (
-  io: PartialIOType,
-  fnrf_instance?: FuncNodesReactFlowZustandInterface
-): PartialIOType => {
-  if (io.value === "<NoValue>") {
-    io.value = undefined;
-  }
-  if (io.fullvalue === "<NoValue>") {
-    io.fullvalue = undefined;
-  }
-
-  if (io.try_get_full_value === undefined) {
-    io.try_get_full_value = () => {
-      if (!fnrf_instance) {
-        return;
-      }
-      if (io.node === undefined || io.id === undefined) {
-        return;
-      }
-      fnrf_instance.worker?.get_io_full_value({ nid: io.node, ioid: io.id });
-    };
-  }
-
-  if (io.hidden === undefined) {
-    io.hidden = false;
-  }
-  if (io.set_hidden === undefined) {
-    io.set_hidden = (v: boolean) => {
-      if (!fnrf_instance) {
-        return;
-      }
-      if (io.node === undefined || io.id === undefined) {
-        return;
-      }
-      fnrf_instance.worker?.update_io_options({
-        nid: io.node,
-        ioid: io.id,
-        options: { hidden: v },
-      });
-    };
-  }
-
-  return io;
-};
 const assert_reactflow_node = (
-  node: NodeType,
   store: NodeStore,
   fnrf_instance?: FuncNodesReactFlowZustandInterface
 ): NodeType & RFNode => {
+  const node = store.getState();
   _fill_node_frontend(node, fnrf_instance);
 
-  node = assert_full_node(node);
   if (node.id === undefined) {
     throw new Error("Node must have an id");
   }
 
-  for (const io in node.io) {
-    node.io[io].node = node.id;
-    assert_react_flow_io(node.io[io], fnrf_instance);
-  }
+  const data: RFNodeDataPass = {
+    nodestore: store,
+  };
 
   const extendedNode: NodeType & RFNode = {
     position: {
       x: node.properties["frontend:pos"][0],
       y: node.properties["frontend:pos"][1],
     },
-    data: {
-      UseNodeStore: store,
-    },
+    data: data,
     type: "default",
     ...node,
   };
@@ -180,7 +133,7 @@ const FuncNodesReactFlowZustand = (
 
       if (!store) {
         try {
-          store = createNodeStore(action.node);
+          store = createNodeStore(iterf, action.node);
           ns.nodesstates.set(action.node.id, store);
         } catch (e) {
           iterf.logger.error(`Failed to create node store ${e}`);
@@ -192,10 +145,7 @@ const FuncNodesReactFlowZustand = (
 
       iterf.logger.info("Add node", node.id, node.name);
 
-      const new_ndoes = [
-        ...rfstate.nodes,
-        assert_reactflow_node(node, store, iterf),
-      ];
+      const new_ndoes = [...rfstate.nodes, assert_reactflow_node(store, iterf)];
       rfstore.setState({ nodes: new_ndoes });
 
       for (const io in action.node.io) {
@@ -219,43 +169,11 @@ const FuncNodesReactFlowZustand = (
     if (action.from_remote) {
       const store = ns.get_node(action.id, false);
       if (!store) {
+        console.error("Node not found to update", action.id);
         return;
       }
 
-      normalize_node(action.node);
-
-      const state = store.getState();
-      const { new_obj, change } = deep_merge(state, action.node);
-
-      if (change) {
-        // update ios after merge, because it might be an object whch would resolt of
-        // some part of the old value still being there (on the frontend)
-        if (action.node.io) {
-          for (const io in action.node.io) {
-            // if fullvalue is in the update data, set to fullvalue otherwise set to undefined
-            new_obj.io[io].fullvalue = action.node.io[io]?.fullvalue;
-
-            for (const io in action.node.io) {
-              const ioobj = action.node.io[io] as PartialIOType;
-              const new_obj_io = new_obj.io[io];
-              // check if value in io, undefined is a valid value
-              if (ioobj.hasOwnProperty("value")) {
-                if (ioobj.value === undefined) {
-                  new_obj_io.value = null;
-                } else if (ioobj.value === "<NoValue>") {
-                  new_obj_io.value = undefined;
-                } else {
-                  new_obj_io.value = ioobj.value;
-                }
-              }
-            }
-          }
-        }
-
-        assert_reactflow_node(new_obj, store, iterf);
-        iterf.logger.debug("update_action", new_obj);
-        store.setState(assert_full_node(new_obj));
-      }
+      store.update(action.node);
     } else {
       if (iterf.worker) {
         iterf.worker.locally_update_node(action);

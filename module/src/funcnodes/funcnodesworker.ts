@@ -12,15 +12,15 @@ import { create, StoreApi, UseBoundStore } from "zustand";
 import {
   NodeActionError,
   NodeActionUpdate,
-  NodeType,
-  PartialNodeType,
+  PartialSerializedNodeType,
+  SerializedNodeType,
 } from "../states/node.t"; // Import the missing type
 import { deep_merge } from "../utils";
 import { LibType } from "../states/lib.t";
 import { PackedPlugin } from "../plugin";
 
 import { UpdateableIOOptions } from "../states/nodeio.t";
-import { update_nodeview } from "../states/node";
+import { update_nodeview } from "../states/node/update_node";
 type CmdMessage = {
   type: string;
   cmd: string;
@@ -47,7 +47,7 @@ interface HookProperties {
 class FuncNodesWorker {
   messagePromises: Map<string, any>;
   _zustand?: FuncNodesReactFlowZustandInterface;
-  _local_nodeupdates: Map<string, PartialNodeType>;
+  _local_nodeupdates: Map<string, PartialSerializedNodeType>;
   _nodeupdatetimer: ReturnType<typeof setTimeout>;
   uuid: string;
   _responsive: boolean;
@@ -294,7 +294,7 @@ class FuncNodesWorker {
     const nodeview = resp.nodes;
     if (nodeview) {
       for (const nodeid in nodeview) {
-        const partnode: PartialNodeType = {};
+        const partnode: PartialSerializedNodeType = {};
         update_nodeview(partnode, nodeview[nodeid]);
 
         this._zustand.on_node_action({
@@ -315,9 +315,9 @@ class FuncNodesWorker {
       kwargs: { with_frontend: true },
       wait_for_response: true,
       unique: true,
-    })) as NodeType[];
+    })) as SerializedNodeType[];
     for (const node of resp) {
-      this._receive_node_added(node as NodeType);
+      this._receive_node_added(node);
     }
 
     const edges = (await this._send_cmd({
@@ -392,7 +392,7 @@ class FuncNodesWorker {
       cmd: "add_node",
       kwargs: { id: node_id },
     });
-    this._receive_node_added(resp as NodeType);
+    this._receive_node_added(resp as SerializedNodeType);
   }
 
   async remove_node(node_id: string) {
@@ -402,7 +402,7 @@ class FuncNodesWorker {
     });
   }
 
-  async _receive_node_added(data: NodeType) {
+  async _receive_node_added(data: SerializedNodeType) {
     if (!this._zustand) return;
     this._zustand.on_node_action({
       type: "add",
@@ -502,7 +502,7 @@ class FuncNodesWorker {
   }
 
   async get_remote_node_state(nid: string) {
-    const ans: NodeType = await this._send_cmd({
+    const ans: SerializedNodeType = await this._send_cmd({
       cmd: "get_node_state",
       kwargs: { nid },
       wait_for_response: true,
@@ -834,7 +834,7 @@ class FuncNodesWorker {
         return;
 
       case "node_added":
-        this._receive_node_added(data.node as NodeType);
+        this._receive_node_added(data.node as SerializedNodeType);
         return;
 
       case "after_disconnect":

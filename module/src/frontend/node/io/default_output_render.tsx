@@ -1,34 +1,31 @@
-import { IOType } from "../../../states/nodeio.t";
+import { IOStore } from "../../../states/nodeio.t";
 import * as React from "react";
 import { useContext } from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 
 const InLineOutput = ({
-  io,
+  iostore,
   typestring,
 }: {
-  io: IOType;
+  iostore: IOStore;
   typestring: string | undefined;
 }) => {
   const { InLineRenderer } = useContext(RenderMappingContext);
 
+  const { preview, full } = iostore.valuestore();
+
   if (typestring && InLineRenderer[typestring]) {
-    return <div>{InLineRenderer[typestring]({ io })}</div>;
+    return <div>{InLineRenderer[typestring]({ iostore })}</div>;
   }
 
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = "";
-  } else {
-    value = JSON.stringify(value).replace(/\\n/g, "\n"); //respect "\n" in strings
-  }
+  let disp = (JSON.stringify(full || preview) || "").replace(/\\n/g, "\n");
+
   //truncate the string if it is too long
-  if (value.length > 63) {
-    value = value.slice(0, 60) + "...";
+  if (disp.length > 63) {
+    disp = disp.slice(0, 60) + "...";
   }
 
-  return <div>{value}</div>;
+  return <div>{disp}</div>;
 };
 
 export { InLineOutput };

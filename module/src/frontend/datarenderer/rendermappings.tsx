@@ -1,7 +1,7 @@
 import * as React from "react";
 import { JSX, ReactElement, createContext, useEffect, useReducer } from "react";
 import {
-  IOType,
+  IOStore,
   InputRendererType,
   OutputRendererType,
 } from "../../states/nodeio.t";
@@ -47,26 +47,38 @@ const _Outputrenderer: {
   [key: string]: OutputRendererType | undefined;
 } = {};
 
-type HandlePreviewRendererType = ({ io }: { io: IOType }) => JSX.Element;
+type HandlePreviewRendererType = ({
+  iostore,
+}: {
+  iostore: IOStore;
+}) => JSX.Element;
 const _HandlePreviewGenerators: {
   [key: string]: HandlePreviewRendererType | undefined;
 } = {
   bytes: Base64BytesOutput,
 };
 
-type InLineRendererType = ({ io }: { io: IOType }) => string;
+type InLineRendererType = ({ iostore }: { iostore: IOStore }) => string;
 const _InLineGenerators: {
   [key: string]: InLineRendererType | undefined;
 } = {
   bytes: Base64BytesInLineOutput,
 };
 
-type DataOverlayRendererType = ({ io }: { io: IOType }) => JSX.Element;
+type DataOverlayRendererType = ({
+  iostore,
+}: {
+  iostore: IOStore;
+}) => JSX.Element;
 const _DataOverlayViewGenerators: {
   [key: string]: DataOverlayRendererType | undefined;
 } = {};
 
-type DataPreviewViewRendererType = ({ io }: { io: IOType }) => JSX.Element;
+type DataPreviewViewRendererType = ({
+  iostore,
+}: {
+  iostore: IOStore;
+}) => JSX.Element;
 
 const _DataPreviewViewRenderer: {
   [key: string]: DataPreviewViewRendererType | undefined;
@@ -79,7 +91,7 @@ const _DataPreviewViewRenderer: {
   bytes: Base64BytesOutput,
 };
 
-type DataViewRendererType = ({ io }: { io: IOType }) => JSX.Element;
+type DataViewRendererType = ({ iostore }: { iostore: IOStore }) => JSX.Element;
 const _DataViewRenderer: {
   [key: string]: DataViewRendererType | undefined;
 } = {};

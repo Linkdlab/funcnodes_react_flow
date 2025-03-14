@@ -5,7 +5,7 @@ import {
 } from "../../../states/fnrfzst.t";
 import { FuncNodesContext } from "../../funcnodesreactflow";
 import { pick_best_io_type } from "./io";
-import { IOType } from "../../../states/nodeio.t";
+import { IOStore, IOType } from "../../../states/nodeio.t";
 
 import { useDataOverlayRendererForIo } from "../../datarenderer/data_renderer_overlay";
 
@@ -15,8 +15,8 @@ import { DictOutput } from "../../datarenderer/default_preview_renderer";
 const usePreviewHandleDataRendererForIo = (
   io?: IOType
 ): [
-  (({ io }: { io: IOType }) => JSX.Element) | undefined,
-  (({ io }: { io: IOType }) => JSX.Element) | undefined
+  (({ iostore }: { iostore : IOStore }) => JSX.Element) | undefined,
+  (({ iostore }: { iostore : IOStore }) => JSX.Element) | undefined
 ] => {
   // Always call hooks at the top
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
@@ -25,8 +25,9 @@ const usePreviewHandleDataRendererForIo = (
   const { HandlePreviewRenderer, DataPreviewViewRenderer } =
     useContext(RenderMappingContext);
 
-  const overlayhandle: (({ io }: { io: IOType }) => JSX.Element) | undefined =
-    useDataOverlayRendererForIo(io);
+  const overlayhandle:
+    | (({ iostore }: { iostore: IOStore }) => JSX.Element)
+    | undefined = useDataOverlayRendererForIo(io);
 
   // Prepare default values
   let previewRenderer = undefined;

@@ -6,7 +6,7 @@ import {
   LibZustandInterface,
 } from "./lib.t";
 import { NodeSpaceZustandInterface } from "./nodespace.t";
-import { NodeAction, NodeType } from "./node.t";
+import { NodeAction, SerializedNodeType } from "./node.t";
 import { RFStore } from "./reactflow.t";
 import { EdgeAction } from "./edge.t";
 import { useReactFlow } from "reactflow";
@@ -29,7 +29,7 @@ interface ViewState {
 }
 
 interface FullNodeSpaceJSON {
-  nodes: NodeType[];
+  nodes: SerializedNodeType[];
   edges: [string, string, string, string][];
   prop: { [key: string]: any };
   lib: LibType;

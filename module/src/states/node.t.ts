@@ -1,8 +1,8 @@
 import { UseBoundStore, StoreApi } from "zustand";
-import { DeepPartial } from "../utils";
-import { IOType } from "./nodeio.t";
+import { IOStore, PartialSerializedIOType, SerializedIOType } from "./nodeio.t";
 import { DataRenderOptions } from "../types/rendering.t";
 import { TqdmState } from "../frontend/utils/progressbar";
+import { LimitedDeepPartial } from "../utils/objects";
 
 /**
  * Interface for the NodeActionAdd.
@@ -19,7 +19,7 @@ interface BaseNodeAction {
 
 interface NodeActionAdd extends BaseNodeAction {
   type: "add";
-  node: NodeType;
+  node: SerializedNodeType;
 }
 
 /**
@@ -30,7 +30,7 @@ interface NodeActionAdd extends BaseNodeAction {
  */
 interface NodeActionUpdate extends BaseNodeAction {
   type: "update";
-  node: PartialNodeType;
+  node: PartialSerializedNodeType;
 }
 
 /**
@@ -64,7 +64,13 @@ type NodeAction =
   | NodeActionError
   | NodeActionTrigger;
 
-type NodeStore = UseBoundStore<StoreApi<NodeType>>;
+interface NodeStore {
+  _state: UseBoundStore<StoreApi<NodeType>>;
+  use: () => NodeType;
+  getState: () => NodeType;
+  setState: (new_state: Partial<NodeType>) => void;
+  update: (new_state: PartialSerializedNodeType) => void;
+}
 
 interface NodeRenderOptions {
   data?: DataRenderOptions;
@@ -78,27 +84,40 @@ interface NodeProperties {
   [key: string]: any;
 }
 
-interface NodeType {
+type SerializedNodeIOMappingType = { [key: string]: SerializedIOType };
+type PartialSerializedNodeIOMappingType = {
+  [key: string]: PartialSerializedIOType;
+};
+
+interface BasicNodeType {
   id: string;
   node_id: string;
   node_name: string;
-  io: { [key: string]: IOType };
-  frontend?: {
-    pos: [number, number];
-    size: [number, number];
-    collapsed: boolean;
-  };
   name: string;
-  in_trigger: boolean;
   error?: string;
   render_options?: NodeRenderOptions;
-  io_order: string[];
-  progress: TqdmState;
   description?: string;
   properties: NodeProperties;
+  status?: { [key: string]: any };
 }
 
-type PartialNodeType = DeepPartial<NodeType>;
+interface SerializedNodeType extends BasicNodeType {
+  in_trigger: boolean;
+  io: SerializedNodeIOMappingType;
+  io_order?: string[];
+  progress: TqdmState;
+}
+
+interface NodeType extends Omit<BasicNodeType, "in_trigger" | "io"> {
+  in_trigger: UseBoundStore<StoreApi<boolean>>;
+  io: { [key: string]: IOStore };
+  inputs: string[];
+  outputs: string[];
+  io_order: string[];
+  progress: UseBoundStore<StoreApi<TqdmState>>;
+}
+
+type PartialSerializedNodeType = LimitedDeepPartial<SerializedNodeType>;
 
 export type {
   NodeStore,
@@ -107,8 +126,11 @@ export type {
   NodeActionDelete,
   NodeActionAdd,
   NodeActionError,
-  PartialNodeType,
   NodeActionTrigger,
   NodeType,
   NodeProperties,
+  SerializedNodeType,
+  PartialSerializedNodeType,
+  SerializedNodeIOMappingType,
+  PartialSerializedNodeIOMappingType,
 };

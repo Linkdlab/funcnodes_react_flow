@@ -8,7 +8,7 @@ import { FuncNodesContext } from "../funcnodesreactflow";
 import { NodeInput, NodeOutput } from "./io";
 
 import CustomDialog from "../dialog";
-import { IOType } from "../../states/nodeio.t";
+import { IOStore } from "../../states/nodeio.t";
 import { useBodyDataRendererForIo } from "./body_data_renderer";
 import {
   DynamicComponentLoader,
@@ -22,7 +22,7 @@ interface NodeHeaderProps {
   node_data: NodeType;
 }
 
-const NodeHeader = ({ node_data }: NodeHeaderProps) => {
+const NodeHeader = React.memo(({ node_data }: NodeHeaderProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
 
@@ -62,16 +62,20 @@ const NodeHeader = ({ node_data }: NodeHeaderProps) => {
       </div>
     </div>
   );
-};
+});
 
 interface NodeBodyProps {
   node_data: NodeType;
 }
 
-const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
-  const io: IOType | undefined = node_data.render_options?.data?.src
-    ? node_data.io[node_data.render_options?.data?.src]
-    : undefined;
+const NodeDataRenderer = ({
+  iostore,
+  node_data,
+}: {
+  node_data: NodeType;
+  iostore: IOStore;
+}) => {
+  const io = iostore.use();
 
   const [pvhandle, overlayhandle] = useBodyDataRendererForIo(io);
 
@@ -85,7 +89,12 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
           title={io.full_id}
           trigger={
             <div className="nodedatabutton">
-              {<DynamicComponentLoader component={pvhandle} io={io} />}
+              {
+                <DynamicComponentLoader
+                  component={pvhandle}
+                  iostore={iostore}
+                />
+              }
             </div>
           }
           onOpenChange={(open: boolean) => {
@@ -95,7 +104,10 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
           }}
         >
           {overlayhandle && (
-            <DynamicComponentLoader component={overlayhandle} io={io} />
+            <DynamicComponentLoader
+              component={overlayhandle}
+              iostore={iostore}
+            />
           )}
         </CustomDialog>
       )}
@@ -103,29 +115,29 @@ const NodeDataRenderer = ({ node_data }: { node_data: NodeType }) => {
   );
 };
 
-const NodeBody = ({ node_data }: NodeBodyProps) => {
-  const inputs = Object.values(node_data.io).filter((io) => io.is_input);
-  const outputs = Object.values(node_data.io).filter((io) => !io.is_input);
+const NodeBody = React.memo(({ node_data }: NodeBodyProps) => {
+  console.log("render node");
 
-  if (node_data.render_options?.data?.src) {
-  }
+  const datarenderio = node_data.render_options?.data?.src
+    ? node_data.io[node_data.render_options?.data?.src]
+    : undefined;
 
   return (
     <div className="nodebody">
-      {outputs.map((io) => {
-        if (io.hidden) return null;
-        return <NodeOutput key={io.id} io={io} />;
+      {node_data.outputs.map((ioname) => {
+        return <NodeOutput key={ioname} iostore={node_data.io[ioname]} />;
       })}
-      <NodeDataRenderer node_data={node_data} />
-      {inputs.map((io) => {
-        if (io.hidden) return null;
-        return <NodeInput key={io.id} io={io} />;
+      {datarenderio && (
+        <NodeDataRenderer node_data={node_data} iostore={datarenderio} />
+      )}
+      {node_data.inputs.map((ioname) => {
+        return <NodeInput key={ioname} iostore={node_data.io[ioname]} />;
       })}
     </div>
   );
-};
+});
 
-const NodeName = ({ node_data }: { node_data: NodeType }) => {
+const NodeName = React.memo(({ node_data }: { node_data: NodeType }) => {
   const [name, setName] = useState(node_data.name);
 
   useEffect(() => {
@@ -156,56 +168,58 @@ const NodeName = ({ node_data }: { node_data: NodeType }) => {
       onBlur={finalSetName}
     />
   );
-};
+});
 
 const NodeProgressBar = ({ node_data }: { node_data: NodeType }) => {
   if (!node_data.progress) return null;
-
+  const progress = node_data.progress();
   return (
     <ProgressBar
       style={{
-        height: node_data.progress.prefix === "idle" ? "0px" : undefined,
+        height: progress.prefix === "idle" ? "0px" : undefined,
       }}
-      state={node_data.progress}
+      state={progress}
       className="nodeprogress"
     ></ProgressBar>
   );
 };
 
-const NodeFooter = ({ node_data }: { node_data: NodeType }) => {
+const NodeFooter = React.memo(({ node_data }: { node_data: NodeType }) => {
   return (
     <div className="nodefooter">
       {node_data.error && <div className="nodeerror">{node_data.error}</div>}
       <NodeProgressBar node_data={node_data} />
     </div>
   );
-};
+});
 
 export const useDefaultNodeInjection = (storedata: NodeType) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
   const [visualTrigger, setVisualTrigger] = useState(false);
+  const intrigger = storedata.in_trigger();
 
   const renderplugins = useContext(RenderMappingContext);
 
-  //load context
+  // Memoize additionalContext so that it only recomputes when
+  // either the extender function or storedata changes.
   const nodeContextExtender =
     renderplugins.NodeContextExtenders[storedata.node_id];
-  const additionalContext =
-    nodeContextExtender?.({ node_data: storedata }) || {};
+  const additionalContext = React.useMemo(
+    () => nodeContextExtender?.({ node_data: storedata }) || {},
+    [nodeContextExtender, storedata]
+  );
 
-  const nodecontext = {
-    ...additionalContext,
-    node_data: storedata,
-  };
+  // Memoize nodecontext so that it’s recreated only if additionalContext or storedata change.
+  const nodecontext = React.useMemo(
+    () => ({ ...additionalContext, node_data: storedata }),
+    [additionalContext, storedata]
+  );
 
-  //load hooks
   const nodeHooks = renderplugins.NodeHooks[storedata.node_id];
   for (const hook of nodeHooks || []) {
     hook({ nodecontext: nodecontext });
   }
-
-  // node_hooks
 
   // Call a hook when the node is mounted.
   useEffect(() => {
@@ -215,13 +229,13 @@ export const useDefaultNodeInjection = (storedata: NodeType) => {
   // Manage visual trigger state based on the node's in_trigger flag.
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
-    if (storedata.in_trigger && !visualTrigger) {
+    if (intrigger && !visualTrigger) {
       setVisualTrigger(true);
     } else if (visualTrigger) {
       timeoutId = setTimeout(() => setVisualTrigger(false), 200);
     }
     return () => clearTimeout(timeoutId);
-  }, [storedata.in_trigger, visualTrigger]);
+  }, [intrigger, visualTrigger]);
 
   return { visualTrigger, nodecontext };
 };
@@ -230,11 +244,15 @@ interface NodeContextType {
   node_data: NodeType;
   [key: string]: any;
 }
+interface RFNodeDataPass {
+  nodestore: NodeStore;
+}
+
 const NodeContext = React.createContext<NodeContextType | null>(null);
 
-const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
+const DefaultNode = ({ data }: { data: RFNodeDataPass }) => {
   // Use the NodeStore to get the data for the node.
-  const storedata = data.UseNodeStore();
+  const storedata = data.nodestore.use();
 
   const collapsed = storedata.properties["frontend:collapsed"] || false;
 
@@ -267,4 +285,4 @@ const DefaultNode = ({ data }: { data: { UseNodeStore: NodeStore } }) => {
 
 export default DefaultNode;
 export { NodeName, NodeContext };
-export type { NodeContextType };
+export type { NodeContextType, RFNodeDataPass };

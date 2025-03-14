@@ -1,69 +1,51 @@
 import * as React from "react";
-import { IOType } from "../../states/nodeio.t";
+import { IOStore } from "../../states/nodeio.t";
 import JSONDataDisplay from "../utils/jsondata";
 import { SortableTable } from "../utils/table";
 import { Base64ImageRenderer, SVGImageRenderer } from "./images";
 
-const Base64ImageOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = "";
-  }
+const Base64ImageOutput = ({ iostore }: { iostore: IOStore }) => {
+  const { full, preview } = iostore.valuestore();
+  const disp = full || preview || "";
 
-  return <Base64ImageRenderer value={value} />;
+  return <Base64ImageRenderer value={disp} />;
 };
 
-const SVGImageOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = "";
-  }
+const SVGImageOutput = ({ iostore }: { iostore: IOStore }) => {
+  const { full, preview } = iostore.valuestore();
+  const disp = full || preview || "";
 
-  return <SVGImageRenderer value={value} />;
+  return <SVGImageRenderer value={disp} />;
 };
 
-const SingleValueOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = "";
-  } else {
-    value = JSON.stringify(io.value).replace(/\\n/g, "\n"); //respect "\n" in strings
-  }
+const SingleValueOutput = ({ iostore }: { iostore: IOStore }) => {
+  const { full, preview } = iostore.valuestore();
+  const disp = JSON.stringify(full || preview) || "";
 
   return (
     <div>
-      <pre>{value}</pre>
+      <pre>{disp}</pre>
     </div>
   );
 };
 
-const Base64BytesInLineOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = "";
-  } else {
-    value = JSON.stringify(io.value).replace(/\\n/g, "\n"); //respect "\n" in strings
-  }
-  const length = Math.round((3 * value.length) / 4); // 3/4 is the ratio of base64 encoding
+const Base64BytesInLineOutput = ({ iostore }: { iostore: IOStore }) => {
+  const { full, preview } = iostore.valuestore();
+  const disp = JSON.stringify(full || preview) || "";
+
+  const length = Math.round((3 * disp.length) / 4); // 3/4 is the ratio of base64 encoding
   return `Bytes(${length})`;
 };
 
-const Base64BytesOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = "";
-  }
+const Base64BytesOutput = ({ iostore }: { iostore: IOStore }) => {
+  const { full, preview } = iostore.valuestore();
+  const disp = full || preview || "";
 
   // chack if the value is a base64 string
-  if (typeof value !== "string" || value.length % 4 !== 0)
-    return <div>{value}</div>;
+  if (typeof disp !== "string" || disp.length % 4 !== 0)
+    return <div>{disp}</div>;
 
-  const length = Math.round((3 * value.length) / 4); // 3/4 is the ratio of base64 encoding
+  const length = Math.round((3 * disp.length) / 4); // 3/4 is the ratio of base64 encoding
   return (
     <div>
       <pre>Bytes({length})</pre>
@@ -71,25 +53,16 @@ const Base64BytesOutput = ({ io }: { io: IOType }) => {
   );
 };
 
-const TableOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue;
-  if (value == undefined) value = io.value;
-  if (value === undefined) {
-    value = [];
-  }
+const TableOutput = ({ iostore }: { iostore: IOStore }) => {
+  const { full, preview } = iostore.valuestore();
 
-  return <SortableTable tabledata={value} />;
+  return <SortableTable tabledata={full || preview || "{}"} />;
 };
 
-const DictOutput = ({ io }: { io: IOType }) => {
-  let value = io.fullvalue;
+const DictOutput = ({ iostore }: { iostore: IOStore }) => {
+  const { full, preview } = iostore.valuestore();
 
-  if (value === undefined) value = io.value;
-  if (value === undefined) {
-    value = {};
-  }
-
-  return <JSONDataDisplay data={value} />;
+  return <JSONDataDisplay data={full || preview || "{}"} />;
 };
 
 export {

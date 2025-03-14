@@ -2,7 +2,6 @@ import * as React from "react";
 import { FuncNodesContext } from "../funcnodesreactflow";
 import { NodeStore } from "../../states/node.t";
 import { NodeName } from "./node";
-import { IOType } from "../..";
 import { pick_best_io_type } from "./io/io";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 
@@ -12,11 +11,13 @@ import { INPUTCONVERTER } from "./io/nodeinput";
 import { RenderOptions } from "../../states/fnrfzst.t";
 
 import { ExpandingContainer } from "../layout/components";
+import { IOStore } from "../../states/nodeio.t";
 
-const NodeSettingsInput = ({ io }: { io: IOType }) => {
+const NodeSettingsInput = ({ iostore }: { iostore: IOStore }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     React.useContext(FuncNodesContext);
   const render: RenderOptions = fnrf_zst.render_options();
+  const io = iostore.use();
 
   const [typestring, otypestring] = pick_best_io_type(
     io.render_options.type,
@@ -35,7 +36,7 @@ const NodeSettingsInput = ({ io }: { io: IOType }) => {
   return (
     <div className="nodesettings_component">
       <div>{io.name}</div>
-      {Input && <Input io={io} inputconverter={inputconverterf} />}
+      {Input && <Input iostore={iostore} inputconverter={inputconverterf} />}
       <div>
         <label>
           hidden:
@@ -54,7 +55,8 @@ const NodeSettingsInput = ({ io }: { io: IOType }) => {
   );
 };
 
-const NodeSettingsOutput = ({ io }: { io: IOType }) => {
+const NodeSettingsOutput = ({ iostore }: { iostore: IOStore }) => {
+  const io = iostore.use();
   return (
     <div className="nodesettings_component">
       <div>{io.name}</div>
@@ -77,9 +79,7 @@ const NodeSettingsOutput = ({ io }: { io: IOType }) => {
 };
 
 const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
-  const node = nodestore();
-  const inputs = Object.values(node.io).filter((io) => io.is_input);
-  const outputs = Object.values(node.io).filter((io) => !io.is_input);
+  const node = nodestore.use();
 
   return (
     <div className="nodesettings_content">
@@ -93,14 +93,14 @@ const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
       </div>
       <div className="nodesettings_section">
         <div>Inputs</div>
-        {inputs.map((io) => (
-          <NodeSettingsInput io={io} key={io.id} />
+        {node.inputs.map((ioname) => (
+          <NodeSettingsInput iostore={node.io[ioname]} key={ioname} />
         ))}
       </div>
       <div className="nodesettings_section">
         <div>Outputs</div>
-        {outputs.map((io) => (
-          <NodeSettingsOutput io={io} key={io.id} />
+        {node.outputs.map((ioname) => (
+          <NodeSettingsOutput iostore={node.io[ioname]} key={ioname} />
         ))}
       </div>
     </div>

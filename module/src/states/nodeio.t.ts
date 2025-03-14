@@ -1,6 +1,8 @@
 import { JSX } from "react";
 import { BaseRenderOptions } from "../types/rendering.t";
-import { DeepPartial } from "../utils";
+import { LimitedDeepPartial } from "../utils/objects";
+import { UseBoundStore, StoreApi } from "zustand";
+import { NodeStore } from "./node.t";
 interface AllOf {
   allOf: SerializedType[];
 }
@@ -55,7 +57,7 @@ interface IOValueOptions {
   colorspace?: string;
 }
 
-interface IOType {
+interface BasicIOType {
   connected: boolean;
   does_trigger: boolean;
   full_id: string;
@@ -64,14 +66,35 @@ interface IOType {
   name: string;
   node: string;
   type: SerializedType;
-  value: any;
-  fullvalue?: any;
   render_options: IORenderOptions;
   value_options?: IOValueOptions;
   valuepreview_type?: string;
-  try_get_full_value: undefined | (() => void);
   hidden: boolean;
-  set_hidden: undefined | ((v: boolean) => void);
+}
+
+interface SerializedIOType extends BasicIOType {
+  value: any;
+  fullvalue: any;
+}
+interface IOType extends BasicIOType {
+  try_get_full_value: () => void;
+  set_hidden: (v: boolean) => void;
+}
+
+type PartialSerializedIOType = LimitedDeepPartial<SerializedIOType>;
+
+interface ValueStoreInterface {
+  preview: any;
+  full: any;
+}
+interface IOStore {
+  _state: UseBoundStore<StoreApi<IOType>>;
+  use: () => IOType;
+  getState: () => IOType;
+  setState: (new_state: Partial<IOType>) => void;
+  update: (new_state: PartialSerializedIOType) => void;
+  valuestore: UseBoundStore<StoreApi<ValueStoreInterface>>;
+  node: NodeStore;
 }
 
 interface UpdateableIOOptions {
@@ -84,15 +107,13 @@ type OutputRendererProps = { io: IOType };
 type OutputRendererType = ({ io }: OutputRendererProps) => JSX.Element;
 
 interface InputRendererProps {
-  io: IOType;
+  iostore: IOStore;
   inputconverter: [(v: any) => any, (v: any) => any];
 }
 type InputRendererType = ({
-  io,
+  iostore,
   inputconverter,
 }: InputRendererProps) => JSX.Element;
-
-type PartialIOType = DeepPartial<IOType>;
 
 export type {
   AllOf,
@@ -109,6 +130,9 @@ export type {
   OutputRendererType,
   InputRendererProps,
   InputRendererType,
-  PartialIOType,
+  PartialSerializedIOType,
   UpdateableIOOptions,
+  SerializedIOType,
+  IOStore,
+  ValueStoreInterface,
 };

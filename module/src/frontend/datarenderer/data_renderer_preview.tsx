@@ -3,7 +3,7 @@ import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
 } from "../../states/fnrfzst.t";
-import { IOType } from "../../states/nodeio.t";
+import { IOStore, IOType } from "../../states/nodeio.t";
 import { FuncNodesContext } from "../funcnodesreactflow";
 import { pick_best_io_type } from "../node/io/io";
 
@@ -12,7 +12,7 @@ import { DictOutput } from "./default_preview_renderer";
 
 const DataPreviewRendererForIo = (
   io: IOType
-): (({ io }: { io: IOType }) => JSX.Element) => {
+): (({ iostore }: { iostore: IOStore }) => JSX.Element) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
   const render: RenderOptions = fnrf_zst.render_options();
