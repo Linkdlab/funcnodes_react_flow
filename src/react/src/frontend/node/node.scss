@@ -1,0 +1,313 @@
+:root {
+  --node_border_radius: 5px;
+  --handle_outer_radius: 4px;
+  --handle_inner_radius: 2px;
+  --handle_width: 10;
+  --handle_width_hover: 15;
+  --handle_overlap: 3;
+  --nodeinput_margin: 2;
+  --nodeio_shift: calc(var(--handle_overlap) - var(--nodeinput_margin));
+  --handle_source_color: hsl(190, 98%, 49%);
+  --handle_target_color: hsl(204, 98%, 51%);
+  --node_background: hsl(245, 51%, 42%);
+  --node_header_color: hsl(245, 51%, 22%);
+}
+
+.react-flow {
+  &__node {
+    padding: 0;
+    border-radius: var(--node_border_radius);
+    background-color: var(--node_background);
+    display: flex;
+    flex-direction: column;
+    color: #f0f8ff;
+    box-sizing: content-box;
+    transform: (-50%, -50%);
+    border: 2px solid #ffffff00;
+    font-size: 0.5rem;
+    width: auto;
+    max-width: 250px;
+    min-width: 100px;
+    max-height: 500px;
+    &.selected {
+      border-color: #ffffff99;
+    }
+    background-clip: content-box;
+
+    & * {
+      box-sizing: border-box;
+    }
+  }
+
+  &__handle {
+    height: calc(100% - 4px);
+    border-radius: 0;
+    width: calc(var(--handle_width) * 1px);
+
+    transition: left 0.2s ease-in-out, right 0.2s ease-in-out,
+      width 0.2s ease-in-out;
+    &:hover {
+      width: calc(var(--handle_width_hover) * 1px);
+    }
+
+    &.source {
+      background-color: var(--handle_source_color);
+    }
+    &.target {
+      background-color: var(--handle_target_color);
+    }
+    &-left {
+      border-radius: var(--handle_outer_radius) var(--handle_inner_radius)
+        var(--handle_inner_radius) var(--handle_outer_radius);
+      left: calc((var(--nodeio_shift) - var(--handle_width)) * 1px);
+      &:hover {
+        left: calc((var(--nodeio_shift) - var(--handle_width_hover)) * 1px);
+      }
+    }
+    &-right {
+      border-radius: var(--handle_inner_radius) var(--handle_outer_radius)
+        var(--handle_outer_radius) var(--handle_inner_radius);
+      right: calc((var(--nodeio_shift) - var(--handle_width)) * 1px);
+      &:hover {
+        right: calc((var(--nodeio_shift) - var(--handle_width_hover)) * 1px);
+      }
+    }
+    &-top {
+      border-radius: var(--handle_outer_radius) var(--handle_outer_radius)
+        var(--handle_inner_radius) var(--handle_inner_radius);
+    }
+    &-bottom {
+      border-radius: var(--handle_inner_radius) var(--handle_inner_radius)
+        var(--handle_outer_radius) var(--handle_outer_radius);
+    }
+  }
+}
+
+.innernode {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  display: flex;
+  // padding: 2px;
+  box-sizing: border-box;
+  max-height: inherit;
+
+  &.intrigger {
+    & .nodeheader {
+      background-color: #abb408;
+    }
+  }
+
+  &.error {
+    & .nodeheader {
+      background-color: #ff0000;
+    }
+  }
+}
+.nodeheader {
+  box-sizing: border-box;
+  background-color: var(--node_header_color);
+  width: 100%;
+  padding: 0.1rem;
+  border-radius: var(--node_border_radius) var(--node_border_radius) 0 0;
+  display: flex; /* Use flex layout */
+  align-items: center; /* Align items vertically in the center */
+  justify-content: space-between; /* Distribute space between items */
+
+  &_element {
+    display: flex; /* Enable flex within each child to center content */
+    align-items: center; /* Align items vertically in the center */
+  }
+  &_title {
+    flex-grow: 1; /* Allow the text div to grow and fill available space */
+    margin: 0 10px; /* Add some space around the text for aesthetics */
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis to overflow */
+    justify-content: center; /* Center the text horizontally */
+    &_text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%; /* Ensure it does not overflow the parent */
+    }
+  }
+
+  & .triggerbutton {
+    cursor: pointer;
+
+    &:hover {
+      color: #0cc3f5;
+    }
+    &:active {
+      color: #075d74;
+    }
+  }
+}
+
+.nodename_input {
+  // remove the default
+  border: 1px solid #000000;
+  border-radius: 2px;
+  background: none;
+  color: white;
+  text-align: center;
+
+  font-size: inherit;
+  margin: 2px;
+  box-sizing: border-box;
+}
+
+.nodefooter {
+  background-color: #4e0ba5;
+  width: 100%;
+  padding: 0.1rem;
+  border-radius: 0 0 var(--node_border_radius) var(--node_border_radius);
+  &:empty {
+    display: none;
+  }
+  & .nodeerror {
+    border: 1px solid #ff0000;
+    border-radius: 2px;
+    padding: 0.25rem;
+    background-color: #ff000075;
+  }
+}
+
+.nodebody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.nodedatabody {
+  overflow: auto;
+  flex: 1;
+  display: flex;
+}
+
+.nodedatabutton {
+  flex: 1;
+}
+
+.noderesizecontrol {
+  background: transparent !important;
+  border: none !important;
+  font-size: 0.5rem;
+}
+.noderesizeicon {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 0.5rem;
+}
+
+.nodeio {
+  width: auto;
+  background-color: inherit;
+  padding: 0.1rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+
+  border: 1px solid #ffffff88;
+  border-radius: 3px;
+  box-sizing: border-box;
+  margin-left: calc(var(--nodeinput_margin) * 1px);
+  margin-right: calc(var(--nodeinput_margin) * 1px);
+  align-items: center;
+}
+
+.nodeinput {
+  @extend .nodeio;
+}
+
+.nodeoutput {
+  @extend .nodeio;
+}
+
+.iovaluefield {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
+  align-items: start;
+  justify-content: start;
+  display: flex;
+  margin: 0.2rem;
+  line-break: anywhere;
+  & > input {
+    width: 100%;
+  }
+}
+
+.nodeinput > .iovaluefield {
+  overflow: visible;
+}
+.ioname {
+  flex-grow: 1;
+  flex-shrink: 1;
+  color: inherit;
+  margin: 0.2rem;
+  overflow: hidden;
+  min-width: 2rem;
+
+  .nodeinput & {
+    text-align: left;
+  }
+  .nodeoutput & {
+    text-align: right;
+  }
+}
+
+.nodedatainput {
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+input.nodedatainput {
+  &:focus {
+    outline: none;
+  }
+}
+
+.nodedatastyledelement {
+  background-color: var(--node_header_color);
+
+  font-size: 0.5rem;
+  height: 1.5rem;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+input.nodedatainput.styledinput,
+.nodedatainput.styleddropdown {
+  @extend .nodedatastyledelement;
+  width: 100%;
+}
+
+.nodeprogress {
+  width: 100%;
+  height: 10px;
+  transition: height 0.1s ease;
+  overflow: hidden;
+
+  &-text {
+    text-align: center;
+    color: white;
+    mix-blend-mode: difference;
+  }
+  &-bar {
+    border-radius: 3px;
+  }
+  &-progress {
+    background-color: #b7f50c;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+}
