@@ -175,7 +175,6 @@ class WebSocketWorker extends FuncNodesWorker {
         this.recieve_bytes(headerObj, fullBytes);
         delete this.blobChunks[msgid];
       }
-      console.log("Header: ", headerObj);
     } catch (e) {
       console.error("Websocketworker: onbytes error", e, data);
       return;
