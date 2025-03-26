@@ -35,8 +35,6 @@ paths = [ "funcnodes_react_flow",]
 
 [project.entry-points."funcnodes.module"]
 plugin_setup = "funcnodes_react_flow.plugin_setup:setup"
-module = "funcnodes_react_flow"
-shelf = "funcnodes_react_flow:NODE_SHELF"
 
 [tool.setuptools.package-dir]
 "" = "src"
