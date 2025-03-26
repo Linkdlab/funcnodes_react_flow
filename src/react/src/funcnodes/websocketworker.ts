@@ -1,0 +1,381 @@
+import axios from "axios";
+import { LargeMessageHint } from "../states/fnrfzst.t";
+import FuncNodesWorker, { WorkerProps } from "./funcnodesworker";
+
+interface WebSocketWorkerProps extends WorkerProps {
+  url: string;
+}
+class WebSocketWorker extends FuncNodesWorker {
+  private _url: string;
+  private _websocket: WebSocket | null = null;
+  private reconnectAttempts: number = 0;
+  private maxReconnectAttempts: number = 999;
+  private initialTimeout: number = 200; // Initial reconnect delay in ms
+  private maxTimeout: number = 5000; // Maximum reconnect delay
+  private _reconnect: boolean = true;
+  private CHUNK_TIMEOUT: number = 10000;
+  private blobChunks: {
+    [key: string]: { chunks: (Uint8Array | null)[]; timestamp: number };
+  } = {};
+  constructor(data: WebSocketWorkerProps) {
+    super(data);
+    this._url = data.url;
+    new Promise((resolve) => {
+      this.connect();
+      resolve(null);
+    });
+    if (this._zustand) this._zustand.auto_progress();
+
+    // Using an arrow function so `this` is lexically bound
+    const cleanupChunks = () => {
+      const now = Date.now();
+      for (const id in this.blobChunks) {
+        if (now - this.blobChunks[id].timestamp > this.CHUNK_TIMEOUT) {
+          delete this.blobChunks[id];
+        }
+      }
+    };
+    setInterval(cleanupChunks, 5000);
+  }
+
+  private connect(): void {
+    this._zustand?.logger.info("Connecting to websocket");
+    this.is_open = false;
+    this._websocket = new WebSocket(this._url);
+
+    this._websocket.onopen = () => {
+      this.onopen();
+    };
+
+    this._websocket.onclose = () => {
+      this.onclose();
+    };
+
+    this._websocket.onerror = () => {
+      this.on_ws_error();
+    };
+
+    this._websocket.onmessage = (event) => {
+      if (typeof event.data === "string") {
+        this.onmessage(event.data);
+      } else {
+        // check if blob
+        if (event.data instanceof Blob) {
+          this.onbytes(event.data);
+        }
+      }
+    };
+  }
+
+  private calculateReconnectTimeout(): number {
+    // Increase timeout exponentially, capped at maxTimeout
+    let timeout = Math.min(
+      this.initialTimeout * Math.pow(2, this.reconnectAttempts),
+      this.maxTimeout
+    );
+    return timeout;
+  }
+  private auto_reconnect(): void {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      let timeout = this.calculateReconnectTimeout();
+      this._zustand?.logger.info(`Attempting to reconnect in ${timeout} ms`);
+
+      setTimeout(() => {
+        if (this._websocket) {
+          if (this._websocket.readyState === WebSocket.OPEN) {
+            return;
+          }
+        }
+        this.reconnectAttempts++;
+        this.connect();
+      }, timeout);
+    } else {
+      this._zustand?.logger.warn(
+        "Maximum reconnect attempts reached. Giving up."
+      );
+    }
+  }
+
+  async onmessage(data: string) {
+    try {
+      const json = JSON.parse(data);
+
+      this._zustand?.logger.debug(
+        `Recieved data of length: ${data.length} and data"`,
+        json
+      );
+
+      await this.receive(json);
+    } catch (e) {
+      console.error("Websocketworker: onmessage JSON.parse error", e, data);
+      return;
+    }
+  }
+
+  async onbytes(data: Blob) {
+    try {
+      const arrayBuffer = await data.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      const headerStr = new TextDecoder("utf-8").decode(bytes);
+
+      const headerEndIndex = headerStr.indexOf("\r\n\r\n");
+      if (headerEndIndex === -1) {
+        console.error("Header terminator not found for:\n", headerStr);
+        return;
+      }
+      const header = headerStr.substring(0, headerEndIndex + 4);
+      const bytes_wo_header = bytes.slice(headerEndIndex + 4);
+      //header are key value pairs i teh form of k1=v1;k2=v2; k3=v3; ...
+      const headerArr = header.split(";");
+      const headerObj: { [key: string]: string } = {};
+      headerArr.forEach((h) => {
+        const [key, value] = h.split("=");
+        headerObj[key.trim()] = value.trim();
+      });
+
+      //make sure the header has the required fields
+      //chunk=1/1;msgid=1d156acd-772f-400c-b023-09111e8643ea;type=io_value; mime=application/json; node=fcc5c2878500436aad0343854db51ac1; io=imagedata
+      if (!headerObj.chunk || !headerObj.msgid) {
+        console.error(
+          "Header missing required fields chunk or msgid",
+          headerObj
+        );
+        return;
+      }
+
+      const [chunk, total] = headerObj.chunk.split("/");
+      const msgid = headerObj.msgid;
+
+      //if chunk is 1/1, then this is the only chunk
+      if (chunk === "1" && total === "1") {
+        return this.recieve_bytes(headerObj, bytes_wo_header);
+      }
+
+      if (!this.blobChunks[msgid]) {
+        this.blobChunks[msgid] = {
+          chunks: Array.from({ length: parseInt(total) }, () => null),
+          timestamp: Date.now(),
+        };
+      }
+
+      if (this.blobChunks[msgid].chunks.length !== parseInt(total)) {
+        console.error("Total chunks mismatch");
+        return;
+      }
+
+      this.blobChunks[msgid].chunks[parseInt(chunk) - 1] = bytes;
+
+      //check if all chunks are recieved
+      if (this.blobChunks[msgid].chunks.every((c) => c !== null)) {
+        const fullBytes = new Uint8Array(
+          this.blobChunks[msgid].chunks.reduce((acc, chunk) => {
+            return acc.concat(Array.from(chunk));
+          }, [] as number[])
+        );
+        this.recieve_bytes(headerObj, fullBytes);
+        delete this.blobChunks[msgid];
+      }
+      console.log("Header: ", headerObj);
+    } catch (e) {
+      console.error("Websocketworker: onbytes error", e, data);
+      return;
+    }
+  }
+
+  get http_protocol(): string {
+    return this.secure_url ? "https" : "http";
+  }
+  get secure_url(): boolean {
+    return this._url.startsWith("wss");
+  }
+  get url_wo_protocol(): string {
+    return this._url.substring(this.secure_url ? 6 : 5);
+  }
+  get http_url(): string {
+    var url = this.http_protocol + "://" + this.url_wo_protocol;
+    // add / to url if it does not end with /
+    if (url[url.length - 1] !== "/") {
+      url += "/";
+    }
+    return url;
+  }
+  get_io_subscription_url({
+    node_id,
+    io_id,
+    stream,
+  }: {
+    node_id: string;
+    io_id: string;
+    stream: boolean;
+  }): string {
+    let url = this.http_url + `node/${node_id}/io/${io_id}/value`;
+    if (stream) {
+      url += "/stream";
+    }
+    return url;
+  }
+
+  async upload_file({
+    files,
+    onProgressCallback,
+    root,
+  }: {
+    files: File[] | FileList;
+    onProgressCallback?: (loaded: number, total?: number) => void;
+    root?: string;
+  }): Promise<string[]> {
+    const url = `${this.http_url}upload/`;
+    const formdata = new FormData();
+    const fileArray = Array.isArray(files) ? files : Array.from(files);
+    for (const file of fileArray) {
+      const subtarget = file.webkitRelativePath || file.name;
+      const target = root ? `${root}/${subtarget}` : subtarget;
+      formdata.append("file", file, target);
+    }
+
+    try {
+      const response = await axios.post(url, formdata, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent: any) => {
+          if (onProgressCallback) {
+            onProgressCallback(progressEvent.loaded, progressEvent.total);
+          }
+        },
+      });
+
+      // Assuming the server response contains a JSON object with the filename
+      return response.data.file;
+    } catch (error) {
+      throw new Error("Failed to upload file");
+    }
+  }
+
+  async handle_large_message_hint({ msg_id }: LargeMessageHint) {
+    // make url from websocket url
+
+    //add /msg_id to url to get the large message (url might end with /)
+    const url = this.http_url + "message/" + msg_id;
+
+    const resp = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    const json = await resp.json();
+    this.receive(json);
+  }
+
+  onopen() {
+    this._zustand?.logger.info("Websocket opened");
+    this.is_open = true;
+    if (this._zustand) this._zustand.auto_progress();
+    this.reconnectAttempts = 0;
+    this.stepwise_fullsync();
+  }
+  onclose() {
+    this._zustand?.logger.info("Websocket closed");
+    super.onclose();
+    if (this._reconnect) {
+      this._zustand?.logger.info("Websocket closed,reconnecting");
+      this.auto_reconnect(); // Attempt to reconnect
+    }
+  }
+
+  on_ws_error() {
+    this._zustand?.logger.warn("Websocket error");
+    if (this._websocket) {
+      this._websocket.close(); // Ensure the connection is closed before attempting to reconnect
+    } else {
+      this.auto_reconnect();
+    }
+  }
+
+  async send_large_message(jsondata: string) {
+    const url = `${this.http_url}message/`;
+
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsondata,
+    });
+  }
+
+  async send(data: any) {
+    if (!this._websocket || this._websocket.readyState !== WebSocket.OPEN) {
+      this._zustand?.logger.warn("Websocket not connected");
+      return;
+    }
+
+    const jsonstring = JSON.stringify(data);
+    const datasize = new Blob([jsonstring]).size;
+    if (datasize > 1000000) {
+      // 1MB
+      this._zustand?.logger.info("Data too large, sending via http");
+      return await this.send_large_message(jsonstring);
+    }
+
+    this._zustand?.logger.debug("Sending data", data);
+    this._websocket.send(jsonstring);
+  }
+
+  async stop() {
+    await super.stop();
+    this._reconnect = false;
+    // this.close();
+  }
+  close() {
+    if (this._websocket) this._websocket.close();
+  }
+  disconnect() {
+    super.disconnect();
+    this._reconnect = false;
+    this.close();
+  }
+
+  async reconnect() {
+    await super.reconnect();
+    this._reconnect = true;
+    if (this._websocket) {
+      this._zustand?.logger.info("Reconnecting");
+      if (
+        this._websocket.readyState === WebSocket.OPEN ||
+        this._websocket.readyState === WebSocket.CONNECTING
+      ) {
+        if (this._websocket.readyState === WebSocket.CONNECTING) {
+          //await to ensure the websocket is connected, with a timeout of 2 seconds
+          await new Promise((resolve, reject) => {
+            if (this._websocket === null) return;
+            let timeout = setTimeout(() => {
+              reject("Timeout@reconnect");
+            }, 2000);
+            this._websocket.addEventListener(
+              "open",
+              () => {
+                clearTimeout(timeout);
+                resolve(null);
+              },
+              { once: true }
+            );
+            if (this._websocket.readyState === WebSocket.OPEN) {
+              clearTimeout(timeout);
+              resolve(null);
+            }
+          });
+        }
+        if (this._websocket.readyState === WebSocket.OPEN) {
+          this.stepwise_fullsync();
+          return;
+        }
+      }
+    }
+    this.connect();
+  }
+}
+
+export default WebSocketWorker;

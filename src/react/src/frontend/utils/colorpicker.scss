@@ -1,0 +1,38 @@
+.colorspace {
+  margin: 0.2rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+
+  &_title {
+    font-size: 0.7em;
+    font-weight: bold;
+  }
+
+  & label {
+    font-size: 0.7rem;
+  }
+  & input {
+    font-size: 0.7rem;
+    max-height: 0.7rem;
+    box-sizing: initial;
+  }
+  & input[type="range"] {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+    background-color: #666;
+    height: 0.7rem;
+    border-radius: 5px;
+
+    &::-webkit-slider-thumb,
+    &::-webkit-range-thumb,
+    &::-moz-range-thumb {
+      width: 0.7rem;
+      height: 0.7rem;
+      background-color: #cc1c1c;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  }
+}
