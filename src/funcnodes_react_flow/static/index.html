@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/static/favicon.ico" />
+    <link rel="apple-touch-icon" href="/static/logo192.png" />
+    <link rel="manifest" href="/static/manifest.json" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Funcnodes via react" />
+    <title>FuncNodes</title>
+    <script defer="defer" src="static/js/index.js"></script>
+    <link href="static/css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root" style="width: 100vw; height: 100vh;"></div>
+    <script>// wait till window is loaded
+        window.onload = async function() {
+            const _init_wm = async ()=>{
+          res = await fetch("/worker_manager", {
+            method: "GET",
+            headers: {
+              "Content-Type": "text/plain",
+            },
+          });
+          // cehck 2xx status
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+
+          const managerurl = await res.text();
+          FuncNodes("root",{
+            "workermanager_url": managerurl,
+          });
+
+        }
+
+        const ini_wm = async ()=>{
+          while (true) {
+            try {
+              await _init_wm();
+              break;
+            } catch (e) {
+              console.log(e);
+              await new Promise(r => setTimeout(r, 5000));
+            }
+          }
+        }
+
+        ini_wm();
+
+        };
+    </script>
+  </body>
+</html>
