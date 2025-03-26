@@ -7,7 +7,7 @@ const Base64ImageRenderer = ({
   value,
   renderoptions,
 }: {
-  value: string | ArrayBufferDataStructure<any>;
+  value: string | ArrayBufferDataStructure;
   renderoptions?: latest.ImageRenderOptions;
 }) => {
   const format = renderoptions?.format || "jpeg";
