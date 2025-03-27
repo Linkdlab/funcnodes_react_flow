@@ -336,7 +336,7 @@ wheels = [
 
 [[package]]
 name = "funcnodes"
-version = "0.5.35"
+version = "0.5.36"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "funcnodes-basic" },
@@ -350,9 +350,9 @@ dependencies = [
     { name = "venvmngr", marker = "sys_platform != 'emscripten'" },
     { name = "virtualenv", marker = "sys_platform != 'emscripten'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fe/79/406fe6cea322e869aa8cbc59b5533c6402164f4cbbeb0c9f00cc32d13dde/funcnodes-0.5.35.tar.gz", hash = "sha256:66b041c4d4443690774c59d7b5397bcffb4042bcdc7d5f6f8d6a31506a0e1a36", size = 42131 }
+sdist = { url = "https://files.pythonhosted.org/packages/8b/e6/4f2dc1b2bb4fc4bf9874212785d875f4ac746fec5ae4135cdb37bc8a12a1/funcnodes-0.5.36.tar.gz", hash = "sha256:112d196422563740535e34136a271b0069973ba8f2baf2af3b6a7c6eda0b4f55", size = 42121 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/bd/d523af160b7604bb49e02d508f80629b1086166e5058e6ac4a3e78f6f720/funcnodes-0.5.35-py3-none-any.whl", hash = "sha256:d12321cf115c52a9a9e4d454cf3c56e1a72f82bda11ea1395cfe547dc346b925", size = 38849 },
+    { url = "https://files.pythonhosted.org/packages/ff/fc/81c38631276ecb642012e62f6eaef37cec1a2f734f53d0c9c1b6bb9ef6b9/funcnodes-0.5.36-py3-none-any.whl", hash = "sha256:953b8894735db38fe89b455356a3b063077b1cec5635b937d176409349c3bf25", size = 38854 },
 ]
 
 [[package]]
@@ -399,7 +399,7 @@ wheels = [
 
 [[package]]
 name = "funcnodes-react-flow"
-version = "0.4.1"
+version = "0.4.2"
 source = { editable = "." }
 dependencies = [
     { name = "funcnodes" },
@@ -417,7 +417,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "funcnodes", specifier = ">=0.5.35" },
-    { name = "funcnodes", marker = "sys_platform != 'emscripten'", specifier = ">=0.5.25" },
+    { name = "funcnodes", marker = "sys_platform != 'emscripten'", specifier = ">=0.5.36" },
     { name = "funcnodes-core", specifier = ">=0.3.51" },
     { name = "funcnodes-worker", specifier = ">=0.3.0" },
 ]
@@ -493,7 +493,7 @@ wheels = [
 
 [[package]]
 name = "licensecheck"
-version = "2025.0.1"
+version = "2025.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "appdirs" },
@@ -509,9 +509,9 @@ dependencies = [
     { name = "tomli" },
     { name = "uv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/84/cd079afa938683a9c92f45a555593ea35de3e66305bb44c19985ebfb58af/licensecheck-2025.0.1.tar.gz", hash = "sha256:4d4229b4bf462c777d464a09d77b8d4d73e7d3113ca9ad7e63ce1450c9b40aab", size = 119579 }
+sdist = { url = "https://files.pythonhosted.org/packages/5a/36/2ea057fb11e7f4918bfaffd4eb135f715dd8cdc653fba516b9e2453d16bd/licensecheck-2025.1.0.tar.gz", hash = "sha256:411a1d81606b8be695794c1e7e79cc899b51fe5c501164155361cd2d6f3c5969", size = 79797 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/3c/712eab5c502af65e9f580160565162756a7a8259580afea0f026011591a0/licensecheck-2025.0.1-py3-none-any.whl", hash = "sha256:82532c18ef0a511af3f94d07de4bbd08a276dea15651a1207552c3d67ce99dc9", size = 28798 },
+    { url = "https://files.pythonhosted.org/packages/65/bd/606e2f7eb0da042bffd8711a7427f7a28ca501aa6b1e3367ae3c7d4dc489/licensecheck-2025.1.0-py3-none-any.whl", hash = "sha256:eb20131cd8f877e5396958fd7b00cdb2225436c37a59dba4cf36d36079133a17", size = 26681 },
 ]
 
 [[package]]

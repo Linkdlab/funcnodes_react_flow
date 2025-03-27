@@ -50,9 +50,10 @@ export class DataStructure<D, R> {
   dispose() {}
 }
 
-export class ArrayBufferDataStructure<
-  D extends ArrayBufferLike
-> extends DataStructure<D, string> {
+export class ArrayBufferDataStructure extends DataStructure<
+  ArrayBuffer,
+  string
+> {
   private _objectUrl: string | undefined;
 
   get objectUrl(): string {
@@ -79,79 +80,137 @@ export class ArrayBufferDataStructure<
   }
 }
 
-const ctypeunpacker = {
-  x: (_data: ArrayBufferLike) => {
+const to_arraybuffer = (data: ArrayBufferLike): ArrayBuffer => {
+  if ((data as any).buffer) {
+    return (data as any).buffer;
+  }
+  return data;
+  // if (data instanceof Uint8Array) {
+  //   return data.buffer;
+  // }
+  // if (data instanceof ArrayBuffer) {
+  //   return data;
+  // }
+  // if (data instanceof DataView) {
+  //   return data.buffer;
+  // }
+  // throw new Error("Unsupported ArrayBufferLike:" + data);
+};
+
+const ctypeunpacker: {
+  [key: string]: (
+    data: ArrayBufferLike,
+    littleEndian: boolean
+  ) => string | number | boolean | null;
+} = {
+  x: (_data: ArrayBufferLike, _littleEndian: boolean) => {
     return null;
   }, //  pad byte 	no value 	(7 )
-  c: (data: ArrayBufferLike) => {
-    return new DataView(data).getInt8(0);
+  c: (data: ArrayBufferLike, _littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getInt8(0);
   }, //  char 	bytes of length 1 	1 	b 	signed char 	integer 	1 	(1 ), (2 )
-  B: (data: ArrayBufferLike) => {
-    return new DataView(data).getUint8(0);
+  B: (data: ArrayBufferLike, _littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getUint8(0);
   }, //  unsigned char 	integer 	1 	(2 )
-  "?": (data: ArrayBufferLike) => {
-    return new DataView(data).getInt8(0) === 1;
+  "?": (data: ArrayBufferLike, _littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getInt8(0) === 1;
   }, //  _Bool 	bool 	1 	(1 )
-  h: (data: ArrayBufferLike) => {
-    return new DataView(data).getInt16(0);
+  h: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getInt16(0, littleEndian);
   }, //  short 	integer 	2 	(2 )
-  H: (data: ArrayBufferLike) => {
-    return new DataView(data).getUint16(0);
+  H: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getUint16(0, littleEndian);
   }, //  unsigned short 	integer 	2 	(2 )
-  i: (data: ArrayBufferLike) => {
-    return new DataView(data).getInt32(0);
+  i: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getInt32(0, littleEndian);
   }, //  int 	integer 	4 	(2 )
-  I: (data: ArrayBufferLike) => {
-    return new DataView(data).getUint32(0);
+  I: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getUint32(0, littleEndian);
   }, //  unsigned int 	integer 	4 	(2 )
-  l: (data: ArrayBufferLike) => {
-    return new DataView(data).getInt32(0);
+  l: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getInt32(0, littleEndian);
   }, //  long 	integer 	4 	(2 )
-  L: (data: ArrayBufferLike) => {
-    return new DataView(data).getUint32(0);
+  L: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getUint32(0, littleEndian);
   }, //  unsigned long 	integer 	4 	(2 )
-  q: (data: ArrayBufferLike) => {
-    return new DataView(data).getBigInt64(0);
+  q: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return Number(
+      new DataView(to_arraybuffer(data)).getBigInt64(0, littleEndian)
+    );
   }, //  long long 	integer 	8 	(2 )
-  Q: (data: ArrayBufferLike) => {
-    return new DataView(data).getBigUint64(0);
+  Q: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return Number(
+      new DataView(to_arraybuffer(data)).getBigUint64(0, littleEndian)
+    );
   }, //  unsigned long long 	integer 	8 	(2 )
-  n: (data: ArrayBufferLike) => {
-    return new DataView(data).getBigInt64(0);
+  n: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return Number(
+      new DataView(to_arraybuffer(data)).getBigInt64(0, littleEndian)
+    );
   }, //  ssize_t 	integer 	(3 )
-  N: (data: ArrayBufferLike) => {
-    return new DataView(data).getBigUint64(0);
+  N: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return Number(
+      new DataView(to_arraybuffer(data)).getBigUint64(0, littleEndian)
+    );
   }, //  size_t 	integer 	(3 )
-  // "e":(data:ArrayBufferLike)=>{return new DataView(data).getFloat16(0)}, //  (6 ) float 	2 	(4 )
-  f: (data: ArrayBufferLike) => {
-    return new DataView(data).getFloat32(0);
+  // "e":(data:ArrayBufferLike)=>{return new DataView(to_arraybuffer(data)).getFloat16(0)}, //  (6 ) float 	2 	(4 )
+  f: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getFloat32(0, littleEndian);
   }, //  float 	float 	4 	(4 )
-  d: (data: ArrayBufferLike) => {
-    return new DataView(data).getFloat64(0);
+  d: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return new DataView(to_arraybuffer(data)).getFloat64(0, littleEndian);
   }, //  double 	float 	8 	(4 )
-  s: (data: ArrayBufferLike) => {
-    return new TextDecoder().decode(data);
+  s: (data: ArrayBufferLike, _littleEndian: boolean) => {
+    return new TextDecoder().decode(to_arraybuffer(data));
   }, //  char[] 	bytes 	(9 )
-  p: (data: ArrayBufferLike) => {
-    return new TextDecoder().decode(data);
+  p: (data: ArrayBufferLike, _littleEndian: boolean) => {
+    return new TextDecoder().decode(to_arraybuffer(data));
   }, //  char[] 	bytes 	(8 )
-  P: (data: ArrayBufferLike) => {
-    return new DataView(data).getBigUint64(0);
+  P: (data: ArrayBufferLike, littleEndian: boolean) => {
+    return Number(
+      new DataView(to_arraybuffer(data)).getBigUint64(0, littleEndian)
+    );
   }, //  void* 	int
 };
 export class CTypeStructure extends DataStructure<
   ArrayBufferLike,
-  string | number | bigint | boolean | null
+  string | number | boolean | null
 > {
-  private _cType: keyof typeof ctypeunpacker;
-  private _value: string | number | bigint | boolean | null;
+  private _cType: string;
+  private _value: string | number | boolean | null;
 
   constructor({ data, mime }: DataStructureProps<ArrayBufferLike>) {
     super({ data, mime });
-    this._cType = mime.split(
-      "application/fn.struct."
-    )[1] as keyof typeof ctypeunpacker;
-    this._value = ctypeunpacker[this._cType](data);
+    this._cType = mime.split("application/fn.struct.")[1];
+    this._value = null;
+    this.parse_value();
+  }
+
+  parse_value() {
+    let littleEndian = true;
+    let cType = this._cType;
+    if (cType.startsWith("<")) {
+      littleEndian = true;
+      cType = cType.slice(1);
+    }
+    if (cType.startsWith(">")) {
+      littleEndian = false;
+      cType = cType.slice(1);
+    }
+    if (cType.startsWith("!")) {
+      littleEndian = false;
+      cType = cType.slice(1);
+    }
+    if (cType.startsWith("@")) {
+      littleEndian = false;
+      cType = cType.slice(1);
+    }
+    if (cType.startsWith("=")) {
+      littleEndian = false;
+      cType = cType.slice(1);
+    }
+    this._value = ctypeunpacker[cType](this.data, littleEndian);
+    return this._value;
   }
 
   get value() {
@@ -181,7 +240,7 @@ export class JSONStructure extends DataStructure<
     if (data.length === 0) {
       this._json = undefined;
     } else {
-      this._json = JSON.parse(new TextDecoder().decode(data));
+      this._json = JSON.parse(new TextDecoder().decode(to_arraybuffer(data)));
       if (this._json === "<NoValue>") {
         this._json = undefined;
       }
@@ -209,7 +268,7 @@ export class TextStructure extends DataStructure<ArrayBufferLike, string> {
   private _value: string;
   constructor({ data, mime }: DataStructureProps<ArrayBufferLike>) {
     super({ data, mime });
-    this._value = new TextDecoder().decode(data);
+    this._value = new TextDecoder().decode(to_arraybuffer(data));
   }
 
   get value() {
