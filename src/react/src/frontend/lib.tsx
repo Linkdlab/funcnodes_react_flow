@@ -669,7 +669,10 @@ const ExternalWorkerInstanceEntry = ({
                   {filterednodes && (
                     <>
                       {filterednodes.map((subItem) => (
-                        <LibraryNode key={subItem.node_id} item={subItem} />
+                        <LibraryNode
+                          key={parentkey + subItem.node_id}
+                          item={subItem}
+                        />
                       ))}
                     </>
                   )}
@@ -832,6 +835,7 @@ const Library = () => {
     zustand.worker?.state((s) => {
       return s.is_open;
     }) ?? false;
+
   return (
     <ExpandingContainer
       maxSize={on_small_screen ? "100%" : "300px"}
@@ -846,18 +850,16 @@ const Library = () => {
           <hr className="hr_prominent" />
           <LibFilter filter={filter} setFilter={setFilter} />
           <div className="vscrollcontainer">
-            {libstate.lib.shelves.map((item) =>
-              item.name == "_external_worker" ? (
-                <></>
-              ) : (
+            {libstate.lib.shelves
+              .filter((item) => item.name !== "_external_worker")
+              .map((item) => (
                 <LibraryShelf
                   key={item.name}
                   item={item}
                   filter={filter}
                   parentkey={item.name}
                 />
-              )
-            )}
+              ))}
           </div>
           <hr />
           <div className="libtitle">External Worker</div>

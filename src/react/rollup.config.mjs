@@ -48,6 +48,7 @@ const moduleConfig = {
     //   api: 'modern'
     // }),
     nodePolyfills(),
+
     babel({
       babelHelpers: 'bundled',
       presets: ["@babel/preset-react",{
@@ -123,6 +124,7 @@ const bundleConfig={
   ],
   output: [
     {
+      banner: 'var global = window;',
       file: path.resolve(__dirname, "public","index.js"),
       format: "iife",
       sourcemap: true,
@@ -132,8 +134,8 @@ const bundleConfig={
 }
 
 export default [
-  styleConfig,
   bundleConfig,
+  styleConfig,
   dtsConfig,
   moduleConfig,
 
