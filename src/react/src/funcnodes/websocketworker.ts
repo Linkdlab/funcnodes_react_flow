@@ -222,7 +222,7 @@ class WebSocketWorker extends FuncNodesWorker {
     files: File[] | FileList;
     onProgressCallback?: (loaded: number, total?: number) => void;
     root?: string;
-  }): Promise<string[]> {
+  }): Promise<string> {
     const url = `${this.http_url}upload/`;
     const formdata = new FormData();
     const fileArray = Array.isArray(files) ? files : Array.from(files);

@@ -712,7 +712,7 @@ class FuncNodesWorker {
     files: File[] | FileList;
     onProgressCallback?: (loaded: number, total?: number) => void;
     root?: string;
-  }): Promise<string[]> {
+  }): Promise<string> {
     throw new Error("upload_file not implemented ");
   }
 
