@@ -13,10 +13,7 @@ class WebSocketWorker extends FuncNodesWorker {
   private initialTimeout: number = 200; // Initial reconnect delay in ms
   private maxTimeout: number = 5000; // Maximum reconnect delay
   private _reconnect: boolean = true;
-  private CHUNK_TIMEOUT: number = 10000;
-  private blobChunks: {
-    [key: string]: { chunks: (Uint8Array | null)[]; timestamp: number };
-  } = {};
+
   constructor(data: WebSocketWorkerProps) {
     super(data);
     this._url = data.url;
@@ -25,17 +22,6 @@ class WebSocketWorker extends FuncNodesWorker {
       resolve(null);
     });
     if (this._zustand) this._zustand.auto_progress();
-
-    // Using an arrow function so `this` is lexically bound
-    const cleanupChunks = () => {
-      const now = Date.now();
-      for (const id in this.blobChunks) {
-        if (now - this.blobChunks[id].timestamp > this.CHUNK_TIMEOUT) {
-          delete this.blobChunks[id];
-        }
-      }
-    };
-    setInterval(cleanupChunks, 5000);
   }
 
   private connect(): void {
@@ -61,7 +47,10 @@ class WebSocketWorker extends FuncNodesWorker {
       } else {
         // check if blob
         if (event.data instanceof Blob) {
-          this.onbytes(event.data);
+          event.data.arrayBuffer().then((arrayBuffer) => {
+            const bytes = new Uint8Array(arrayBuffer);
+            this.onbytes(bytes);
+          });
         }
       }
     };
@@ -112,75 +101,6 @@ class WebSocketWorker extends FuncNodesWorker {
     }
   }
 
-  async onbytes(data: Blob) {
-    try {
-      const arrayBuffer = await data.arrayBuffer();
-      const bytes = new Uint8Array(arrayBuffer);
-      const headerStr = new TextDecoder("utf-8").decode(bytes);
-
-      const headerEndIndex = headerStr.indexOf("\r\n\r\n");
-      if (headerEndIndex === -1) {
-        console.error("Header terminator not found for:\n", headerStr);
-        return;
-      }
-      const header = headerStr.substring(0, headerEndIndex + 4);
-      const bytes_wo_header = bytes.slice(headerEndIndex + 4);
-      //header are key value pairs i teh form of k1=v1;k2=v2; k3=v3; ...
-      const headerArr = header.split(";");
-      const headerObj: { [key: string]: string } = {};
-      headerArr.forEach((h) => {
-        const [key, value] = h.split("=");
-        headerObj[key.trim()] = value.trim();
-      });
-
-      //make sure the header has the required fields
-      //chunk=1/1;msgid=1d156acd-772f-400c-b023-09111e8643ea;type=io_value; mime=application/json; node=fcc5c2878500436aad0343854db51ac1; io=imagedata
-      if (!headerObj.chunk || !headerObj.msgid) {
-        console.error(
-          "Header missing required fields chunk or msgid",
-          headerObj
-        );
-        return;
-      }
-
-      const [chunk, total] = headerObj.chunk.split("/");
-      const msgid = headerObj.msgid;
-
-      //if chunk is 1/1, then this is the only chunk
-      if (chunk === "1" && total === "1") {
-        return this.recieve_bytes(headerObj, bytes_wo_header);
-      }
-
-      if (!this.blobChunks[msgid]) {
-        this.blobChunks[msgid] = {
-          chunks: Array.from({ length: parseInt(total) }, () => null),
-          timestamp: Date.now(),
-        };
-      }
-
-      if (this.blobChunks[msgid].chunks.length !== parseInt(total)) {
-        console.error("Total chunks mismatch");
-        return;
-      }
-
-      this.blobChunks[msgid].chunks[parseInt(chunk) - 1] = bytes;
-
-      //check if all chunks are recieved
-      if (this.blobChunks[msgid].chunks.every((c) => c !== null)) {
-        const fullBytes = new Uint8Array(
-          this.blobChunks[msgid].chunks.reduce((acc, chunk) => {
-            return acc.concat(Array.from(chunk));
-          }, [] as number[])
-        );
-        this.recieve_bytes(headerObj, fullBytes);
-        delete this.blobChunks[msgid];
-      }
-    } catch (e) {
-      console.error("Websocketworker: onbytes error", e, data);
-      return;
-    }
-  }
-
   get http_protocol(): string {
     return this.secure_url ? "https" : "http";
   }
@@ -222,7 +142,7 @@ class WebSocketWorker extends FuncNodesWorker {
     files: File[] | FileList;
     onProgressCallback?: (loaded: number, total?: number) => void;
     root?: string;
-  }): Promise<string[]> {
+  }): Promise<string> {
     const url = `${this.http_url}upload/`;
     const formdata = new FormData();
     const fileArray = Array.isArray(files) ? files : Array.from(files);

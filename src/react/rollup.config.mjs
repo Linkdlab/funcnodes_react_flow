@@ -15,6 +15,7 @@ import * as sass from "sass";
 import path from "path";
 import { dts } from "rollup-plugin-dts";
 import replace from '@rollup/plugin-replace';
+import copy from "rollup-plugin-copy";
 
 const production = !process.env.ROLLUP_WATCH;
 const peers = Object.keys(pkg.peerDependencies || {});
@@ -87,7 +88,17 @@ const styleConfig = {
         sass: sass,
         outputStyle: production?"compressed":undefined,
       }),
-  ],
+      production &&
+      copy({
+        targets: [
+          {
+            src: "public/style.css",
+            dest: "../funcnodes_react_flow/static/css",
+          },
+        ],
+        hook: "writeBundle",
+      }),
+  ].filter(Boolean),
   output:[
     {
       file: path.resolve(__dirname, pkg.style),
@@ -121,7 +132,22 @@ const bundleConfig={
       'global': 'window',
       preventAssignment: true,
     }),
-  ],
+    production &&
+      copy({
+        targets: [
+          {
+            src: "public/index.js",
+            dest: "../funcnodes_react_flow/static/js",
+          },
+          {
+            src: "public/index.js.map",
+            dest: "../funcnodes_react_flow/static/js",
+          },
+        ],
+        hook: "writeBundle",
+      }),
+  ].filter(Boolean),
+
   output: [
     {
       banner: 'var global = window;',

@@ -48,6 +48,11 @@ class FuncNodesWorker {
   _nodeupdatetimer: ReturnType<typeof setTimeout>;
   uuid: string;
   _responsive: boolean;
+  private CHUNK_TIMEOUT: number = 10000; // 10 seconds
+  private PONGDELAY: number = 2000; // 2 seconds
+  private blobChunks: {
+    [key: string]: { chunks: (Uint8Array | null)[]; timestamp: number };
+  } = {};
 
   state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
   on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
@@ -86,21 +91,32 @@ class FuncNodesWorker {
     }
 
     this._responsive = false;
-    this._last_pong = Date.now() - 1000 * 60 * 60; // set the last pong to 1 hour ago
+    this._last_pong = Date.now() - this.PONGDELAY * 100; // set the last pong way back in the past
     // send a ping message every 1 seconds
     setInterval(() => {
       if (!this.is_open) return;
       this.send({ type: "ping" });
-    }, 1000);
+    }, this.PONGDELAY);
 
     // regular check if the last pong is less than 5 seconds ago
     setInterval(() => {
-      if (Date.now() - this._last_pong > 5000) {
+      if (Date.now() - this._last_pong > this.PONGDELAY * 3) {
         this._responsive = false;
       } else {
         this._responsive = true;
       }
-    }, 5000);
+    }, this.PONGDELAY * 2);
+
+    // Using an arrow function so `this` is lexically bound
+    const cleanupChunks = () => {
+      const now = Date.now();
+      for (const id in this.blobChunks) {
+        if (now - this.blobChunks[id].timestamp > this.CHUNK_TIMEOUT) {
+          delete this.blobChunks[id];
+        }
+      }
+    };
+    setInterval(cleanupChunks, this.CHUNK_TIMEOUT / 2);
   }
 
   _receive_pong() {
@@ -712,7 +728,7 @@ class FuncNodesWorker {
     files: File[] | FileList;
     onProgressCallback?: (loaded: number, total?: number) => void;
     root?: string;
-  }): Promise<string[]> {
+  }): Promise<string> {
     throw new Error("upload_file not implemented ");
   }
 
@@ -997,6 +1013,73 @@ class FuncNodesWorker {
       default:
         console.warn("Unhandled message", data);
         break;
+    }
+  }
+
+  async onbytes(data: Uint8Array) {
+    try {
+      const headerStr = new TextDecoder("utf-8").decode(data);
+
+      const headerEndIndex = headerStr.indexOf("\r\n\r\n");
+      if (headerEndIndex === -1) {
+        console.error("Header terminator not found for:\n", headerStr);
+        return;
+      }
+      const header = headerStr.substring(0, headerEndIndex + 4);
+      const bytes_wo_header = data.slice(headerEndIndex + 4);
+      //header are key value pairs i teh form of k1=v1;k2=v2; k3=v3; ...
+      const headerArr = header.split(";");
+      const headerObj: { [key: string]: string } = {};
+      headerArr.forEach((h) => {
+        const [key, value] = h.split("=");
+        headerObj[key.trim()] = value.trim();
+      });
+
+      //make sure the header has the required fields
+      //chunk=1/1;msgid=1d156acd-772f-400c-b023-09111e8643ea;type=io_value; mime=application/json; node=fcc5c2878500436aad0343854db51ac1; io=imagedata
+      if (!headerObj.chunk || !headerObj.msgid) {
+        console.error(
+          "Header missing required fields chunk or msgid",
+          headerObj
+        );
+        return;
+      }
+
+      const [chunk, total] = headerObj.chunk.split("/");
+      const msgid = headerObj.msgid;
+
+      //if chunk is 1/1, then this is the only chunk
+      if (chunk === "1" && total === "1") {
+        return this.recieve_bytes(headerObj, bytes_wo_header);
+      }
+
+      if (!this.blobChunks[msgid]) {
+        this.blobChunks[msgid] = {
+          chunks: Array.from({ length: parseInt(total) }, () => null),
+          timestamp: Date.now(),
+        };
+      }
+
+      if (this.blobChunks[msgid].chunks.length !== parseInt(total)) {
+        console.error("Total chunks mismatch");
+        return;
+      }
+
+      this.blobChunks[msgid].chunks[parseInt(chunk) - 1] = data;
+
+      //check if all chunks are recieved
+      if (this.blobChunks[msgid].chunks.every((c) => c !== null)) {
+        const fullBytes = new Uint8Array(
+          this.blobChunks[msgid].chunks.reduce((acc, chunk) => {
+            return acc.concat(Array.from(chunk));
+          }, [] as number[])
+        );
+        this.recieve_bytes(headerObj, fullBytes);
+        delete this.blobChunks[msgid];
+      }
+    } catch (e) {
+      console.error("Websocketworker: onbytes error", e, data);
+      return;
     }
   }
 
