@@ -1,6 +1,6 @@
 {
   "name": "@linkdlab/funcnodes_react_flow",
-  "version": "0.4.0",
+  "version": "0.4.3",
   "description": "Frontend with React Flow for FuncNodes",
   "repository": {
     "type": "git",
@@ -80,6 +80,7 @@
     "react": "^19.0",
     "react-dom": "^19.0",
     "rollup": "^4.34.6",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-import-css": "^3.5.8",
     "rollup-plugin-node-polyfills": "^0.2.1",
