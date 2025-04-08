@@ -238,6 +238,7 @@
   display: flex;
   margin: 0.2rem;
   line-break: anywhere;
+  flex-direction: column;
   & > input {
     width: 100%;
   }

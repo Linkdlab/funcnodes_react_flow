@@ -4,11 +4,19 @@ import { latest } from "../../types/versioned/versions.t";
 import { Base64BytesRenderer } from "./default_data_view_renderer";
 
 import * as Slider from "@radix-ui/react-slider";
-import * as ToolTip from "@radix-ui/react-tooltip";
+// import * as ToolTip from "@radix-ui/react-tooltip";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 import { FuncNodesContext } from "../funcnodesreactflow";
 import CustomColorPicker from "../utils/colorpicker";
 import CustomSelect from "../utils/select";
+
+function relativeRound(value: number) {
+  if (value === 0) return 0;
+  const absValue = Math.abs(value);
+  // Do not round extremely small numbers.
+  if (absValue < 1e-12) return value;
+  return Number(value.toPrecision(12));
+}
 
 export const NumberInput = ({
   iostore,
@@ -50,6 +58,7 @@ export const NumberInput = ({
         new_value > io.value_options.max
       )
         new_value = io.value_options.max;
+      new_value = relativeRound(new_value);
       setTempValue(new_value.toString());
     }
     try {
@@ -72,21 +81,30 @@ export const NumberInput = ({
   if (v === undefined) v = "";
   if (v === null) v = "";
 
-  if (
+  let add_input: React.ReactNode = null;
+  let step = 1;
+  if (io.value_options?.step !== undefined) {
+    step = io.value_options.step;
+  } else if (
     io.value_options?.max !== undefined &&
     io.value_options?.min !== undefined
   ) {
-    return (
+    step = (io.value_options?.max - io.value_options?.min) / 1000;
+  }
+
+  if (
+    io.value_options?.max !== undefined &&
+    io.value_options?.min !== undefined &&
+    !io.connected
+  ) {
+    add_input = (
       <div style={{ minWidth: "100px" }} className="SliderContainer">
         <Slider.Root
           className="SliderRoot"
           value={[v === undefined ? io.value_options?.min : v]}
           min={io.value_options?.min}
           max={io.value_options?.max}
-          step={
-            io.value_options.step ||
-            (io.value_options?.max - io.value_options?.min) / 1000
-          }
+          step={step}
           disabled={io.connected}
           onValueCommit={(value) => {
             if (isNaN(value[0])) return;
@@ -100,65 +118,68 @@ export const NumberInput = ({
           <Slider.Track className="SliderTrack">
             <Slider.Range className="SliderRange" />
           </Slider.Track>
-          <ToolTip.TooltipProvider>
+          {/* <ToolTip.TooltipProvider>
             <ToolTip.Root open>
-              <ToolTip.Trigger asChild>
-                <Slider.Thumb className="SliderThumb" />
-              </ToolTip.Trigger>
+              <ToolTip.Trigger asChild> */}
+          <Slider.Thumb className="SliderThumb" />
+          {/* </ToolTip.Trigger>
               <ToolTip.Content className="SliderTooltipContent">
                 {v}
               </ToolTip.Content>
             </ToolTip.Root>
-          </ToolTip.TooltipProvider>
+          </ToolTip.TooltipProvider> */}
         </Slider.Root>
       </div>
     );
   }
   return (
-    <input
-      type="text"
-      className="nodedatainput styledinput numberinput"
-      value={v}
-      onChange={(e) => setTempValue(e.target.value)}
-      onBlur={on_change}
-      onKeyDown={(e) => {
-        // on key up add step to value
+    <>
+      {add_input}
+      <input
+        type="text"
+        className="nodedatainput styledinput numberinput"
+        value={v}
+        onChange={(e) => setTempValue(e.target.value)}
+        onBlur={on_change}
+        onKeyDown={(e) => {
+          // on key up add step to value
+          if (e.ctrlKey || e.metaKey) {
+            return;
+          }
+          if (e.key === "ArrowUp") {
+            if (e.shiftKey) step *= 10;
 
-        if (e.key === "ArrowUp") {
-          let step = io.value_options?.step || 1;
-          if (e.shiftKey) step *= 10;
+            let new_value = (parseFloat(v) || 0) + step;
+            // setTempValue(new_value.toString());
+            set_new_value(new_value);
+            return;
+          }
 
-          let new_value = (parseFloat(v) || 0) + step;
-          // setTempValue(new_value.toString());
-          set_new_value(new_value);
-          return;
-        }
+          // on key down subtract step to value
+          if (e.key === "ArrowDown") {
+            if (e.shiftKey) step *= 10;
+            let new_value = (parseFloat(v) || 0) - step;
+            // setTempValue(new_value.toString());
+            set_new_value(new_value);
+            return;
+          }
 
-        // on key down subtract step to value
-        if (e.key === "ArrowDown") {
-          let step = io.value_options?.step || 1;
-          if (e.shiftKey) step *= 10;
-          let new_value = (parseFloat(v) || 0) - step;
-          // setTempValue(new_value.toString());
-          set_new_value(new_value);
-          return;
-        }
-
-        //accept only numbers
-        if (
-          !/^[0-9.eE+-]$/.test(e.key) &&
-          !["Backspace", "ArrowLeft", "ArrowRight", "Delete", "Tab"].includes(
-            e.key
-          )
-        ) {
-          e.preventDefault();
-        }
-      }}
-      disabled={io.connected}
-      step={io.value_options?.step}
-      min={io.value_options?.min}
-      max={io.value_options?.max}
-    />
+          //accept only numbers
+          if (
+            !/^[0-9.eE+-]$/.test(e.key) &&
+            !["Backspace", "ArrowLeft", "ArrowRight", "Delete", "Tab"].includes(
+              e.key
+            )
+          ) {
+            e.preventDefault();
+          }
+        }}
+        disabled={io.connected}
+        step={io.value_options?.step}
+        min={io.value_options?.min}
+        max={io.value_options?.max}
+      />
+    </>
   );
 };
 
