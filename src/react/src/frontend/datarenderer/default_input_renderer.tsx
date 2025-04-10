@@ -114,6 +114,16 @@ export const NumberInput = ({
             if (isNaN(value[0])) return;
             setTempValue(value[0].toString());
           }}
+          onKeyDown={(event) => {
+            // Optionally, you can restrict this to arrow keys only:
+            if (
+              ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(
+                event.key
+              )
+            ) {
+              event.stopPropagation();
+            }
+          }}
         >
           <Slider.Track className="SliderTrack">
             <Slider.Range className="SliderRange" />
@@ -141,6 +151,7 @@ export const NumberInput = ({
         value={v}
         onChange={(e) => setTempValue(e.target.value)}
         onBlur={on_change}
+        step={step}
         onKeyDown={(e) => {
           // on key up add step to value
           if (e.ctrlKey || e.metaKey) {
@@ -175,7 +186,6 @@ export const NumberInput = ({
           }
         }}
         disabled={io.connected}
-        step={io.value_options?.step}
         min={io.value_options?.min}
         max={io.value_options?.max}
       />
