@@ -21,7 +21,7 @@
   flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
-  width: 15rem;
+  // width: 15rem;
   background-color: var(--funcnodesbackground2);
   border-radius: var(--containerboarderradius);
   padding: 0.5rem;
@@ -33,8 +33,12 @@
   }
 
   & hr {
+    border-color: var(--funheadercolor);
+    border-width: 1px;
+    border-style: dotted none none none;
     &.hr_prominent {
-      border: 0.5px solid var(--funheadercolor);
+      border-style: solid none none none;
+      border-width: 2px;
     }
     width: 100%;
   }
