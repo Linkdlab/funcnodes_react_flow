@@ -13,14 +13,15 @@ class WebSocketWorker extends FuncNodesWorker {
   private initialTimeout: number = 200; // Initial reconnect delay in ms
   private maxTimeout: number = 5000; // Maximum reconnect delay
   private _reconnect: boolean = true;
+  private _reconnect_timeout: ReturnType<typeof setTimeout> | undefined =
+    undefined;
 
   constructor(data: WebSocketWorkerProps) {
     super(data);
     this._url = data.url;
-    new Promise((resolve) => {
+    this._reconnect_timeout = setTimeout(() => {
       this.connect();
-      resolve(null);
-    });
+    }, 200);
     if (this._zustand) this._zustand.auto_progress();
   }
 
@@ -69,7 +70,7 @@ class WebSocketWorker extends FuncNodesWorker {
       let timeout = this.calculateReconnectTimeout();
       this._zustand?.logger.info(`Attempting to reconnect in ${timeout} ms`);
 
-      setTimeout(() => {
+      this._reconnect_timeout = setTimeout(() => {
         if (this._websocket) {
           if (this._websocket.readyState === WebSocket.OPEN) {
             return;
@@ -254,6 +255,10 @@ class WebSocketWorker extends FuncNodesWorker {
   disconnect() {
     super.disconnect();
     this._reconnect = false;
+    if (this._reconnect_timeout) {
+      clearTimeout(this._reconnect_timeout);
+      this._reconnect_timeout = undefined;
+    }
     this.close();
   }
 

@@ -124,7 +124,9 @@ const FuncNodesReactFlowZustand = (
     const rfstate = rfstore.getState();
     if (action.from_remote) {
       let store = ns.get_node(action.node.id, false);
-
+      if (store) {
+        return;
+      }
       if (!store) {
         try {
           store = createNodeStore(iterf, action.node);

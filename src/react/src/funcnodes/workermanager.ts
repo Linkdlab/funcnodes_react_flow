@@ -8,7 +8,7 @@ import WebSocketWorker from "./websocketworker";
 
 class WorkerManager {
   private wsuri: string;
-  private workers: any;
+  private workers: { [key: string]: FuncNodesWorker };
   private ws: WebSocket | null = null;
   private reconnectAttempts: number = 0;
   private maxReconnectAttempts: number = 999;
@@ -16,15 +16,25 @@ class WorkerManager {
   private maxTimeout: number = 2000; // Maximum reconnect delay
   private zustand: FuncNodesReactFlowZustandInterface;
   private connectionTimeout?: ReturnType<typeof setTimeout>;
+  private _default_worker: string | undefined;
   on_setWorker: (worker: FuncNodesWorker | undefined) => void;
-  constructor(wsuri: string, zustand: FuncNodesReactFlowZustandInterface) {
+  constructor(
+    wsuri: string,
+    zustand: FuncNodesReactFlowZustandInterface,
+    default_worker?: string
+  ) {
     this.wsuri = wsuri;
     this.zustand = zustand;
     this.workers = {};
+    this._default_worker = default_worker;
     this.on_setWorker = (worker: FuncNodesWorker | undefined) => {
       this.zustand.set_worker(worker);
     };
-    this.connect();
+
+    // conect after a short delay to allow the zustand store to be initialized
+    this.connectionTimeout = setTimeout(() => {
+      this.connect();
+    }, 200);
   }
 
   get open() {
@@ -124,6 +134,7 @@ class WorkerManager {
             msg.data.host +
             ":" +
             msg.data.port;
+
           this.setWorker(
             this.workers[msg.data.uuid] ||
               new WebSocketWorker({
@@ -161,7 +172,8 @@ class WorkerManager {
       this.workers[worker.uuid] = worker;
       worker.reconnect();
     }
-    window.localStorage.setItem("funcnodes__active_worker", worker?.uuid || "");
+    if (worker?.uuid)
+      window.localStorage.setItem("funcnodes__active_worker", worker?.uuid);
     if (this.zustand.worker !== undefined) {
       this.zustand.clear_all();
     }
@@ -245,6 +257,34 @@ class WorkerManager {
           },
         })
       );
+    }
+  }
+
+  remove() {
+    /// closes all websockets permanently
+    for (let w in this.workers) {
+      this.workers[w].disconnect();
+    }
+    if (this.connectionTimeout) {
+      clearTimeout(this.connectionTimeout);
+      this.connectionTimeout = undefined;
+    }
+
+    if (this.ws) {
+      this.ws.onclose = () => {
+        // do nothing
+      };
+      this.ws.onerror = () => {
+        // do nothing
+      };
+      this.ws.onmessage = () => {
+        // do nothing
+      };
+      this.ws.onopen = () => {
+        // do nothing
+      };
+
+      this.ws.close();
     }
   }
 }

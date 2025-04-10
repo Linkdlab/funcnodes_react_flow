@@ -4,7 +4,8 @@ import FuncNodesWorker from "../../funcnodes/funcnodesworker";
 import FuncNodesReactFlowZustand from "../../states/fnrfzst";
 
 import { WorkerManager } from "../../funcnodes";
-
+import WebSocketWorker from "../../funcnodes/websocketworker";
+import { remoteUrlToBase64 } from "../../utils/data";
 import FuncnodesHeader from "../header";
 import Library from "../lib";
 import ReactFlowLayer from "./react_flow_layer";
@@ -28,6 +29,7 @@ import {
 import SmoothExpandComponent from "../layout/smoothexpand";
 import FullScreenComponent from "../layout/fullscreenelement";
 import { SizeContextContainer } from "../layout/components";
+import { LimitedDeepPartial } from "../../utils/objects";
 
 const InnerFuncnodesReactFlow = ({
   fnrf_zst,
@@ -137,6 +139,12 @@ const FUNCNODESREACTFLOW_MAPPER: {
   [key: string]: FuncNodesReactFlowZustandInterface | undefined;
 } = {};
 
+// @ts-ignore
+if (window.fnrf_zst === undefined) {
+  // @ts-ignore
+  window.fnrf_zst = FUNCNODESREACTFLOW_MAPPER;
+}
+
 const DEFAULT_LIB_PROPS: ReactFlowLibraryProps = {
   show: true,
 };
@@ -170,7 +178,9 @@ const FuncNodesContext = createContext<FuncNodesReactFlowZustandInterface>(
   FuncNodesReactFlowZustand(DEFAULT_FN_PROPS)
 );
 
-const FuncnodesReactFlow = (fnprops: Partial<FuncnodesReactFlowProps>) => {
+const FuncnodesReactFlow = (
+  fnprops: LimitedDeepPartial<FuncnodesReactFlowProps>
+) => {
   let fullprops: FuncnodesReactFlowProps = deep_update(fnprops, {
     ...DEFAULT_FN_PROPS,
     id: uuidv4(),
@@ -194,37 +204,82 @@ const FuncnodesReactFlow = (fnprops: Partial<FuncnodesReactFlowProps>) => {
     );
   }
 
-  // @ts-ignore
-  if (window.fnrf_zst === undefined) {
-    // @ts-ignore
-    window.fnrf_zst = FUNCNODESREACTFLOW_MAPPER;
-  }
   let fnrf_zst = FUNCNODESREACTFLOW_MAPPER[fullprops.id];
   if (fnrf_zst === undefined) {
     fnrf_zst = FuncNodesReactFlowZustand(fullprops);
     FUNCNODESREACTFLOW_MAPPER[fullprops.id] = fnrf_zst;
   }
 
-  if (fullprops.worker) {
-    fullprops.worker.set_zustand(fnrf_zst);
-  }
-
   fnrf_zst.options.debug = fullprops.debug;
 
-  if (fullprops.useWorkerManager) {
-    const workermanager = new WorkerManager(
-      fullprops.workermanager_url as string,
-      fnrf_zst
-    );
-    fnrf_zst.workermanager = workermanager;
-  }
+  const [fullProps, setFullProps] =
+    React.useState<FuncnodesReactFlowProps>(fullprops);
+
+  React.useEffect(() => {
+    const onclose: (() => void)[] = [];
+    if (fullProps.worker === undefined) {
+      if (fullProps.worker_url !== undefined) {
+        fullProps.useWorkerManager = false;
+        const worker = new WebSocketWorker({
+          url: fullProps.worker_url,
+          uuid: fullProps.id,
+          on_sync_complete: fullProps.on_sync_complete,
+        });
+        fullProps.worker = worker;
+        onclose.push(() => {
+          worker.disconnect();
+        });
+      }
+    }
+
+    if (fullProps.fnw_url !== undefined) {
+      // overwrite the worker.on_sync_complete temporarily to load the worker
+      if (fullProps.worker === undefined) {
+        throw new Error("defining fnw_url requires a worker to be defined");
+      }
+      const fnw_data_promise = remoteUrlToBase64(fullProps.fnw_url);
+      const o_on_sync_complete = fullProps.worker.on_sync_complete;
+      const new_on_sync_complete = async (worker: FuncNodesWorker) => {
+        const fnw_data = await fnw_data_promise;
+        worker.on_sync_complete = o_on_sync_complete;
+        await worker.update_from_export(fnw_data);
+      };
+      fullProps.worker.on_sync_complete = new_on_sync_complete;
+    }
+
+    if (fullProps.worker !== undefined) {
+      fullProps.worker.set_zustand(fnrf_zst);
+    }
+
+    if (fullprops.useWorkerManager) {
+      const workermanager = new WorkerManager(
+        fullprops.workermanager_url as string,
+        fnrf_zst
+      );
+      fnrf_zst.workermanager = workermanager;
+      onclose.push(() => {
+        workermanager.remove();
+      });
+    }
+
+    setFullProps({ ...fullProps });
+    if (fullProps.on_ready && typeof fullProps.on_ready === "function") {
+      fullProps.on_ready({ fnrf_zst });
+    }
+    return () => {
+      // cleanup function
+      for (const fn of onclose) {
+        fn();
+      }
+    };
+  }, []);
 
   return (
     <InnerFuncnodesReactFlow
       fnrf_zst={fnrf_zst}
-      header={fullprops.header}
-      library={fullprops.library}
-      flow={fullprops.flow}
+      header={fullProps.header}
+      library={fullProps.library}
+      flow={fullProps.flow}
     />
   );
 };

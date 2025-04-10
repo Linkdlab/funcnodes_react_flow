@@ -6,6 +6,7 @@ declare global {
 import * as React from "react";
 import FuncNodes, { FuncnodesReactFlowProps } from "./index";
 import { createRoot } from "react-dom/client";
+import "./index.scss";
 
 const FuncNodesRenderer = (
   id_or_element: string | HTMLElement,
