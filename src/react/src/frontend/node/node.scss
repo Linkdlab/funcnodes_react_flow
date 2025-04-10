@@ -1,5 +1,6 @@
 :root {
   --node_border_radius: 5px;
+  --node_border_width: 2px;
   --handle_outer_radius: 4px;
   --handle_inner_radius: 2px;
   --handle_width: 10;
@@ -11,6 +12,10 @@
   --handle_target_color: hsl(204, 98%, 51%);
   --node_background: hsl(245, 51%, 42%);
   --node_header_color: hsl(245, 51%, 22%);
+
+  --node_inner_ele_radius: calc(
+    var(--node_border_radius) - var(--node_border_width)
+  );
 }
 
 .react-flow {
@@ -23,7 +28,7 @@
     color: #f0f8ff;
     box-sizing: content-box;
     transform: (-50%, -50%);
-    border: 2px solid #ffffff00;
+    border: var(--node_border_width) solid #ffffff00;
     font-size: 0.5rem;
     width: auto;
     max-width: 250px;
@@ -59,17 +64,19 @@
     &-left {
       border-radius: var(--handle_outer_radius) var(--handle_inner_radius)
         var(--handle_inner_radius) var(--handle_outer_radius);
-      left: calc((var(--nodeio_shift) - var(--handle_width)) * 1px);
+      left: calc((var(--nodeio_shift) - var(--handle_width) / 2) * 1px);
       &:hover {
-        left: calc((var(--nodeio_shift) - var(--handle_width_hover)) * 1px);
+        left: calc((var(--nodeio_shift) - var(--handle_width_hover) / 2) * 1px);
       }
     }
     &-right {
       border-radius: var(--handle_inner_radius) var(--handle_outer_radius)
         var(--handle_outer_radius) var(--handle_inner_radius);
-      right: calc((var(--nodeio_shift) - var(--handle_width)) * 1px);
+      right: calc((var(--nodeio_shift) - var(--handle_width) / 2) * 1px);
       &:hover {
-        right: calc((var(--nodeio_shift) - var(--handle_width_hover)) * 1px);
+        right: calc(
+          (var(--nodeio_shift) - var(--handle_width_hover) / 2) * 1px
+        );
       }
     }
     &-top {
@@ -109,7 +116,7 @@
   background-color: var(--node_header_color);
   width: 100%;
   padding: 0.1rem;
-  border-radius: var(--node_border_radius) var(--node_border_radius) 0 0;
+  border-radius: var(--node_inner_ele_radius) var(--node_inner_ele_radius) 0 0;
   display: flex; /* Use flex layout */
   align-items: center; /* Align items vertically in the center */
   justify-content: space-between; /* Distribute space between items */
@@ -162,7 +169,7 @@
   background-color: #4e0ba5;
   width: 100%;
   padding: 0.1rem;
-  border-radius: 0 0 var(--node_border_radius) var(--node_border_radius);
+  border-radius: 0 0 var(--node_inner_ele_radius) var(--node_inner_ele_radius);
   &:empty {
     display: none;
   }
