@@ -1,4 +1,4 @@
-import { EdgeProps, getBezierPath, BaseEdge } from "reactflow";
+import { EdgeProps, getBezierPath, BaseEdge } from "@xyflow/react";
 import * as React from "react";
 
 const DefaultEdge = ({

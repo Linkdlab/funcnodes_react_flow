@@ -9,7 +9,7 @@ import { NodeSpaceZustandInterface } from "./nodespace.t";
 
 import { RFStore } from "./reactflow.t";
 import { EdgeAction } from "./edge.t";
-import { useReactFlow } from "reactflow";
+import { useReactFlow } from "@xyflow/react";
 import { Logger } from "../utils/logger";
 import { FuncNodesWorkerState } from "../funcnodes/funcnodesworker";
 import { latest } from "../types/versioned/versions.t";

@@ -1,5 +1,11 @@
 import { UseBoundStore, StoreApi } from "zustand";
-import { Edge, Node, OnNodesChange, OnEdgesChange, OnConnect } from "reactflow";
+import {
+  Edge,
+  Node,
+  OnNodesChange,
+  OnEdgesChange,
+  OnConnect,
+} from "@xyflow/react";
 
 type RFState = {
   nodes: Node[];

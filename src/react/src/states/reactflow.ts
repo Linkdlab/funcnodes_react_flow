@@ -5,7 +5,7 @@ import {
   NodeChange,
   applyNodeChanges,
   applyEdgeChanges,
-} from "reactflow";
+} from "@xyflow/react";
 import { RFState, RFStore } from "./reactflow.t";
 
 const reactflowstore = ({

@@ -9,7 +9,7 @@ import {
   EdgeChange,
   Edge as RFEdge,
   Connection as RFConnection,
-} from "reactflow";
+} from "@xyflow/react";
 
 import { deep_merge } from "../utils";
 import { generate_edge_id } from "./edge";

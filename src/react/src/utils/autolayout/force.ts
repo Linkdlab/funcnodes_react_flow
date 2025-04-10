@@ -1,6 +1,6 @@
 // @ts-nocheck
 import * as d3 from "d3";
-import { useEdges, useNodes, Node } from "reactflow";
+import { useEdges, useNodes, Node } from "@xyflow/react";
 
 interface SimNode extends d3.SimulationNodeDatum {
   x: number;
