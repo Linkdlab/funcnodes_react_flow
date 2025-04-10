@@ -1,7 +1,8 @@
 import * as React from "react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
-import ReactFlow, {
+import {
+  ReactFlow,
   Background,
   Edge,
   EdgeTypes,
@@ -12,7 +13,7 @@ import ReactFlow, {
   useReactFlow,
   Node,
   NodeTypes,
-} from "reactflow";
+} from "@xyflow/react";
 
 import { FuncNodesContext } from "../funcnodesreactflow";
 import { useShallow } from "zustand/react/shallow";

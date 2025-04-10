@@ -9,7 +9,7 @@
 
   &.selected {
     & .react-flow__edge-path {
-      stroke: #11ff00;
+      stroke: #11ff00 !important;
     }
   }
 }

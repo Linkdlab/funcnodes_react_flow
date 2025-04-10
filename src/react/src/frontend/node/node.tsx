@@ -233,7 +233,7 @@ interface NodeContextType {
   node_data: latest.NodeType;
   [key: string]: any | undefined;
 }
-interface RFNodeDataPass {
+interface RFNodeDataPass extends Record<string, unknown> {
   nodestore: latest.NodeStore;
 }
 

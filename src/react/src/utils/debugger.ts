@@ -1,7 +1,6 @@
 import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 
-const development: boolean =
-  !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+const development: boolean = !!import.meta.env.DEV; // vite
 
 const print_object_size = (
   obj: any,

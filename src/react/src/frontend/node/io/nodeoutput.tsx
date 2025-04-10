@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { Position } from "reactflow";
+import { Position } from "@xyflow/react";
 import { FuncNodesContext } from "../../funcnodesreactflow";
 
 import { HandleWithPreview, pick_best_io_type } from "./io";

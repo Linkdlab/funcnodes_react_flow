@@ -21,8 +21,14 @@ const create_color_converter = (
   }
 
   // @ts-ignore
-  const source = convert[type];
-  if (!source) throw new Error("Unsupported color type: " + type);
+  const source = convert.default[type];
+  if (!source) {
+    throw new Error(
+      `Unsupported color type: ${type} allowed are ${Object.keys(convert).join(
+        ", "
+      )}`
+    );
+  }
 
   // necessary to add the identity function to the source object
   source[type] = () => data;
@@ -338,7 +344,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
   const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
 
   // useRef to store the debounce timer.
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Debounced onChange: clear any existing timer and schedule a new one.
   const innerSetColor = useCallback(

@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { FuncNodesContext } from "../../funcnodesreactflow";
-import { Position } from "reactflow";
+import { Position } from "@xyflow/react";
 import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
