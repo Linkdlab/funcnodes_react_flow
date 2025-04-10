@@ -16,17 +16,11 @@ class WorkerManager {
   private maxTimeout: number = 2000; // Maximum reconnect delay
   private zustand: FuncNodesReactFlowZustandInterface;
   private connectionTimeout?: ReturnType<typeof setTimeout>;
-  private _default_worker: string | undefined;
   on_setWorker: (worker: FuncNodesWorker | undefined) => void;
-  constructor(
-    wsuri: string,
-    zustand: FuncNodesReactFlowZustandInterface,
-    default_worker?: string
-  ) {
+  constructor(wsuri: string, zustand: FuncNodesReactFlowZustandInterface) {
     this.wsuri = wsuri;
     this.zustand = zustand;
     this.workers = {};
-    this._default_worker = default_worker;
     this.on_setWorker = (worker: FuncNodesWorker | undefined) => {
       this.zustand.set_worker(worker);
     };

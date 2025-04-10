@@ -21,8 +21,14 @@ const create_color_converter = (
   }
 
   // @ts-ignore
-  const source = convert[type];
-  if (!source) throw new Error("Unsupported color type: " + type);
+  const source = convert.default[type];
+  if (!source) {
+    throw new Error(
+      `Unsupported color type: ${type} allowed are ${Object.keys(convert).join(
+        ", "
+      )}`
+    );
+  }
 
   // necessary to add the identity function to the source object
   source[type] = () => data;

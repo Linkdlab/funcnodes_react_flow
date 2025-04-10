@@ -1,6 +1,5 @@
 import * as React from "react";
 import FuncnodesReactFlow, {
-  DEFAULT_FN_PROPS,
   FuncNodesContext,
 } from "./frontend/funcnodesreactflow";
 import WebSocketWorker from "./funcnodes/websocketworker";
@@ -27,7 +26,7 @@ import { NodeContext, NodeContextType } from "./frontend/node/node";
 import { latest as latest_types } from "./types/versioned/versions.t";
 import { v1 as v1_types } from "./types/versioned/versions.t";
 import { v0 as v0_types } from "./types/versioned/versions.t";
-
+import "./index.scss";
 const FuncNodes = (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => {
   const logger = new ConsoleLogger("FuncNodes", props.debug ? "debug" : "info");
 
@@ -40,8 +39,8 @@ const FuncNodes = (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => {
   );
 };
 
-export default FuncNodes;
 export {
+  FuncNodes,
   WebSocketWorker,
   helperfunctions,
   FuncNodesReactFlowZustand,
