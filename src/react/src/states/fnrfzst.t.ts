@@ -9,7 +9,7 @@ import { NodeSpaceZustandInterface } from "./nodespace.t";
 
 import { RFStore } from "./reactflow.t";
 import { EdgeAction } from "./edge.t";
-import { useReactFlow } from "reactflow";
+import { useReactFlow } from "@xyflow/react";
 import { Logger } from "../utils/logger";
 import { FuncNodesWorkerState } from "../funcnodes/funcnodesworker";
 import { latest } from "../types/versioned/versions.t";
@@ -133,6 +133,7 @@ interface FuncnodesReactFlowProps {
   on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
   useWorkerManager: boolean;
   show_library: boolean;
+  load_worker?: string;
   worker?: FuncNodesWorker;
   header: FuncnodesReactHeaderProps;
   flow: ReactFlowLayerProps;
@@ -140,6 +141,11 @@ interface FuncnodesReactFlowProps {
   worker_url?: string;
   fnw_url?: string;
   workermanager_url?: string;
+  on_ready?: ({
+    fnrf_zst,
+  }: {
+    fnrf_zst: FuncNodesReactFlowZustandInterface;
+  }) => void;
 }
 
 interface DevSettings {

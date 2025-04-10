@@ -283,7 +283,7 @@ class FuncNodesWorker {
         // Convert the Uint8Array to a Blob
         const blob = new Blob([bytes], { type: "application/javascript" });
         const blobUrl = URL.createObjectURL(blob);
-        const module = await import(/* webpackIgnore: true */ blobUrl);
+        const module = await import(/* @vite-ignore */ blobUrl);
         // gc the blob
         URL.revokeObjectURL(blobUrl);
 
@@ -954,6 +954,8 @@ class FuncNodesWorker {
         break;
 
       default:
+        const ignored_events = ["after_set_nodespace"];
+        if (ignored_events.includes(event)) return;
         console.warn("Unhandled nodepsace event", event, data);
         break;
     }

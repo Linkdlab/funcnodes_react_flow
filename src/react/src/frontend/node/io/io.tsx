@@ -1,6 +1,6 @@
 // import * as Tooltip from "@radix-ui/react-tooltip";
 import * as Popover from "@radix-ui/react-popover";
-import { Handle, HandleProps } from "reactflow";
+import { Handle, HandleProps } from "@xyflow/react";
 import * as React from "react";
 import { useState } from "react";
 import CustomDialog from "../../dialog";

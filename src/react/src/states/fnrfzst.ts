@@ -9,7 +9,7 @@ import {
   EdgeChange,
   Edge as RFEdge,
   Connection as RFConnection,
-} from "reactflow";
+} from "@xyflow/react";
 
 import { deep_merge } from "../utils";
 import { generate_edge_id } from "./edge";
@@ -27,13 +27,14 @@ import type {
   FuncnodesReactFlowLocalState,
 } from "./fnrfzst.t";
 import { upgradeFuncNodesReactPlugin } from "../plugin";
-import { ConsoleLogger, INFO } from "../utils/logger";
+import { ConsoleLogger, INFO, DEBUG } from "../utils/logger";
 import FuncNodesWorker, {
   FuncNodesWorkerState,
 } from "../funcnodes/funcnodesworker";
 import { RFNodeDataPass } from "../frontend/node/node";
 
 import { latest } from "../types/versioned/versions.t";
+import { development } from "../utils/debugger";
 
 const _fill_node_frontend = (
   node: latest.NodeType,
@@ -124,7 +125,9 @@ const FuncNodesReactFlowZustand = (
     const rfstate = rfstore.getState();
     if (action.from_remote) {
       let store = ns.get_node(action.node.id, false);
-
+      if (store) {
+        return;
+      }
       if (!store) {
         try {
           store = createNodeStore(iterf, action.node);
@@ -524,7 +527,7 @@ const FuncNodesReactFlowZustand = (
       debug: true,
     },
 
-    logger: new ConsoleLogger("fn", INFO),
+    logger: new ConsoleLogger("fn", development ? DEBUG : INFO),
   };
   return iterf;
 };
