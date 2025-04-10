@@ -198,7 +198,7 @@ export interface ExpandingContainerProps
   extends React.HTMLAttributes<HTMLDivElement> {
   direction: "up" | "down" | "left" | "right";
   expanded?: boolean;
-  maxSize: string;
+  maxSize?: string;
   expanderSize?: string;
   containerStyle?: React.CSSProperties;
   containerClassName?: string;
@@ -210,8 +210,8 @@ export const ExpandingContainer = ({
   expanded = true,
   children,
   className,
-  maxSize,
-  expanderSize = "40px",
+  maxSize = "18.75rem",
+  expanderSize = "2rem",
   containerStyle,
   style,
   containerClassName,

@@ -146,8 +146,8 @@ const NodeSettings = () => {
 
   return (
     <ExpandingContainer
-      maxSize="300px"
       direction="left"
+
       expanded={expanded === undefined ? false : expanded}
       containerClassName={`pos-right pos-top bg1 h-12`}
       className="nodesettings_content"

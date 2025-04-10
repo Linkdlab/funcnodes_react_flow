@@ -838,7 +838,7 @@ const Library = () => {
 
   return (
     <ExpandingContainer
-      maxSize={on_small_screen ? "100%" : "300px"}
+      maxSize={on_small_screen ? "100%" : "18.75rem"}
       direction={on_small_screen ? "down" : "right"}
       containerClassName={`pos-left pos-top bg1 h-12`}
       onExpandChange={set_expand_lib}

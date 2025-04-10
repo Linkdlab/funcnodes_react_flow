@@ -14,8 +14,8 @@ const IOSubscriptionImageRenderer: latest.DataViewRendererType = ({
       style={{
         maxWidth: "100%",
         maxHeight: "100%",
-        minWidth: "100px",
-        minHeight: "100px",
+        minWidth: "6.25rem",
+        minHeight: "6.25rem",
       }}
     ></StreamingImage>
   );
