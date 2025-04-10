@@ -1,21 +1,40 @@
 // vite.browser.config.js
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import fs from "fs/promises";
+import path from "path";
+
+function htmlTransformPlugin(mode) {
+  return {
+    name: "html-transform-plugin",
+    async transformIndexHtml(html) {
+      // Choose the script file based on the current mode.
+      const scriptfile =
+        mode === "production" ? "index.prod.js" : "index.dev.js";
+      // Resolve the absolute path of the file.
+      const filePath = path.resolve(__dirname, scriptfile);
+      console.log("filePath", filePath);
+      // Read the file content as a string.
+      const scriptContent = await fs.readFile(filePath, "utf-8");
+      // Replace the placeholder in your HTML with the script tag containing the file content.
+      return html.replace(
+        "<!-- WORKER_SCRIPT -->",
+        `<script>${scriptContent}</script>`
+      );
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   const production = mode === "production";
-
   // laod version number from package.json
   const pkg = require("./package.json");
   const version = pkg.version;
   const basename = pkg.name.replace(/@.*\//, "");
 
   return {
-    plugins: [
-      react(),
-      // You can integrate rollup plugins (like replace) directly in Vite's Rollup options:
-    ],
-    base: "", // Set the base URL for the app (e.g., for deployment)
+    plugins: [react(), htmlTransformPlugin(mode)],
+    base: "static", // Set the base URL for the app (e.g., for deployment)
     define: {
       "process.env.NODE_ENV": JSON.stringify(mode),
       global: "window", // replacement if you need the global object in browser builds.
@@ -24,27 +43,22 @@ export default defineConfig(({ mode }) => {
       sourcemap: !production,
       target: "es2020",
       cssCodeSplit: false, // disable CSS code splitting, css will be in a separate file
-      outDir: "build",
+      assetsInlineLimit: 0, // disable inlining assets; output them as separate files
+      outDir: production
+        ? `../funcnodes_react_flow/static/`
+        : `build/${production ? "prod" : "dev"}`, // output directory for the build
       rollupOptions: {
         output: {
           banner: "var global = window;",
           format: "iife",
-          entryFileNames: `assets/${basename}-${version}.js`,
-          chunkFileNames: `assets/${basename}-[name]-${version}.js`,
-          assetFileNames: `assets/${basename}-[name]-${version}.[ext]`,
+          entryFileNames: `${basename}.js`,
+          chunkFileNames: `${basename}-[name].js`,
+          assetFileNames: `${basename}-[name].[ext]`,
         },
         // If you need to bundle all dependencies (i.e. non-externalized) for a browser IIFE,
         // you can adjust the external config accordingly (or leave external: [] as desired)
         external: [],
       },
-      // If you have multiple entry points (e.g., one for JS and one for CSS), you can specify:
-      // rollupOptions: {
-      //   input: {
-      //     main: path.resolve(__dirname, 'src/browser_index.tsx'),
-      //     style: path.resolve(__dirname, 'src/index.scss'),
-      //   },
-      // }
-      // (Vite will output separate bundles based on these entries)
     },
   };
 });

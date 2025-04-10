@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<link rel="icon" href="favicon.ico"/>
-<link rel="apple-touch-icon" href="logo192.png"/>
-<link rel="manifest" href="manifest.json"/>
+<link rel="icon" href="assets/favicon.ico"/>
+<link rel="apple-touch-icon" href="assets/logo192.png"/>
+<link rel="manifest" href="assets/manifest.json"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="theme-color" content="#000000"/>
 <meta name="description" content="Funcnodes via react"/>
@@ -13,21 +13,7 @@
 </head>
 <body>
 <noscript>You need to enable JavaScript to run this app.</noscript>
-<div id="root2" style="height: 100vh; width: 100vw;">worker manager</div>
-<script>// wait till window is loaded
-      window.onload = async function() {
-
-        const managerurl = "ws://localhost:9380"
-        FuncNodes("root2",{
-          "workermanager_url": managerurl,
-          load_worker:"demo",
-          on_ready: function(obj) {
-            window.funcnodes_return = obj;
-          },
-        });
-
-
-
-    }</script>
+<div id="root" style="height: 100vh; width: 100vw;"></div>
+<!-- WORKER_SCRIPT -->
 </body>
 </html>
