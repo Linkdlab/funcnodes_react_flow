@@ -47,13 +47,17 @@ export default defineConfig(({ mode }) => {
       outDir: production
         ? `../funcnodes_react_flow/static/`
         : `build/${production ? "prod" : "dev"}`, // output directory for the build
+
+      lib: {
+        entry: path.resolve(__dirname, "index.html"), // your library's entry point
+        formats: ["iife", "es"], // output format
+        name: basename, // change as needed
+        fileName: (format) => `${basename}.${format}.js`, // output file name pattern
+        emitAssets: false, // disable asset emission
+      },
       rollupOptions: {
         output: {
           banner: "var global = window;",
-          format: "iife",
-          entryFileNames: `${basename}.js`,
-          chunkFileNames: `${basename}-[name].js`,
-          assetFileNames: `${basename}-[name].[ext]`,
         },
         // If you need to bundle all dependencies (i.e. non-externalized) for a browser IIFE,
         // you can adjust the external config accordingly (or leave external: [] as desired)

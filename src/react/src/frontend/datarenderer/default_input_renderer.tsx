@@ -98,7 +98,7 @@ export const NumberInput = ({
     !io.connected
   ) {
     add_input = (
-      <div style={{ minWidth: "100px" }} className="SliderContainer">
+      <div style={{ minWidth: "6.25rem" }} className="SliderContainer">
         <Slider.Root
           className="SliderRoot"
           value={[v === undefined ? io.value_options?.min : v]}
