@@ -344,7 +344,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
   const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
 
   // useRef to store the debounce timer.
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Debounced onChange: clear any existing timer and schedule a new one.
   const innerSetColor = useCallback(

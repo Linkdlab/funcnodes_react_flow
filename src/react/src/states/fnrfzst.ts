@@ -27,13 +27,14 @@ import type {
   FuncnodesReactFlowLocalState,
 } from "./fnrfzst.t";
 import { upgradeFuncNodesReactPlugin } from "../plugin";
-import { ConsoleLogger, INFO } from "../utils/logger";
+import { ConsoleLogger, INFO, DEBUG } from "../utils/logger";
 import FuncNodesWorker, {
   FuncNodesWorkerState,
 } from "../funcnodes/funcnodesworker";
 import { RFNodeDataPass } from "../frontend/node/node";
 
 import { latest } from "../types/versioned/versions.t";
+import { development } from "../utils/debugger";
 
 const _fill_node_frontend = (
   node: latest.NodeType,
@@ -526,7 +527,7 @@ const FuncNodesReactFlowZustand = (
       debug: true,
     },
 
-    logger: new ConsoleLogger("fn", INFO),
+    logger: new ConsoleLogger("fn", development ? DEBUG : INFO),
   };
   return iterf;
 };
