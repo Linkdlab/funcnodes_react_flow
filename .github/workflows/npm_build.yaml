@@ -6,8 +6,11 @@ on:
       - dev
       - test
 
+permissions:
+  contents: write # Request write access for pushing code
+
 jobs:
-  build-and-publish:
+  yarn-build-and-commit:
     runs-on: ubuntu-latest
 
     steps:
