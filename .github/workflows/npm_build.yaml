@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write # Request write access for pushing code
+  pull-requests: write # Request write access for creating pull requests
 
 jobs:
   yarn-build-and-commit:
