@@ -10,14 +10,14 @@ repos:
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: "0.6.10"
+    rev: "0.6.14"
     hooks:
       # Update the uv lockfile
       - id: uv-lock
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.11.2
+    rev: v0.11.5
     hooks:
       # Run the linter.
       - id: ruff
@@ -26,7 +26,13 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.2 # pick a git hash / tag to point to
+    rev: 7.2.0 # pick a git hash / tag to point to
     hooks:
       - id: flake8
         args: ["--config=.flake8"]
+
+  - repo: https://github.com/JulianKimmig/version_sync
+    rev: v0.1.0
+    hooks:
+      - id: version-sync
+        args: ["--sync", "src/react/package.json", "pyproject.toml"]

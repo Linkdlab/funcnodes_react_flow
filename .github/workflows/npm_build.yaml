@@ -1,0 +1,96 @@
+name: react build
+
+on:
+  push:
+    branches:
+      - dev
+      - test
+
+permissions:
+  contents: write # Request write access for pushing code
+  pull-requests: write # Request write access for creating pull requests
+
+jobs:
+  yarn-build-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository with full history.
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Set up Node.js and cache yarn dependencies.
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          cache: yarn
+          cache-dependency-path: src/react/yarn.lock
+
+      # Install dependencies in the src/react directory.
+      - name: Install dependencies
+        working-directory: src/react
+        run: yarn install
+
+      # Run the build script in the src/react directory.
+      - name: Build project
+        working-directory: src/react
+        run: yarn build
+
+      - name: run pre-commit hooks
+        run: |
+          # Install pre-commit and run hooks
+          pip install pre-commit
+          pre-commit run --all-files || true
+
+      # Commit any generated build files.
+      # If there are file changes (for example in dist), commit them.
+      # The commit message contains "[skip ci]" to prevent an infinite CI loop.
+      - name: Commit generated build files
+        id: commit_changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore: update build files [skip ci]"
+            echo "changes_committed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_committed=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Check if the repository now contains commits (i.e. new build changes)
+      - name: Check for pending commits
+        id: check_commits
+        run: |
+          branch=${GITHUB_REF##*/}
+          echo "Working on branch: $branch"
+          commits=$(git log origin/$branch..HEAD --oneline)
+          echo "Commits not on remote: $commits"
+          if [ -z "$commits" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      # If on the dev branch and build changes exist, create a pull request.
+      - name: Create Pull Request for build changes on dev branch
+        if: github.ref == 'refs/heads/dev' && steps.check_commits.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Auto update build files"
+          commit-message: "chore: update build files [skip ci]"
+          # Use a unique branch name for the PR.
+          branch: build/update-build-files-${{ github.run_id }}
+          base: dev
+          body: "This PR was created automatically by the build workflow to update generated build files."
+
+      # If on the test branch and build changes exist, fail the job.
+      - name: Fail build on test branch if build changes exist
+        if: github.ref == 'refs/heads/test' && steps.check_commits.outputs.has_changes == 'true'
+        run: |
+          echo "Error: Generated build files exist in the test branch. Please update manually."
+          exit 1

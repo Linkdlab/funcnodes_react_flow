@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => {
     base: "static", // Set the base URL for the app (e.g., for deployment)
     define: {
       "process.env.NODE_ENV": JSON.stringify(mode),
+      __FN_VERSION__: JSON.stringify(version), // Define the version number
       global: "window", // replacement if you need the global object in browser builds.
     },
     build: {
