@@ -8,6 +8,8 @@ import { FuncNodes, FuncnodesReactFlowProps } from "./index";
 import { createRoot } from "react-dom/client";
 import "./index.scss";
 
+declare const __FN_VERSION__: string;
+
 const FuncNodesRenderer = (
   id_or_element: string | HTMLElement,
   options?: Partial<FuncnodesReactFlowProps>
@@ -32,6 +34,7 @@ const FuncNodesRenderer = (
 };
 
 window.FuncNodes = FuncNodesRenderer;
+window.FuncNodes.version = __FN_VERSION__;
 export default FuncNodesRenderer;
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
