@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: "22"
           cache: yarn
+          cache-dependency-path: src/react/yarn.lock
 
       # Install dependencies in the src/react directory.
       - name: Install dependencies
@@ -37,6 +38,12 @@ jobs:
       - name: Build project
         working-directory: src/react
         run: yarn build
+
+      - name: run pre-commit hooks
+        run: |
+          # Install pre-commit and run hooks
+          pip install pre-commit
+          pre-commit run --all-files || true
 
       # Commit any generated build files.
       # If there are file changes (for example in dist), commit them.
