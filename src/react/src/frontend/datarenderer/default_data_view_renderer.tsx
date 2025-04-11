@@ -51,9 +51,20 @@ const DefaultImageRenderer: latest.DataViewRendererType = ({
   }
 
   if (typeof src !== "string") {
-    console.error("Base64ImageOutput: value is not a string", src);
+    console.error("ImageRenderer: value is not a string", src);
     return <></>;
   }
+
+  // Check if the value is a valid image URL or base64 string
+  const isblob = src.startsWith("data:") || src.startsWith("blob:");
+
+  let valid_src = src;
+  if (!isblob) {
+    // If the value is not a valid image URL or base64 string we assume its a raw base64 string
+    // and convert it to a blob URL
+    valid_src = "data:image/jpeg;base64," + src;
+  }
+
   return <img src={src} style={{ maxWidth: "100%", maxHeight: "100%" }} />;
 };
 
