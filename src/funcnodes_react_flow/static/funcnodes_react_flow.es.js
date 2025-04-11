@@ -11589,23 +11589,23 @@ var H7 = function() {
     n === "padding" && "padding-right: ".concat(u, "px ").concat(r, ";")
   ].filter(Boolean).join(""), `
   }
-
+  
   .`).concat(ih, ` {
     right: `).concat(u, "px ").concat(r, `;
   }
-
+  
   .`).concat(oh, ` {
     margin-right: `).concat(u, "px ").concat(r, `;
   }
-
+  
   .`).concat(ih, " .").concat(ih, ` {
     right: 0 `).concat(r, `;
   }
-
+  
   .`).concat(oh, " .").concat(oh, ` {
     margin-right: 0 `).concat(r, `;
   }
-
+  
   body[`).concat(Gs, `] {
     `).concat(O7, ": ").concat(u, `px;
   }
@@ -26804,8 +26804,8 @@ const C3 = ({ item: e }) => {
 }) => {
   const [t, n] = C.useState(!1), r = () => n(!t), i = 150, a = e.description.length > i ? e.description.substring(0, i) + "..." : e.description;
   return /* @__PURE__ */ _.jsxs("div", { className: "module-description", children: [
-    /* @__PURE__ */ _.jsx(fZ, { remarkPlugins: [EJ], children: t ? e.description.replace(/\\n/g, `
-`) : a.replace(/\\n/g, `
+    /* @__PURE__ */ _.jsx(fZ, { remarkPlugins: [EJ], children: t ? e.description.replace(/\\n/g, `  
+`) : a.replace(/\\n/g, `  
 `) }),
     e.description.length > i && /* @__PURE__ */ _.jsx("button", { onClick: r, className: "toggle-description", children: t ? "Show less" : "Show more" })
   ] });
@@ -33418,15 +33418,21 @@ const Vie = ({ value: e }) => /* @__PURE__ */ _.jsx(
   onLoaded: n
 }) => {
   const [r, i] = C.useState(t || e);
-  return C.useEffect(() => {
+  if (C.useEffect(() => {
     if (e === t) return;
-    const a = new Image();
-    return a.onload = () => {
+    const u = new Image();
+    return u.onload = () => {
       n?.(), i(e);
-    }, a.src = e, () => {
-      a.onload = null;
+    }, u.src = e, () => {
+      u.onload = null;
     };
-  }, [e, t, n]), r === void 0 ? /* @__PURE__ */ _.jsx(_.Fragment, {}) : typeof r != "string" ? (console.error("Base64ImageOutput: value is not a string", r), /* @__PURE__ */ _.jsx(_.Fragment, {})) : /* @__PURE__ */ _.jsx("img", { src: r, style: { maxWidth: "100%", maxHeight: "100%" } });
+  }, [e, t, n]), r === void 0)
+    return /* @__PURE__ */ _.jsx(_.Fragment, {});
+  if (typeof r != "string")
+    return console.error("ImageRenderer: value is not a string", r), /* @__PURE__ */ _.jsx(_.Fragment, {});
+  const a = r.startsWith("data:") || r.startsWith("blob:");
+  let s = r;
+  return a || (s = "data:image/jpeg;base64," + r), /* @__PURE__ */ _.jsx("img", { src: s, style: { maxWidth: "100%", maxHeight: "100%" } });
 }, R5 = ({
   value: e
 }) => /* @__PURE__ */ _.jsx(Vie, { value: e }), O5 = ({
@@ -48850,3 +48856,4 @@ const lue = (e, t) => {
   );
 };
 window.FuncNodes = lue;
+window.FuncNodes.version = "0.4.7";
