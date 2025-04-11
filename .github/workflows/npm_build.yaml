@@ -17,6 +17,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: enter react directory
+        run: cd src/react
+        shell: bash
+
       # Set up Node.js and cache yarn dependencies.
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -30,7 +34,7 @@ jobs:
 
       # Run the build. This uses the build script defined in your package.json.
       - name: Build project
-        run: cd src/react && yarn build
+        run: yarn build
 
       # If the build process updated files (such as files in "dist"), commit those changes.
       # The commit message includes "[skip ci]" to prevent recursive triggering of CI.
