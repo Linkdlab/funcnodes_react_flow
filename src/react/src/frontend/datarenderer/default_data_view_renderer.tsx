@@ -65,7 +65,9 @@ const DefaultImageRenderer: latest.DataViewRendererType = ({
     valid_src = "data:image/jpeg;base64," + src;
   }
 
-  return <img src={src} style={{ maxWidth: "100%", maxHeight: "100%" }} />;
+  return (
+    <img src={valid_src} style={{ maxWidth: "100%", maxHeight: "100%" }} />
+  );
 };
 
 const SVGImageRenderer: latest.DataViewRendererType = ({
