@@ -1,4 +1,4 @@
-name: Build, Commit & Publish
+name: react build
 
 on:
   push:
@@ -17,10 +17,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: enter react directory
-        run: cd src/react
-        shell: bash
-
       # Set up Node.js and cache yarn dependencies.
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -30,10 +26,12 @@ jobs:
 
       # Install dependencies.
       - name: Install dependencies
+        working-directory: src/react
         run: yarn install
 
       # Run the build. This uses the build script defined in your package.json.
       - name: Build project
+        working-directory: src/react
         run: yarn build
 
       # If the build process updated files (such as files in "dist"), commit those changes.
