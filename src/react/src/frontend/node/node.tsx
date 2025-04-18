@@ -110,7 +110,7 @@ const NodeBody = React.memo(({ node_data }: NodeBodyProps) => {
     : undefined;
 
   return (
-    <div className="nodebody">
+    <div className="nodebody nowheel ">
       {node_data.outputs.map((ioname) => {
         return <NodeOutput key={ioname} iostore={node_data.io[ioname]!} />;
       })}
