@@ -90,3 +90,13 @@
 .iotooltipcontentarrow {
   fill: white;
 }
+
+.inner_nodeio {
+  overflow: hidden;
+  width: auto;
+  background-color: inherit;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1 1 auto;
+}
