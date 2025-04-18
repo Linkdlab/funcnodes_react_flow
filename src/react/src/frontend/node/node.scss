@@ -253,7 +253,7 @@
   & > textarea {
     width: 100%;
     max-width: 100%;
-    height: auto;
+    height: auto !important;
     resize: both;
     box-sizing: border-box;
     min-height: 1rem;
@@ -315,6 +315,7 @@ input.nodedatainput {
 }
 
 input.nodedatainput.styledinput,
+textarea.nodedatainput.styledinput,
 .nodedatainput.styleddropdown {
   @extend .nodedatastyledelement;
   width: 100%;
