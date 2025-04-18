@@ -73,13 +73,14 @@ const NodeInput = ({ iostore }: { iostore: latest.IOStore }) => {
         position={Position.Left}
         type="target"
       />
-
-      {Input && (
-        <div className="iovaluefield nodrag" {...{ "data-type": typestring }}>
-          <Input iostore={iostore} inputconverter={inputconverterf} />
-        </div>
-      )}
-      <div className="ioname">{io.name}</div>
+      <div className="inner_nodeio">
+        {Input && (
+          <div className="iovaluefield nodrag" {...{ "data-type": typestring }}>
+            <Input iostore={iostore} inputconverter={inputconverterf} />
+          </div>
+        )}
+        <div className="ioname">{io.name}</div>
+      </div>
       <HandleWithPreview
         iostore={iostore}
         typestring={typestring}
