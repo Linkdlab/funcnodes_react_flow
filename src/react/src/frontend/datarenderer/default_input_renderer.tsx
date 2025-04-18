@@ -64,6 +64,9 @@ export const NumberInput = ({
     try {
       new_value = inputconverter[0](new_value);
     } catch (e) {}
+
+    if (new_value === preview?.value) return; // no change
+
     fnrf_zst.worker?.set_io_value({
       nid: io.node,
       ioid: io.id,
@@ -273,6 +276,8 @@ export const StringInput = ({
     try {
       new_value = inputconverter[0](new_value);
     } catch (e) {}
+
+    if (new_value === display) return; // no change
 
     fnrf_zst.worker?.set_io_value({
       nid: io.node,
