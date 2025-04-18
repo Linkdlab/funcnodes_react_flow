@@ -260,6 +260,8 @@ export const StringInput = ({
     React.useContext(FuncNodesContext);
 
   const { preview, full } = iostore.valuestore();
+  // const [expanded, setExpanded] = React.useState(false);
+  // const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const io = iostore.use();
   const display = full === undefined ? preview?.value : full?.value;
 
@@ -269,7 +271,15 @@ export const StringInput = ({
     setTempValue(inputconverter[1](display));
   }, [display]);
 
-  const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // React.useEffect(() => {
+  //   if (expanded && textareaRef.current) {
+  //     textareaRef.current.focus();
+  //   }
+  // }, [expanded]);
+
+  const on_change = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     let new_value: string = e.target.value;
 
     if (!new_value) new_value = "<NoValue>";
@@ -289,15 +299,45 @@ export const StringInput = ({
 
   let v = io.connected ? inputconverter[1](display) : tempvalue;
   if (v === undefined || v === null) v = "";
+
+  // if (expanded) {
+  const nLines = (v.match(/\n/g) || []).length;
+  const nCols = Math.max(...v.split("\n").map((x: string) => x.length), 0);
+
   return (
-    <input
+    <textarea
+      // style={{
+      //   maxHeight: expanded ? "inherit" : "2rem",
+      // }}
       className="nodedatainput styledinput stringinput"
       value={v}
       onChange={(e) => setTempValue(e.target.value)}
-      onBlur={on_change}
+      onBlur={(e) => {
+        on_change(e);
+        // setExpanded(false);
+      }}
+      // onFocus={() => {
+      //   setExpanded(true);
+      // }}
       disabled={io.connected}
+      // ref={textareaRef}
+      rows={nLines + 1}
+      cols={nCols + 1}
     />
   );
+  //  }
+  // return (
+  //   <input
+  //     className="nodedatainput styledinput stringinput"
+  //     value={v}
+  //     onChange={(e) => setTempValue(e.target.value)}
+  //     onBlur={on_change}
+  //     disabled={io.connected}
+  //     onFocus={() => {
+  //       setExpanded(true);
+  //     }}
+  //   />
+  // );
 };
 
 export const ColorInput = ({ iostore }: latest.InputRendererProps) => {
