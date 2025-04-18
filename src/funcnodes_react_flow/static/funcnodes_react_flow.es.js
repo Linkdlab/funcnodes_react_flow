@@ -48867,4 +48867,4 @@ const lue = (e, t) => {
   );
 };
 window.FuncNodes = lue;
-window.FuncNodes.version = "0.4.7";
+window.FuncNodes.version = "0.4.8";
