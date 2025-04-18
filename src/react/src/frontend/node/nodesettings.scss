@@ -17,10 +17,17 @@
   &_section {
     margin-bottom: 10px;
     margin-left: 0.5rem;
+    margin-right: 0.5rem;
   }
   &_component {
     margin-bottom: 0.5rem;
     margin-left: 0.5rem;
     margin-top: 0.5rem;
+
+    & > textarea {
+      max-height: 10rem;
+      height: auto;
+      width: 100%;
+    }
   }
 }
