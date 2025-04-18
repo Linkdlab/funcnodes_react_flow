@@ -36,17 +36,18 @@ const NodeOutput = ({ iostore }: { iostore: latest.IOStore }) => {
         position={Position.Right}
         type="source"
       />
-
-      <div className="ioname">{io.name}</div>
-      {Output ? (
-        <div className="iovaluefield nodrag">
-          <Output iostore={iostore} />
-        </div>
-      ) : (
-        <div className="iovaluefield">
-          <InLineOutput iostore={iostore} typestring={typestring} />
-        </div>
-      )}
+      <div className="inner_nodeio">
+        <div className="ioname">{io.name}</div>
+        {Output ? (
+          <div className="iovaluefield nodrag">
+            <Output iostore={iostore} />
+          </div>
+        ) : (
+          <div className="iovaluefield">
+            <InLineOutput iostore={iostore} typestring={typestring} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

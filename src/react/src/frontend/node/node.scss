@@ -238,17 +238,31 @@
 }
 
 .iovaluefield {
-  flex-grow: 1;
-  flex-shrink: 1;
   overflow: hidden;
   align-items: start;
   justify-content: start;
-  display: flex;
   margin: 0.2rem;
   line-break: anywhere;
+  flex: 1 1 auto;
+  display: flex;
   flex-direction: column;
   & > input {
     width: 100%;
+  }
+
+  & > textarea {
+    width: 100%;
+    max-width: 100%;
+    height: auto !important;
+    resize: both;
+    box-sizing: border-box;
+    min-height: 1rem;
+    max-height: 2rem;
+    transition: max-height 0.2s ease-in-out;
+
+    &:focus {
+      max-height: 25rem;
+    }
   }
 }
 
@@ -256,12 +270,17 @@
   overflow: visible;
 }
 .ioname {
-  flex-grow: 1;
-  flex-shrink: 1;
+  // flex-grow: 1;
+  // flex-shrink: 1;
   color: inherit;
   margin: 0.2rem;
+  // min-width: 2rem;
+  flex: 0 0 auto;
+  min-width: 1rem;
+  max-width: 6rem;
   overflow: hidden;
-  min-width: 2rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   .nodeinput & {
     text-align: left;
@@ -275,6 +294,7 @@
   height: 1.5rem;
   display: flex;
   align-items: center;
+  max-width: 100%;
 }
 
 input.nodedatainput {
@@ -295,6 +315,7 @@ input.nodedatainput {
 }
 
 input.nodedatainput.styledinput,
+textarea.nodedatainput.styledinput,
 .nodedatainput.styleddropdown {
   @extend .nodedatastyledelement;
   width: 100%;
