@@ -299,9 +299,10 @@ export const StringInput = ({
 
   let v = io.connected ? inputconverter[1](display) : tempvalue;
   if (v === undefined || v === null) v = "";
+  v = v.toString();
 
   // if (expanded) {
-  const nLines = (v.match(/\n/g) || []).length;
+  const nLines = (v.toString().match(/\n/g) || []).length;
   const nCols = Math.max(...v.split("\n").map((x: string) => x.length), 0);
 
   return (
