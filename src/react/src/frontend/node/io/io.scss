@@ -92,11 +92,18 @@
 }
 
 .inner_nodeio {
-  overflow: hidden;
-  width: auto;
+  // overflow: hidden;
+  // width: auto;
   background-color: inherit;
-  display: flex;
-  flex-direction: row;
+  // display: flex;
+  // flex-direction: row;
   align-items: center;
-  flex: 1 1 auto;
+  // flex: 1 1 auto;
+
+  display: grid; /* 2‑column grid */
+  grid-template-columns:
+    minmax(0, 1fr) /* column 1  → .b  */
+    auto; /* column 2  → .c  */
+  max-width: 100%; /* your chosen limit */
+  width: 100%;
 }

@@ -238,7 +238,7 @@
 }
 
 .iovaluefield {
-  overflow: hidden;
+  // overflow: hidden;
   align-items: start;
   justify-content: start;
   margin: 0.2rem;
@@ -253,8 +253,8 @@
   & > textarea {
     width: 100%;
     max-width: 100%;
-    height: auto !important;
-    resize: both;
+
+    resize: none;
     box-sizing: border-box;
     min-height: 1rem;
     max-height: 2rem;
@@ -262,6 +262,7 @@
 
     &:focus {
       max-height: 25rem;
+      resize: both;
     }
   }
 }

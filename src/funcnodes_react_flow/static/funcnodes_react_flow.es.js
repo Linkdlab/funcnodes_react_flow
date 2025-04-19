@@ -37718,8 +37718,8 @@ const v4 = ({
     });
   };
   let h = a.connected ? t[1](s) : u;
-  h == null && (h = "");
-  const p = (h.match(/\n/g) || []).length, g = Math.max(...h.split(`
+  h == null && (h = ""), h = h.toString();
+  const p = (h.toString().match(/\n/g) || []).length, g = Math.max(...h.split(`
 `).map((y) => y.length), 0);
   return /* @__PURE__ */ _.jsx(
     "textarea",
@@ -48867,4 +48867,4 @@ const lue = (e, t) => {
   );
 };
 window.FuncNodes = lue;
-window.FuncNodes.version = "0.4.8";
+window.FuncNodes.version = "0.4.9";
