@@ -140,7 +140,7 @@ const ReactFlowManager = () => {
   return <></>;
 };
 
-const KeyHandler = ({ onNodesChange }: { onNodesChange: OnNodesChange }) => {
+const KeyHandler = () => {
   const fnrf_zst = useContext(FuncNodesContext);
   const delPressed = useKeyPress("Delete");
   const copyPressed = useKeyPress(["Meta+c", "Control+c", "Strg+c"]);
@@ -340,7 +340,7 @@ const ReactFlowLayer = (props: ReactFlowLayerProps) => {
         panOnDrag={!props.static}
       >
         <ReactFlowManager />
-        <KeyHandler onNodesChange={onNodesChange} />
+        <KeyHandler />
         <Background
           color="#888" // Color of the grid lines
           gap={16} // Distance between grid lines
