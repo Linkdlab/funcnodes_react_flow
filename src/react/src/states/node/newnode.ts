@@ -36,6 +36,8 @@ const dummy_node: latest.SerializedNodeType = {
   },
 };
 
+const dummy_node_string = JSON.stringify(dummy_node);
+
 const dummy_nodeio: latest.SerializedIOType = {
   id: "dummy",
   name: "dummy",
@@ -56,6 +58,7 @@ const dummy_nodeio: latest.SerializedIOType = {
   required: false,
 };
 
+const dummy_io_string = JSON.stringify(dummy_nodeio);
 const deserialize_io = (
   fnrfz: FuncNodesReactFlowZustandInterface,
   io: latest.SerializedIOType
@@ -111,7 +114,7 @@ const assert_full_nodeio = (
     io.name = io.id;
   }
 
-  const { new_obj } = deep_update(io, dummy_nodeio);
+  const { new_obj } = deep_update(io, JSON.parse(dummy_io_string));
 
   if (
     new_obj.render_options.type === "any" ||
@@ -204,6 +207,19 @@ const createIOStore = (
       });
     },
     node: nodestore,
+    serialize: () => {
+      const state = iostore._state.getState();
+      const values = iostore.valuestore.getState();
+      const serialized_io: latest.SerializedIOType = {
+        ...state,
+        value: values.preview,
+        fullvalue: values.full,
+        render_options: state.render_options,
+        valuepreview_type: state.valuepreview_type,
+        emit_value_set: state.emit_value_set,
+      };
+      return serialized_io;
+    },
   };
 
   return iostore;
@@ -249,7 +265,7 @@ const assert_full_node = (
 
   const { new_obj } = deep_update<NormalizedSerializedNodeType>(
     node,
-    dummy_node
+    JSON.parse(dummy_node_string)
   );
 
   const desernode: latest.NodeType = deserialize_node(
@@ -278,6 +294,21 @@ const createNodeStore = (
     },
     update: (new_state: latest.PartialSerializedNodeType) => {
       update_node(nodestore._state, new_state);
+    },
+    serialize: () => {
+      const state = nodestore._state.getState();
+      const serialized_node: latest.SerializedNodeType = {
+        ...state,
+        io: Object.fromEntries(
+          Object.entries(state.io).map(([name, value]) => [
+            name,
+            value?.serialize(),
+          ])
+        ),
+        in_trigger: state.in_trigger.getState(),
+        progress: state.progress.getState(),
+      };
+      return serialized_node;
     },
   };
   const nodestore = _nodestore as latest.NodeStore;
