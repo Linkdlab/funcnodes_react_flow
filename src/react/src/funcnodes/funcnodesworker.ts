@@ -406,7 +406,7 @@ class FuncNodesWorker {
       cmd: "add_node",
       kwargs: { id: node_id },
     });
-    this._receive_node_added(resp as latest.SerializedNodeType);
+    return this._receive_node_added(resp as latest.SerializedNodeType);
   }
 
   async remove_node(node_id: string) {
@@ -418,7 +418,7 @@ class FuncNodesWorker {
 
   async _receive_node_added(data: latest.SerializedNodeType) {
     if (!this._zustand) return;
-    this._zustand.on_node_action({
+    return this._zustand.on_node_action({
       type: "add",
       node: data,
       id: data.id,
