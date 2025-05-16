@@ -45,35 +45,17 @@ const edgeTypes: EdgeTypes = {
   default: DefaultEdge,
 };
 
-const ReactFlowManager = () => {
-  const rfinstance = useReactFlow();
-  const fnrf_zst = useContext(FuncNodesContext);
-  fnrf_zst.rf_instance = rfinstance;
-  // useForceGraph();
-
-  return <></>;
-};
-
-const KeyHandler = ({ onNodesChange }: { onNodesChange: OnNodesChange }) => {
-  const fnrf_zst = useContext(FuncNodesContext);
-  const delPressed = useKeyPress("Delete");
-  const copyPressed = useKeyPress(["Meta+c", "Control+c", "Strg+c"]);
-  const pastePressed = useKeyPress(["Meta+v", "Control+v", "Strg+v"]);
-  const edges = useEdges();
-  const nodes = useNodes();
-
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    const pastedText = e.clipboardData?.getData("text");
-    if (!pastedText) return;
-    console.log("paste", pastedText);
-    if (!pastedText) return;
+const past_clipboard_data = async (
+  data: string,
+  fnrf_zst: FuncNodesReactFlowZustandInterface,
+  onNodesChange: OnNodesChange
+) => {
+  try {
+    if (!data) return;
     const copydata: {
       nodes: latest.SerializedNodeType[];
       edges: latest.SerializedEdge[];
-    } = JSON.parse(pastedText);
-    console.log("copydata", copydata);
+    } = JSON.parse(data);
     if (!copydata) return;
     if (!fnrf_zst.worker) return;
     if (!copydata.nodes) return;
@@ -110,7 +92,6 @@ const KeyHandler = ({ onNodesChange }: { onNodesChange: OnNodesChange }) => {
 
     for (const node of rel_node_infos) {
       const new_node = await fnrf_zst.worker.add_node(node.id);
-      console.log("new_node", new_node);
       if (!new_node) continue;
       const newnodestore = fnrf_zst.nodespace.get_node(new_node.id, false);
       if (!newnodestore) continue;
@@ -144,7 +125,27 @@ const KeyHandler = ({ onNodesChange }: { onNodesChange: OnNodesChange }) => {
         trg_ioid: edge.trg_ioid,
       });
     }
-  };
+  } catch (err) {
+    console.error("Failed to process pasted data:", err);
+    // Potentially alert user: "Paste failed. Clipboard data may not be valid."
+  }
+};
+
+const ReactFlowManager = () => {
+  const rfinstance = useReactFlow();
+  const fnrf_zst = useContext(FuncNodesContext);
+  fnrf_zst.rf_instance = rfinstance;
+  // useForceGraph();
+
+  return <></>;
+};
+
+const KeyHandler = ({ onNodesChange }: { onNodesChange: OnNodesChange }) => {
+  const fnrf_zst = useContext(FuncNodesContext);
+  const delPressed = useKeyPress("Delete");
+  const copyPressed = useKeyPress(["Meta+c", "Control+c", "Strg+c"]);
+  const edges = useEdges();
+  const nodes = useNodes();
 
   if (delPressed) {
     for (const edge of edges) {
@@ -197,22 +198,15 @@ const KeyHandler = ({ onNodesChange }: { onNodesChange: OnNodesChange }) => {
 
     // inject copydata into clipboard
     navigator.clipboard.writeText(JSON.stringify(copydata));
-  } else if (pastePressed) {
-    console.log("paste pressed");
-    if (!inputRef.current) return;
-    if (inputRef.current instanceof HTMLTextAreaElement) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
   }
 
   return (
     <>
-      <textarea
+      {/* <textarea
         ref={inputRef}
         onPaste={handlePaste}
         style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
-      />
+      /> */}
     </>
   );
 };
@@ -307,6 +301,27 @@ const ReactFlowLayer = (props: ReactFlowLayerProps) => {
   return (
     <div className="reactflowlayer">
       <ReactFlow
+        onPasteCapture={(e: React.ClipboardEvent<HTMLDivElement>) => {
+          const reftarget = reactflowRef.current;
+          if (!reftarget) return;
+          let current_target = e.target;
+          let steps = 0;
+          while (current_target && (current_target as any).parentElement) {
+            if (current_target === reftarget) {
+              break;
+            }
+            steps++;
+            current_target = (current_target as any).parentElement;
+          }
+          fnrf_zst.logger.debug(`onPasteCapture: ${steps} steps to reactflow`);
+          if (steps <= 2) {
+            past_clipboard_data(
+              e.clipboardData.getData("text/plain"),
+              fnrf_zst,
+              onNodesChange
+            );
+          }
+        }}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
