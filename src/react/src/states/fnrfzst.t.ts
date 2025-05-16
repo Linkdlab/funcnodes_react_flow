@@ -185,7 +185,7 @@ interface FuncNodesReactFlowZustandInterface {
   progress_state: UseBoundStore<StoreApi<ProgressState>>;
   update_render_options: (options: RenderOptions) => void;
   rf_instance?: ReturnType<typeof useReactFlow>;
-  on_node_action: (action: latest.NodeAction) => void;
+  on_node_action: (action: latest.NodeAction) => latest.NodeType | undefined;
   on_edge_action: (edge: EdgeAction) => void;
   set_progress: (progress: ProgressState) => void;
   auto_progress: () => void;

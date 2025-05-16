@@ -21,6 +21,7 @@ export interface IOStore {
   valuestore: UseBoundStore<StoreApi<ValueStoreInterface>>;
   node: NodeStore;
   updateValueStore: (newData: Partial<ValueStoreInterface>) => void;
+  serialize: () => SerializedIOType;
 }
 
 export interface BasicIOType {

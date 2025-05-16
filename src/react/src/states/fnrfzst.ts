@@ -44,7 +44,6 @@ const _fill_node_frontend = (
   if (!nodeprops["frontend:size"]) {
     nodeprops["frontend:size"] = [200, 100];
   }
-
   const frontend_pos = nodeprops["frontend:pos"];
   if (
     !frontend_pos ||
@@ -121,12 +120,14 @@ const FuncNodesReactFlowZustand = (
     ...props,
   };
 
-  const _add_node = (action: latest.NodeActionAdd) => {
+  const _add_node = (
+    action: latest.NodeActionAdd
+  ): latest.NodeType | undefined => {
     const rfstate = rfstore.getState();
     if (action.from_remote) {
       let store = ns.get_node(action.node.id, false);
       if (store) {
-        return;
+        return undefined;
       }
       if (!store) {
         try {
@@ -134,7 +135,7 @@ const FuncNodesReactFlowZustand = (
           ns.nodesstates.set(action.node.id, store);
         } catch (e) {
           iterf.logger.error(`Failed to create node store ${e}`);
-          return;
+          return undefined;
         }
       }
 
@@ -155,10 +156,14 @@ const FuncNodesReactFlowZustand = (
       setTimeout(() => {
         iterf.worker?.call_hooks("node_added", { node: node.id });
       }, 0);
+      return node;
     }
+    return undefined;
   };
 
-  const _update_node = (action: latest.NodeActionUpdate) => {
+  const _update_node = (
+    action: latest.NodeActionUpdate
+  ): latest.NodeType | undefined => {
     // some action reset the error, so far trigger does, so errors should remove the in_trigger flag
     if (action.node.in_trigger) {
       action.node.error = undefined;
@@ -167,15 +172,17 @@ const FuncNodesReactFlowZustand = (
       const store = ns.get_node(action.id, false);
       if (!store) {
         console.error("Node not found to update", action.id);
-        return;
+        return undefined;
       }
 
       store.update(action.node);
+      return store.getState();
     } else {
       if (iterf.worker) {
         iterf.worker.locally_update_node(action);
       }
     }
+    return undefined;
   };
 
   const _delete_node = (action: latest.NodeActionDelete) => {
@@ -190,11 +197,12 @@ const FuncNodesReactFlowZustand = (
     } else {
       iterf.worker?.remove_node(action.id);
     }
+    return undefined;
   };
 
   const _error_action = (action: latest.NodeActionError) => {
     iterf.logger.error("Error", action);
-    on_node_action({
+    return on_node_action({
       type: "update",
       id: action.id,
       node: {
@@ -207,7 +215,7 @@ const FuncNodesReactFlowZustand = (
 
   const _trigger_action = (action: latest.NodeActionTrigger) => {
     if (action.from_remote) {
-      on_node_action({
+      return on_node_action({
         type: "update",
         id: action.id,
         node: {
@@ -219,27 +227,26 @@ const FuncNodesReactFlowZustand = (
     } else {
       iterf.worker?.trigger_node(action.id);
     }
+    return undefined;
   };
 
-  const on_node_action = (action: latest.NodeAction) => {
+  const on_node_action = (
+    action: latest.NodeAction
+  ): latest.NodeType | undefined => {
     switch (action.type) {
       case "add":
-        _add_node(action);
-        break;
+        return _add_node(action);
       case "update":
-        _update_node(action);
-        break;
+        return _update_node(action);
       case "delete":
-        _delete_node(action);
-        break;
+        return _delete_node(action);
       case "error":
-        _error_action(action);
-        break;
+        return _error_action(action);
       case "trigger":
-        _trigger_action(action);
-        break;
+        return _trigger_action(action);
       default:
         iterf.logger.error("Unknown node action", action);
+        return undefined;
     }
   };
 

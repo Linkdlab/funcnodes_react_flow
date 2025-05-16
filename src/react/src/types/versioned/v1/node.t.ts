@@ -74,4 +74,5 @@ export interface NodeStore {
   getState: () => NodeType;
   setState: (new_state: Partial<NodeType>) => void;
   update: (new_state: PartialSerializedNodeType) => void;
+  serialize: () => SerializedNodeType;
 }
