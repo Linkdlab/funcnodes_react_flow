@@ -23,7 +23,7 @@
   & .statusbar {
     // max-width: 500px;
     height: 1.5rem;
-    background-color: var(--funcnodesbackground2);
+    background-color: var(--fn-container-background);
     display: inline-block;
     margin: 2px 4px 0px 4px;
     position: relative;
@@ -37,7 +37,7 @@
       left: 0;
       width: 0;
       height: 100%;
-      background-color: var(--funheadercolor);
+      background-color: var(--fn-primary-color);
       display: inline-block;
     }
     &-message {
@@ -47,7 +47,7 @@
       top: 50%;
       transform: translateY(-50%);
       font-size: 0.8rem;
-      color: var(--funheadercolor);
+      color: var(--fn-primary-color);
       mix-blend-mode: difference;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -63,21 +63,21 @@
   overflow: auto;
   padding: 5px;
   border-radius: 0.25rem;
-  z-index: 2;
+  z-index: 1;
 }
 
 .headermenuitem {
   padding: 0 5px;
   &[data-highlighted] {
-    background-color: var(--funcnodesbackground_light);
+    background-color: var(--fn-neutral-element-background);
   }
 
   &[data-state="open"] {
-    background-color: var(--funcnodesbackground_light);
+    background-color: var(--fn-neutral-element-background);
   }
 
   &[data-state="checked"] {
-    background-color: var(--funcnodesbackground_light);
+    background-color: var(--fn-neutral-element-background);
     color: #fff;
   }
 }

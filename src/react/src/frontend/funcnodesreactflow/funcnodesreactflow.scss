@@ -1,18 +1,134 @@
 :root {
-  --funheadercolor: #00d9ff; // Dark background color
-  --funcnodesbackground1: hsl(243, 26%, 13%); // Dark background color
-  --funcnodesbackground2: hsl(245, 22%, 22%); // Dark background color
-  --funcnodesbackground_light: hsl(240, 22%, 38%);
+  --fn-app-background: hsl(
+    220,
+    11%,
+    12%
+  ); /* slightly darker, crisper contrast */
+  --fn-container-background: hsl(220, 11%, 20%); /* deeper container shading */
+  --fn-text-color-neutral: hsl(0, 0%, 98%); /* near-white for easier reading */
+  --fn-text-color-inverted: hsl(0, 0%, 10%); /* for light surfaces */
+  --fn-neutral-element-background: hsl(220, 10%, 27%);
+  --fn-neutral-element-background-hover: hsl(220, 10%, 37%);
+  --fn-primary-color: hsl(210, 85%, 56%);
+  --fn-primary-color-hover: hsl(210, 85%, 62%); /* -new- smoother hover */
+
+  // nodes
+  --fn-node-handle-source-color: hsl(189, 20%, 55%);
+  --fn-node-handle-target-color: hsl(192, 25%, 65%);
+  --fn-node-background: hsl(220, 6%, 42%);
+  --fn-node-header-color: hsl(220, 5%, 32%);
+  --fn-node-footer-color: hsl(225, 7%, 70%);
+  --fn-node-progress-color: hsl(95, 38%, 46%); /* green-ish progress bar */
+
+  //new
+
+  --fn-surface-elevation-low: hsl(220, 11%, 24%); /* -new-: cards, side-bars */
+  --fn-surface-elevation-high: hsl(
+    220,
+    11%,
+    28%
+  ); /* -new-: dialogs, pop-overs */
+
+  /* typography */
+  --fn-text-color-subtle: hsl(0, 0%, 75%); /* -new-: secondary labels */
+  /* interactive neutrals */
+  --fn-neutral-element-border: hsla(0, 0%, 100%, 0.06); /* hair-line borders */
+
+  /* micro-interactions */
+  --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.6);
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+}
+
+[data-color-theme="classic"] {
+  --fn-app-background: hsl(243, 26%, 13%);
+  --fn-container-background: hsl(245, 22%, 22%);
+  --fn-text-color-neutral: hsl(0, 0%, 100%);
+  --fn-text-color-neutral-inverted: hsl(0, 0%, 0%);
+  --fn-neutral-element-background: hsl(245, 15%, 32%);
+  --fn-neutral-element-background-hover: hsl(245, 20%, 50%);
+  --fn-primary-color: hsl(189, 100%, 50%);
+
+  // nodes
+  --fn-node-handle-source-color: hsl(190, 98%, 49%);
+  --fn-node-handle-target-color: hsl(204, 98%, 51%);
+  --fn-node-background: hsl(245, 51%, 42%);
+  --fn-node-header-color: hsl(245, 51%, 22%);
+  --fn-node-footer-color: hsl(266, 88%, 35%);
+  --fn-node-progress-color: hsl(76, 92%, 50%);
+}
+
+[data-color-theme="metal"] {
+  --fn-app-background: hsl(220, 10%, 15%);
+  --fn-container-background: hsl(220, 10%, 21%);
+  --fn-text-color-neutral: hsl(0, 0%, 100%);
+  --fn-text-color-neutral-inverted: hsl(0, 0%, 0%);
+  --fn-neutral-element-background: hsl(220, 10%, 25%);
+  --fn-neutral-element-background-hover: hsl(220, 10%, 35%);
+  --fn-primary-color: hsl(210, 70%, 55%);
+
+  // nodes
+  --fn-node-handle-source-color: hsl(189, 8%, 46%);
+  --fn-node-handle-target-color: hsl(190, 11%, 61%);
+  --fn-node-background: hsl(220, 4%, 46%);
+  --fn-node-header-color: hsl(220, 3%, 35%);
+  --fn-node-footer-color: hsl(225, 4%, 82%);
+  --fn-node-progress-color: hsl(76, 16%, 31%);
+}
+
+[data-color-theme="metal"] {
+  /* layout & chrome */
+  --fn-app-background: hsl(
+    220,
+    11%,
+    12%
+  ); /* slightly darker, crisper contrast */
+  --fn-container-background: hsl(220, 11%, 20%); /* deeper container shading */
+  --fn-surface-elevation-low: hsl(220, 11%, 24%); /* -new-: cards, side-bars */
+  --fn-surface-elevation-high: hsl(
+    220,
+    11%,
+    28%
+  ); /* -new-: dialogs, pop-overs */
+
+  /* typography */
+  --fn-text-color-neutral: hsl(0, 0%, 98%); /* near-white for easier reading */
+  --fn-text-color-subtle: hsl(0, 0%, 75%); /* -new-: secondary labels */
+  --fn-text-color-inverted: hsl(0, 0%, 10%); /* for light surfaces */
+
+  /* interactive neutrals */
+  --fn-neutral-element-background: hsl(220, 10%, 27%);
+  --fn-neutral-element-background-hover: hsl(220, 10%, 37%);
+  --fn-neutral-element-border: hsla(0, 0%, 100%, 0.06); /* hair-line borders */
+
+  /* primary accent (cool steel-blue) */
+  --fn-primary-color: hsl(210, 85%, 56%);
+  --fn-primary-color-hover: hsl(210, 85%, 62%); /* -new- smoother hover */
+
+  /* nodes */
+  --fn-node-handle-source-color: hsl(189, 20%, 55%);
+  --fn-node-handle-target-color: hsl(192, 25%, 65%);
+  --fn-node-background: hsl(220, 6%, 42%);
+  --fn-node-header-color: hsl(220, 5%, 32%);
+  --fn-node-footer-color: hsl(225, 7%, 70%);
+  --fn-node-progress-color: hsl(95, 38%, 46%); /* green-ish progress bar */
+
+  /* micro-interactions */
+  --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.6);
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+}
+
+:root {
   --containerboarderradius: 1rem;
-  --funcnodestextcolor1: #ffffff; // Dark background color
   --funcnodes-z-index: 1000;
 }
 
 .bg1 {
-  background-color: var(--funcnodesbackground1);
+  background-color: var(--fn-app-background);
 }
 .bg2 {
-  background-color: var(--funcnodesbackground2);
+  background-color: var(--fn-container-background);
 }
 
 .funcnodescontainer {
@@ -32,11 +148,11 @@
   height: 100%;
   flex-grow: 1;
   z-index: var(--funcnodes-z-index);
-  background-color: var(--funcnodesbackground1); // Dark background color
+  background-color: var(--fn-app-background); // Dark background color
   position: relative;
   display: flex;
   flex-direction: column;
-  color: var(--funcnodestextcolor1);
+  color: var(--fn-text-color-neutral);
 
   & * {
     box-sizing: border-box;
@@ -55,7 +171,7 @@
   flex-grow: 1;
   position: relative;
   overflow: hidden;
-  background-color: var(--funcnodesbackground2); // Dark background color
+  background-color: var(--fn-container-background); // Dark background color
   margin: 0.5rem;
   border-radius: var(--containerboarderradius);
 }
@@ -73,7 +189,7 @@
 }
 .workerselectoption {
   &.selected {
-    color: var(--funcnodestextcolor1);
+    color: var(--fn-text-color-neutral);
   }
   &.active {
     color: green;

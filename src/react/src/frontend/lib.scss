@@ -1,7 +1,5 @@
 :root {
   --expandtime: 0.3s;
-  --libnodebgcolor: #48465f;
-  --libnodebgcolor_hover: #6a6698;
 }
 .libcontainer {
   top: 0;
@@ -22,18 +20,18 @@
   flex-grow: 1;
   overflow: hidden;
   // width: 15rem;
-  background-color: var(--funcnodesbackground2);
+  background-color: var(--fn-container-background);
   border-radius: var(--containerboarderradius);
   padding: 0.5rem;
 
   & .libtitle {
     font-size: 1rem;
     font-weight: bold;
-    color: var(--funheadercolor);
+    color: var(--fn-primary-color);
   }
 
   & hr {
-    border-color: var(--funheadercolor);
+    border-color: var(--fn-primary-color);
     border-width: 1px;
     border-style: dotted none none none;
     &.hr_prominent {
@@ -45,13 +43,13 @@
 }
 
 .addlib {
-  background-color: var(--funcnodesbackground2);
+  background-color: var(--fn-container-background);
   border-radius: var(--containerboarderradius);
   padding: 0.5rem;
 
   & button {
-    background-color: var(--funcnodesbackground1);
-    color: var(--funheadercolor);
+    background-color: var(--fn-app-background);
+    color: var(--fn-primary-color);
     border: 0;
     border-radius: 0.5rem;
     padding: 0.5rem;
@@ -59,17 +57,17 @@
     font-size: 1rem;
     width: 100%;
     &:hover {
-      background-color: var(--funheadercolor);
-      color: var(--funcnodesbackground1);
+      background-color: var(--fn-primary-color);
+      color: var(--fn-app-background);
     }
     &:active {
-      background-color: var(--funcnodesbackground1);
-      color: var(--funcnodestextcolor1);
+      background-color: var(--fn-app-background);
+      color: var(--fn-text-color-neutral);
     }
   }
   & button[disabled] {
-    background-color: var(--funcnodesbackground1);
-    color: var(--funcnodestextcolor1);
+    background-color: var(--fn-app-background);
+    color: var(--fn-text-color-neutral);
     cursor: not-allowed;
   }
 }
@@ -80,12 +78,12 @@
   background-color: rgba(0, 0, 0, 0.1);
   padding: 0.2rem;
   &:focus-within {
-    border: 1px solid var(--funheadercolor);
+    border: 1px solid var(--fn-primary-color);
   }
   & input {
     flex-grow: 1;
     background-color: transparent;
-    color: var(--funcnodestextcolor1);
+    color: var(--fn-text-color-neutral);
     border: 0;
 
     &:focus {
@@ -124,10 +122,14 @@
   & .shelftitle {
     font-size: 0.8rem;
 
-    color: var(--funheadercolor);
+    color: var(--fn-primary-color);
     opacity: 0.8;
     display: flex;
     max-width: 100%;
+    &:hover {
+      color: var(--fn-primary-color-hover);
+      opacity: 1;
+    }
 
     &_text {
       flex-grow: 1;
@@ -140,18 +142,18 @@
 .libnodeentry {
   border-radius: 10px;
   box-sizing: border-box;
-  background-color: var(--libnodebgcolor);
+  background-color: var(--fn-neutral-element-background);
   margin-bottom: 0.2rem;
   //  border-radius: 0.2rem;
   padding: 0.1rem;
   cursor: pointer;
-  border: 1px solid var(--libnodebgcolor);
+  border: 1px solid var(--fn-neutral-element-background);
   transition: border 0.2s ease-in-out;
   font-size: 0.8rem;
-  box-shadow: -0.2rem 0px rgba(0, 76, 255);
+  box-shadow: -0.2rem 0px var(--fn-primary-color);
   &:hover {
-    background-color: var(--libnodebgcolor_hover);
-    border: 1px solid rgba(0, 76, 255);
+    background-color: var(--fn-neutral-element-background-hover);
+    border: 1px solid var(--fn-primary-color);
   }
 }
 

@@ -1,22 +1,22 @@
 .basicstyleelement {
-  background-color: var(--funcnodesbackground1);
-  color: var(--funcnodestextcolor1);
+  background-color: var(--fn-app-background);
+  color: var(--fn-color-primary-text);
   border-radius: 0.75rem;
-  border: 1px solid var(--funheadercolor);
+  border: 1px solid var(--fn-primary-color);
 }
 .styleelement {
   @extend .basicstyleelement;
   &:hover {
-    background-color: var(--funcnodesbackground_light);
+    background-color: var(--fn-neutral-element-background);
   }
 
   &:active {
-    background-color: var(--funheadercolor);
-    color: var(--funcnodesbackground1);
+    background-color: var(--fn-primary-color);
+    color: var(--fn-app-background);
   }
 
   &:focus {
-    outline: 1px solid var(--funheadercolor);
+    outline: 1px solid var(--fn-primary-color);
   }
 
   height: 2rem;
@@ -58,13 +58,13 @@ input[type="number"]::-webkit-outer-spin-button {
   }
   &:after {
     content: "";
-    background-color: var(--funheadercolor);
+    background-color: var(--fn-primary-color);
   }
   &.checked {
-    background-color: var(--funheadercolor);
-    color: var(--funcnodesbackground1);
+    background-color: var(--fn-primary-color);
+    color: var(--fn-app-background);
   }
-  accent-color: var(--funheadercolor);
+  accent-color: var(--fn-primary-color);
 }
 
 .SliderContainer {
@@ -87,7 +87,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .SliderTrack {
-  background-color: var(--funcnodesbackground1);
+  background-color: var(--fn-app-background);
   position: relative;
   flex-grow: 1;
   border-radius: 9999px;
@@ -96,7 +96,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .SliderRange {
   position: absolute;
-  background-color: var(--funheadercolor);
+  background-color: var(--fn-primary-color);
   border-radius: 9999px;
   height: 100%;
 }
@@ -138,7 +138,7 @@ input[type="number"]::-webkit-outer-spin-button {
   }
   &__option {
     &:hover {
-      background-color: var(--funcnodesbackground_light);
+      background-color: var(--fn-neutral-element-background);
     }
   }
 }

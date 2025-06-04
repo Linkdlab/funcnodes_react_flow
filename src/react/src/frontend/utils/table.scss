@@ -4,8 +4,8 @@
   min-height: 20rem;
 }
 .tableHead {
-  color: var(--funheadercolor) !important;
-  background-color: var(--funcnodesbackground1);
+  color: var(--fn-primary-color) !important;
+  background-color: var(--fn-app-background);
   font-weight: bold !important;
 }
 
@@ -16,8 +16,8 @@
 }
 
 .indexcol {
-  background-color: var(--funcnodesbackground2);
-  color: var(--funheadercolor) !important;
+  background-color: var(--fn-container-background);
+  color: var(--fn-primary-color) !important;
   font-family: inherit !important;
   font-weight: inherit !important;
 }
