@@ -10,7 +10,7 @@ import CustomDialog from "../dialog";
 import { useBodyDataRendererForIo } from "./body_data_renderer";
 import { RenderMappingContext } from "../datarenderer/rendermappings";
 import ProgressBar from "../utils/progressbar";
-import { PlayCircleFilledIcon, LanIcon } from "../assets/fontawsome";
+import { PlayCircleFilledIcon, LanIcon, GearIcon } from "../assets/fontawsome";
 import { ExpandLessIcon } from "../assets/fontawsome";
 import { latest } from "../../types/versioned/versions.t";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
@@ -38,11 +38,12 @@ const NodeHeader = React.memo(({ node_data }: NodeHeaderProps) => {
       <div className="nodeheader_element">
         <PlayCircleFilledIcon
           fontSize="inherit"
-          className="triggerbutton"
+          className="triggerbutton nodeheaderbutton"
           onClick={clicktrigger}
         />
         <LanIcon
           fontSize="inherit"
+          className="nodestatusbutton nodeheaderbutton"
           onClick={async () => {
             console.log(
               "nodestatus",

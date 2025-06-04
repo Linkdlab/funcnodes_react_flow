@@ -19,6 +19,7 @@ import {
   faNetworkWired,
   faCirclePlay,
   faMagnifyingGlass,
+  faGear,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
@@ -99,6 +100,10 @@ const SearchIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faMagnifyingGlass} />;
 };
 
+const GearIcon = (props: FontAwesomeWrapperIconProps) => {
+  return <_InnerIcon {...props} icon={faGear} />;
+};
+
 export {
   MenuRoundedIcon,
   ChevronRightIcon,
@@ -116,4 +121,5 @@ export {
   LanIcon,
   PlayCircleFilledIcon,
   SearchIcon,
+  GearIcon,
 };
