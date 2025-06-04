@@ -11,6 +11,7 @@ import * as React from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 import { latest } from "../../../types/versioned/versions.t";
 import { SelectionInput } from "../../datarenderer/default_input_renderer";
+import { useKeysDown } from "../../utils/keypresslistener";
 
 const INPUTCONVERTER: {
   [key: string]: [(v: any) => any, (v: any) => any] | undefined;
@@ -43,7 +44,15 @@ const INPUTCONVERTER: {
   ],
 };
 
-const NodeInput = ({ iostore }: { iostore: latest.IOStore }) => {
+const NodeInput = ({
+  iostore,
+  setNodeSettingsPath,
+  setShowSettings,
+}: {
+  iostore: latest.IOStore;
+  setNodeSettingsPath?: (path: string) => void;
+  setShowSettings?: (show: boolean) => void;
+}) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
   const render: RenderOptions = fnrf_zst.render_options();
@@ -64,9 +73,22 @@ const NodeInput = ({ iostore }: { iostore: latest.IOStore }) => {
     INPUTCONVERTER[
       (otypestring && render.inputconverter?.[otypestring]) ?? ""
     ] || INPUTCONVERTER[""]!;
+  const pressedKeys = useKeysDown();
+  const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (pressedKeys.has("s")) {
+      if (setNodeSettingsPath) setNodeSettingsPath("inputs/" + io.id);
+      if (setShowSettings) setShowSettings(true);
+      e.stopPropagation();
+    }
+  };
+
   if (io.hidden) return null;
   return (
-    <div className="nodeinput" {...{ "data-type": typestring }}>
+    <div
+      className="nodeinput"
+      {...{ "data-type": typestring }}
+      onClick={onClickHandler}
+    >
       <HandleWithPreview
         iostore={iostore}
         typestring={typestring}

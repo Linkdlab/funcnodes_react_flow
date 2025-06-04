@@ -30,6 +30,7 @@ import SmoothExpandComponent from "../layout/smoothexpand";
 import FullScreenComponent from "../layout/fullscreenelement";
 import { SizeContextContainer } from "../layout/components";
 import { LimitedDeepPartial } from "../../utils/objects";
+import { KeyContextProvider } from "../utils/keypresslistener";
 
 const InnerFuncnodesReactFlow = ({
   fnrf_zst,
@@ -68,69 +69,76 @@ const InnerFuncnodesReactFlow = ({
 
   return (
     <RenderMappingProvider plugins={plugins} fnrf_zst={fnrf_zst}>
-      <FuncNodesContext.Provider value={fnrf_zst}>
-        <SmoothExpandComponent asChild>
-          <FullScreenComponent asChild>
-            <SizeContextContainer
-              style={{
-                height: "100%",
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                flex: 1,
-              }}
-            >
-              <div
-                ref={ref}
-                className="funcnodesreactflowcontainer funcnodescontainer"
+      <KeyContextProvider>
+        <FuncNodesContext.Provider value={fnrf_zst}>
+          <SmoothExpandComponent asChild>
+            <FullScreenComponent asChild>
+              <SizeContextContainer
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  flex: 1,
+                }}
               >
-                {header.show && <FuncnodesHeader {...header}></FuncnodesHeader>}
+                <div
+                  ref={ref}
+                  className="funcnodesreactflowcontainer funcnodescontainer"
+                >
+                  {header.show && (
+                    <FuncnodesHeader {...header}></FuncnodesHeader>
+                  )}
 
-                <div className="funcnodesreactflowbody">
-                  <ReactFlowLayer {...flow}></ReactFlowLayer>
-                  {worker && library.show && <Library></Library>}
-                  {worker && flow.showNodeSettings && (
-                    <NodeSettings></NodeSettings>
-                  )}
-                </div>
-                <div className="funcnodesflaotingmenu">
-                  <FullScreenComponent.OutFullScreen>
-                    {flow.allowExpand && (
-                      <SmoothExpandComponent.Trigger>
-                        <SmoothExpandComponent.Expanded>
-                          <CloseFullscreenIcon
-                            size="xl"
-                            style={{ padding: "4px" }}
-                          />
-                        </SmoothExpandComponent.Expanded>
-                        <SmoothExpandComponent.Collapsed>
-                          <OpenInFullIcon
-                            size="xl"
-                            style={{ padding: "4px" }}
-                          />
-                        </SmoothExpandComponent.Collapsed>
-                      </SmoothExpandComponent.Trigger>
+                  <div className="funcnodesreactflowbody">
+                    <ReactFlowLayer {...flow}></ReactFlowLayer>
+                    {worker && library.show && <Library></Library>}
+                    {worker && flow.showNodeSettings && (
+                      <NodeSettings></NodeSettings>
                     )}
-                  </FullScreenComponent.OutFullScreen>
-                  {flow.allowFullScreen && (
-                    <FullScreenComponent.Trigger>
-                      <FullScreenComponent.OutFullScreen>
-                        <FullscreenIcon size="xl" style={{ padding: "4px" }} />
-                      </FullScreenComponent.OutFullScreen>
-                      <FullScreenComponent.InFullScreen>
-                        <FullscreenExitIcon
-                          size="xl"
-                          style={{ padding: "4px" }}
-                        />
-                      </FullScreenComponent.InFullScreen>
-                    </FullScreenComponent.Trigger>
-                  )}
+                  </div>
+                  <div className="funcnodesflaotingmenu">
+                    <FullScreenComponent.OutFullScreen>
+                      {flow.allowExpand && (
+                        <SmoothExpandComponent.Trigger>
+                          <SmoothExpandComponent.Expanded>
+                            <CloseFullscreenIcon
+                              size="xl"
+                              style={{ padding: "4px" }}
+                            />
+                          </SmoothExpandComponent.Expanded>
+                          <SmoothExpandComponent.Collapsed>
+                            <OpenInFullIcon
+                              size="xl"
+                              style={{ padding: "4px" }}
+                            />
+                          </SmoothExpandComponent.Collapsed>
+                        </SmoothExpandComponent.Trigger>
+                      )}
+                    </FullScreenComponent.OutFullScreen>
+                    {flow.allowFullScreen && (
+                      <FullScreenComponent.Trigger>
+                        <FullScreenComponent.OutFullScreen>
+                          <FullscreenIcon
+                            size="xl"
+                            style={{ padding: "4px" }}
+                          />
+                        </FullScreenComponent.OutFullScreen>
+                        <FullScreenComponent.InFullScreen>
+                          <FullscreenExitIcon
+                            size="xl"
+                            style={{ padding: "4px" }}
+                          />
+                        </FullScreenComponent.InFullScreen>
+                      </FullScreenComponent.Trigger>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </SizeContextContainer>
-          </FullScreenComponent>
-        </SmoothExpandComponent>
-      </FuncNodesContext.Provider>
+              </SizeContextContainer>
+            </FullScreenComponent>
+          </SmoothExpandComponent>
+        </FuncNodesContext.Provider>
+      </KeyContextProvider>
     </RenderMappingProvider>
   );
 };

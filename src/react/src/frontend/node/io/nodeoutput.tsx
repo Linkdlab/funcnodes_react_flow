@@ -14,8 +14,17 @@ import * as React from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 import { latest } from "../../../types/versioned/versions.t";
 import { InLineOutput } from "../../datarenderer/default_output_renderer";
+import { useKeysDown } from "../../utils/keypresslistener";
 
-const NodeOutput = ({ iostore }: { iostore: latest.IOStore }) => {
+const NodeOutput = ({
+  iostore,
+  setNodeSettingsPath,
+  setShowSettings,
+}: {
+  iostore: latest.IOStore;
+  setNodeSettingsPath?: (path: string) => void;
+  setShowSettings?: (show: boolean) => void;
+}) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface =
     useContext(FuncNodesContext);
   const render: RenderOptions = fnrf_zst.render_options();
@@ -24,12 +33,25 @@ const NodeOutput = ({ iostore }: { iostore: latest.IOStore }) => {
 
   const [typestring] = pick_best_io_type(io.type, render.typemap || {});
   const { Outputrenderer } = useContext(RenderMappingContext);
+  const pressedKeys = useKeysDown();
   const Output = typestring ? Outputrenderer[typestring] : undefined;
+  const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (pressedKeys.has("s")) {
+      if (setNodeSettingsPath) setNodeSettingsPath("outputs/" + io.id);
+      if (setShowSettings) setShowSettings(true);
+      e.stopPropagation();
+    }
+  };
+
   if (io.hidden) {
     return null;
   }
   return (
-    <div className="nodeoutput" {...{ "data-type": typestring }}>
+    <div
+      className="nodeoutput"
+      {...{ "data-type": typestring }}
+      onClick={onClickHandler}
+    >
       <HandleWithPreview
         iostore={iostore}
         typestring={typestring}

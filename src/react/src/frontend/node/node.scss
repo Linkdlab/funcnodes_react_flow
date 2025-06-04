@@ -342,3 +342,10 @@ textarea.nodedatainput.styledinput,
     transition: width 0.3s ease;
   }
 }
+
+.nodesettings-dialog {
+  width: 80vw;
+  height: 80vh;
+  max-width: 80vw;
+  max-height: 80vh;
+}

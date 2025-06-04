@@ -11,6 +11,7 @@ interface CustomDialogProps {
   children: React.ReactNode;
   closebutton?: boolean;
   modal?: boolean;
+  dialogClassName?: string;
   onOpenChange?: (open: boolean) => void;
   buttons?: {
     text: string;
@@ -32,6 +33,7 @@ const CustomDialog = ({
   open,
   setOpen,
   modal = true,
+  dialogClassName = "defaultdialogcontent",
 }: CustomDialogProps) => {
   const handleOpenChange = (isOpen: boolean) => {
     if (setOpen) {
@@ -46,13 +48,13 @@ const CustomDialog = ({
 
   const content = (
     <Dialog.Content asChild>
-      <div className="dialogconent funcnodescontainer">
+      <div className={"dialogconent funcnodescontainer " + dialogClassName}>
         {title && <Dialog.Title className="dialogtitle">{title}</Dialog.Title>}
-        {/* {description && ( */}
-        <Dialog.Description className="dialogdescription">
-          {description}
-        </Dialog.Description>
-        {/* )} */}
+        {description && (
+          <Dialog.Description className="dialogdescription">
+            {description}
+          </Dialog.Description>
+        )}
         <div className="dialogchildren">{children}</div>
         <div
           style={{
