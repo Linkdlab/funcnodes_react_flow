@@ -28,7 +28,8 @@
     "watch": "vite --config vite.browser.config.js",
     "preview": "vite build --config vite.browser.config.js && vite preview --config vite.browser.config.js",
     "test": "vitest run",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "dev-playwright": "node dev_playwright.cjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
