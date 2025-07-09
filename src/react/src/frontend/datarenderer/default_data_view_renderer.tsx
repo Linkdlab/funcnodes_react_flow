@@ -91,6 +91,82 @@ const SingleValueRenderer: latest.DataViewRendererType = ({
   );
 };
 
+const HTMLRenderer: latest.DataViewRendererType = ({
+  value,
+}: latest.DataViewRendererProps) => {
+  /** Save the current srcDoc (`value`) to a file called preview.html */
+  const handleDownload = () => {
+    const blob = new Blob([value], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "preview.html";
+    a.click();
+
+    URL.revokeObjectURL(url); // tidy up
+  };
+
+  return (
+    <div style={{ position: "relative" }}>
+      {/* small download button, absolute-positioned in the corner */}
+      <button
+        onClick={handleDownload}
+        style={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          zIndex: 10,
+          padding: "4px 8px",
+          fontSize: "0.8rem",
+          border: "1px solid #ccc",
+          borderRadius: 4,
+          background: "#fff",
+          cursor: "pointer",
+        }}
+      >
+        Download&nbsp;HTML
+      </button>
+
+      <iframe
+        title="html-preview"
+        srcDoc={value}
+        sandbox="allow-scripts"
+        style={{
+          border: "none",
+          width: "100%",
+          height: "100vh",
+        }}
+      />
+    </div>
+  );
+};
+
+const StringValueRenderer: latest.DataViewRendererType = (
+  props: latest.DataViewRendererProps
+) => {
+  // const { value } = props;
+  // const isHtml = React.useMemo(() => {
+  //   if (typeof value !== "string" || !/[<>]/.test(value)) return false;
+
+  //   try {
+  //     const doc = new DOMParser().parseFromString(value, "text/html");
+
+  //     // If the parser produced <parsererror>, it’s invalid.
+  //     if (doc.querySelector("parsererror")) return false;
+
+  //     // Treat as HTML only if there’s at least one element node.
+  //     return Array.from(doc.body.childNodes).some(
+  //       (n) => n.nodeType === Node.ELEMENT_NODE
+  //     );
+  //   } catch {
+  //     return false;
+  //   }
+  // }, [value]);
+  // if (isHtml) return HTMLRenderer(props); // Render as HTML if it’s valid HTML
+  return SingleValueRenderer(props); // Otherwise, render as plain text
+};
+
 const Base64BytesRenderer: latest.DataViewRendererType = ({
   value,
 }: latest.DataViewRendererProps) => {
@@ -133,7 +209,8 @@ export const DefaultDataView = DictRenderer;
 export const DefaultDataViewRenderer: {
   [key: string]: latest.DataViewRendererType | undefined;
 } = {
-  string: SingleValueRenderer,
+  string: StringValueRenderer,
+  str: StringValueRenderer,
   table: TableRender,
   image: DefaultImageRenderer,
   svg: SVGImageRenderer,
@@ -149,4 +226,6 @@ export {
   DictRenderer,
   SVGImageRenderer,
   Base64BytesRenderer,
+  StringValueRenderer,
+  HTMLRenderer,
 };

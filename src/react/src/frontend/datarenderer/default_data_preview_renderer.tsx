@@ -4,7 +4,7 @@ import {
   Base64BytesRenderer,
   DefaultImageRenderer,
   DictRenderer,
-  SingleValueRenderer,
+  StringValueRenderer,
   SVGImageRenderer,
   TableRender,
 } from "./default_data_view_renderer";
@@ -25,7 +25,8 @@ export const DataViewRendererToDataPreviewViewRenderer = (
 export const DefaultDataPreviewViewRenderer: {
   [key: string]: latest.DataPreviewViewRendererType | undefined;
 } = {
-  string: DataViewRendererToDataPreviewViewRenderer(SingleValueRenderer),
+  string: DataViewRendererToDataPreviewViewRenderer(StringValueRenderer),
+  str: DataViewRendererToDataPreviewViewRenderer(StringValueRenderer),
   table: DataViewRendererToDataPreviewViewRenderer(TableRender),
   image: DataViewRendererToDataPreviewViewRenderer(DefaultImageRenderer),
   svg: DataViewRendererToDataPreviewViewRenderer(SVGImageRenderer, ""),
