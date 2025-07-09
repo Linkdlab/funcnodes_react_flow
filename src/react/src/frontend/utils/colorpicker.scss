@@ -4,16 +4,16 @@
   grid-template-columns: auto minmax(0, 1fr);
 
   &_title {
-    font-size: 0.7em;
+    font-size: var(--fn-font-size-xs);
     font-weight: bold;
   }
 
   & label {
-    font-size: 0.7rem;
+    font-size: var(--fn-font-size-xs);
   }
   & input {
-    font-size: 0.7rem;
-    max-height: 0.7rem;
+    font-size: var(--fn-font-size-xs);
+    max-height: calc(1.1 * var(--fn-font-size-xs));
     box-sizing: initial;
   }
   & input[type="range"] {

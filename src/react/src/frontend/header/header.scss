@@ -22,12 +22,12 @@
 
   & .statusbar {
     // max-width: 500px;
-    height: 1.5rem;
+    height: 24px;
     background-color: var(--fn-container-background);
     display: inline-block;
     margin: 2px 4px 0px 4px;
     position: relative;
-    border-radius: 0.5rem;
+    border-radius: var(--fn-border-radius-s);
     overflow: hidden;
     flex-grow: 1;
 
@@ -46,7 +46,7 @@
       right: 4px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 0.8rem;
+      font-size: var(--fn-font-size-xs);
       color: var(--fn-primary-color);
       mix-blend-mode: difference;
       overflow: hidden;
@@ -62,7 +62,7 @@
   max-height: 90vh;
   overflow: auto;
   padding: 5px;
-  border-radius: 0.25rem;
+  border-radius: var(--fn-border-radius-xs);
   z-index: 1;
 }
 

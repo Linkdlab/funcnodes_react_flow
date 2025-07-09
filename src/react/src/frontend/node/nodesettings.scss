@@ -16,13 +16,13 @@
 
   &_section {
     margin-bottom: 10px;
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
+    margin-left: var(--fn-space-s);
+    margin-right: var(--fn-space-s);
   }
   &_component {
-    margin-bottom: 0.5rem;
-    margin-left: 0.5rem;
-    margin-top: 0.5rem;
+    margin-bottom: var(--fn-space-s);
+    margin-left: var(--fn-space-s);
+    margin-top: var(--fn-space-s);
 
     & > textarea {
       max-height: 10rem;
@@ -54,7 +54,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: var(--fn-font-size-s);
   line-height: 1;
   color: var(--fn-color-primary-text);
   user-select: none;
@@ -108,7 +108,7 @@
     grid-template-columns: minmax(100px, auto) 1fr; // Label column and control column
     align-items: center;
     label {
-      font-size: 0.875rem;
+      font-size: var(--fn-font-size-s);
       color: var(--fn-color-primary-text);
       justify-self: start; // Align label text to the start
     }
@@ -122,7 +122,7 @@
       border: 1px solid var(--fn-input-border);
       color: var(--fn-input-text);
       border-radius: var(--fn-border-radius-small);
-      font-size: 0.875rem;
+      font-size: var(--fn-font-size-s);
 
       &:focus {
         outline: none;
@@ -151,7 +151,7 @@
       word-break: break-all;
       max-height: 150px;
       overflow-y: auto;
-      font-size: 0.8rem;
+      font-size: var(--fn-font-size-s);
       border: 1px solid var(--fn-input-border);
       color: var(--fn-input-text);
       &.readonly {

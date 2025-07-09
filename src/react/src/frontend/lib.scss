@@ -6,12 +6,12 @@
   left: 0;
 
   height: 100%;
-  padding: 0.5rem;
+  padding: var(--fn-space-s);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
 
-  border-radius: 0.5rem;
+  border-radius: var(--fn-border-radius-s);
 }
 
 .library {
@@ -19,13 +19,12 @@
   flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
-  // width: 15rem;
   background-color: var(--fn-container-background);
   border-radius: var(--containerboarderradius);
-  padding: 0.5rem;
+  padding: var(--fn-space-s);
 
   & .libtitle {
-    font-size: 1rem;
+    font-size: var(--fn-font-size-m);
     font-weight: bold;
     color: var(--fn-primary-color);
   }
@@ -45,16 +44,17 @@
 .addlib {
   background-color: var(--fn-container-background);
   border-radius: var(--containerboarderradius);
-  padding: 0.5rem;
+  padding: var(--fn-space-s);
+  margin-top: var(--fn-space-s);
 
   & button {
     background-color: var(--fn-app-background);
     color: var(--fn-primary-color);
     border: 0;
-    border-radius: 0.5rem;
-    padding: 0.5rem;
+    border-radius: var(--fn-border-radius-s);
+    padding: var(--fn-space-s);
     cursor: pointer;
-    font-size: 1rem;
+    font-size: var(--fn-font-size-m);
     width: 100%;
     &:hover {
       background-color: var(--fn-primary-color);
@@ -120,7 +120,7 @@
   display: flex;
   flex-direction: column;
   & .shelftitle {
-    font-size: 0.8rem;
+    font-size: var(--fn-font-size-s);
 
     color: var(--fn-primary-color);
     opacity: 0.8;
@@ -149,7 +149,7 @@
   cursor: pointer;
   border: 1px solid var(--fn-neutral-element-background);
   transition: border 0.2s ease-in-out;
-  font-size: 0.8rem;
+  font-size: var(--fn-font-size-s);
   box-shadow: -0.2rem 0px var(--fn-primary-color);
   &:hover {
     background-color: var(--fn-neutral-element-background-hover);
@@ -181,14 +181,14 @@
   }
 
   .module-name {
-    font-size: 1.2rem;
+    font-size: var(--fn-font-size-l);
     font-weight: bold;
     color: #333;
     margin-bottom: 8px;
   }
 
   .module-description {
-    font-size: 0.75rem;
+    font-size: var(--fn-font-size-xs);
     color: #666;
     margin-bottom: 8px;
     max-height: 200px;
@@ -196,7 +196,7 @@
   }
 
   .module-links {
-    font-size: 0.9rem;
+    font-size: var(--fn-font-size-s);
     color: #007bff;
     margin-bottom: 8px;
     text-decoration: underline;
@@ -209,7 +209,7 @@
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: var(--fn-font-size-s);
     transition: background-color 0.2s ease;
 
     &:hover {
@@ -224,7 +224,7 @@
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: var(--fn-font-size-s);
     transition: background-color 0.2s ease;
 
     &:hover {
@@ -239,7 +239,7 @@
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: var(--fn-font-size-s);
     transition: background-color 0.2s ease;
 
     &:hover {
@@ -257,7 +257,7 @@
     border: none;
     color: #007bff;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: var(--fn-font-size-s);
     margin-top: 4px;
     text-decoration: underline;
     padding: 0;

@@ -32,7 +32,7 @@ interface FontAwesomeWrapperIconProps
 const _InnerIcon = (props: FontAwesomeIconProps) => {
   const { style, ...rest } = props;
   return (
-    <span style={{ marginLeft: "5px", ...style }}>
+    <span style={style}>
       <FontAwesomeIcon {...rest} />
     </span>
   );

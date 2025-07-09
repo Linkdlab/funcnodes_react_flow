@@ -42,7 +42,7 @@ const NodeHeader = React.memo(
         <div className="nodeheader_element">
           <PlayCircleFilledIcon
             fontSize="inherit"
-            className="triggerbutton nodeheaderbutton"
+            className="triggerbutton nodeheaderbutton "
             onClick={clicktrigger}
           />
           <LanIcon

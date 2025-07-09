@@ -342,6 +342,22 @@ const NodeSettingsGeneralTab = ({
           rows={3}
         />
       </div>
+      <div className="funcnodes-control-row">
+        <label>Reset Inputs on Trigger:</label>
+        <input
+          type="checkbox"
+          checked={node_data.reset_inputs_on_trigger}
+          onChange={(e) => {
+            fnrf_zst.on_node_action({
+              type: "update",
+              from_remote: false,
+              id: node_data.id,
+              node: { reset_inputs_on_trigger: e.target.checked },
+            });
+          }}
+          className="styledcheckbox"
+        />
+      </div>
     </div>
   );
 };

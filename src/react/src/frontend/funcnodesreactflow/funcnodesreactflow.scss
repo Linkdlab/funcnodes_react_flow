@@ -59,21 +59,22 @@
 }
 
 [data-color-theme="metal"] {
-  --fn-app-background: hsl(220, 10%, 15%);
-  --fn-container-background: hsl(220, 10%, 21%);
-  --fn-text-color-neutral: hsl(0, 0%, 100%);
-  --fn-text-color-neutral-inverted: hsl(0, 0%, 0%);
-  --fn-neutral-element-background: hsl(220, 10%, 25%);
-  --fn-neutral-element-background-hover: hsl(220, 10%, 35%);
-  --fn-primary-color: hsl(210, 70%, 55%);
+  --fn-app-background: hsl(220, 11%, 12%);
+  --fn-container-background: hsl(220, 11%, 20%); /* deeper container shading */
+  --fn-text-color-neutral: hsl(0, 0%, 98%); /* near-white for easier reading */
+  --fn-text-color-inverted: hsl(0, 0%, 10%); /* for light surfaces */
+  --fn-neutral-element-background: hsl(220, 10%, 27%);
+  --fn-neutral-element-background-hover: hsl(220, 10%, 37%);
+  --fn-primary-color: hsl(210, 85%, 56%);
+  --fn-primary-color-hover: hsl(210, 85%, 62%); /* -new- smoother hover */
 
   // nodes
-  --fn-node-handle-source-color: hsl(189, 8%, 46%);
-  --fn-node-handle-target-color: hsl(190, 11%, 61%);
-  --fn-node-background: hsl(220, 4%, 46%);
-  --fn-node-header-color: hsl(220, 3%, 35%);
-  --fn-node-footer-color: hsl(225, 4%, 82%);
-  --fn-node-progress-color: hsl(76, 16%, 31%);
+  --fn-node-handle-source-color: hsl(189, 20%, 55%);
+  --fn-node-handle-target-color: hsl(192, 25%, 65%);
+  --fn-node-background: hsl(220, 6%, 42%);
+  --fn-node-header-color: hsl(220, 5%, 32%);
+  --fn-node-footer-color: hsl(225, 7%, 70%);
+  --fn-node-progress-color: hsl(95, 38%, 46%); /* green-ish progress bar */
 }
 
 [data-color-theme="metal"] {
@@ -117,6 +118,82 @@
   --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.6);
   --fn-transition-fast: 120ms ease-out;
   --fn-transition-slow: 240ms ease;
+}
+
+:root {
+  --fn-space-xs: 0.25rem; /* 4px */
+  --fn-space-s: 0.5rem; /* 8px */
+  --fn-space-m: 1rem; /* 16px */
+  --fn-space-l: 2rem; /* 32px */
+  --fn-space-xl: 4rem; /* 64px */
+  --fn-border-radius-xs: 0.25rem; /* 4px */
+  --fn-border-radius-s: 0.5rem; /* 8px */
+  --fn-border-radius-m: 1rem; /* 16px */
+  --fn-border-radius-l: 2rem; /* 32px */
+  --fn-border-radius-xl: 4rem; /* 64px */
+  --fn-font-size-xs: 0.75rem; /* 12px */
+  --fn-font-size-s: 0.875rem; /* 14px */
+  --fn-font-size-m: 1rem; /* 16px */
+  --fn-font-size-l: 1.25rem; /* 20px */
+  --fn-font-size-xl: 1.5rem; /* 24px */
+  --fn-font-size-xxl: 2rem; /* 32px */
+}
+
+.m-xs {
+  margin: var(--fn-space-xs);
+}
+.m-s {
+  margin: var(--fn-space-s);
+}
+.m-m {
+  margin: var(--fn-space-m);
+}
+.m-l {
+  margin: var(--fn-space-l);
+}
+.m-xl {
+  margin: var(--fn-space-xl);
+}
+
+.m-x-xs {
+  margin-left: var(--fn-space-xs);
+  margin-right: var(--fn-space-xs);
+}
+.m-x-s {
+  margin-left: var(--fn-space-s);
+  margin-right: var(--fn-space-s);
+}
+.m-x-m {
+  margin-left: var(--fn-space-m);
+  margin-right: var(--fn-space-m);
+}
+.m-x-l {
+  margin-left: var(--fn-space-l);
+  margin-right: var(--fn-space-l);
+}
+.m-x-xl {
+  margin-left: var(--fn-space-xl);
+  margin-right: var(--fn-space-xl);
+}
+.m-y-xs {
+  margin-top: var(--fn-space-xs);
+  margin-bottom: var(--fn-space-xs);
+}
+.m-y-s {
+  margin-top: var(--fn-space-s);
+  margin-bottom: var(--fn-space-s);
+}
+.m-y-m {
+  margin-top: var(--fn-space-m);
+  margin-bottom: var(--fn-space-m);
+}
+.m-y-l {
+  margin-top: var(--fn-space-l);
+  margin-bottom: var(--fn-space-l);
+}
+.m-y-xl {
+  margin-top: var(--fn-space-xl);
+  margin-bottom: var(--fn-space-xl);
 }
 
 :root {
@@ -165,6 +242,7 @@
   display: flex;
   flex-direction: row;
   overflow: hidden;
+  padding: var(--fn-space-s);
 }
 
 .reactflowlayer {
@@ -172,7 +250,7 @@
   position: relative;
   overflow: hidden;
   background-color: var(--fn-container-background); // Dark background color
-  margin: 0.5rem;
+  padding: var(--fn-space-s);
   border-radius: var(--containerboarderradius);
 }
 
@@ -180,7 +258,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   flex-grow: 1;
-  padding: 0.5rem;
+  padding: var(--fn-space-s);
   box-sizing: border-box;
 }
 

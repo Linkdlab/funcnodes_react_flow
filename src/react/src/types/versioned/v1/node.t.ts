@@ -42,6 +42,7 @@ export interface BasicNodeType {
   render_options?: v0_types.NodeRenderOptions;
   description?: string;
   properties: NodeProperties;
+  reset_inputs_on_trigger: boolean;
   status?: { [key: string]: any | undefined };
 }
 

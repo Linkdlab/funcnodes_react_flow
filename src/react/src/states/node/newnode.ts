@@ -24,6 +24,7 @@ const dummy_node: latest.SerializedNodeType = {
   io: {},
   name: "dummy",
   in_trigger: false,
+  reset_inputs_on_trigger: false,
   progress: {
     ascii: false,
     elapsed: 0,

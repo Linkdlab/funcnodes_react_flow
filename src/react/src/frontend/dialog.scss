@@ -34,12 +34,12 @@
   margin: 0;
   font-weight: 500;
   color: var(--fn-primary-color);
-  font-size: 17px;
+  font-size: var(--fn-font-size-l);
 }
 
 .dialogdescription {
   margin: 10px 0 20px;
-  font-size: 15px;
+  font-size: var(--fn-font-size-m);
   line-height: 1.5;
 }
 
@@ -74,7 +74,7 @@
   border-radius: 99rem;
   padding: 10px 20px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: var(--fn-font-size-m);
   margin-top: 20px;
 
   &:hover {

@@ -1,7 +1,7 @@
 .basicstyleelement {
   background-color: var(--fn-app-background);
   color: var(--fn-color-primary-text);
-  border-radius: 0.75rem;
+  border-radius: var(--fn-border-radius-s);
   border: 1px solid var(--fn-primary-color);
 }
 .styleelement {
@@ -19,15 +19,15 @@
     outline: 1px solid var(--fn-primary-color);
   }
 
-  height: 2rem;
-  min-height: 2rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  height: var(--fn-space-l);
+  min-height: var(--fn-space-l);
+  padding-left: var(--fn-space-s);
+  padding-right: var(--fn-space-s);
 }
 
 .styleddropdown {
   @extend .styleelement;
-  padding-right: 0.25rem;
+  padding-right: var(--fn-space-xs);
 }
 
 .styledbtn {
@@ -134,7 +134,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
   &__menu {
     @extend .basicstyleelement;
-    margin-left: -0.5rem;
+    // margin-left: -0.5rem;
   }
   &__option {
     &:hover {

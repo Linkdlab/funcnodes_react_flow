@@ -25,7 +25,7 @@
     box-sizing: content-box;
     transform: (-50%, -50%);
     border: var(--node_border_width) solid #ffffff00;
-    font-size: 0.5rem;
+    font-size: var(--fn-font-size-xs);
     width: auto;
     max-width: 250px;
     min-width: 100px;
@@ -138,6 +138,7 @@
 
   & .nodeheaderbutton {
     cursor: pointer;
+    margin-left: var(--fn-space-xs);
 
     &:hover {
       color: #0cc3f5;
@@ -198,13 +199,13 @@
 .noderesizecontrol {
   background: transparent !important;
   border: none !important;
-  font-size: 0.5rem;
+  font-size: var(--fn-font-size-xs);
 }
 .noderesizeicon {
   position: absolute;
   bottom: 4px;
   right: 4px;
-  font-size: 0.5rem;
+  font-size: var(--fn-font-size-xs);
 }
 
 .nodeio {
@@ -303,7 +304,7 @@ input.nodedatainput {
 .nodedatastyledelement {
   background-color: var(--fn-node-header-color);
 
-  font-size: 0.5rem;
+  font-size: var(--fn-font-size-xs);
   height: 1.5rem;
 
   &:disabled {

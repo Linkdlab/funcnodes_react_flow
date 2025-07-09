@@ -252,7 +252,7 @@ const WorkerMenu = () => {
         <DropdownMenu.Trigger asChild>
           <button className="styledbtn">
             <FloatContainer direction="row">
-              Worker <MenuRoundedIcon />
+              Worker <MenuRoundedIcon className="m-x-s" />
             </FloatContainer>
           </button>
         </DropdownMenu.Trigger>
@@ -433,7 +433,7 @@ const NodeSpaceMenu = () => {
         <DropdownMenu.Trigger asChild>
           <button className="styledbtn">
             <FloatContainer direction="row">
-              Nodespace <MenuRoundedIcon />
+              Nodespace <MenuRoundedIcon className="m-x-s" />
             </FloatContainer>
           </button>
         </DropdownMenu.Trigger>

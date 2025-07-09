@@ -145,6 +145,14 @@ const update_node = (
           updatedstate[key] = newvalue as latest.NodeType[typeof key];
         break;
       }
+      case "reset_inputs_on_trigger": {
+        const [newvalue, needs_update] = simple_updater(
+          old_state[key],
+          norm_new_state[key]
+        );
+        if (needs_update) updatedstate[key] = newvalue;
+        break;
+      }
       default:
         try {
           assertNever(key, norm_new_state[key]);

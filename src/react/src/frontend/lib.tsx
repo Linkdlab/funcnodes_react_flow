@@ -877,7 +877,6 @@ const Library = () => {
           </div>
           <hr />
         </div>
-        <div style={{ paddingTop: "0.5rem" }}></div>
         {worker_isopen && (
           <div className="addlib">
             <AddLibraryOverLay>
