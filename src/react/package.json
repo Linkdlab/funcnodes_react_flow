@@ -26,7 +26,9 @@
     "typecheck": "tsc --noEmit --watch",
     "build": " vite build && vite build --config vite.browser.config.js",
     "watch": "vite --config vite.browser.config.js",
-    "preview": "vite build --config vite.browser.config.js && vite preview --config vite.browser.config.js"
+    "preview": "vite build --config vite.browser.config.js && vite preview --config vite.browser.config.js",
+    "test": "vitest run",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -60,7 +62,10 @@
     "sass": "^1.86.3",
     "typescript": "^5.8.3",
     "vite": "^6.2.6",
-    "vite-plugin-dts": "^4.5.3"
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "^2.0.4",
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.19"
   },
   "peerDependencies": {
     "react": "^19.0",
