@@ -21,17 +21,17 @@
     background-color: var(--fn-node-background);
     display: flex;
     flex-direction: column;
-    color: #f0f8ff;
+    color: var(--fn-text-color-neutral);
     box-sizing: content-box;
     transform: (-50%, -50%);
-    border: var(--node_border_width) solid #ffffff00;
+    border: var(--node_border_width) solid var(--fn-node-header-color, #ffffff00);
     font-size: var(--fn-font-size-xs);
     width: auto;
     max-width: 250px;
     min-width: 100px;
     max-height: 2000px;
     &.selected {
-      border-color: #ffffff99;
+      border-color: var(--fn-primary-color, #ffffff99);
     }
     background-clip: content-box;
 
@@ -116,6 +116,7 @@
   display: flex; /* Use flex layout */
   align-items: center; /* Align items vertically in the center */
   justify-content: space-between; /* Distribute space between items */
+  color: var(--fn-text-color-neutral);
 
   &_element {
     display: flex; /* Enable flex within each child to center content */
@@ -141,7 +142,7 @@
     margin-left: var(--fn-space-xs);
 
     &:hover {
-      color: #0cc3f5;
+      color: var(--fn-primary-color, #0cc3f5);
     }
     &:active {
       color: #075d74;
@@ -151,10 +152,10 @@
 
 .nodename_input {
   // remove the default
-  border: 1px solid #000000;
+  border: 1px solid var(--fn-node-header-color, #000000);
   border-radius: 2px;
   background: none;
-  color: white;
+  color: var(--fn-text-color-neutral);
   text-align: center;
 
   font-size: inherit;
@@ -167,6 +168,7 @@
   width: 100%;
   padding: 0.1rem;
   border-radius: 0 0 var(--node_inner_ele_radius) var(--node_inner_ele_radius);
+  color: var(--fn-text-color-neutral);
   &:empty {
     display: none;
   }
@@ -218,7 +220,7 @@
   display: flex;
   flex-direction: row;
 
-  border: 1px solid #ffffff88;
+  border: 1px solid var(--fn-neutral-element-border, #ffffff88);
   border-radius: 3px;
   box-sizing: border-box;
   margin-left: calc(var(--nodeinput_margin) * 1px);
@@ -270,7 +272,7 @@
 .ioname {
   // flex-grow: 1;
   // flex-shrink: 1;
-  color: inherit;
+  color: var(--fn-text-color-neutral);
   margin: 0.2rem;
   // min-width: 2rem;
   flex: 0 0 auto;
@@ -303,7 +305,7 @@ input.nodedatainput {
 
 .nodedatastyledelement {
   background-color: var(--fn-node-header-color);
-
+  color: var(--fn-text-color-neutral);
   font-size: var(--fn-font-size-xs);
   height: 1.5rem;
 
@@ -327,7 +329,7 @@ textarea.nodedatainput.styledinput,
 
   &-text {
     text-align: center;
-    color: white;
+    color: var(--fn-text-color-neutral);
     mix-blend-mode: difference;
   }
   &-bar {
