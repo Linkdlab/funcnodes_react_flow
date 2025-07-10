@@ -172,20 +172,20 @@ const KeyHandler = () => {
       nodes: latest.SerializedNodeType[];
       edges: latest.SerializedEdge[];
     } = { nodes: [], edges: [] };
-    for (const node of nodes) {
-      if (node.selected) {
+    const selectedNodes = nodes.filter((n) => n.selected);
+    for (const node of  selectedNodes) {
         const fnnode = fnrf_zst.nodespace.get_node(node.id, false);
         if (!fnnode) continue;
         copydata.nodes.push(fnnode.serialize());
-      }
     }
+    
     for (const edge of edges) {
       if (!edge.source || !edge.target) continue;
       if (!edge.sourceHandle || !edge.targetHandle) continue;
       // check if edge.source and edge.target are selected
       if (
-        nodes.find((node) => node.id === edge.source)?.selected &&
-        nodes.find((node) => node.id === edge.target)?.selected
+        selectedNodes.find((node) => node.id === edge.source) &&
+        selectedNodes.find((node) => node.id === edge.target)
       ) {
         copydata.edges.push({
           src_nid: edge.source,
