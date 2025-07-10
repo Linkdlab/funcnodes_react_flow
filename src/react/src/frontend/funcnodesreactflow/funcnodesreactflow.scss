@@ -11,6 +11,8 @@
   --fn-neutral-element-background-hover: hsl(220, 10%, 37%);
   --fn-primary-color: hsl(210, 85%, 56%);
   --fn-primary-color-hover: hsl(210, 85%, 62%); /* -new- smoother hover */
+  --fn-edge-color: hsl(210, 75%, 70%);
+  --fn-edge-color-selected: #11ff00;
 
   // nodes
   --fn-node-handle-source-color: hsl(189, 20%, 55%);
@@ -56,6 +58,8 @@
   --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.6);
   --fn-transition-fast: 120ms ease-out;
   --fn-transition-slow: 240ms ease;
+  --fn-edge-color: hsl(189, 100%, 70%);
+  --fn-edge-color-selected: hsl(76, 92%, 60%);
 
   // nodes
   --fn-node-handle-source-color: hsl(190, 98%, 49%);
@@ -86,6 +90,8 @@
   /* primary accent (cool steel-blue) */
   --fn-primary-color: hsl(210, 85%, 56%);
   --fn-primary-color-hover: hsl(210, 85%, 62%); /* -new- smoother hover */
+  --fn-edge-color: hsl(210, 85%, 56%);
+  --fn-edge-color-selected: hsl(95, 100%, 60%);
 
   /* nodes */
   --fn-node-handle-source-color: hsl(189, 20%, 55%);
@@ -117,6 +123,8 @@
   --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.4);
   --fn-transition-fast: 120ms ease-out;
   --fn-transition-slow: 240ms ease;
+  --fn-edge-color: hsl(210, 85%, 56%);
+  --fn-edge-color-selected: hsl(95, 60%, 46%);
 
   // nodes
   --fn-node-handle-source-color: hsl(190, 98%, 49%);
@@ -143,6 +151,8 @@
   --fn-focus-ring: 0 0 0 2px #268bd2aa;
   --fn-transition-fast: 120ms ease-out;
   --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #268bd2;
+  --fn-edge-color-selected: #859900;
 
   // nodes
   --fn-node-handle-source-color: #b58900;
@@ -169,6 +179,8 @@
   --fn-focus-ring: 0 0 0 2px #4f5dffaa;
   --fn-transition-fast: 120ms ease-out;
   --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #4f5dff;
+  --fn-edge-color-selected: #00ffb3;
 
   // nodes
   --fn-node-handle-source-color: #7a8cff;
@@ -195,6 +207,8 @@
   --fn-focus-ring: 0 0 0 2px #4caf50aa;
   --fn-transition-fast: 120ms ease-out;
   --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #81c784;
+  --fn-edge-color-selected: #b2ff59;
 
   // nodes
   --fn-node-handle-source-color: #81c784;
@@ -221,6 +235,8 @@
   --fn-focus-ring: 0 0 0 2px #2563eb88;
   --fn-transition-fast: 120ms ease-out;
   --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #2563eb;
+  --fn-edge-color-selected: #22d3ee;
 
   // nodes
   --fn-node-handle-source-color: #0ea5e9;
