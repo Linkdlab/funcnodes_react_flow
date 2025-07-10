@@ -3,7 +3,6 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MenuRoundedIcon } from "../assets/fontawsome";
 import { FloatContainer } from "../layout/components";
 import CustomDialog from "../dialog";
-import { useTheme } from "../utils/themes";
 import { AppearanceDialogContent } from "./settingsmenu_appearance";
 
 export const SettingsMenu = () => {
@@ -42,4 +41,4 @@ export const SettingsMenu = () => {
       </CustomDialog>
     </>
   );
-};
+  };
