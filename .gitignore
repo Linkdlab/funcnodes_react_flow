@@ -19,4 +19,4 @@ __pycache__/
 /**/dist/
 /.funcnodes
 /src/*.egg-info/
-development_workers
+_development_workers
