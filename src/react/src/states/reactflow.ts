@@ -5,8 +5,11 @@ import {
   NodeChange,
   applyNodeChanges,
   applyEdgeChanges,
+  Node,
+  Edge,
 } from "@xyflow/react";
 import { RFState, RFStore } from "./reactflow.t";
+import { sortByParent } from "../utils/nodes";
 
 const reactflowstore = ({
   on_node_change,
@@ -21,17 +24,40 @@ const reactflowstore = ({
   const _on_edge_change = on_edge_change || ((_changes: EdgeChange[]) => {});
   const _on_connect = on_connect || ((_connection: Connection) => {});
   const useStore = create<RFState>((set, get) => ({
-    nodes: [],
-    edges: [],
-    onNodesChange: (changes: NodeChange[]) => {
+    _nodes: [],
+    _edges: [],
+    _nodes_map: new Map(),
+    update_nodes: (nodes: Node[]) => {
+      nodes=sortByParent(nodes);
       set({
-        nodes: applyNodeChanges(changes, get().nodes),
+        _nodes: nodes,
+        _nodes_map: new Map(nodes.map((node) => [node.id, node])),
       });
+    },
+    partial_update_nodes: (nodes: Node[]) => {
+      const state=get();
+      const old_nodes = state._nodes;
+      const old_nodes_id_map = new Map(old_nodes.map((node) => [node.id, node]));
+      for (const node of nodes) {
+        old_nodes_id_map.set(node.id, node);
+      }
+      state.update_nodes(
+        Array.from(old_nodes_id_map.values())
+      );
+    },
+    update_edges: (edges: Edge[]) => {
+      set({
+        _edges: edges,
+      });
+    },
+    onNodesChange: (changes: NodeChange[]) => {
+      const state = get();
+      state.update_nodes(applyNodeChanges(changes, state._nodes));
       _on_node_change(changes);
     },
     onEdgesChange: (changes: EdgeChange[]) => {
       set({
-        edges: applyEdgeChanges(changes, get().edges),
+        _edges: applyEdgeChanges(changes, get()._edges),
       });
       _on_edge_change(changes);
     },
@@ -41,6 +67,15 @@ const reactflowstore = ({
       }
 
       _on_connect(connection);
+    },
+    getNode: (id: string) => {
+      return get()._nodes_map.get(id);
+    },
+    getNodes: () => {
+      return get()._nodes;
+    },
+    getEdges: () => {
+      return get()._edges;
     },
   }));
   return useStore;

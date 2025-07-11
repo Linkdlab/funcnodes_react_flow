@@ -13,6 +13,7 @@ import { useReactFlow } from "@xyflow/react";
 import { Logger } from "../utils/logger";
 import { FuncNodesWorkerState } from "../funcnodes/funcnodesworker";
 import { latest } from "../types/versioned/versions.t";
+import { GroupAction } from "./groups.t";
 
 interface RenderOptions {
   typemap?: { [key: string]: string | undefined };
@@ -33,6 +34,7 @@ interface FullNodeSpaceJSON {
   edges: [string, string, string, string][];
   prop: { [key: string]: any | undefined };
   lib: LibType;
+  groups?: latest.NodeGroups;
 }
 
 interface FullState {
@@ -164,6 +166,7 @@ interface FuncnodesReactFlowLocalSettings {
 interface FuncnodesReactFlowLocalState {
   selected_nodes: string[];
   selected_edges: string[];
+  selected_groups: string[];
   funcnodescontainerRef: HTMLDivElement | null;
 }
 
@@ -187,6 +190,7 @@ interface FuncNodesReactFlowZustandInterface {
   rf_instance?: ReturnType<typeof useReactFlow>;
   on_node_action: (action: latest.NodeAction) => latest.NodeType | undefined;
   on_edge_action: (edge: EdgeAction) => void;
+  on_group_action: (group: GroupAction) => void;
   set_progress: (progress: ProgressState) => void;
   auto_progress: () => void;
   plugins: UseBoundStore<

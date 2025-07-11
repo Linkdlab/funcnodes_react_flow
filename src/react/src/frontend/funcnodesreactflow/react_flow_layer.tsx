@@ -27,19 +27,28 @@ import {
 } from "../../states/fnrfzst.t";
 
 import { latest } from "../../types/versioned/versions.t";
-import { update_node } from "../../states/node/update_node";
+import {  groupNodes, removeGroup as removeGroups } from "../../utils/grouping";
+import { DefaultGroup } from "../group";
+import { split_rf_nodes, useNodeTools } from "../../utils/nodes";
+
 
 // import { useForceGraph } from "../../utils/autolayout";
 
+
+
+
+
 const selector = (state: RFState) => ({
-  nodes: state.nodes,
-  edges: state.edges,
+  nodes: state.getNodes(),
+  edges: state.getEdges(),
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
 });
 
-const nodeTypes: NodeTypes = { default: DefaultNode };
+const nodeTypes: NodeTypes = { default: DefaultNode,
+  group: DefaultGroup,
+ };
 
 const edgeTypes: EdgeTypes = {
   default: DefaultEdge,
@@ -144,49 +153,68 @@ const KeyHandler = () => {
   const fnrf_zst = useContext(FuncNodesContext);
   const delPressed = useKeyPress("Delete");
   const copyPressed = useKeyPress(["Meta+c", "Control+c", "Strg+c"]);
-  const edges = useEdges();
-  const nodes = useNodes();
+  const groupPressed = useKeyPress(["Control+g", "Meta+g"]);
+  const ungroupPressed = useKeyPress(["Control+Alt+g", "Meta+Alt+g"]);
 
-  if (delPressed) {
-    for (const edge of edges) {
-      if (edge.selected) {
-        if (!fnrf_zst.worker) return <></>;
-        if (!edge.source || !edge.target) return <></>;
-        if (!edge.sourceHandle || !edge.targetHandle) return <></>;
-        fnrf_zst.worker.remove_edge({
-          src_nid: edge.source,
-          src_ioid: edge.sourceHandle,
-          trg_nid: edge.target,
-          trg_ioid: edge.targetHandle,
-        });
+  const { getEdges } = useReactFlow();
+  const { getNodes, getSelectedNodes, getSplitNodes } = useNodeTools();
+
+    // --- Deletion Logic ---
+    useEffect(() => {
+      if (delPressed) {
+        if (!fnrf_zst.worker) return;
+  
+        const selectedEdges = getEdges().filter((e) => e.selected);
+        for (const edge of selectedEdges) {
+          if (!edge.source || !edge.target || !edge.sourceHandle || !edge.targetHandle) continue;
+          fnrf_zst.worker.remove_edge({
+            src_nid: edge.source,
+            src_ioid: edge.sourceHandle,
+            trg_nid: edge.target,
+            trg_ioid: edge.targetHandle,
+          });
+        }
+  
+        const selectedNodes = getSelectedNodes();
+        const { group_nodes, default_nodes } = getSplitNodes(selectedNodes);
+        for (const node of default_nodes) {
+          fnrf_zst.worker.remove_node(node.id);
+        }
+        for (const node of group_nodes) {
+          fnrf_zst.worker.remove_group(node.id);
+        }
       }
-    }
-    for (const node of nodes) {
-      if (node.selected) {
-        if (!fnrf_zst.worker) return <></>;
-        fnrf_zst.worker.remove_node(node.id);
-      }
-    }
-  } else if (copyPressed) {
-    const copydata: {
-      nodes: latest.SerializedNodeType[];
-      edges: latest.SerializedEdge[];
-    } = { nodes: [], edges: [] };
-    const selectedNodes = nodes.filter((n) => n.selected);
-    for (const node of  selectedNodes) {
+    }, [delPressed, getNodes, getEdges, fnrf_zst]); // Dependencies for the effect
+
+
+   // --- Copy Logic ---
+   useEffect(() => {
+    if (copyPressed) {
+      const nodes = getNodes();
+      const edges = getEdges();
+      const selectedNodes = nodes.filter((n) => n.selected);
+
+      if (selectedNodes.length === 0) return;
+
+      const copydata: {
+        nodes: latest.SerializedNodeType[];
+        edges: latest.SerializedEdge[];
+      } = { nodes: [], edges: [] };
+
+      for (const node of selectedNodes) {
         const fnnode = fnrf_zst.nodespace.get_node(node.id, false);
-        if (!fnnode) continue;
-        copydata.nodes.push(fnnode.serialize());
-    }
-    
-    for (const edge of edges) {
-      if (!edge.source || !edge.target) continue;
-      if (!edge.sourceHandle || !edge.targetHandle) continue;
-      // check if edge.source and edge.target are selected
-      if (
-        selectedNodes.find((node) => node.id === edge.source) &&
-        selectedNodes.find((node) => node.id === edge.target)
-      ) {
+        if (fnnode) {
+          copydata.nodes.push(fnnode.serialize());
+        }
+      }
+
+      const selectedNodeIds = new Set(selectedNodes.map(n => n.id));
+      const internalEdges = edges.filter(edge => 
+        selectedNodeIds.has(edge.source) && selectedNodeIds.has(edge.target)
+      );
+
+      for (const edge of internalEdges) {
+        if (!edge.sourceHandle || !edge.targetHandle) continue;
         copydata.edges.push({
           src_nid: edge.source,
           src_ioid: edge.sourceHandle,
@@ -194,11 +222,34 @@ const KeyHandler = () => {
           trg_ioid: edge.targetHandle,
         });
       }
-    }
 
-    // inject copydata into clipboard
-    navigator.clipboard.writeText(JSON.stringify(copydata));
-  }
+      navigator.clipboard.writeText(JSON.stringify(copydata));
+    }
+  }, [copyPressed, getNodes, getEdges, fnrf_zst]); // Dependencies for the effect
+
+    // --- Grouping Logic ---
+  useEffect(() => {
+    // Only run if the key is pressed
+    if (groupPressed) {
+      const selectedNodes =getSelectedNodes();
+      const { group_nodes, default_nodes } = getSplitNodes(selectedNodes);
+      if (selectedNodes.length > 0) {
+        // This will now only run once when groupPressed becomes true
+        groupNodes(default_nodes.map((n) => n.id), group_nodes.map((n) => n.id), fnrf_zst);
+      }
+    }
+  }, [groupPressed, getNodes, fnrf_zst]); // Dependencies for the effect
+
+  useEffect(() => {
+    if (ungroupPressed) {
+      console.log("ungroupPressed");
+      const selectedNodes = getSelectedNodes();
+      const { group_nodes, default_nodes } = getSplitNodes(selectedNodes);
+      if (group_nodes.length > 0) {
+        removeGroups(group_nodes.map((n) => n.id), fnrf_zst);
+      }
+    }
+  }, [ungroupPressed, getNodes, fnrf_zst]); // Dependencies for the effect
 
   return (
     <>
@@ -277,7 +328,6 @@ const ReactFlowLayer = (props: ReactFlowLayerProps) => {
   }, [reactflowRef]);
 
   const [menu, setMenu] = useState<ContextMenuProps | null>(null);
-
   const onSelectionChange = ({
     nodes,
     edges,
@@ -285,11 +335,15 @@ const ReactFlowLayer = (props: ReactFlowLayerProps) => {
     nodes: Node[];
     edges: Edge[];
   }) => {
+
+    const { group_nodes, default_nodes } = split_rf_nodes(nodes);
+
     const cs = fnrf_zst.local_state.getState();
     fnrf_zst.local_state.setState({
       ...cs,
-      selected_nodes: nodes.map((node) => node.id),
+      selected_nodes: default_nodes.map((node) => node.id),
       selected_edges: edges.map((edge) => edge.id),
+      selected_groups: group_nodes.map((node) => node.id),
     });
   };
 
