@@ -29,7 +29,7 @@
     "preview": "vite build --config vite.browser.config.js && vite preview --config vite.browser.config.js",
     "test": "vitest run",
     "e2e": "playwright test",
-    "dev-playwright": "node dev_playwright.cjs"
+    "dev-full": "node dev_full.cjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -53,11 +53,18 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@radix-ui/react-tabs": "^1.1.12",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/color-convert": "^2.0.4",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.2",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "identity-obj-proxy": "^3.0.0",
+    "jsdom": "^24.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "sass": "^1.86.3",
@@ -66,7 +73,8 @@
     "vite-plugin-dts": "^4.5.3",
     "vitest": "^2.0.4",
     "@playwright/test": "^1.42.1",
-    "@types/node": "^20.11.19"
+    "@types/node": "^20.11.19",
+    "concurrently": "^8.2.2"
   },
   "peerDependencies": {
     "react": "^19.0",

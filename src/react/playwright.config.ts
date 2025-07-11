@@ -23,10 +23,10 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: `uv run funcnodes runserver --port ${BACKEND_PORT} --no-browser`,
+    command: `funcnodes --dir demo runserver --port ${BACKEND_PORT} --no-browser`,
     port: BACKEND_PORT,
     timeout: 60_000,
     reuseExistingServer: !process.env.CI,
-    cwd: path.resolve(__dirname, '../../../../backend/FuncNodes'),
+    cwd: path.resolve(__dirname, '../../../..'),
   },
 }); 
