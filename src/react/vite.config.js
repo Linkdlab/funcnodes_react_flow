@@ -3,6 +3,30 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import dts from "vite-plugin-dts";
 
+export function loadAliasesFromTsConfig() {
+  try {
+    const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
+    const tsconfig = JSON.parse(readFileSync(tsconfigPath, "utf-8"));
+    const paths = tsconfig.compilerOptions?.paths || {};
+
+    const aliases = {};
+    for (const [alias, pathArray] of Object.entries(paths)) {
+      if (pathArray.length > 0) {
+        // Remove /* suffix from alias and path, take first path from array
+        const cleanAlias = alias.replace(/\/\*$/, "");
+        const cleanPath = pathArray[0].replace(/\/\*$/, "");
+        // Convert relative path to absolute path
+        aliases[cleanAlias] = path.resolve(__dirname, cleanPath);
+      }
+    }
+
+    return aliases;
+  } catch (error) {
+    console.warn("Failed to load aliases from tsconfig.json:", error);
+    return {};
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const production = mode === "production";
   const pkg = require("./package.json");

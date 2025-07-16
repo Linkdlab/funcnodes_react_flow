@@ -1,16 +1,28 @@
 // vite.browser.config.js
+// Neo protects this file from agents
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import fs from "fs/promises";
 import path from "path";
+import { fileURLToPath } from "url";
+import { readFileSync } from "fs";
+import { loadAliasesFromTsConfig } from "./vite.config.js"; // Import the alias loading function
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 
 function htmlTransformPlugin(mode) {
   return {
     name: "html-transform-plugin",
     async transformIndexHtml(html) {
-      // Choose the script file based on the current mode.
-      const scriptfile =
-        mode === "production" ? "index.prod.js" : "index.dev.js";
+      // Check for custom script file from environment variable
+      let scriptfile;
+      if (process.env.FN_CUSTOM_SCRIPT) {
+        scriptfile = process.env.FN_CUSTOM_SCRIPT;
+      } else {
+        scriptfile = mode === "production" ? "index.prod.js" : "index.dev.js";
+      }
       // Resolve the absolute path of the file.
       const filePath = path.resolve(__dirname, scriptfile);
       console.log("filePath", filePath);
@@ -28,14 +40,26 @@ function htmlTransformPlugin(mode) {
 
 export default defineConfig(({ mode }) => {
   const production = mode === "production";
-  // laod version number from package.json
-  const pkg = require("./package.json");
+  // load version number from package.json
+  const pkg = JSON.parse(
+    readFileSync(path.resolve(__dirname, "./package.json"), "utf-8")
+  );
   const version = pkg.version;
   const basename = pkg.name.replace(/@.*\//, "");
 
   return {
     plugins: [react(), htmlTransformPlugin(mode)],
-    base: "static", // Set the base URL for the app (e.g., for deployment)
+    base: "/static", // Set the base URL for the app (e.g., for deployment)
+    resolve: {
+      alias: loadAliasesFromTsConfig(),
+    },
+    server: {
+      watch: {
+        additionalPaths: (watcher) => {
+          watcher.add(path.resolve(__dirname, "src/**")); // Watch all files in the src directory
+        },
+      },
+    },
     define: {
       "process.env.NODE_ENV": JSON.stringify(mode),
       __FN_VERSION__: JSON.stringify(version), // Define the version number
