@@ -9,6 +9,9 @@ import {
   EdgeChange,
   Edge as RFEdge,
   Connection as RFConnection,
+  NodePositionChange,
+  NodeDimensionChange,
+  applyNodeChanges,
 } from "@xyflow/react";
 
 import { deep_merge } from "../utils";
@@ -35,6 +38,8 @@ import { RFNodeDataPass } from "../frontend/node/node";
 
 import { latest } from "../types/versioned/versions.t";
 import { development } from "../utils/debugger";
+import { GroupAction, GroupActionUpdate } from "./groups.t";
+import { sortByParent, split_rf_nodes, useNodeTools } from "../utils/nodes";
 
 const _fill_node_frontend = (
   node: latest.NodeType,
@@ -103,6 +108,8 @@ const assert_reactflow_node = (
     },
     data: data,
     type: "default",
+    zIndex:2,
+    // expandParent: true,
     ...node,
   };
 
@@ -143,8 +150,8 @@ const FuncNodesReactFlowZustand = (
 
       iterf.logger.info("Add node", node.id, node.name);
 
-      const new_ndoes = [...rfstate.nodes, assert_reactflow_node(store, iterf)];
-      rfstore.setState({ nodes: new_ndoes });
+      const new_ndoes = [...rfstate.getNodes(), assert_reactflow_node(store, iterf)];
+      rfstore.getState().update_nodes(new_ndoes);
 
       for (const io in action.node.io) {
         const ioid = action.node.io[io]!.id;
@@ -229,7 +236,7 @@ const FuncNodesReactFlowZustand = (
     }
     return undefined;
   };
-
+  
   const on_node_action = (
     action: latest.NodeAction
   ): latest.NodeType | undefined => {
@@ -256,7 +263,7 @@ const FuncNodesReactFlowZustand = (
     switch (action.type) {
       case "add":
         if (action.from_remote) {
-          const edges = rfstate.edges;
+          const edges = rfstate.getEdges();
           const new_edge_id = generate_edge_id(action);
 
           //cehck if edge already exists including reversed
@@ -274,7 +281,7 @@ const FuncNodesReactFlowZustand = (
 
           iterf.logger.info("Adding edge", new_edge);
 
-          rfstore.setState({ edges: [...edges, new_edge] });
+          rfstate.update_edges([...edges, new_edge]);
           iterf.worker?.get_remote_node_state(action.src_nid);
           iterf.worker?.get_remote_node_state(action.trg_nid);
         } else {
@@ -283,11 +290,11 @@ const FuncNodesReactFlowZustand = (
 
       case "delete":
         if (action.from_remote) {
-          const edges = rfstate.edges;
+          const edges = rfstate.getEdges();
           const del_edge_id = generate_edge_id(action);
           iterf.logger.info("Deleting edge", del_edge_id);
           const new_edges = edges.filter((edge) => edge.id !== del_edge_id);
-          rfstore.setState({ edges: new_edges });
+          rfstate.update_edges(new_edges);
           iterf.worker?.get_remote_node_state(action.src_nid);
           iterf.worker?.get_remote_node_state(action.trg_nid);
         } else {
@@ -297,49 +304,278 @@ const FuncNodesReactFlowZustand = (
         iterf.logger.error("Unknown edge action", action);
     }
   };
+
+ 
+
+  
+
+  const _set_groups = (groups: latest.NodeGroups) => {
+    const rfstate = rfstore.getState();
+    const { group_nodes, default_nodes: new_nodes } = split_rf_nodes(rfstate.getNodes());
+    
+    const node_group_map: Record<string, string> = {};
+    for (const group_id in groups) {
+      const group = groups[group_id];
+      for (const node_id of group.node_ids) {
+        node_group_map[node_id] = group_id;
+      }
+      for (const child_group_id of group.child_groups) {
+        node_group_map[child_group_id] = group_id;
+      }
+      if(group.position === undefined){
+        group.position = [0,0];
+      }
+      const group_node: RFNode = {
+        id: group_id,
+        type: "group",
+        data: { group: groups[group_id],id:group_id },
+        position: { x: group.position[0], y: group.position[1] },
+        zIndex:1
+      
+      };
+      if (group.parent_group) {
+        group_node.data.groupID = group.parent_group;
+      }
+      new_nodes.push(group_node);
+    }
+
+    for (const node of new_nodes) {
+      if(node.id in node_group_map){
+        node.data.groupID = node_group_map[node.id];
+      }else{
+        node.data.groupID = undefined;
+      }
+    }
+    const sorted_nodes = sortByParent(new_nodes);
+    
+    rfstate.update_nodes(sorted_nodes);
+    //iterate in reverse over sorted_nodes:
+    for (const node of sorted_nodes.reverse()) {
+      if(node.type === "group"){
+        auto_resize_group(node.id);
+      }
+    }
+  };
+
+  const _update_group = (action: GroupActionUpdate) => {
+    if (action.from_remote) {
+      const rfstate = rfstore.getState();
+      const group = rfstate.getNode(action.id);
+      if(group === undefined){
+        return;
+      }
+      const {new_obj, change} = deep_merge(group.data.group , action.group);
+      if(change){
+        group.data.group = new_obj;
+      }
+      rfstate.partial_update_nodes([group]);
+
+    } else {
+      if (iterf.worker) {
+        iterf.worker.locally_update_group(action);
+      }
+    }
+  }
+
+  const on_group_action = (action: GroupAction) => {
+    switch (action.type) {
+      case "set":
+        return _set_groups(action.groups);
+      case "update":
+        return _update_group(action);
+      default:
+        iterf.logger.error("Unknown group action", action);
+    }
+  };
   /*
   on_node_change is called by react flow when a note change event is fired
   should update the local state if something changed
   */
-  const on_node_change = (nodechange: NodeChange[]) => {
+
+  const change_group_position = (change: NodePositionChange) => {
+    if(change.position === undefined){
+      return;
+    }
+    const rfstate = rfstore.getState();
+
+    const old_node = rfstate.getNode(change.id);
+    if(old_node === undefined){
+      return;
+    }
+
+    const child_node_ids = [...old_node.data.group.node_ids, ...old_node.data.group.child_groups];
+    const bounds = iterf.rf_instance?.getNodesBounds(child_node_ids);
+
+    const delta_x = change.position.x - bounds?.x;
+    const delta_y = change.position.y - bounds?.y;
+
+    const child_changes: NodePositionChange[] = [];
+    for (const node_id of child_node_ids) {
+      const child_node = rfstate.getNode(node_id);
+      if(child_node === undefined){
+        continue;
+      }
+      child_changes.push({
+        id: node_id,
+        type: "position",
+        position: {
+          x: child_node.position.x + delta_x,
+          y: child_node.position.y + delta_y,
+        },
+      });
+    }
+
+    rfstate.onNodesChange(child_changes);
+    
+  }
+
+  const change_group_dimensions = (change: NodeDimensionChange) => {
+    if(change.dimensions === undefined){
+      return;
+    }
+    const rfstate = iterf.useReactFlowStore.getState();
+    const group = rfstate.getNode(change.id);
+    if(group === undefined){
+      return;
+    }
+    
+    iterf.useReactFlowStore.getState().partial_update_nodes(applyNodeChanges([change], [group]))
+  }
+  const change_fn_node_position = (change: NodePositionChange) => {
+    if(change.position === undefined){
+      return;
+    }
+    on_node_action({
+      type: "update",
+      id: change.id,
+      node: {
+        properties: {
+          "frontend:pos": [change.position.x, change.position.y],
+        },
+      },
+      from_remote: false,
+    });
+  }
+
+  const change_fn_node_dimensions = (change: NodeDimensionChange) => {
+    if(change.dimensions === undefined){
+      return;
+    }
+    on_node_action({
+      type: "update",
+      id: change.id,
+      node: {
+        properties: {
+          "frontend:size": [
+            change.dimensions.width,
+            change.dimensions.height,
+          ],
+        },
+      },
+      from_remote: false,
+    });
+  }
+
+  const auto_resize_group = (gid: string) => {
+    const rfstate = iterf.useReactFlowStore.getState()
+    const group = rfstate.getNode(gid);
+    if(group === undefined){
+      return;
+    }
+    const child_nodes= group.data.group.node_ids.map((nid:string)=>rfstate.getNode(nid));
+    const child_groups= group.data.group.child_groups.map((gid:string)=>rfstate.getNode(gid));
+    const all_nodes = [...child_nodes, ...child_groups];
+    // console.log("all_nodes", all_nodes)
+    const bounds = iterf.rf_instance?.getNodesBounds(all_nodes);
+    if(bounds === undefined){
+      return;
+    }
+    const updated_group={
+      ...group,
+      position:{
+        x:bounds.x,
+        y:bounds.y
+      },
+      height:bounds.height,
+      width:bounds.width
+    }
+    updated_group.data.group.position = [bounds.x, bounds.y];
+    rfstate.partial_update_nodes([updated_group])
+
+    // const min_x= Math.min(...all_nodes.map((node)=>node.position.x));
+    // const min_y= Math.min(...all_nodes.map((node)=>node.position.y));
+
+    // const oldx= group.position.x;
+    // const oldy= group.position.y;
+    // const deltax= min_x
+    // const deltay= min_y
+    
+    // for (const node of all_nodes) {
+    //   node.position.x -= deltax;
+    //   node.position.y -= deltay;
+    // }
+
+    // const updatedGroup = {
+    //   ...group,
+    //   position: {
+    //      x: oldx + deltax,
+    //      y: oldy + deltay,
+    //    },
+    //   width: bounds.width,
+    //   height: bounds.height,
+      
+    // }
+    // rfstate.partial_update_nodes([updatedGroup, ...all_nodes]);
+      
+  } 
+    
+
+  const on_rf_node_change = (nodechange: NodeChange[]) => {
+    const rfstate = iterf.useReactFlowStore.getState()
+
+
     for (const change of nodechange) {
       switch (change.type) {
         case "position":
-          if (change.position) {
-            on_node_action({
-              type: "update",
-              id: change.id,
-              node: {
-                properties: {
-                  "frontend:pos": [change.position.x, change.position.y],
-                },
-              },
-              from_remote: false,
-            });
+            if (change.position) {
+            const node = rfstate.getNode(change.id);
+            if(node === undefined){
+              continue;
+            }
+            if(node.type === "group"){
+              change_group_position(change);
+            }
+            else{
+              change_fn_node_position(change);
+            }
+            if(node.data.groupID){
+              auto_resize_group(node.data.groupID);
+            }
           }
           break;
         case "dimensions":
           if (change.dimensions) {
-            on_node_action({
-              type: "update",
-              id: change.id,
-              node: {
-                properties: {
-                  "frontend:size": [
-                    change.dimensions.width,
-                    change.dimensions.height,
-                  ],
-                },
-              },
-              from_remote: false,
-            });
+            const node = rfstate.getNode(change.id);
+            if(node === undefined){
+              continue;
+            }
+            if(node.type === "group"){
+              change_group_dimensions(change);
+            }
+            else{
+              change_fn_node_dimensions(change);
+            }
+            
+            if(node.data.groupID){
+              auto_resize_group(node.data.groupID as string);
+            }
           }
           break;
       }
     }
   };
 
-  const on_edge_change = (_edgechange: EdgeChange[]) => {};
+  const on_rf_edge_change = (_edgechange: EdgeChange[]) => {};
 
   const on_connect = (connection: RFConnection) => {
     if (
@@ -361,8 +597,8 @@ const FuncNodesReactFlowZustand = (
   };
 
   const rfstore = reactflowstore({
-    on_node_change,
-    on_edge_change,
+    on_node_change: on_rf_node_change,
+    on_edge_change: on_rf_edge_change,
     on_connect,
   });
   const ns = NodeSpaceZustand({});
@@ -376,7 +612,8 @@ const FuncNodesReactFlowZustand = (
       .getState()
       .set({ lib: { shelves: [] }, external_worker: [] });
     iterf.nodespace.nodesstates.clear();
-    iterf.useReactFlowStore.setState({ nodes: [], edges: [] });
+    iterf.useReactFlowStore.getState().update_nodes([]);
+    iterf.useReactFlowStore.getState().update_edges([]);
     iterf.auto_progress();
   };
 
@@ -387,8 +624,7 @@ const FuncNodesReactFlowZustand = (
     node_id = Array.isArray(node_id) ? node_id : [node_id];
 
     const nodes = iterf.useReactFlowStore
-      .getState()
-      .nodes.filter((node) => node_id.includes(node.id));
+      .getState().getNodes().filter((node) => node_id.includes(node.id));
 
     if (nodes.length > 0) {
       iterf.rf_instance?.fitView({ padding: 0.2, nodes });
@@ -413,6 +649,7 @@ const FuncNodesReactFlowZustand = (
     local_state: create<FuncnodesReactFlowLocalState>((_set, _get) => ({
       selected_nodes: [],
       selected_edges: [],
+      selected_groups: [],
       funcnodescontainerRef: null,
     })),
 
@@ -467,6 +704,7 @@ const FuncNodesReactFlowZustand = (
     useReactFlowStore: rfstore,
     on_node_action: on_node_action,
     on_edge_action: on_edge_action,
+    on_group_action: on_group_action,
     reactflowRef: null,
     clear_all: clear_all,
     center_node: center_node,

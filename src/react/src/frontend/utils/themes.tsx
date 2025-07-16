@@ -1,9 +1,9 @@
 import * as React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
-type ColorTheme = "classic" | "metal";
+type ColorTheme = "classic" | "metal" | "light" | "solarized" | "midnight" | "forest" | "scientific";
 // type FontTheme = "sans" | "serif";
-const AVAILABLE_COLOR_THEMES: ColorTheme[] = ["classic", "metal"];
+export const AVAILABLE_COLOR_THEMES: ColorTheme[] = ["classic", "metal", "light", "solarized", "midnight", "forest", "scientific"];
 // const AVAILABLE_FONT_THEMES: FontTheme[] = ["sans", "serif"];
 type Theme = {
   colorTheme: ColorTheme;
@@ -11,44 +11,37 @@ type Theme = {
 };
 const ThemeContext = createContext<{
   colorTheme: ColorTheme;
-  setColorTheme: (t: ColorTheme) => void;
-  //   fontTheme: FontTheme;
-  //   setFontTheme: (t: FontTheme) => void;
+  setColorTheme: (t: ColorTheme) => void; // persistent
+  previewColorTheme: (t: ColorTheme) => void; // temporary
 }>({
   colorTheme: "classic",
   setColorTheme: () => {},
-  //   fontTheme: "sans",
-  //   setFontTheme: () => {},
+  previewColorTheme: () => {},
 });
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [colorTheme, setColorTheme] = useState<ColorTheme>("classic");
+  const [colorTheme, _setColorTheme] = useState<ColorTheme>("classic");
   //   const [fontTheme, setFontTheme] = useState<FontTheme>("sans");
 
-  const setTheme = (theme: unknown) => {
-    if (typeof theme !== "object" || theme === null) return;
-
-    if (theme.hasOwnProperty("colorTheme")) {
-      const newColorTheme = (theme as { colorTheme?: ColorTheme }).colorTheme;
-      if (newColorTheme && AVAILABLE_COLOR_THEMES.includes(newColorTheme)) {
-        setColorTheme(newColorTheme);
-      }
-    }
-    // if (theme.hasOwnProperty("fontTheme")) {
-    //   const newFontTheme = (theme as { fontTheme?: FontTheme }).fontTheme;
-    //   if (newFontTheme && AVAILABLE_FONT_THEMES.includes(newFontTheme)) {
-    //     setFontTheme(newFontTheme);
-    //   }
-    // }
-  };
-  useEffect(() => {
-    document.documentElement.setAttribute("data-color-theme", colorTheme);
-    // document.documentElement.setAttribute("data-font-theme", fontTheme);
+  // Persistent setter
+  const setColorTheme = (t: ColorTheme) => {
+    _setColorTheme(t);
     const savetheme: Theme = {
       colorTheme,
       // fontTheme,
     };
     localStorage.setItem("theme", JSON.stringify(savetheme));
+  };
+
+  // Temporary setter (no localStorage)
+  const previewColorTheme = (t: ColorTheme) => {
+    _setColorTheme(t);
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute("fn-data-color-theme", colorTheme);
+    // document.documentElement.setAttribute("data-font-theme", fontTheme);
+    
   }, [
     colorTheme,
     // fontTheme
@@ -59,7 +52,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       const raw = localStorage.getItem("theme");
       if (!raw) return; // nothing saved
       const saved = JSON.parse(raw); // may still throw!
-      setTheme(saved);
+      if (saved.colorTheme && AVAILABLE_COLOR_THEMES.includes(saved.colorTheme)) {
+        _setColorTheme(saved.colorTheme);
+      }
     } catch {
       return; // malformed JSON – fall back safely
     }
@@ -70,6 +65,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         colorTheme,
         setColorTheme,
+        previewColorTheme,
         // fontTheme,
         // setFontTheme,
       }}

@@ -17,9 +17,10 @@ function htmlTransformPlugin(mode) {
       // Read the file content as a string.
       const scriptContent = await fs.readFile(filePath, "utf-8");
       // Replace the placeholder in your HTML with the script tag containing the file content.
+      const workerPort = process.env.FN_WORKER_PORT || "9380";
       return html.replace(
         "<!-- WORKER_SCRIPT -->",
-        `<script>${scriptContent}</script>`
+        `<script>window.FN_WORKER_PORT=${workerPort};</script><script>${scriptContent}</script>`
       );
     },
   };

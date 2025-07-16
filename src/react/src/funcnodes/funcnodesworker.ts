@@ -16,6 +16,7 @@ import { PackedPlugin } from "../plugin";
 import { update_nodeview } from "../states/node/update_node";
 import { latest } from "../types/versioned/versions.t";
 import { interfereDataStructure } from "./datastructures";
+import { GroupActionUpdate } from "../states/groups.t";
 
 type CmdMessage = {
   type: string;
@@ -45,7 +46,9 @@ class FuncNodesWorker {
   messagePromises: Map<string, any>;
   _zustand?: FuncNodesReactFlowZustandInterface;
   _local_nodeupdates: Map<string, latest.PartialSerializedNodeType>;
+  _local_groupupdates: Map<string, Partial<latest.NodeGroup>>;
   _nodeupdatetimer: ReturnType<typeof setTimeout>;
+  _groupupdatetimer: ReturnType<typeof setTimeout>;
   uuid: string;
   _responsive: boolean;
   private CHUNK_TIMEOUT: number = 10000; // 10 seconds
@@ -76,8 +79,12 @@ class FuncNodesWorker {
     this.messagePromises = new Map();
 
     this._local_nodeupdates = new Map();
+    this._local_groupupdates = new Map();
     this._nodeupdatetimer = setTimeout(() => {
       this.sync_local_node_updates();
+    }, 5000);
+    this._groupupdatetimer = setTimeout(() => {
+      this.sync_local_group_updates();
     }, 5000);
     this.state = create<FuncNodesWorkerState>((_set, _get) => ({
       is_open: false,
@@ -342,6 +349,13 @@ class FuncNodesWorker {
     for (const edge of edges) {
       this._receive_edge_added(...edge);
     }
+    const groups = (await this._send_cmd({
+      cmd: "get_groups",
+      kwargs: {},
+      wait_for_response: true,
+      unique: true,
+    })) as latest.NodeGroups;
+    this._receive_groups(groups);
   }
 
   async fullsync() {
@@ -377,6 +391,10 @@ class FuncNodesWorker {
     for (const edge of resp.backend.edges) {
       this._receive_edge_added(...edge);
     }
+    const groups = resp.backend.groups;
+    if (groups) {
+      this._receive_groups(groups);
+    }
   }
 
   async _receive_edge_added(
@@ -390,6 +408,14 @@ class FuncNodesWorker {
       type: "add",
       from_remote: true,
       ...{ src_nid, src_ioid, trg_nid, trg_ioid },
+    });
+  }
+
+  async _receive_groups(groups: latest.NodeGroups) {
+    if (!this._zustand) return;
+    this._zustand.on_group_action({
+      type: "set",
+      groups: groups,
     });
   }
 
@@ -516,6 +542,46 @@ class FuncNodesWorker {
     }
   }
 
+  sync_local_group_updates() {
+    clearTimeout(this._groupupdatetimer);
+    this._local_groupupdates.forEach(async (group, id) => {
+      const ans = await this._send_cmd({
+        cmd: "update_group",
+        kwargs: { gid: id, data: group },
+        wait_for_response: true,
+      });
+      if (!this._zustand) return;
+      this._zustand.on_group_action({
+        type: "update",
+        group: ans,
+        id: id,
+        from_remote: true,
+      });
+    });
+    this._local_groupupdates.clear();
+    this._groupupdatetimer = setTimeout(() => {
+      this.sync_local_group_updates();
+    }, 200);
+  }
+
+
+  locally_update_group(action: GroupActionUpdate) {
+   // Add the type to the parameter
+    //log current stack trace
+    const currentstate = this._local_groupupdates.get(action.id);
+    if (currentstate) {
+      const { new_obj, change } = deep_merge(currentstate, action.group);
+      if (change) {
+        this._local_groupupdates.set(action.id, new_obj);
+      }
+    } else {
+      this._local_groupupdates.set(action.id, action.group);
+    }
+    if (action.immediate) {
+      this.sync_local_group_updates();
+    }
+  }
+    
   async get_remote_node_state(nid: string) {
     const ans: latest.SerializedNodeType = await this._send_cmd({
       cmd: "get_node_state",
@@ -1299,7 +1365,31 @@ class FuncNodesWorker {
       centerhook();
     }
   }
+
+  async group_nodes(nodeIds: string[], group_ids: string[]) {
+    // This sends a command to the backend Python worker
+    // The backend should implement a handler for the "group_nodes" command
+    const res =  await this._send_cmd({
+      cmd: "group_nodes",
+      kwargs: { node_ids: nodeIds, group_ids: group_ids },
+      wait_for_response: true,
+    }) as latest.NodeGroups;
+    this._receive_groups(res);
+    return res;
+  }
+
+  async remove_group(gid: string) {
+    console.log("remove_group", gid);
+    await this._send_cmd({
+      cmd: "remove_group",
+      kwargs: { gid: gid },
+      wait_for_response: true,
+    });
+    await this.sync_nodespace();
+  }
 }
+
+
 
 export default FuncNodesWorker;
 export type { WorkerProps, FuncNodesWorkerState };

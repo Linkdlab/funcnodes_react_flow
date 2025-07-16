@@ -1,15 +1,13 @@
-:root {
-  --funcnodesedgecolor: #7bb3ec;
-}
+
 .funcnodes-edge {
   & .react-flow__edge-path {
-    stroke: var(--funcnodesedgecolor);
+    stroke: var(--fn-edge-color, #7bb3ec);
     stroke-width: 2px;
   }
 
   &.selected {
     & .react-flow__edge-path {
-      stroke: #11ff00 !important;
+      stroke: var(--fn-edge-color-selected, #11ff00) !important;
     }
   }
 }

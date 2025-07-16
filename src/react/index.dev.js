@@ -1,5 +1,6 @@
 window.onload = async function () {
-  const managerurl = "ws://localhost:9380";
+  const port = window.FN_WORKER_PORT || 9380;
+  const managerurl = `ws://localhost:${port}`;
   FuncNodes("root", {
     workermanager_url: managerurl,
     load_worker: "demo",

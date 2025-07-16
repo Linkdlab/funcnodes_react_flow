@@ -224,11 +224,13 @@ class WorkerManager {
     reference,
     copyLib,
     copyNS,
+    in_venv,
   }: {
     name?: string;
     reference?: string;
     copyLib?: boolean;
     copyNS?: boolean;
+    in_venv?: boolean;
   }) {
     if (!name) name = undefined;
     if (!copyLib) copyLib = false;
@@ -248,6 +250,7 @@ class WorkerManager {
             reference,
             copyLib,
             copyNS,
+            in_venv,
           },
         })
       );
