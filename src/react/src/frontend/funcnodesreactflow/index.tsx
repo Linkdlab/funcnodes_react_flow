@@ -32,6 +32,7 @@ import { SizeContextContainer } from "../layout/components";
 import { LimitedDeepPartial } from "../../utils/objects";
 import { KeyContextProvider } from "../utils/keypresslistener";
 import { ThemeProvider } from "../utils/themes";
+import { ConsoleLogger, Logger } from "../../utils/logger";
 
 const InnerFuncnodesReactFlow = ({
   fnrf_zst,
@@ -196,6 +197,11 @@ const FuncnodesReactFlow = (
     ...DEFAULT_FN_PROPS,
     id: uuidv4(),
   }).new_obj;
+
+  fullprops.logger =
+    (fullprops.logger as Logger | undefined) ||
+    new ConsoleLogger("FuncNodes", fullprops.debug ? "debug" : "info");
+  fullprops.logger.debug("Initalizing FuncNodes with props:", fnprops);
 
   if (!fullprops.useWorkerManager && fullprops.worker === undefined) {
     return (

@@ -7,6 +7,15 @@ import * as React from "react";
 import { FuncNodes, FuncnodesReactFlowProps } from "./index";
 import { createRoot } from "react-dom/client";
 import "./index.scss";
+import {
+  BaseLogger,
+  ConsoleLogger,
+  DEBUG,
+  DivLogger,
+  ERROR,
+  INFO,
+  WARN,
+} from "./utils/logger";
 
 declare const __FN_VERSION__: string;
 
@@ -35,6 +44,17 @@ const FuncNodesRenderer = (
 
 window.FuncNodes = FuncNodesRenderer;
 window.FuncNodes.version = __FN_VERSION__;
+window.FuncNodes.utils = {
+  logger: {
+    ConsoleLogger,
+    DivLogger,
+    BaseLogger,
+    DEBUG,
+    INFO,
+    WARN,
+    ERROR,
+  },
+};
 export default FuncNodesRenderer;
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

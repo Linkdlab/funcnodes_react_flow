@@ -19,7 +19,6 @@ import {
 import ReactFlowLayer from "./frontend/funcnodesreactflow/react_flow_layer";
 import { deep_update } from "./utils";
 import { WorkerProps } from "./funcnodes/funcnodesworker";
-import { ConsoleLogger } from "./utils/logger";
 
 import { LimitedDeepPartial } from "./utils/objects";
 import { NodeContext, NodeContextType } from "./frontend/node/node";
@@ -28,10 +27,6 @@ import { v1 as v1_types } from "./types/versioned/versions.t";
 import { v0 as v0_types } from "./types/versioned/versions.t";
 import "./index.scss";
 const FuncNodes = (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => {
-  const logger = new ConsoleLogger("FuncNodes", props.debug ? "debug" : "info");
-
-  logger.debug("Initalizing FuncNodes with props:", props);
-
   return (
     <div className="FuncnodesApp">
       <FuncnodesReactFlow {...props}></FuncnodesReactFlow>

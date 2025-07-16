@@ -13,7 +13,7 @@
  * (lazy formatting)
  */
 
-interface Logger {
+export interface Logger {
   level: number;
 
   // Set the logging level
@@ -39,10 +39,10 @@ const LEVELS = {
   ERROR: 30,
 };
 
-const DEBUG = LEVELS.DEBUG;
-const INFO = LEVELS.INFO;
-const WARN = LEVELS.WARN;
-const ERROR = LEVELS.ERROR;
+export const DEBUG = LEVELS.DEBUG;
+export const INFO = LEVELS.INFO;
+export const WARN = LEVELS.WARN;
+export const ERROR = LEVELS.ERROR;
 
 const level_to_string = (level: number | string) => {
   if (typeof level === "string") return level;
@@ -82,51 +82,116 @@ const string_to_level = (level: string | number) => {
   throw new Error(`Unknown log level: ${level}`);
 };
 
-class ConsoleLogger implements Logger {
+export abstract class BaseLogger implements Logger {
   name: string;
   level: number;
   private _level_name: string;
-
-  constructor(name: string, level: number | string = LEVELS.INFO) {
+  with_timestamp: boolean;
+  constructor(
+    name: string,
+    level: number | string = LEVELS.INFO,
+    with_timestamp: boolean = true
+  ) {
     this.name = name;
     this.level = string_to_level(level);
     this._level_name = level_to_string(level);
+    this.with_timestamp = with_timestamp;
   }
+
   set_level(level: number) {
     this.level = level;
     this._level_name = level_to_string(level);
   }
 
-  private _fomat_message(message: string, ...args: any[]) {
-    return `[${this.name}] ${this._level_name}: ${message} ${args
-      .map((a) => JSON.stringify(a, getCircularReplacer()))
-      .join(" ")}`;
+  get level_name() {
+    return this._level_name;
   }
+
+  format_message(levelstring: string, message: string, ...args: any[]) {
+    const timestamp = this.with_timestamp ? new Date().toLocaleString() : "";
+    return `${timestamp} [${this.name}] ${levelstring}: ${message} ${args
+      .map((a) => JSON.stringify(a, getCircularReplacer()))
+      .join(" ")}`.trim();
+  }
+
+  // Abstract methods that child classes must implement
+  protected abstract out_debug(formatted_message: string): void;
+  protected abstract out_info(formatted_message: string): void;
+  protected abstract out_warn(formatted_message: string): void;
+  protected abstract out_error(formatted_message: string): void;
 
   debug(message: string, ...args: any[]) {
     if (this.level <= LEVELS.DEBUG) {
-      console.debug(this._fomat_message(message, ...args));
+      this.out_debug(this.format_message("DEBUG", message, ...args));
     }
   }
 
   info(message: string, ...args: any[]) {
     if (this.level <= LEVELS.INFO) {
-      console.info(this._fomat_message(message, ...args));
+      this.out_info(this.format_message("INFO", message, ...args));
     }
   }
 
   warn(message: string, ...args: any[]) {
     if (this.level <= LEVELS.WARN) {
-      console.warn(this._fomat_message(message, ...args));
+      this.out_warn(this.format_message("WARN", message, ...args));
     }
   }
 
   error(message: string, ...args: any[]) {
     if (this.level <= LEVELS.ERROR) {
-      console.error(this._fomat_message(message, ...args));
+      this.out_error(this.format_message("ERROR", message, ...args));
     }
   }
 }
 
-export { ConsoleLogger, DEBUG, INFO, WARN, ERROR };
-export type { Logger };
+export class ConsoleLogger extends BaseLogger {
+  constructor(name: string, level: number | string = LEVELS.INFO) {
+    super(name, level);
+  }
+
+  protected out_debug(formatted_message: string): void {
+    console.debug(formatted_message);
+  }
+
+  protected out_info(formatted_message: string): void {
+    console.info(formatted_message);
+  }
+
+  protected out_warn(formatted_message: string): void {
+    console.warn(formatted_message);
+  }
+
+  protected out_error(formatted_message: string): void {
+    console.error(formatted_message);
+  }
+}
+
+export class DivLogger extends BaseLogger {
+  private _div: HTMLDivElement;
+
+  constructor(
+    div: HTMLDivElement,
+    name: string,
+    level: number | string = LEVELS.INFO
+  ) {
+    super(name, level);
+    this._div = div;
+  }
+
+  protected out_debug(formatted_message: string): void {
+    this._div.innerHTML += `<div class="debug">${formatted_message}</div>`;
+  }
+
+  protected out_info(formatted_message: string): void {
+    this._div.innerHTML += `<div class="info">${formatted_message}</div>`;
+  }
+
+  protected out_warn(formatted_message: string): void {
+    this._div.innerHTML += `<div class="warn">${formatted_message}</div>`;
+  }
+
+  protected out_error(formatted_message: string): void {
+    this._div.innerHTML += `<div class="error">${formatted_message}</div>`;
+  }
+}

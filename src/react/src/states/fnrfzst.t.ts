@@ -143,6 +143,7 @@ interface FuncnodesReactFlowProps {
   worker_url?: string;
   fnw_url?: string;
   workermanager_url?: string;
+  logger?: Logger;
   on_ready?: ({
     fnrf_zst,
   }: {
