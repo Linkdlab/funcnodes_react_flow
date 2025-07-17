@@ -2,11 +2,18 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import dts from "vite-plugin-dts";
+import { readFileSync } from "fs";
 
 export function loadAliasesFromTsConfig() {
   try {
     const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
-    const tsconfig = JSON.parse(readFileSync(tsconfigPath, "utf-8"));
+    const tsconfigContent = readFileSync(tsconfigPath, "utf-8");
+    // Strip comments and trailing commas from JSONC
+    const cleanContent = tsconfigContent
+      .replace(/\/\*[\s\S]*?\*\//g, "") // Remove /* */ comments
+      .replace(/\/\/.*$/gm, "") // Remove // comments
+      .replace(/,(\s*[}\]])/g, "$1"); // Remove trailing commas
+    const tsconfig = JSON.parse(cleanContent);
     const paths = tsconfig.compilerOptions?.paths || {};
 
     const aliases = {};
