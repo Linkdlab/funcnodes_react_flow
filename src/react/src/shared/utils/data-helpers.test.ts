@@ -11,7 +11,7 @@ import {
   fileDialogToFile,
   fileDialogToBase64,
   remoteUrlToBase64,
-} from "./data-helper";
+} from "./data-helpers";
 
 // Test data
 const testString = "Hello World";
@@ -23,23 +23,20 @@ const testUint8Array = new Uint8Array([
 describe("data-helper", () => {
   beforeEach(() => {
     // Mock window.atob and window.btoa
-    global.window = {
-      ...global.window,
-      atob: vi.fn().mockImplementation((str: string) => {
-        // Simple mock implementation for base64 decoding
-        if (str === testBase64) {
-          return testString;
-        }
-        return "decoded";
-      }),
-      btoa: vi.fn().mockImplementation((str: string) => {
-        // Simple mock implementation for base64 encoding
-        if (str === testString) {
-          return testBase64;
-        }
-        return "encoded";
-      }),
-    };
+    global.window.atob = vi.fn().mockImplementation((str: string) => {
+      // Simple mock implementation for base64 decoding
+      if (str === testBase64) {
+        return testString;
+      }
+      return "decoded";
+    });
+    global.window.btoa = vi.fn().mockImplementation((str: string) => {
+      // Simple mock implementation for base64 encoding
+      if (str === testString) {
+        return testBase64;
+      }
+      return "encoded";
+    });
 
     // Mock URL.createObjectURL and URL.revokeObjectURL
     global.URL.createObjectURL = vi.fn().mockReturnValue("blob:mock-url");
@@ -267,7 +264,7 @@ describe("data-helper", () => {
         click: vi.fn().mockImplementation(function (this: HTMLInputElement) {
           setTimeout(() => {
             if (this.onchange) {
-              this.onchange();
+              this.onchange({} as Event);
             }
           }, 0);
         }),
@@ -295,7 +292,7 @@ describe("data-helper", () => {
         click: vi.fn().mockImplementation(function (this: HTMLInputElement) {
           setTimeout(() => {
             if (this.onchange) {
-              this.onchange();
+              this.onchange({} as Event);
             }
           }, 0);
         }),
@@ -320,7 +317,7 @@ describe("data-helper", () => {
         click: vi.fn().mockImplementation(function (this: HTMLInputElement) {
           setTimeout(() => {
             if (this.onchange) {
-              this.onchange();
+              this.onchange({} as Event);
             }
           }, 0);
         }),
