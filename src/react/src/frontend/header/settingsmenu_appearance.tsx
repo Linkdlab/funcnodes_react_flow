@@ -1,10 +1,11 @@
+import { useTheme } from "@/providers";
 import * as React from "react";
-import { AVAILABLE_COLOR_THEMES, useTheme } from "../utils/themes";
+import { AVAILABLE_COLOR_THEMES } from "@/app";
 
-
-type ColorTheme = typeof AVAILABLE_COLOR_THEMES[number];
-
-const ThemePreviewMiniApp: React.FC<{ theme: ColorTheme; selected: boolean }> = ({ theme, selected }) => {
+const ThemePreviewMiniApp: React.FC<{
+  theme: string;
+  selected: boolean;
+}> = ({ theme, selected }) => {
   return (
     <div
       style={{
@@ -38,7 +39,8 @@ const ThemePreviewMiniApp: React.FC<{ theme: ColorTheme; selected: boolean }> = 
         <div
           style={{
             width: 12,
-            background: "var(--fn-surface-elevation-low, var(--fn-container-background))",
+            background:
+              "var(--fn-surface-elevation-low, var(--fn-container-background))",
             borderRight: "1px solid var(--fn-neutral-element-border)",
           }}
         />
@@ -121,20 +123,20 @@ const ThemePreviewMiniApp: React.FC<{ theme: ColorTheme; selected: boolean }> = 
 
 export const AppearanceDialogContent: React.FC = () => {
   const { colorTheme, setColorTheme } = useTheme();
-  const [hoveredTheme, setHoveredTheme] = React.useState<ColorTheme | null>(null);
-  const [prevTheme, setPrevTheme] = React.useState<ColorTheme | null>(null);
+  const [hoveredTheme, setHoveredTheme] = React.useState<string | null>(null);
+  const [prevTheme, setPrevTheme] = React.useState<string | null>(null);
 
   // On hover, temporarily set the theme
-  const handleMouseEnter = (theme: ColorTheme) => {
+  const handleMouseEnter = (theme: string) => {
     if (theme !== colorTheme) {
-      setPrevTheme(colorTheme as ColorTheme);
+      setPrevTheme(colorTheme as string);
       setColorTheme(theme);
       setHoveredTheme(theme);
     }
   };
 
   // On mouse leave, revert to previous theme if not selected
-  const handleMouseLeave = (theme: ColorTheme) => {
+  const handleMouseLeave = (theme: string) => {
     if (hoveredTheme === theme && prevTheme && prevTheme !== theme) {
       setColorTheme(prevTheme);
     }
@@ -166,10 +168,13 @@ export const AppearanceDialogContent: React.FC = () => {
             }}
             aria-label={`Select ${theme} theme`}
           >
-            <ThemePreviewMiniApp theme={theme} selected={colorTheme === theme} />
+            <ThemePreviewMiniApp
+              theme={theme}
+              selected={colorTheme === theme}
+            />
           </button>
         ))}
       </div>
     </div>
   );
-}; 
+};

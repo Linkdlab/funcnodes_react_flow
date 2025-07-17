@@ -14,7 +14,6 @@ import {
   applyNodeChanges,
 } from "@xyflow/react";
 
-import { deep_merge } from "../utils";
 import { generate_edge_id } from "./edge";
 import { EdgeAction } from "./edge.t";
 import { create } from "zustand";
@@ -23,23 +22,24 @@ import type {
   FuncNodesReactFlowZustandInterface,
   ProgressState,
   RenderOptions,
-  WorkersState,
-  FuncnodesReactFlowProps,
   FuncnodesReactFlowLocalSettings,
   FuncnodesReactFlowViewSettings,
   FuncnodesReactFlowLocalState,
 } from "./fnrfzst.t";
 import { upgradeFuncNodesReactPlugin } from "../plugin";
-import { ConsoleLogger, INFO, DEBUG } from "../utils/logger";
-import FuncNodesWorker, {
-  FuncNodesWorkerState,
-} from "../funcnodes/funcnodesworker";
+
 import { RFNodeDataPass } from "../frontend/node/node";
 
 import { latest } from "../types/versioned/versions.t";
 import { development } from "../utils/debugger";
 import { GroupAction, GroupActionUpdate } from "./groups.t";
-import { sortByParent, split_rf_nodes, useNodeTools } from "../utils/nodes";
+import { sortByParent, split_rf_nodes } from "../utils/nodes";
+import { ConsoleLogger, DEBUG, INFO } from "@/logging";
+import { deep_merge } from "@/object-helpers";
+import { FuncnodesReactFlowProps } from "@/app";
+import { FuncNodesWorker, FuncNodesWorkerState, WorkersState } from "@/workers";
+import { AnyFuncNodesRFNode, GroupRFNode } from "@/nodes";
+import { NodeGroups } from "@/groups";
 
 const _fill_node_frontend = (
   node: latest.NodeType,
@@ -108,7 +108,7 @@ const assert_reactflow_node = (
     },
     data: data,
     type: "default",
-    zIndex:2,
+    zIndex: 2,
     // expandParent: true,
     ...node,
   };
@@ -150,7 +150,10 @@ const FuncNodesReactFlowZustand = (
 
       iterf.logger.info("Add node", node.id, node.name);
 
-      const new_ndoes = [...rfstate.getNodes(), assert_reactflow_node(store, iterf)];
+      const new_ndoes = [
+        ...rfstate.getNodes(),
+        assert_reactflow_node(store, iterf),
+      ];
       rfstore.getState().update_nodes(new_ndoes);
 
       for (const io in action.node.io) {
@@ -236,7 +239,7 @@ const FuncNodesReactFlowZustand = (
     }
     return undefined;
   };
-  
+
   const on_node_action = (
     action: latest.NodeAction
   ): latest.NodeType | undefined => {
@@ -305,14 +308,11 @@ const FuncNodesReactFlowZustand = (
     }
   };
 
- 
-
-  
-
-  const _set_groups = (groups: latest.NodeGroups) => {
+  const _set_groups = (groups: NodeGroups) => {
     const rfstate = rfstore.getState();
-    const { group_nodes, default_nodes: new_nodes } = split_rf_nodes(rfstate.getNodes());
-    
+    const { default_nodes } = split_rf_nodes(rfstate.getNodes());
+    const new_nodes: AnyFuncNodesRFNode[] = [...default_nodes];
+
     const node_group_map: Record<string, string> = {};
     for (const group_id in groups) {
       const group = groups[group_id];
@@ -322,16 +322,15 @@ const FuncNodesReactFlowZustand = (
       for (const child_group_id of group.child_groups) {
         node_group_map[child_group_id] = group_id;
       }
-      if(group.position === undefined){
-        group.position = [0,0];
+      if (group.position === undefined) {
+        group.position = [0, 0];
       }
-      const group_node: RFNode = {
+      const group_node: GroupRFNode = {
         id: group_id,
         type: "group",
-        data: { group: groups[group_id],id:group_id },
+        data: { group: groups[group_id], id: group_id },
         position: { x: group.position[0], y: group.position[1] },
-        zIndex:1
-      
+        zIndex: 1,
       };
       if (group.parent_group) {
         group_node.data.groupID = group.parent_group;
@@ -340,18 +339,18 @@ const FuncNodesReactFlowZustand = (
     }
 
     for (const node of new_nodes) {
-      if(node.id in node_group_map){
+      if (node.id in node_group_map) {
         node.data.groupID = node_group_map[node.id];
-      }else{
+      } else {
         node.data.groupID = undefined;
       }
     }
     const sorted_nodes = sortByParent(new_nodes);
-    
+
     rfstate.update_nodes(sorted_nodes);
     //iterate in reverse over sorted_nodes:
     for (const node of sorted_nodes.reverse()) {
-      if(node.type === "group"){
+      if (node.type === "group") {
         auto_resize_group(node.id);
       }
     }
@@ -360,22 +359,24 @@ const FuncNodesReactFlowZustand = (
   const _update_group = (action: GroupActionUpdate) => {
     if (action.from_remote) {
       const rfstate = rfstore.getState();
-      const group = rfstate.getNode(action.id);
-      if(group === undefined){
+      const group = rfstate.getNode(action.id) as AnyFuncNodesRFNode;
+      if (group === undefined) {
         return;
       }
-      const {new_obj, change} = deep_merge(group.data.group , action.group);
-      if(change){
+      if (group.type !== "group") {
+        return;
+      }
+      const { new_obj, change } = deep_merge(group.data.group, action.group);
+      if (change) {
         group.data.group = new_obj;
       }
       rfstate.partial_update_nodes([group]);
-
     } else {
       if (iterf.worker) {
         iterf.worker.locally_update_group(action);
       }
     }
-  }
+  };
 
   const on_group_action = (action: GroupAction) => {
     switch (action.type) {
@@ -393,18 +394,26 @@ const FuncNodesReactFlowZustand = (
   */
 
   const change_group_position = (change: NodePositionChange) => {
-    if(change.position === undefined){
+    if (change.position === undefined) {
       return;
     }
     const rfstate = rfstore.getState();
 
-    const old_node = rfstate.getNode(change.id);
-    if(old_node === undefined){
+    const old_node = rfstate.getNode(change.id) as AnyFuncNodesRFNode;
+    if (old_node === undefined) {
       return;
     }
-
-    const child_node_ids = [...old_node.data.group.node_ids, ...old_node.data.group.child_groups];
+    if (old_node.type !== "group") {
+      return;
+    }
+    const child_node_ids = [
+      ...old_node.data.group.node_ids,
+      ...old_node.data.group.child_groups,
+    ];
     const bounds = iterf.rf_instance?.getNodesBounds(child_node_ids);
+    if (bounds === undefined) {
+      return;
+    }
 
     const delta_x = change.position.x - bounds?.x;
     const delta_y = change.position.y - bounds?.y;
@@ -412,7 +421,7 @@ const FuncNodesReactFlowZustand = (
     const child_changes: NodePositionChange[] = [];
     for (const node_id of child_node_ids) {
       const child_node = rfstate.getNode(node_id);
-      if(child_node === undefined){
+      if (child_node === undefined) {
         continue;
       }
       child_changes.push({
@@ -426,23 +435,24 @@ const FuncNodesReactFlowZustand = (
     }
 
     rfstate.onNodesChange(child_changes);
-    
-  }
+  };
 
   const change_group_dimensions = (change: NodeDimensionChange) => {
-    if(change.dimensions === undefined){
+    if (change.dimensions === undefined) {
       return;
     }
     const rfstate = iterf.useReactFlowStore.getState();
     const group = rfstate.getNode(change.id);
-    if(group === undefined){
+    if (group === undefined) {
       return;
     }
-    
-    iterf.useReactFlowStore.getState().partial_update_nodes(applyNodeChanges([change], [group]))
-  }
+
+    iterf.useReactFlowStore
+      .getState()
+      .partial_update_nodes(applyNodeChanges([change], [group]));
+  };
   const change_fn_node_position = (change: NodePositionChange) => {
-    if(change.position === undefined){
+    if (change.position === undefined) {
       return;
     }
     on_node_action({
@@ -455,10 +465,10 @@ const FuncNodesReactFlowZustand = (
       },
       from_remote: false,
     });
-  }
+  };
 
   const change_fn_node_dimensions = (change: NodeDimensionChange) => {
-    if(change.dimensions === undefined){
+    if (change.dimensions === undefined) {
       return;
     }
     on_node_action({
@@ -466,41 +476,45 @@ const FuncNodesReactFlowZustand = (
       id: change.id,
       node: {
         properties: {
-          "frontend:size": [
-            change.dimensions.width,
-            change.dimensions.height,
-          ],
+          "frontend:size": [change.dimensions.width, change.dimensions.height],
         },
       },
       from_remote: false,
     });
-  }
+  };
 
   const auto_resize_group = (gid: string) => {
-    const rfstate = iterf.useReactFlowStore.getState()
-    const group = rfstate.getNode(gid);
-    if(group === undefined){
+    const rfstate = iterf.useReactFlowStore.getState();
+    const group = rfstate.getNode(gid) as AnyFuncNodesRFNode;
+    if (group === undefined) {
       return;
     }
-    const child_nodes= group.data.group.node_ids.map((nid:string)=>rfstate.getNode(nid));
-    const child_groups= group.data.group.child_groups.map((gid:string)=>rfstate.getNode(gid));
+    if (group.type !== "group") {
+      return;
+    }
+    const child_nodes = group.data.group.node_ids
+      .map((nid: string) => rfstate.getNode(nid))
+      .filter((node) => node !== undefined);
+    const child_groups = group.data.group.child_groups
+      .map((gid: string) => rfstate.getNode(gid))
+      .filter((node) => node !== undefined);
     const all_nodes = [...child_nodes, ...child_groups];
     // console.log("all_nodes", all_nodes)
     const bounds = iterf.rf_instance?.getNodesBounds(all_nodes);
-    if(bounds === undefined){
+    if (bounds === undefined) {
       return;
     }
-    const updated_group={
+    const updated_group = {
       ...group,
-      position:{
-        x:bounds.x,
-        y:bounds.y
+      position: {
+        x: bounds.x,
+        y: bounds.y,
       },
-      height:bounds.height,
-      width:bounds.width
-    }
+      height: bounds.height,
+      width: bounds.width,
+    };
     updated_group.data.group.position = [bounds.x, bounds.y];
-    rfstate.partial_update_nodes([updated_group])
+    rfstate.partial_update_nodes([updated_group]);
 
     // const min_x= Math.min(...all_nodes.map((node)=>node.position.x));
     // const min_y= Math.min(...all_nodes.map((node)=>node.position.y));
@@ -509,7 +523,7 @@ const FuncNodesReactFlowZustand = (
     // const oldy= group.position.y;
     // const deltax= min_x
     // const deltay= min_y
-    
+
     // for (const node of all_nodes) {
     //   node.position.x -= deltax;
     //   node.position.y -= deltay;
@@ -523,32 +537,28 @@ const FuncNodesReactFlowZustand = (
     //    },
     //   width: bounds.width,
     //   height: bounds.height,
-      
+
     // }
     // rfstate.partial_update_nodes([updatedGroup, ...all_nodes]);
-      
-  } 
-    
+  };
 
   const on_rf_node_change = (nodechange: NodeChange[]) => {
-    const rfstate = iterf.useReactFlowStore.getState()
-
+    const rfstate = iterf.useReactFlowStore.getState();
 
     for (const change of nodechange) {
       switch (change.type) {
         case "position":
-            if (change.position) {
-            const node = rfstate.getNode(change.id);
-            if(node === undefined){
+          if (change.position) {
+            const node = rfstate.getNode(change.id) as AnyFuncNodesRFNode;
+            if (node === undefined) {
               continue;
             }
-            if(node.type === "group"){
+            if (node.type === "group") {
               change_group_position(change);
-            }
-            else{
+            } else {
               change_fn_node_position(change);
             }
-            if(node.data.groupID){
+            if (node.data.groupID) {
               auto_resize_group(node.data.groupID);
             }
           }
@@ -556,17 +566,16 @@ const FuncNodesReactFlowZustand = (
         case "dimensions":
           if (change.dimensions) {
             const node = rfstate.getNode(change.id);
-            if(node === undefined){
+            if (node === undefined) {
               continue;
             }
-            if(node.type === "group"){
+            if (node.type === "group") {
               change_group_dimensions(change);
-            }
-            else{
+            } else {
               change_fn_node_dimensions(change);
             }
-            
-            if(node.data.groupID){
+
+            if (node.data.groupID) {
               auto_resize_group(node.data.groupID as string);
             }
           }
@@ -624,7 +633,9 @@ const FuncNodesReactFlowZustand = (
     node_id = Array.isArray(node_id) ? node_id : [node_id];
 
     const nodes = iterf.useReactFlowStore
-      .getState().getNodes().filter((node) => node_id.includes(node.id));
+      .getState()
+      .getNodes()
+      .filter((node) => node_id.includes(node.id));
 
     if (nodes.length > 0) {
       iterf.rf_instance?.fitView({ padding: 0.2, nodes });
@@ -777,5 +788,5 @@ const FuncNodesReactFlowZustand = (
   return iterf;
 };
 
-export default FuncNodesReactFlowZustand;
+export { FuncNodesReactFlowZustand };
 export { LibZustand, NodeSpaceZustand, assert_reactflow_node };

@@ -1,9 +1,9 @@
-import { deep_compare_objects, deep_merge } from "../../utils/objects";
 import { NodeViewState } from "../fnrfzst.t";
 
 import { UseBoundStore, StoreApi } from "zustand";
 import { assertNever, normalize_node, simple_updater } from "./update_funcs";
 import { latest } from "../../types/versioned/versions.t";
+import { deep_merge, deep_compare_objects } from "@/object-helpers";
 
 const update_node = (
   old_store: UseBoundStore<StoreApi<latest.NodeType>>,

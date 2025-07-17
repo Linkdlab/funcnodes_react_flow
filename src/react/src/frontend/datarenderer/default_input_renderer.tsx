@@ -6,9 +6,10 @@ import { Base64BytesRenderer } from "./default_data_view_renderer";
 import * as Slider from "@radix-ui/react-slider";
 // import * as ToolTip from "@radix-ui/react-tooltip";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
-import { FuncNodesContext } from "../funcnodesreactflow";
+
 import CustomColorPicker from "../utils/colorpicker";
 import CustomSelect from "../utils/select";
+import { useFuncNodesContext } from "@/providers";
 
 function relativeRound(value: number) {
   if (value === 0) return 0;
@@ -25,8 +26,7 @@ export const NumberInput = ({
 }: latest.InputRendererProps & {
   parser: (n: string) => number;
 }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    React.useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
   const { preview } = iostore.valuestore();
   const io = iostore.use();
@@ -214,8 +214,7 @@ export const BooleanInput = ({
   iostore,
   inputconverter,
 }: latest.InputRendererProps) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    React.useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const { preview } = iostore.valuestore();
   const io = iostore.use();
 
@@ -256,8 +255,7 @@ export const StringInput = ({
   iostore,
   inputconverter,
 }: latest.InputRendererProps) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    React.useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
   const { preview, full } = iostore.valuestore();
   // const [expanded, setExpanded] = React.useState(false);
@@ -342,8 +340,7 @@ export const StringInput = ({
 };
 
 export const ColorInput = ({ iostore }: latest.InputRendererProps) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    React.useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const io = iostore.use();
   const { preview, full } = iostore.valuestore();
   const display = full === undefined ? preview?.value : full.value;
@@ -474,8 +471,7 @@ export const SelectionInput = ({
     optionsmap.push([options.keys[i], v.toString(), t]);
   }
 
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    React.useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
   const on_change_value = ({
     value,

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MenuRoundedIcon } from "../assets/fontawsome";
+import { MenuRoundedIcon } from "@/icons";
 import { FloatContainer } from "../layout/components";
 import CustomDialog from "../dialog";
 import { AppearanceDialogContent } from "./settingsmenu_appearance";
@@ -24,7 +24,10 @@ export const SettingsMenu = () => {
         </DropdownMenu.Trigger>
         <DropdownMenu.Content className="headermenucontent funcnodescontainer">
           <DropdownMenu.Group>
-            <DropdownMenu.Item className="headermenuitem" onClick={handleAppearance}>
+            <DropdownMenu.Item
+              className="headermenuitem"
+              onClick={handleAppearance}
+            >
               Appearance
             </DropdownMenu.Item>
           </DropdownMenu.Group>
@@ -41,4 +44,4 @@ export const SettingsMenu = () => {
       </CustomDialog>
     </>
   );
-  };
+};

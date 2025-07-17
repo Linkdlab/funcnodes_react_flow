@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { FuncNodesContext } from "../../funcnodesreactflow";
+import { useFuncNodesContext } from "@/providers";
 import { Position } from "@xyflow/react";
 import {
   FuncNodesReactFlowZustandInterface,
@@ -53,8 +53,7 @@ const NodeInput = ({
   setNodeSettingsPath?: (path: string) => void;
   setShowSettings?: (show: boolean) => void;
 }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
 
   const io = iostore.use();

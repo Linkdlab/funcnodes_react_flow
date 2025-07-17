@@ -3,7 +3,7 @@ import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
 } from "../../../states/fnrfzst.t";
-import { FuncNodesContext } from "../../funcnodesreactflow";
+import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "./io";
 
 import { useDataOverlayRendererForIo } from "../../datarenderer/data_renderer_overlay";
@@ -20,8 +20,7 @@ const usePreviewHandleDataRendererForIo = (
   latest.DataOverlayRendererType | undefined
 ] => {
   // Always call hooks at the top
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
   const { HandlePreviewRenderer, DataPreviewViewRenderer } =
     useContext(RenderMappingContext);

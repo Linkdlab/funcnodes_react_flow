@@ -6,12 +6,11 @@ import { useState } from "react";
 import CustomDialog from "../../dialog";
 import { usePreviewHandleDataRendererForIo } from "./handle_renderer";
 
-import { LockIcon, LockOpenIcon } from "../../assets/fontawsome";
-import { FullscreenIcon } from "../../assets/fontawsome";
-import { FuncNodesContext } from "../../funcnodesreactflow";
+import { LockIcon, LockOpenIcon, FullscreenIcon } from "@/icons";
 
 import { latest } from "../../../types/versioned/versions.t";
 import { IODataOverlay, IOPreviewWrapper } from "./iodataoverlay";
+import { useFuncNodesContext } from "@/providers";
 
 const pick_best_io_type = (
   iot: latest.SerializedType,
@@ -72,7 +71,7 @@ const HandleWithPreview = ({
 }: HandleWithPreviewProps) => {
   const [locked, setLocked] = useState(false);
   const [opened, setOpened] = useState(false);
-  const fnrf_zst = React.useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const io = iostore.use();
 
   const [pvhandle, overlayhandle] = usePreviewHandleDataRendererForIo(io);

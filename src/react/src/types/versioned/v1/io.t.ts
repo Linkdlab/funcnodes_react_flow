@@ -1,5 +1,5 @@
 import { UseBoundStore, StoreApi } from "zustand";
-import { LimitedDeepPartial } from "../../../utils/objects";
+import { LimitedDeepPartial } from "@/object-helpers";
 import { IORenderOptions, IOValueOptions } from "../v0/io.t";
 import { SerializedType } from "./rendering.t";
 import { NodeStore } from "./node.t";

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FuncNodesContext } from "../funcnodesreactflow";
+import { useFuncNodesContext } from "@/providers";
 import { NodeName } from "./node";
 import { pick_best_io_type } from "./io/io";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
@@ -14,11 +14,9 @@ import { latest } from "../../types/versioned/versions.t";
 import { SelectionInput } from "../datarenderer/default_input_renderer";
 import CustomDialog from "../dialog";
 import * as Tabs from "@radix-ui/react-tabs";
-import { deep_compare_objects } from "../../utils";
 
 const NodeSettingsInput = ({ iostore }: { iostore: latest.IOStore }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    React.useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
   const io = iostore.use();
 
@@ -117,7 +115,7 @@ const CurrentNodeSettings = ({
 };
 
 const CurrentNodeSettingsWrapper = () => {
-  const fnrf_zst = React.useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const selected_nodes = fnrf_zst.local_state((state) => state.selected_nodes);
   if (selected_nodes.length === 0) {
     return <div>Node Settings</div>;
@@ -134,7 +132,7 @@ const CurrentNodeSettingsWrapper = () => {
 };
 
 const NodeSettings = () => {
-  const fnrf_zst = React.useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const expanded = fnrf_zst.local_settings(
     (state) => state.view_settings.expand_node_props
   );
@@ -163,7 +161,7 @@ interface NodeIOSettingsProps {
   iostore: latest.IOStore;
 }
 const NodeIOSettings = ({ iostore }: NodeIOSettingsProps) => {
-  const fnrf_zst = React.useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const io = iostore.use();
   const renderOpts = fnrf_zst.render_options();
 
@@ -193,10 +191,6 @@ const NodeIOSettings = ({ iostore }: NodeIOSettingsProps) => {
       (otypestring && renderOpts.inputconverter?.[otypestring]) ?? ""
     ] || INPUTCONVERTER[""]!;
 
-  const [tempDefaultDisplayValue, setTempDefaultDisplayValue] = React.useState(
-    () => inputconverterf[1](io.default)
-  );
-
   const { Inputrenderer } = React.useContext(RenderMappingContext);
 
   const Input = _typestring
@@ -204,10 +198,6 @@ const NodeIOSettings = ({ iostore }: NodeIOSettingsProps) => {
       ? SelectionInput
       : Inputrenderer[_typestring]
     : undefined;
-
-  React.useEffect(() => {
-    setTempDefaultDisplayValue(inputconverterf[1](io.default));
-  }, [io.default, inputconverterf]);
 
   return (
     <div className="nodesettings-io-entry funcnodes-control-group">
@@ -281,8 +271,7 @@ const NodeSettingsGeneralTab = ({
 }: {
   node_data: latest.NodeType;
 }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    React.useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const [tempDescription, setTempDescription] = React.useState(
     node_data.description || ""
   );

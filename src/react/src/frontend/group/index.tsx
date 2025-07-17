@@ -1,12 +1,11 @@
 import * as React from "react";
-import { useContext } from "react";
 import { removeGroup } from "../../utils/grouping";
-import { FuncNodesContext } from "../funcnodesreactflow";
-import { CloseIcon } from "../assets/fontawsome";
+import { useFuncNodesContext } from "@/providers";
+import { CloseIcon } from "@/icons";
 
 // The default Node rendering component for groups
 export const DefaultGroup = ({ data }: { data: any }) => {
-  const fnrf_zst = useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const groupId = data?.group?.id || data?.id;
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();

@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 
-import { CloseIcon } from "./assets/fontawsome";
-import { FuncNodesContext } from "./funcnodesreactflow";
+import { CloseIcon } from "@/icons";
+import { useFuncNodesContext } from "@/providers";
 
 interface CustomDialogProps {
   trigger?: React.ReactNode;
@@ -43,7 +43,7 @@ const CustomDialog = ({
       onOpenChange(isOpen);
     }
   };
-  const fnrf_zst = React.useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const portal = fnrf_zst.local_state((state) => state.funcnodescontainerRef);
 
   const content = (

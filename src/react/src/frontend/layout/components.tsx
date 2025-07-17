@@ -4,7 +4,7 @@ import {
   ChevronRightIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-} from "../assets/fontawsome";
+} from "@/icons";
 
 export type Breakpoint = "" | "xxs" | "xs" | "s" | "m" | "l" | "xl" | "xxl";
 

@@ -1,5 +1,4 @@
 import { StoreApi, UseBoundStore } from "zustand";
-import { FuncNodesWorker, WorkerManager } from "../funcnodes";
 import {
   ExternalWorkerDependencies,
   LibType,
@@ -10,168 +9,80 @@ import { NodeSpaceZustandInterface } from "./nodespace.t";
 import { RFStore } from "./reactflow.t";
 import { EdgeAction } from "./edge.t";
 import { useReactFlow } from "@xyflow/react";
-import { Logger } from "../utils/logger";
-import { FuncNodesWorkerState } from "../funcnodes/funcnodesworker";
+
 import { latest } from "../types/versioned/versions.t";
 import { GroupAction } from "./groups.t";
+import { FuncnodesReactFlowProps } from "@/app";
+import {
+  FuncNodesWorker,
+  FuncNodesWorkerState,
+  WorkerManager,
+  WorkersState,
+} from "@/workers";
+import { Logger } from "@/logging";
+import { NodeGroups } from "@/groups";
 
-interface RenderOptions {
+export interface RenderOptions {
   typemap?: { [key: string]: string | undefined };
   inputconverter?: { [key: string]: string | undefined };
 }
-interface NodeViewState {
+export interface NodeViewState {
   pos: [number, number];
   size: [number, number];
   collapsed: boolean;
 }
-interface ViewState {
+export interface ViewState {
   nodes: { [key: string]: NodeViewState | undefined };
   renderoptions?: RenderOptions;
 }
 
-interface FullNodeSpaceJSON {
+export interface FullNodeSpaceJSON {
   nodes: latest.SerializedNodeType[];
   edges: [string, string, string, string][];
   prop: { [key: string]: any | undefined };
   lib: LibType;
-  groups?: latest.NodeGroups;
+  groups?: NodeGroups;
 }
 
-interface FullState {
+export interface FullState {
   backend: FullNodeSpaceJSON;
   view: ViewState;
   worker: { [key: string]: string[] | undefined };
   worker_dependencies: ExternalWorkerDependencies[];
 }
 
-interface ProgressState {
+export interface ProgressState {
   message: string;
   status: string;
   progress: number;
   blocking: boolean;
 }
 
-interface ProgressStateMessage extends ProgressState {
+export interface ProgressStateMessage extends ProgressState {
   type: "progress";
 }
 
-interface ResultMessage {
-  type: "result";
-  id?: string;
-  result: any;
-}
-
-interface ErrorMessage {
-  type: "error";
-  error: string;
-  tb: string[];
-  id?: string;
-}
-
-interface NodeSpaceEvent {
-  type: "nsevent";
-  event: string;
-  data: { [key: string]: any | undefined };
-}
-
-interface WorkerEvent {
-  type: "workerevent";
-  event: string;
-  data: { [key: string]: any | undefined };
-}
-
-interface LargeMessageHint {
-  type: "large_message";
-  msg_id: string;
-}
-
-interface PongMessage {
-  type: "pong";
-}
-
-type JSONMessage =
-  | ProgressStateMessage
-  | ResultMessage
-  | ErrorMessage
-  | NodeSpaceEvent
-  | WorkerEvent
-  | LargeMessageHint
-  | PongMessage;
-
-interface WorkerRepresentation {
-  uuid: string;
-  host: string;
-  port: number;
-  ssl: boolean;
-  active: boolean;
-  open: boolean;
-  name: string | null;
-}
-interface WorkersState {
-  [key: string]: WorkerRepresentation | undefined;
-}
-
-interface FuncnodesReactHeaderProps {
-  show: boolean;
-  showmenu: boolean;
-}
-
-interface ReactFlowLibraryProps {
-  show: boolean;
-}
-interface ReactFlowLayerProps {
-  minimap: boolean;
-  static: boolean;
-  minZoom: number;
-  maxZoom: number;
-  allowFullScreen: boolean;
-  allowExpand: boolean;
-  showNodeSettings: boolean;
-}
-
-interface FuncnodesReactFlowProps {
-  id: string;
-  debug: boolean;
-  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
-  useWorkerManager: boolean;
-  show_library: boolean;
-  load_worker?: string;
-  worker?: FuncNodesWorker;
-  header: FuncnodesReactHeaderProps;
-  flow: ReactFlowLayerProps;
-  library: ReactFlowLibraryProps;
-  worker_url?: string;
-  fnw_url?: string;
-  workermanager_url?: string;
-  logger?: Logger;
-  on_ready?: ({
-    fnrf_zst,
-  }: {
-    fnrf_zst: FuncNodesReactFlowZustandInterface;
-  }) => void;
-}
-
-interface DevSettings {
+export interface DevSettings {
   debug: boolean;
 }
 
-interface FuncnodesReactFlowViewSettings {
+export interface FuncnodesReactFlowViewSettings {
   expand_node_props?: boolean;
   expand_lib?: boolean;
 }
-interface FuncnodesReactFlowLocalSettings {
+export interface FuncnodesReactFlowLocalSettings {
   view_settings: FuncnodesReactFlowViewSettings;
   update_view_settings: (settings: FuncnodesReactFlowViewSettings) => void;
 }
 
-interface FuncnodesReactFlowLocalState {
+export interface FuncnodesReactFlowLocalState {
   selected_nodes: string[];
   selected_edges: string[];
   selected_groups: string[];
   funcnodescontainerRef: HTMLDivElement | null;
 }
 
-interface FuncNodesReactFlowZustandInterface {
+export interface FuncNodesReactFlowZustandInterface {
   options: FuncnodesReactFlowProps;
   local_settings: UseBoundStore<StoreApi<FuncnodesReactFlowLocalSettings>>;
   local_state: UseBoundStore<StoreApi<FuncnodesReactFlowLocalState>>;
@@ -206,29 +117,3 @@ interface FuncNodesReactFlowZustandInterface {
   dev_settings: DevSettings;
   logger: Logger;
 }
-
-export type {
-  FuncNodesReactFlowZustandInterface,
-  WorkersState,
-  WorkerRepresentation,
-  JSONMessage,
-  FullState,
-  FullNodeSpaceJSON,
-  ViewState,
-  RenderOptions,
-  ProgressState,
-  ProgressStateMessage,
-  ResultMessage,
-  ErrorMessage,
-  NodeSpaceEvent,
-  WorkerEvent,
-  LargeMessageHint,
-  NodeViewState,
-  FuncnodesReactFlowProps,
-  FuncnodesReactHeaderProps,
-  ReactFlowLayerProps,
-  FuncnodesReactFlowLocalSettings,
-  FuncnodesReactFlowLocalState,
-  FuncnodesReactFlowViewSettings,
-  ReactFlowLibraryProps,
-};

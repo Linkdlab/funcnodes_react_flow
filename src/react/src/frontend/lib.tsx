@@ -1,11 +1,11 @@
 import * as React from "react";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 import { MouseEvent } from "react";
-import { FuncNodesContext } from "./funcnodesreactflow";
+import { useFuncNodesContext } from "@/providers";
 
 import CustomDialog from "./dialog";
 import {
@@ -15,16 +15,14 @@ import {
   LibNode,
   Shelf,
 } from "../states/lib.t";
-import { SearchIcon } from "./assets/fontawsome";
-import { CloseIcon, ExpandLessIcon } from "./assets/fontawsome";
+import { SearchIcon, CloseIcon, ExpandLessIcon } from "@/icons";
 import {
   currentBreakpointSmallerThan,
   ExpandingContainer,
 } from "./layout/components";
 
 const LibraryNode = ({ item }: { item: LibNode }) => {
-  const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+  const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
   const add_to_flow = () => {
     zustand.worker?.add_node(item.node_id);
@@ -56,7 +54,7 @@ const filterShelf = (shelf: Shelf, filter: string): boolean => {
   return hasFilteredNodes || hasFilteredSubShelves;
 };
 
-const LibraryShelf = ({
+export const LibraryItem = ({
   item,
   filter,
   parentkey,
@@ -103,7 +101,7 @@ const LibraryShelf = ({
           {item.subshelves && (
             <>
               {item.subshelves.map((subItem) => (
-                <LibraryShelf
+                <LibraryItem
                   key={parentkey + subItem.name}
                   item={subItem}
                   filter={filter}
@@ -409,9 +407,8 @@ const InstallableModule = ({
 
 const AddLibraryOverLay = ({ children }: { children: React.ReactNode }) => {
   const [filter, setFilter] = useState(""); // State for the filter input
-  const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
-
+  const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  useFuncNodesContext();
   const [activeExtended, SetActiveExtended] = useState(true);
   const [availableExtended, SetAvailableExtended] = useState(true);
   const [installedExtended, SetInstalledExtended] = useState(true);
@@ -576,7 +573,7 @@ const ExternalWorkerInstanceSettings = ({
   ins: ExternalWorkerInstance;
 }) => {
   const [tempName, setTempName] = useState(ins.name);
-  const fnrz = useContext(FuncNodesContext);
+  const fnrz = useFuncNodesContext();
 
   const stop_instance = () => {
     if (!fnrz.worker) return;
@@ -677,7 +674,7 @@ const ExternalWorkerInstanceEntry = ({
                     </>
                   )}
                   {lib.subshelves.map((subItem) => (
-                    <LibraryShelf
+                    <LibraryItem
                       key={parentkey + subItem.name}
                       item={subItem}
                       filter={filter}
@@ -703,8 +700,7 @@ const ExternalWorkerClassEntry = ({
   mod: string;
   lib?: Shelf;
 }) => {
-  const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+  const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -810,12 +806,11 @@ const ExternalWorkerShelf = ({
   );
 };
 
-const Library = () => {
-  const zustand: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+export const Library = () => {
+  const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const libstate = zustand.lib.libstate();
 
-  const fnrf_zst = React.useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const expanded = fnrf_zst.local_settings(
     (state) => state.view_settings.expand_lib
   );
@@ -853,7 +848,7 @@ const Library = () => {
             {libstate.lib.shelves
               .filter((item) => item.name !== "_external_worker")
               .map((item) => (
-                <LibraryShelf
+                <LibraryItem
                   key={item.name}
                   item={item}
                   filter={filter}
@@ -888,6 +883,3 @@ const Library = () => {
     </ExpandingContainer>
   );
 };
-
-export default Library;
-export { LibraryShelf as LibraryItem };

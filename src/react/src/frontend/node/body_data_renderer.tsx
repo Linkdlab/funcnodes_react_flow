@@ -3,7 +3,7 @@ import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
 } from "../../states/fnrfzst.t";
-import { FuncNodesContext } from "../funcnodesreactflow";
+import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "./io/io";
 
 import { useDataOverlayRendererForIo } from "../datarenderer/data_renderer_overlay";
@@ -19,8 +19,7 @@ const useBodyDataRendererForIo = (
   latest.DataPreviewViewRendererType | undefined,
   latest.DataOverlayRendererType | undefined
 ] => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const overlayhandle = useDataOverlayRendererForIo(io);
   const { DataPreviewViewRenderer, DataViewRenderer } =
     useContext(RenderMappingContext);

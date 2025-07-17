@@ -1,20 +1,16 @@
 import * as React from "react";
-import { useContext} from "react";
-import {
-  FuncNodesReactFlowZustandInterface,
-  FuncnodesReactHeaderProps,
-} from "../../states/fnrfzst.t";
-import { FuncNodesContext } from "../funcnodesreactflow";
+import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
+import { useFuncNodesContext } from "@/providers";
 
 import { development } from "../../utils/debugger";
 import { FloatContainer } from "../layout/components";
 import { NodeSpaceMenu } from "./nodespacemenu";
 import { WorkerMenu } from "./workermenu";
 import { SettingsMenu } from "./settingsmenu";
+import { FuncnodesReactHeaderProps } from "@/app";
 
-const Statusbar = () => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+export const Statusbar = () => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const progress = fnrf_zst.progress_state();
 
   return (
@@ -28,11 +24,10 @@ const Statusbar = () => {
   );
 };
 
-
-
-const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+export const FuncnodesHeader = ({
+  ...headerprops
+}: FuncnodesReactHeaderProps) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
   const workerstate = fnrf_zst.workerstate();
   // pserudouse headerprops
@@ -62,13 +57,10 @@ const FuncnodesHeader = ({ ...headerprops }: FuncnodesReactHeaderProps) => {
             </div>
           )}
           <div className="headerelement">
-              <SettingsMenu></SettingsMenu>
-            </div>
+            <SettingsMenu></SettingsMenu>
+          </div>
         </FloatContainer>
       )}
     </FloatContainer>
   );
 };
-
-export default FuncnodesHeader;
-export { Statusbar };

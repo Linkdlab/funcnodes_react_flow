@@ -1,15 +1,8 @@
 import * as React from "react";
-import {
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-  useCallback,
-} from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as convert from "color-convert";
-import { FuncNodesContext } from "../funcnodesreactflow";
+import { useFuncNodesContext } from "@/providers";
 
 const create_color_converter = (
   type: string,
@@ -340,7 +333,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
     setColor(newConverter);
   }, [JSON.stringify(inicolordata), inicolorspace]);
 
-  const fnrf_zst = useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
 
   // useRef to store the debounce timer.

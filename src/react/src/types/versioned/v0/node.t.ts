@@ -1,6 +1,6 @@
 import { UseBoundStore, StoreApi } from "zustand";
 import { DataRenderOptions } from "./rendering.t";
-import { DeepPartial } from "../../../utils/objects";
+import { DeepPartial } from "@/object-helpers";
 
 import { IOType } from "./io.t";
 import { TqdmState } from "../../../frontend/utils/progressbar";

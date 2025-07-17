@@ -1,13 +1,11 @@
 import {
   FuncNodesReactFlowZustandInterface,
   ProgressStateMessage,
-  WorkersState,
-} from "../states/fnrfzst.t";
-import FuncNodesWorker from "./funcnodesworker";
-import WebSocketWorker from "./websocketworker";
+} from "@/barrel_imports";
+import { FuncNodesWorker, WebSocketWorker, WorkersState } from "@/workers";
 
-class WorkerManager {
-  private wsuri: string;
+export class WorkerManager {
+  private _wsuri: string;
   private workers: { [key: string]: FuncNodesWorker };
   private ws: WebSocket | null = null;
   private reconnectAttempts: number = 0;
@@ -18,7 +16,7 @@ class WorkerManager {
   private connectionTimeout?: ReturnType<typeof setTimeout>;
   on_setWorker: (worker: FuncNodesWorker | undefined) => void;
   constructor(wsuri: string, zustand: FuncNodesReactFlowZustandInterface) {
-    this.wsuri = wsuri;
+    this._wsuri = wsuri;
     this.zustand = zustand;
     this.workers = {};
     this.on_setWorker = (worker: FuncNodesWorker | undefined) => {
@@ -29,6 +27,10 @@ class WorkerManager {
     this.connectionTimeout = setTimeout(() => {
       this.connect();
     }, 200);
+  }
+
+  get wsuri() {
+    return this._wsuri;
   }
 
   get open() {
@@ -42,8 +44,8 @@ class WorkerManager {
       status: "info",
       blocking: true,
     });
-    this.zustand.logger.info("Connecting to websocket:", this.wsuri);
-    this.ws = new WebSocket(this.wsuri);
+    this.zustand.logger.info("Connecting to websocket:", this._wsuri);
+    this.ws = new WebSocket(this._wsuri);
 
     this.ws.onopen = () => {
       this.onopen();
@@ -285,5 +287,3 @@ class WorkerManager {
     }
   }
 }
-
-export default WorkerManager;

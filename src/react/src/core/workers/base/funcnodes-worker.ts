@@ -1,52 +1,36 @@
 import { v4 as uuidv4 } from "uuid";
+import { deep_merge } from "@/object-helpers";
+import { UseBoundStore, StoreApi, create } from "zustand";
 import {
-  FullState,
-  FuncNodesReactFlowZustandInterface,
+  FuncNodesWorkerState,
+  WorkerHookProperties,
+  WorkerProps,
+} from "@/workers";
+import {
+  NodeSpaceEvent,
+  WorkerEvent,
+  CmdMessage,
   JSONMessage,
   LargeMessageHint,
-  NodeSpaceEvent,
+} from "@/messages";
+import {
+  FuncNodesReactFlowZustandInterface,
+  latest,
+  LibType,
+  PackedPlugin,
   ViewState,
-  WorkerEvent,
-} from "../states/fnrfzst.t";
-import { create, StoreApi, UseBoundStore } from "zustand";
-import { deep_merge } from "../utils";
-import { LibType } from "../states/lib.t";
-import { PackedPlugin } from "../plugin";
+  update_nodeview,
+  GroupActionUpdate,
+  interfereDataStructure,
+  FullState,
+} from "@/barrel_imports";
+import { NodeGroup, NodeGroups } from "@/groups";
 
-import { update_nodeview } from "../states/node/update_node";
-import { latest } from "../types/versioned/versions.t";
-import { interfereDataStructure } from "./datastructures";
-import { GroupActionUpdate } from "../states/groups.t";
-
-type CmdMessage = {
-  type: string;
-  cmd: string;
-  kwargs: any;
-  as_bytes?: boolean;
-  id?: string;
-};
-
-interface WorkerProps {
-  zustand?: FuncNodesReactFlowZustandInterface;
-  uuid: string;
-  on_error?: (error: string | Error) => void;
-  on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
-}
-
-interface FuncNodesWorkerState {
-  is_open: boolean;
-}
-
-interface HookProperties {
-  worker: FuncNodesWorker;
-  data: any;
-}
-
-class FuncNodesWorker {
+export class FuncNodesWorker {
   messagePromises: Map<string, any>;
   _zustand?: FuncNodesReactFlowZustandInterface;
   _local_nodeupdates: Map<string, latest.PartialSerializedNodeType>;
-  _local_groupupdates: Map<string, Partial<latest.NodeGroup>>;
+  _local_groupupdates: Map<string, Partial<NodeGroup>>;
   _nodeupdatetimer: ReturnType<typeof setTimeout>;
   _groupupdatetimer: ReturnType<typeof setTimeout>;
   uuid: string;
@@ -59,7 +43,8 @@ class FuncNodesWorker {
 
   state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
   on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
-  _hooks: Map<string, ((p: HookProperties) => Promise<void>)[]> = new Map();
+  _hooks: Map<string, ((p: WorkerHookProperties) => Promise<void>)[]> =
+    new Map();
   _ns_event_intercepts: Map<
     string,
     ((event: NodeSpaceEvent) => Promise<NodeSpaceEvent>)[]
@@ -141,7 +126,7 @@ class FuncNodesWorker {
 
   add_hook(
     hook: string,
-    callback: (p: HookProperties) => Promise<void>
+    callback: (p: WorkerHookProperties) => Promise<void>
   ): () => void {
     const hooks = this._hooks.get(hook) || [];
     hooks.push(callback);
@@ -354,7 +339,7 @@ class FuncNodesWorker {
       kwargs: {},
       wait_for_response: true,
       unique: true,
-    })) as latest.NodeGroups;
+    })) as NodeGroups;
     this._receive_groups(groups);
   }
 
@@ -411,7 +396,7 @@ class FuncNodesWorker {
     });
   }
 
-  async _receive_groups(groups: latest.NodeGroups) {
+  async _receive_groups(groups: NodeGroups) {
     if (!this._zustand) return;
     this._zustand.on_group_action({
       type: "set",
@@ -564,9 +549,8 @@ class FuncNodesWorker {
     }, 200);
   }
 
-
   locally_update_group(action: GroupActionUpdate) {
-   // Add the type to the parameter
+    // Add the type to the parameter
     //log current stack trace
     const currentstate = this._local_groupupdates.get(action.id);
     if (currentstate) {
@@ -581,7 +565,7 @@ class FuncNodesWorker {
       this.sync_local_group_updates();
     }
   }
-    
+
   async get_remote_node_state(nid: string) {
     const ans: latest.SerializedNodeType = await this._send_cmd({
       cmd: "get_node_state",
@@ -1369,11 +1353,11 @@ class FuncNodesWorker {
   async group_nodes(nodeIds: string[], group_ids: string[]) {
     // This sends a command to the backend Python worker
     // The backend should implement a handler for the "group_nodes" command
-    const res =  await this._send_cmd({
+    const res = (await this._send_cmd({
       cmd: "group_nodes",
       kwargs: { node_ids: nodeIds, group_ids: group_ids },
       wait_for_response: true,
-    }) as latest.NodeGroups;
+    })) as NodeGroups;
     this._receive_groups(res);
     return res;
   }
@@ -1388,8 +1372,3 @@ class FuncNodesWorker {
     await this.sync_nodespace();
   }
 }
-
-
-
-export default FuncNodesWorker;
-export type { WorkerProps, FuncNodesWorkerState };

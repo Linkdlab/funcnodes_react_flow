@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { deep_update } from "../../utils";
+import { deep_update } from "@/object-helpers";
 
 import { update_node } from "./update_node";
 import { update_io } from "./update_io";

@@ -1,6 +1,5 @@
-import { useContext } from "react";
 import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
-import { FuncNodesContext } from "../frontend/funcnodesreactflow";
+import { useFuncNodesContext } from "@/providers";
 
 const set_io_value = ({
   nid,
@@ -13,8 +12,7 @@ const set_io_value = ({
   value: any;
   set_default?: boolean;
 }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   fnrf_zst.worker?.set_io_value({
     nid: nid,
     ioid: ioid,

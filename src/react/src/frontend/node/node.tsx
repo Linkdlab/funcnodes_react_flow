@@ -2,7 +2,7 @@ import * as React from "react";
 import { useContext, useEffect, useState } from "react";
 
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
-import { FuncNodesContext } from "../funcnodesreactflow";
+import { useFuncNodesContext } from "@/providers";
 import { NodeInput, NodeOutput } from "./io";
 
 import CustomDialog from "../dialog";
@@ -10,8 +10,12 @@ import CustomDialog from "../dialog";
 import { useBodyDataRendererForIo } from "./body_data_renderer";
 import { RenderMappingContext } from "../datarenderer/rendermappings";
 import ProgressBar from "../utils/progressbar";
-import { PlayCircleFilledIcon, LanIcon, GearIcon } from "../assets/fontawsome";
-import { ExpandLessIcon } from "../assets/fontawsome";
+import {
+  PlayCircleFilledIcon,
+  LanIcon,
+  GearIcon,
+  ExpandLessIcon,
+} from "@/icons";
 import { latest } from "../../types/versioned/versions.t";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
 import { NodeSettingsOverlay } from "./nodesettings";
@@ -24,8 +28,7 @@ interface NodeHeaderProps {
 
 const NodeHeader = React.memo(
   ({ node_data, toogleShowSettings }: NodeHeaderProps) => {
-    const fnrf_zst: FuncNodesReactFlowZustandInterface =
-      useContext(FuncNodesContext);
+    const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
     const clicktrigger = () => {
       fnrf_zst.on_node_action({
@@ -162,8 +165,7 @@ const NodeName = React.memo(({ node_data }: { node_data: latest.NodeType }) => {
     setName(node_data.name);
   }, [node_data]);
 
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -214,8 +216,7 @@ const NodeFooter = React.memo(
 );
 
 export const useDefaultNodeInjection = (storedata: latest.NodeType) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const [visualTrigger, setVisualTrigger] = useState(false);
   const intrigger = storedata.in_trigger();
 

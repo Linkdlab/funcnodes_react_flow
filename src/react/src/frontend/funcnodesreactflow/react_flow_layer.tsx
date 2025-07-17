@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   ReactFlow,
@@ -7,36 +7,27 @@ import {
   Edge,
   EdgeTypes,
   MiniMap,
-  useEdges,
   useKeyPress,
-  useNodes,
   useReactFlow,
   Node,
   NodeTypes,
   OnNodesChange,
 } from "@xyflow/react";
 
-import { FuncNodesContext } from "../funcnodesreactflow";
 import { useShallow } from "zustand/react/shallow";
 import { RFState } from "../../states/reactflow.t";
 import DefaultNode from "../node";
 import DefaultEdge from "../edge";
-import {
-  FuncNodesReactFlowZustandInterface,
-  ReactFlowLayerProps,
-} from "../../states/fnrfzst.t";
+import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 
 import { latest } from "../../types/versioned/versions.t";
-import {  groupNodes, removeGroup as removeGroups } from "../../utils/grouping";
+import { groupNodes, removeGroup as removeGroups } from "../../utils/grouping";
 import { DefaultGroup } from "../group";
 import { split_rf_nodes, useNodeTools } from "../../utils/nodes";
-
+import { useFuncNodesContext } from "@/providers";
+import { ReactFlowLayerProps } from "src/app/app.types";
 
 // import { useForceGraph } from "../../utils/autolayout";
-
-
-
-
 
 const selector = (state: RFState) => ({
   nodes: state.getNodes(),
@@ -46,9 +37,7 @@ const selector = (state: RFState) => ({
   onConnect: state.onConnect,
 });
 
-const nodeTypes: NodeTypes = { default: DefaultNode,
-  group: DefaultGroup,
- };
+const nodeTypes: NodeTypes = { default: DefaultNode, group: DefaultGroup };
 
 const edgeTypes: EdgeTypes = {
   default: DefaultEdge,
@@ -142,7 +131,7 @@ const past_clipboard_data = async (
 
 const ReactFlowManager = () => {
   const rfinstance = useReactFlow();
-  const fnrf_zst = useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   fnrf_zst.rf_instance = rfinstance;
   // useForceGraph();
 
@@ -150,7 +139,7 @@ const ReactFlowManager = () => {
 };
 
 const KeyHandler = () => {
-  const fnrf_zst = useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
   const delPressed = useKeyPress("Delete");
   const copyPressed = useKeyPress(["Meta+c", "Control+c", "Strg+c"]);
   const groupPressed = useKeyPress(["Control+g", "Meta+g"]);
@@ -159,36 +148,41 @@ const KeyHandler = () => {
   const { getEdges } = useReactFlow();
   const { getNodes, getSelectedNodes, getSplitNodes } = useNodeTools();
 
-    // --- Deletion Logic ---
-    useEffect(() => {
-      if (delPressed) {
-        if (!fnrf_zst.worker) return;
-  
-        const selectedEdges = getEdges().filter((e) => e.selected);
-        for (const edge of selectedEdges) {
-          if (!edge.source || !edge.target || !edge.sourceHandle || !edge.targetHandle) continue;
-          fnrf_zst.worker.remove_edge({
-            src_nid: edge.source,
-            src_ioid: edge.sourceHandle,
-            trg_nid: edge.target,
-            trg_ioid: edge.targetHandle,
-          });
-        }
-  
-        const selectedNodes = getSelectedNodes();
-        const { group_nodes, default_nodes } = getSplitNodes(selectedNodes);
-        for (const node of default_nodes) {
-          fnrf_zst.worker.remove_node(node.id);
-        }
-        for (const node of group_nodes) {
-          fnrf_zst.worker.remove_group(node.id);
-        }
+  // --- Deletion Logic ---
+  useEffect(() => {
+    if (delPressed) {
+      if (!fnrf_zst.worker) return;
+
+      const selectedEdges = getEdges().filter((e) => e.selected);
+      for (const edge of selectedEdges) {
+        if (
+          !edge.source ||
+          !edge.target ||
+          !edge.sourceHandle ||
+          !edge.targetHandle
+        )
+          continue;
+        fnrf_zst.worker.remove_edge({
+          src_nid: edge.source,
+          src_ioid: edge.sourceHandle,
+          trg_nid: edge.target,
+          trg_ioid: edge.targetHandle,
+        });
       }
-    }, [delPressed, getNodes, getEdges, fnrf_zst]); // Dependencies for the effect
 
+      const selectedNodes = getSelectedNodes();
+      const { group_nodes, default_nodes } = getSplitNodes(selectedNodes);
+      for (const node of default_nodes) {
+        fnrf_zst.worker.remove_node(node.id);
+      }
+      for (const node of group_nodes) {
+        fnrf_zst.worker.remove_group(node.id);
+      }
+    }
+  }, [delPressed, getNodes, getEdges, fnrf_zst]); // Dependencies for the effect
 
-   // --- Copy Logic ---
-   useEffect(() => {
+  // --- Copy Logic ---
+  useEffect(() => {
     if (copyPressed) {
       const nodes = getNodes();
       const edges = getEdges();
@@ -208,9 +202,10 @@ const KeyHandler = () => {
         }
       }
 
-      const selectedNodeIds = new Set(selectedNodes.map(n => n.id));
-      const internalEdges = edges.filter(edge => 
-        selectedNodeIds.has(edge.source) && selectedNodeIds.has(edge.target)
+      const selectedNodeIds = new Set(selectedNodes.map((n) => n.id));
+      const internalEdges = edges.filter(
+        (edge) =>
+          selectedNodeIds.has(edge.source) && selectedNodeIds.has(edge.target)
       );
 
       for (const edge of internalEdges) {
@@ -227,15 +222,19 @@ const KeyHandler = () => {
     }
   }, [copyPressed, getNodes, getEdges, fnrf_zst]); // Dependencies for the effect
 
-    // --- Grouping Logic ---
+  // --- Grouping Logic ---
   useEffect(() => {
     // Only run if the key is pressed
     if (groupPressed) {
-      const selectedNodes =getSelectedNodes();
+      const selectedNodes = getSelectedNodes();
       const { group_nodes, default_nodes } = getSplitNodes(selectedNodes);
       if (selectedNodes.length > 0) {
         // This will now only run once when groupPressed becomes true
-        groupNodes(default_nodes.map((n) => n.id), group_nodes.map((n) => n.id), fnrf_zst);
+        groupNodes(
+          default_nodes.map((n) => n.id),
+          group_nodes.map((n) => n.id),
+          fnrf_zst
+        );
       }
     }
   }, [groupPressed, getNodes, fnrf_zst]); // Dependencies for the effect
@@ -244,9 +243,12 @@ const KeyHandler = () => {
     if (ungroupPressed) {
       console.log("ungroupPressed");
       const selectedNodes = getSelectedNodes();
-      const { group_nodes, default_nodes } = getSplitNodes(selectedNodes);
+      const { group_nodes } = getSplitNodes(selectedNodes);
       if (group_nodes.length > 0) {
-        removeGroups(group_nodes.map((n) => n.id), fnrf_zst);
+        removeGroups(
+          group_nodes.map((n) => n.id),
+          fnrf_zst
+        );
       }
     }
   }, [ungroupPressed, getNodes, fnrf_zst]); // Dependencies for the effect
@@ -281,7 +283,7 @@ const ContextMenu = ({
 }: ContextMenuProps) => {
   const { getNode, setNodes, addNodes, setEdges } = useReactFlow();
 
-  const fnrf_zst = useContext(FuncNodesContext);
+  const fnrf_zst = useFuncNodesContext();
 
   const duplicateNode = useCallback(() => {
     const rfnode = getNode(id);
@@ -317,9 +319,8 @@ const ContextMenu = ({
   );
 };
 
-const ReactFlowLayer = (props: ReactFlowLayerProps) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface =
-    useContext(FuncNodesContext);
+export const ReactFlowLayer = (props: ReactFlowLayerProps) => {
+  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
 
   const reactflowRef = useRef<HTMLDivElement>(null);
 
@@ -335,7 +336,6 @@ const ReactFlowLayer = (props: ReactFlowLayerProps) => {
     nodes: Node[];
     edges: Edge[];
   }) => {
-
     const { group_nodes, default_nodes } = split_rf_nodes(nodes);
 
     const cs = fnrf_zst.local_state.getState();
@@ -414,5 +414,4 @@ const ReactFlowLayer = (props: ReactFlowLayerProps) => {
   );
 };
 
-export default ReactFlowLayer;
 export { nodeTypes };

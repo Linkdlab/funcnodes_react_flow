@@ -1,7 +1,6 @@
 import { assertNever, simple_updater } from "./update_funcs";
-import { deep_merge } from "../../utils/objects";
 import { latest } from "../../types/versioned/versions.t";
-
+import { deep_merge } from "@/object-helpers";
 const update_io = (
   iostore: latest.IOStore,
   new_state: latest.PartialSerializedIOType

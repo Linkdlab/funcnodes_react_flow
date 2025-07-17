@@ -1,5 +1,5 @@
 import { StoreApi, UseBoundStore } from "zustand";
-import { LimitedDeepPartial } from "../../../utils/objects";
+import { LimitedDeepPartial } from "@/object-helpers";
 import { IOStore, PartialSerializedIOType, SerializedIOType } from "./io.t";
 import { TqdmState } from "../../../frontend/utils/progressbar";
 import { v0 as v0_types } from "../../../types/versioned/versions.t";
@@ -76,16 +76,4 @@ export interface NodeStore {
   setState: (new_state: Partial<NodeType>) => void;
   update: (new_state: PartialSerializedNodeType) => void;
   serialize: () => SerializedNodeType;
-}
-
-export interface NodeGroup {
-  node_ids: string[];
-  child_groups: string[];
-  parent_group: string | null;
-  meta: Record<string, any>;
-  position: [number, number];
-}
-
-export interface NodeGroups {
-  [key: string]: NodeGroup
 }

@@ -1,34 +1,30 @@
-import { latest } from "../types/versioned/versions.t";
+import { NodeGroup, NodeGroups } from "@/groups";
 
 interface BaseGroupAction {
-    type: string;
-    id: string;
-    group: Partial<latest.NodeGroup>
-    from_remote: boolean;
-    immediate?: boolean;
-  }
-  
+  type: string;
+  id: string;
+  group: Partial<NodeGroup>;
+  from_remote: boolean;
+  immediate?: boolean;
+}
+
 //   interface GroupActionAdd extends BaseGroupAction {
 //     type: "add";
 //   }
-  
+
 //   interface GroupActionDelete extends BaseGroupAction {
 //     type: "delete";
 //   }
 
-  interface GroupActionSet {
-    type: "set";
-    groups: latest.NodeGroups;
-  }
+interface GroupActionSet {
+  type: "set";
+  groups: NodeGroups;
+}
 
-  interface GroupActionUpdate extends BaseGroupAction {
-    type: "update";
-  }
-  
-  type GroupAction =  GroupActionSet | GroupActionUpdate;
+interface GroupActionUpdate extends BaseGroupAction {
+  type: "update";
+}
 
-export type {
-  GroupAction,
-  GroupActionSet,
-  GroupActionUpdate,
-};
+type GroupAction = GroupActionSet | GroupActionUpdate;
+
+export type { GroupAction, GroupActionSet, GroupActionUpdate };
