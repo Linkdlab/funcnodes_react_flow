@@ -23,7 +23,8 @@
     "dist"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit --watch",
+    "typewatch": "tsc --noEmit --watch",
+    "typecheck": "tsc --noEmit",
     "build": " vite build && vite build --config vite.browser.config.js",
     "watch": "vite --config vite.browser.config.js",
     "preview": "vite build --config vite.browser.config.js && vite preview --config vite.browser.config.js",
