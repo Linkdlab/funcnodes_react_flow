@@ -28,24 +28,25 @@ const reactflowstore = ({
     _edges: [],
     _nodes_map: new Map(),
     update_nodes: (nodes: Node[]) => {
-      nodes=sortByParent(nodes);
+      nodes = sortByParent(nodes);
       set({
         _nodes: nodes,
         _nodes_map: new Map(nodes.map((node) => [node.id, node])),
       });
     },
     partial_update_nodes: (nodes: Node[]) => {
-      const state=get();
+      const state = get();
       const old_nodes = state._nodes;
-      const old_nodes_id_map = new Map(old_nodes.map((node) => [node.id, node]));
+      const old_nodes_id_map = new Map(
+        old_nodes.map((node) => [node.id, node])
+      );
       for (const node of nodes) {
         old_nodes_id_map.set(node.id, node);
       }
-      state.update_nodes(
-        Array.from(old_nodes_id_map.values())
-      );
+      state.update_nodes(Array.from(old_nodes_id_map.values()));
     },
     update_edges: (edges: Edge[]) => {
+      console.log("update_edges", edges);
       set({
         _edges: edges,
       });
