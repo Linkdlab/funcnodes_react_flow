@@ -1,12 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as React from "react";
 import { SmoothExpandComponent } from "./smoothexpand";
@@ -393,7 +386,7 @@ describe("SmoothExpandComponent", () => {
     });
 
     it("should use custom zIndex", () => {
-      const { container } = render(
+      render(
         <SmoothExpandComponent zIndex={5000}>
           <SmoothExpandComponent.Trigger>
             <button>Toggle</button>
@@ -414,7 +407,7 @@ describe("SmoothExpandComponent", () => {
 
   describe("Portal Behavior", () => {
     it("should render in place when collapsed", () => {
-      const { container } = render(
+      render(
         <div data-testid="parent">
           <SmoothExpandComponent>
             <div data-testid="content">Content</div>
@@ -429,7 +422,7 @@ describe("SmoothExpandComponent", () => {
     });
 
     it("should render in document.body when expanded", () => {
-      const { container } = render(
+      render(
         <div data-testid="parent">
           <SmoothExpandComponent>
             <SmoothExpandComponent.Trigger>
