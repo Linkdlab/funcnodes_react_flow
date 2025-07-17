@@ -4,13 +4,14 @@ import {
   FuncNodesReactFlowZustand,
 } from "@/barrel_imports";
 import { remoteUrlToBase64 } from "@/data-helpers";
-import { LimitedDeepPartial } from "@/object-helpers";
+import { LimitedDeepPartial, object_factory_maker } from "@/object-helpers";
 import { ErrorDiv } from "@/shared-components";
 import { ConsoleLogger, Logger } from "@/logging";
 import { FuncNodesWorker, WebSocketWorker, WorkerManager } from "@/workers";
 import { FuncnodesReactFlowProps } from "./app.types";
-import { DEFAULT_FN_PROPS_FACTORY } from "./app-properties";
+import { DEFAULT_FN_PROPS } from "./app-properties";
 import { InnerFuncnodesReactFlow } from "./workspace";
+import { v4 as uuidv4 } from "uuid";
 
 declare global {
   interface Window {
@@ -19,6 +20,14 @@ declare global {
     };
   }
 }
+
+export const DEFAULT_FN_PROPS_FACTORY = object_factory_maker(
+  DEFAULT_FN_PROPS,
+  (obj: FuncnodesReactFlowProps) => {
+    obj.id = uuidv4();
+    return obj;
+  }
+);
 
 const guard_check_props = (props: FuncnodesReactFlowProps) => {
   if (!props.useWorkerManager && props.worker === undefined) {

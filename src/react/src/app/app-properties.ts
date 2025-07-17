@@ -26,7 +26,7 @@ const DEFAULT_FLOW_PROPS: ReactFlowLayerProps = {
   showNodeSettings: true,
 };
 
-const DEFAULT_FN_PROPS: FuncnodesReactFlowProps = {
+export const DEFAULT_FN_PROPS: FuncnodesReactFlowProps = {
   id: "", // required
   debug: false,
   useWorkerManager: true,
@@ -35,14 +35,6 @@ const DEFAULT_FN_PROPS: FuncnodesReactFlowProps = {
   flow: DEFAULT_FLOW_PROPS,
   library: DEFAULT_LIB_PROPS,
 };
-
-export const DEFAULT_FN_PROPS_FACTORY = object_factory_maker(
-  DEFAULT_FN_PROPS,
-  (obj: FuncnodesReactFlowProps) => {
-    obj.id = uuidv4();
-    return obj;
-  }
-);
 
 export const AVAILABLE_COLOR_THEMES: string[] = [
   "classic",
