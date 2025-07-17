@@ -38,6 +38,12 @@
       ],
       "@/logging": [
         "src/shared/utils/logger"
+      ],
+      "@/app": [
+        "src/app"
+      ],
+      "@/providers": [
+        "src/app/providers"
       ]
     },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
