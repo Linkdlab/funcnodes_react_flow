@@ -493,6 +493,16 @@ describe("performance optimizations", () => {
 
   it("should not update state when dimensions haven't changed", async () => {
     let renderCount = 0;
+    let mockObserver: MockResizeObserver;
+    
+    // Capture the ResizeObserver instance
+    const OriginalObserver = global.ResizeObserver;
+    global.ResizeObserver = class extends MockResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        super(callback);
+        mockObserver = this;
+      }
+    } as any;
 
     const TestComponent: React.FC = () => {
       renderCount++;
@@ -517,27 +527,14 @@ describe("performance optimizations", () => {
     const initialRenderCount = renderCount;
 
     // Simulate resize to same dimensions - should not trigger re-render
-    let mockObserver: MockResizeObserver;
-    const OriginalObserver = global.ResizeObserver;
-    global.ResizeObserver = class extends MockResizeObserver {
-      constructor(callback: ResizeObserverCallback) {
-        super(callback);
-        mockObserver = this;
-      }
-    } as any;
-
-    // Re-render with same observer
-    const { rerender } = render(
-      <SizeContextContainer>
-        <TestComponent />
-      </SizeContextContainer>
-    );
-
     act(() => {
       mockObserver!.simulateResize(800, 600); // Same dimensions
     });
 
-    // Should not cause additional re-renders
+    // Wait a bit to ensure any debounced updates would have fired
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // Should not cause additional re-renders since dimensions are the same
     expect(renderCount).toBe(initialRenderCount);
 
     global.ResizeObserver = OriginalObserver;

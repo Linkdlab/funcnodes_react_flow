@@ -9,14 +9,6 @@ import "@testing-library/jest-dom";
 import * as React from "react";
 import { ExpandingContainer, ExpandingContainerProps } from "./index";
 
-// Mock the icon components since they're from external dependencies
-vi.mock("@/icons", () => ({
-  ChevronLeftIcon: () => <div data-testid="chevron-left-icon">Left</div>,
-  ChevronRightIcon: () => <div data-testid="chevron-right-icon">Right</div>,
-  ChevronDownIcon: () => <div data-testid="chevron-down-icon">Down</div>,
-  ChevronUpIcon: () => <div data-testid="chevron-up-icon">Up</div>,
-}));
-
 describe("ExpandingContainer", () => {
   // Default props for testing
   const defaultProps: ExpandingContainerProps = {
@@ -103,8 +95,14 @@ describe("ExpandingContainer", () => {
           />
         );
 
-        const expectedIcon = `chevron-${direction}-icon`;
-        expect(screen.getByTestId(expectedIcon)).toBeInTheDocument();
+        const expectedIcon = {
+          up: "▲",
+          down: "▼",
+          left: "◀",
+          right: "▶",
+        }[direction];
+
+        expect(screen.getByText(expectedIcon)).toBeInTheDocument();
       });
 
       it(`should show correct collapse icon for ${direction} direction when expanded`, () => {
@@ -116,17 +114,120 @@ describe("ExpandingContainer", () => {
           />
         );
 
-        // Map direction to opposite for collapse icon
-        const oppositeDirection = {
-          up: "down",
-          down: "up",
-          left: "right",
-          right: "left",
+        // Collapse icons point in the opposite direction for horizontal directions
+        const expectedIcon = {
+          up: "▲",
+          down: "▼",
+          left: "▶", // left collapse shows right arrow
+          right: "◀", // right collapse shows left arrow
         }[direction];
 
-        const expectedIcon = `chevron-${oppositeDirection}-icon`;
-        expect(screen.getByTestId(expectedIcon)).toBeInTheDocument();
+        expect(screen.getByText(expectedIcon)).toBeInTheDocument();
       });
+    });
+  });
+
+  describe("Custom Icons", () => {
+    it("should use custom expand icons when provided", () => {
+      const CustomUpIcon = () => <div data-testid="custom-up-expand">↑</div>;
+      const CustomRightIcon = () => (
+        <div data-testid="custom-right-expand">→</div>
+      );
+
+      const customExpandIcons = {
+        up: CustomUpIcon,
+        right: CustomRightIcon,
+      };
+
+      render(
+        <ExpandingContainer
+          direction="up"
+          expanded={false}
+          expandIcons={customExpandIcons}
+        />
+      );
+
+      expect(screen.getByTestId("custom-up-expand")).toBeInTheDocument();
+      expect(screen.getByText("↑")).toBeInTheDocument();
+    });
+
+    it("should use custom collapse icons when provided", () => {
+      const CustomDownIcon = () => (
+        <div data-testid="custom-down-collapse">↓</div>
+      );
+
+      const customCollapseIcons = {
+        down: CustomDownIcon,
+      };
+
+      render(
+        <ExpandingContainer
+          direction="down"
+          expanded={true}
+          collapseIcons={customCollapseIcons}
+        />
+      );
+
+      expect(screen.getByTestId("custom-down-collapse")).toBeInTheDocument();
+      expect(screen.getByText("↓")).toBeInTheDocument();
+    });
+
+    it("should fall back to default icons when custom icons not provided for direction", () => {
+      const CustomUpIcon = () => <div data-testid="custom-up">↑</div>;
+
+      const customExpandIcons = {
+        up: CustomUpIcon,
+        // No left icon provided
+      };
+
+      render(
+        <ExpandingContainer
+          direction="left"
+          expanded={false}
+          expandIcons={customExpandIcons}
+        />
+      );
+
+      // Should use default left icon since custom one not provided
+      expect(screen.getByText("◀")).toBeInTheDocument();
+      expect(screen.queryByTestId("custom-up")).not.toBeInTheDocument();
+    });
+
+    it("should use default icons when no custom icons provided", () => {
+      render(<ExpandingContainer direction="right" expanded={false} />);
+
+      expect(screen.getByText("▶")).toBeInTheDocument();
+    });
+
+    it("should switch between custom expand and collapse icons", () => {
+      const CustomExpandIcon = () => <div data-testid="custom-expand">+</div>;
+      const CustomCollapseIcon = () => (
+        <div data-testid="custom-collapse">-</div>
+      );
+
+      const { rerender } = render(
+        <ExpandingContainer
+          direction="right"
+          expanded={false}
+          expandIcons={{ right: CustomExpandIcon }}
+          collapseIcons={{ right: CustomCollapseIcon }}
+        />
+      );
+
+      expect(screen.getByTestId("custom-expand")).toBeInTheDocument();
+      expect(screen.queryByTestId("custom-collapse")).not.toBeInTheDocument();
+
+      rerender(
+        <ExpandingContainer
+          direction="right"
+          expanded={true}
+          expandIcons={{ right: CustomExpandIcon }}
+          collapseIcons={{ right: CustomCollapseIcon }}
+        />
+      );
+
+      expect(screen.getByTestId("custom-collapse")).toBeInTheDocument();
+      expect(screen.queryByTestId("custom-expand")).not.toBeInTheDocument();
     });
   });
 
@@ -272,7 +373,11 @@ describe("ExpandingContainer", () => {
     });
 
     it("should apply custom containerStyle", () => {
-      const customStyle = { backgroundColor: "red", margin: "10px" };
+      const customStyle = {
+        backgroundColor: "red",
+        margin: "10px",
+        border: "2px solid blue",
+      };
 
       render(
         <ExpandingContainer {...defaultProps} containerStyle={customStyle} />
@@ -281,7 +386,9 @@ describe("ExpandingContainer", () => {
       const container = screen
         .getByTestId("test-content")
         .closest(".expanding_container");
-      expect(container).toHaveStyle(customStyle);
+      expect(container).toHaveStyle("background-color: rgb(255, 0, 0)");
+      expect(container).toHaveStyle("margin: 10px");
+      expect(container).toHaveStyle("border: 2px solid blue");
     });
 
     it("should apply custom content style", () => {
@@ -370,6 +477,32 @@ describe("ExpandingContainer", () => {
       expander.focus();
 
       expect(document.activeElement).toBe(expander);
+    });
+
+    it("should handle keyboard interaction (Enter and Space)", () => {
+      const onExpandChange = vi.fn();
+
+      render(
+        <ExpandingContainer
+          {...defaultProps}
+          expanded={false}
+          onExpandChange={onExpandChange}
+        />
+      );
+
+      const expander = screen.getByRole("button");
+
+      // Test Enter key
+      fireEvent.keyDown(expander, { key: "Enter" });
+      expect(onExpandChange).toHaveBeenCalledWith(true);
+
+      // Test Space key
+      fireEvent.keyDown(expander, { key: " " });
+      expect(onExpandChange).toHaveBeenCalledWith(false);
+
+      // Test that other keys don't trigger expansion
+      fireEvent.keyDown(expander, { key: "Tab" });
+      expect(onExpandChange).toHaveBeenCalledTimes(2); // Should still be 2, not 3
     });
   });
 

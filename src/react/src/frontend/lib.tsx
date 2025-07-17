@@ -15,7 +15,15 @@ import {
   LibNode,
   Shelf,
 } from "../states/lib.t";
-import { SearchIcon, CloseIcon, ExpandLessIcon } from "@/icons";
+import {
+  SearchIcon,
+  CloseIcon,
+  ExpandLessIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
+} from "@/icons";
 import {
   currentBreakpointSmallerThan,
   ExpandingContainer,
@@ -838,6 +846,18 @@ export const Library = () => {
       containerClassName={`pos-left pos-top bg1 h-12`}
       onExpandChange={set_expand_lib}
       expanded={expanded === undefined ? true : expanded}
+      collapseIcons={{
+        up: ChevronDownIcon,
+        down: ChevronUpIcon,
+        left: ChevronRightIcon,
+        right: ChevronLeftIcon,
+      }}
+      expandIcons={{
+        up: ChevronUpIcon,
+        down: ChevronDownIcon,
+        left: ChevronLeftIcon,
+        right: ChevronRightIcon,
+      }}
     >
       <div className="libcontainer">
         <div className="library">
