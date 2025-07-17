@@ -10,8 +10,6 @@ import { loadAliasesFromTsConfig } from "./vite.config.js"; // Import the alias 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
-
 function htmlTransformPlugin(mode) {
   return {
     name: "html-transform-plugin",
@@ -55,6 +53,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       watch: {
+        usePolling: true,
         additionalPaths: (watcher) => {
           watcher.add(path.resolve(__dirname, "src/**")); // Watch all files in the src directory
         },
