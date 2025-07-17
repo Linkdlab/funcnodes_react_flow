@@ -22,7 +22,6 @@ import {
   MockInstance,
 } from "vitest";
 import {
-  Logger,
   BaseLogger,
   ConsoleLogger,
   DivLogger,

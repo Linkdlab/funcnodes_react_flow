@@ -76,7 +76,7 @@ describe("ErrorDiv", () => {
       render(<ErrorDiv error={testError} />);
 
       // Use a more flexible matcher that handles whitespace normalization
-      const message = screen.getByText((content, element) => {
+      const message = screen.getByText((_, element) => {
         return element?.textContent === multilineMessage;
       });
       expect(message).toBeInTheDocument();
