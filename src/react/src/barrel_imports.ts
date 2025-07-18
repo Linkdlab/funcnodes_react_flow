@@ -12,7 +12,6 @@ export type { ViewState, FullState } from "./states/fnrfzst.t";
 export type { GroupActionUpdate } from "./states/groups.t";
 export { update_nodeview } from "./states/node/update_node";
 export type { ProgressStateMessage } from "./states/fnrfzst.t";
-export { NodeSettings } from "./frontend/node";
 export { RenderMappingProvider } from "./frontend/datarenderer/rendermappings";
 export { KeyContextProvider } from "./frontend/utils/keypresslistener";
 export * from "./states/lib.t";

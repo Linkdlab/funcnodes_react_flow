@@ -16,7 +16,7 @@ import {
 } from "@/icons";
 import { latest } from "../../types/versioned/versions.t";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
-import { NodeSettingsOverlay } from "./nodesettings";
+import { NodeSettingsOverlay } from "@/node-settings";
 import { useKeysDown } from "../utils/keypresslistener";
 import { CustomDialog } from "@/barrel_imports";
 
