@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import JSONDataDisplay from "../utils/jsondata";
-import { SortableTable } from "../utils/table";
+import { SortableTable } from "@/shared-components";
 import { SVGImage, StreamingImage } from "./images";
 import { latest } from "../../types/versioned/versions.t";
 
