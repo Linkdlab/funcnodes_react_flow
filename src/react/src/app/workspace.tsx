@@ -20,7 +20,6 @@ import { AVAILABLE_COLOR_THEMES } from "./app-properties";
 import {
   FuncNodesReactFlowZustandInterface,
   KeyContextProvider,
-  Library,
   NodeSettings,
   ReactFlowLayer,
   RenderMappingProvider,
@@ -31,6 +30,7 @@ import {
 } from "@/shared-components";
 import { SizeContextContainer } from "@/shared-components/auto-layouts";
 import { FuncnodesHeader } from "@/header";
+import { Library } from "@/library";
 
 export const InnerFuncnodesReactFlow = ({
   fnrf_zst,
