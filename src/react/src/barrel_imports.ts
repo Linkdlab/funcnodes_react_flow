@@ -15,5 +15,4 @@ export type { ProgressStateMessage } from "./states/fnrfzst.t";
 export { NodeSettings } from "./frontend/node";
 export { RenderMappingProvider } from "./frontend/datarenderer/rendermappings";
 export { KeyContextProvider } from "./frontend/utils/keypresslistener";
-export { Library, LibraryItem } from "./features/library";
 export * from "./states/lib.t";
