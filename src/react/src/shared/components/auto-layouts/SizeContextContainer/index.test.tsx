@@ -245,7 +245,7 @@ describe("SizeContextContainer", () => {
         [2500, "xxl"],
       ];
 
-      testCases.forEach(([width, expected]) => {
+      testCases.forEach(([width, _expected]) => {
         // We need to access the internal getBreakpointKey function indirectly
         // by testing through the component
         Element.prototype.getBoundingClientRect = vi.fn(() => ({
