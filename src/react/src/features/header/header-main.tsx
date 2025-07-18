@@ -1,28 +1,13 @@
 import * as React from "react";
-import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
-import { useFuncNodesContext } from "@/providers";
-
-import { development } from "../../utils/debugger";
-import { FloatContainer } from "../layout/components";
-import { NodeSpaceMenu } from "./nodespacemenu";
-import { WorkerMenu } from "./workermenu";
-import { SettingsMenu } from "./settingsmenu";
 import { FuncnodesReactHeaderProps } from "@/app";
-
-export const Statusbar = () => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
-  const progress = fnrf_zst.progress_state();
-
-  return (
-    <div className="statusbar">
-      <span
-        className="statusbar-progressbar"
-        style={{ width: Math.min(100, 100 * progress.progress) + "%" }}
-      ></span>
-      <span className="statusbar-message">{progress.message}</span>
-    </div>
-  );
-};
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+import { useFuncNodesContext } from "@/providers";
+import { FloatContainer } from "@/shared-components/auto-layouts";
+import { Statusbar } from "./statusbar";
+import { development } from "@/utils/debugger";
+import { WorkerMenu } from "./workermenu";
+import { NodeSpaceMenu } from "./nodespacemenu";
+import { SettingsMenu } from "./settingsmenu";
 
 export const FuncnodesHeader = ({
   ...headerprops

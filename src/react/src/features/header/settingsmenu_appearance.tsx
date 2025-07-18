@@ -1,5 +1,5 @@
-import { useTheme } from "@/providers";
 import * as React from "react";
+import { useTheme } from "@/providers";
 import { AVAILABLE_COLOR_THEMES } from "@/app";
 
 const ThemePreviewMiniApp: React.FC<{

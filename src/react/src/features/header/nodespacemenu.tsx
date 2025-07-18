@@ -1,9 +1,10 @@
-import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
-import { useFuncNodesContext } from "@/providers";
 import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+
+import { useFuncNodesContext } from "@/providers";
 import { MenuRoundedIcon } from "@/icons";
-import { FloatContainer } from "../layout/components";
+import { FloatContainer } from "@/shared-components/auto-layouts";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 
 export const NodeSpaceMenu = () => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();

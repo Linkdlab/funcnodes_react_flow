@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 import { useFuncNodesContext } from "@/providers";
-import CustomDialog from "../dialog";
 import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MenuRoundedIcon, ChevronRightIcon } from "@/icons";
-import { development } from "../../utils/debugger";
-import { FloatContainer } from "../layout/components";
 import { downloadBase64, fileDialogToBase64 } from "@/data-helpers";
+import { CustomDialog } from "@/barrel_imports";
+import { development } from "@/utils/debugger";
+import { FloatContainer } from "@/shared-components/auto-layouts";
 
 const NewWorkerDialog = ({
   trigger,

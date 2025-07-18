@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MenuRoundedIcon } from "@/icons";
-import { FloatContainer } from "../layout/components";
-import CustomDialog from "../dialog";
 import { AppearanceDialogContent } from "./settingsmenu_appearance";
+import { FloatContainer } from "@/shared-components/auto-layouts";
+import { CustomDialog } from "@/barrel_imports";
 
 export const SettingsMenu = () => {
   const [appearanceOpen, setAppearanceOpen] = React.useState(false);
