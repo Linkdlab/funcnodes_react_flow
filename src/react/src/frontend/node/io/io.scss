@@ -42,6 +42,10 @@
   }
 }
 
+.funcnodesreactflowbody [data-radix-popper-content-wrapper] {
+  position: absolute !important;
+}
+
 .iotooltipcontent {
   z-index: 100;
   background-color: #f9f9f9;
@@ -55,6 +59,8 @@
   max-width: 40vw;
   max-height: 40vh;
   cursor: default;
+  overflow: hidden;
+  box-sizing: border-box;
 
   &.fullsize {
     max-width: 100vw;
@@ -85,6 +91,7 @@
   flex-direction: column;
   max-width: inherit;
   max-height: inherit;
+  overflow: hidden;
 }
 
 .iotooltipcontentarrow {

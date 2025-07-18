@@ -42,8 +42,8 @@ export const transformTableData = (data: TableData): TransformedTableData => {
     data.data = [];
   }
 
-  if (data.columns === undefined) {
-    // if no columns are defined, create columns based on the first row
+  if (data.columns === undefined || data.columns.length === 0) {
+    // if no columns are defined or columns array is empty, create columns based on the first row
 
     // if data is empty, there are no columns
     if (data.data.length === 0) {
@@ -53,8 +53,8 @@ export const transformTableData = (data: TableData): TransformedTableData => {
       data.columns = data.data[0].map((_, i) => `col${i}`);
     }
   }
-  if (data.index === undefined) {
-    // if no index is defined, create index based on the number of rows
+  if (data.index === undefined || data.index.length === 0) {
+    // if no index is defined or index array is empty, create index based on the number of rows
     data.index = data.data.map((_, i) => `row${i}`);
   }
 

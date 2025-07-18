@@ -182,20 +182,18 @@ const Base64BytesRenderer: latest.DataViewRendererType = ({
   );
 };
 
+// Create a constant empty table to avoid creating new objects on every render
+const EMPTY_TABLE_DATA = {
+  columns: [],
+  index: [],
+  data: [],
+} as const;
+
 const TableRender: latest.DataViewRendererType = ({
   value,
+  ...props
 }: latest.DataViewRendererProps) => {
-  return (
-    <SortableTable
-      tabledata={
-        value || {
-          columns: [],
-          index: [],
-          data: [],
-        }
-      }
-    />
-  );
+  return <SortableTable tabledata={value || EMPTY_TABLE_DATA} {...props} />;
 };
 
 const DictRenderer: latest.DataViewRendererType = ({

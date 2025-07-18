@@ -11,14 +11,15 @@ import {
 
 export const DataViewRendererToDataPreviewViewRenderer = (
   DV: latest.DataViewRendererType,
-  defaultValue: any = undefined
+  defaultValue: any = undefined,
+  props: any = {}
 ): latest.DataPreviewViewRendererType => {
   return ({ iostore }: latest.DataPreviewViewRendererProps) => {
     const { full, preview } = iostore.valuestore();
     const val = full === undefined ? preview : full;
     const renderval = val?.value || defaultValue;
 
-    return <DV iostore={iostore} value={renderval} />;
+    return <DV iostore={iostore} value={renderval} {...props} />;
   };
 };
 
@@ -27,7 +28,9 @@ export const DefaultDataPreviewViewRenderer: {
 } = {
   string: DataViewRendererToDataPreviewViewRenderer(StringValueRenderer),
   str: DataViewRendererToDataPreviewViewRenderer(StringValueRenderer),
-  table: DataViewRendererToDataPreviewViewRenderer(TableRender),
+  table: DataViewRendererToDataPreviewViewRenderer(TableRender, undefined, {
+    pageSize: 10,
+  }),
   image: DataViewRendererToDataPreviewViewRenderer(DefaultImageRenderer),
   svg: DataViewRendererToDataPreviewViewRenderer(SVGImageRenderer, ""),
   dict: DataViewRendererToDataPreviewViewRenderer(DictRenderer, "{}"),

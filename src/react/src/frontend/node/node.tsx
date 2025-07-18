@@ -82,44 +82,46 @@ interface NodeBodyProps {
   setShowSettings?: (show: boolean) => void;
 }
 
-const NodeIODataRenderer = ({
-  iostore,
-  node_data,
-}: {
-  node_data: latest.NodeType;
-  iostore: latest.IOStore;
-}) => {
-  const io = iostore.use();
+const NodeIODataRenderer = React.memo(
+  ({
+    iostore,
+    node_data,
+  }: {
+    node_data: latest.NodeType;
+    iostore: latest.IOStore;
+  }) => {
+    const io = iostore.use();
 
-  const [pvhandle, overlayhandle] = useBodyDataRendererForIo(io);
+    const [pvhandle, overlayhandle] = useBodyDataRendererForIo(io);
 
-  return (
-    <div
-      className="nodrag nodedatabody"
-      data-src={node_data.render_options?.data?.src || ""}
-    >
-      {pvhandle && io && (
-        <CustomDialog
-          title={io.full_id}
-          trigger={
-            <div className="nodedatabutton">
-              {<IOPreviewWrapper Component={pvhandle} iostore={iostore} />}
-            </div>
-          }
-          onOpenChange={(open: boolean) => {
-            if (open) {
-              if (io?.try_get_full_value) io?.try_get_full_value();
+    return (
+      <div
+        className="nodrag nodedatabody"
+        data-src={node_data.render_options?.data?.src || ""}
+      >
+        {pvhandle && io && (
+          <CustomDialog
+            title={io.full_id}
+            trigger={
+              <div className="nodedatabutton">
+                {<IOPreviewWrapper Component={pvhandle} iostore={iostore} />}
+              </div>
             }
-          }}
-        >
-          {overlayhandle && (
-            <IODataOverlay Component={overlayhandle} iostore={iostore} />
-          )}
-        </CustomDialog>
-      )}
-    </div>
-  );
-};
+            onOpenChange={(open: boolean) => {
+              if (open) {
+                if (io?.try_get_full_value) io?.try_get_full_value();
+              }
+            }}
+          >
+            {overlayhandle && (
+              <IODataOverlay Component={overlayhandle} iostore={iostore} />
+            )}
+          </CustomDialog>
+        )}
+      </div>
+    );
+  }
+);
 
 const NodeBody = React.memo(
   ({ node_data, setShowSettings, setNodeSettingsPath }: NodeBodyProps) => {

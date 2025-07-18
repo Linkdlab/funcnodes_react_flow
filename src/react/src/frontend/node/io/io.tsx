@@ -85,7 +85,17 @@ const HandleWithPreview = ({
         <Handle id={io.id} {...{ "data-type": typestring }} {...props} />
       </Popover.Trigger>
       <Popover.Portal container={portal}>
-        <Popover.Content className={"iotooltipcontent"} sideOffset={5}>
+        <Popover.Content
+          className={"iotooltipcontent"}
+          sideOffset={5}
+          // side="top"
+          // align="center"
+          avoidCollisions={true}
+          collisionBoundary={portal}
+          collisionPadding={10}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
           <div className="iotooltip_container">
             <div className="iotooltip_header">
               {locked ? (
