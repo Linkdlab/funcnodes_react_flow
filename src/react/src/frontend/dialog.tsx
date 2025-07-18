@@ -4,7 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { CloseIcon } from "@/icons";
 import { useFuncNodesContext } from "@/providers";
 
-interface CustomDialogProps {
+export interface CustomDialogProps {
   trigger?: React.ReactNode;
   title?: string;
   description?: string | React.ReactNode;
@@ -22,7 +22,7 @@ interface CustomDialogProps {
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
-const CustomDialog = ({
+export const CustomDialog = ({
   trigger,
   title,
   description,
@@ -91,6 +91,3 @@ const CustomDialog = ({
     </Dialog.Root>
   );
 };
-
-export default CustomDialog;
-export type { CustomDialogProps };
