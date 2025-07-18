@@ -11,7 +11,7 @@ import * as React from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 import { latest } from "../../../types/versioned/versions.t";
 import { SelectionInput } from "../../datarenderer/default_input_renderer";
-import { useKeysDown } from "../../utils/keypresslistener";
+import { useKeyPress } from "@/providers";
 
 const INPUTCONVERTER: {
   [key: string]: [(v: any) => any, (v: any) => any] | undefined;
@@ -72,7 +72,7 @@ const NodeInput = ({
     INPUTCONVERTER[
       (otypestring && render.inputconverter?.[otypestring]) ?? ""
     ] || INPUTCONVERTER[""]!;
-  const pressedKeys = useKeysDown();
+  const { keys: pressedKeys } = useKeyPress();
   const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     if (pressedKeys.has("s")) {
       if (setNodeSettingsPath) setNodeSettingsPath("inputs/" + io.id);

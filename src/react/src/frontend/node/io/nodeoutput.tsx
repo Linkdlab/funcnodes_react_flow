@@ -14,7 +14,7 @@ import * as React from "react";
 import { RenderMappingContext } from "../../datarenderer/rendermappings";
 import { latest } from "../../../types/versioned/versions.t";
 import { InLineOutput } from "../../datarenderer/default_output_renderer";
-import { useKeysDown } from "../../utils/keypresslistener";
+import { useKeyPress } from "@/providers";
 
 const NodeOutput = ({
   iostore,
@@ -32,7 +32,7 @@ const NodeOutput = ({
 
   const [typestring] = pick_best_io_type(io.type, render.typemap || {});
   const { Outputrenderer } = useContext(RenderMappingContext);
-  const pressedKeys = useKeysDown();
+  const { keys: pressedKeys } = useKeyPress();
   const Output = typestring ? Outputrenderer[typestring] : undefined;
   const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     if (pressedKeys.has("s")) {

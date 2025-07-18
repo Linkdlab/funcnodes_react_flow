@@ -17,7 +17,7 @@ import {
 import { latest } from "../../types/versioned/versions.t";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
 import { NodeSettingsOverlay } from "@/node-settings";
-import { useKeysDown } from "../utils/keypresslistener";
+import { useKeyPress } from "@/providers";
 import { CustomDialog } from "@/barrel_imports";
 
 interface NodeHeaderProps {
@@ -280,7 +280,7 @@ const DefaultNode = ({ data }: { data: RFNodeDataPass }) => {
 
   const [showSettings, setShowSettings] = useState(false);
   const [nodeSettingsPath, setNodeSettingsPath] = useState<string>("");
-  const pressedKeys = useKeysDown();
+  const { keys: pressedKeys } = useKeyPress();
 
   const toogleShowSettings = () => {
     setShowSettings((prev) => !prev);

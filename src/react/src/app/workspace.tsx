@@ -8,7 +8,7 @@ import {
   CloseFullscreenIcon,
 } from "@/icons";
 
-import { ThemeProvider } from "./providers/theme-provider";
+import { KeyPressProvider, ThemeProvider } from "@/providers";
 import {
   FuncnodesReactHeaderProps,
   ReactFlowLayerProps,
@@ -19,7 +19,6 @@ import { FuncNodesContext } from "@/providers";
 import { AVAILABLE_COLOR_THEMES } from "./app-properties";
 import {
   FuncNodesReactFlowZustandInterface,
-  KeyContextProvider,
   ReactFlowLayer,
   RenderMappingProvider,
 } from "@/barrel_imports";
@@ -68,7 +67,7 @@ export const InnerFuncnodesReactFlow = ({
   return (
     <ThemeProvider available_themes={AVAILABLE_COLOR_THEMES}>
       <RenderMappingProvider plugins={plugins} fnrf_zst={fnrf_zst}>
-        <KeyContextProvider>
+        <KeyPressProvider>
           <FuncNodesContext.Provider value={fnrf_zst}>
             <SmoothExpandComponent asChild>
               <FullScreenComponent asChild>
@@ -137,7 +136,7 @@ export const InnerFuncnodesReactFlow = ({
               </FullScreenComponent>
             </SmoothExpandComponent>
           </FuncNodesContext.Provider>
-        </KeyContextProvider>
+        </KeyPressProvider>
       </RenderMappingProvider>
     </ThemeProvider>
   );
