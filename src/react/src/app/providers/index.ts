@@ -10,10 +10,5 @@ export {
   type KeyPressState,
   type KeyPressProviderProps,
   type KeyConstant,
-
-  // Backward compatibility exports (deprecated)
-  KeyContextProvider,
-  useKeysDown,
-  KeyContext,
 } from "./keypress-provider";
 export { ThemeProvider, useTheme } from "./theme-provider";

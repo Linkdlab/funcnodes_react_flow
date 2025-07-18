@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {
   render,
   screen,
@@ -16,11 +16,7 @@ import {
   useKeyboardShortcuts,
   withKeyPress,
   Keys,
-  useKeysDown,
-  KeyContextProvider,
-  KeyContext,
   type KeyPressState,
-  type KeyPressProviderProps,
 } from "./keypress-provider";
 
 // Test component that uses the keypress hooks
@@ -590,69 +586,6 @@ describe("KeyPressProvider", () => {
     });
   });
 
-  describe("Backward Compatibility", () => {
-    it("should support deprecated useKeysDown hook", () => {
-      const TestDeprecatedComponent = () => {
-        const keysDown = useKeysDown();
-        return (
-          <div data-testid="deprecated-keys">
-            {Array.from(keysDown).join(", ")}
-          </div>
-        );
-      };
-
-      render(
-        <KeyPressProvider>
-          <TestDeprecatedComponent />
-        </KeyPressProvider>
-      );
-
-      act(() => {
-        fireEvent.keyDown(window, { key: "a" });
-        fireEvent.keyDown(window, { key: "b" });
-      });
-
-      const keysText = screen.getByTestId("deprecated-keys").textContent;
-      expect(keysText).toContain("a");
-      expect(keysText).toContain("b");
-    });
-
-    it("should support deprecated KeyContext", () => {
-      const TestKeyContext = () => {
-        const context = React.useContext(KeyContext);
-        return (
-          <div data-testid="key-context">
-            {context ? "has-context" : "no-context"}
-          </div>
-        );
-      };
-
-      render(
-        <KeyPressProvider>
-          <TestKeyContext />
-        </KeyPressProvider>
-      );
-
-      expect(screen.getByTestId("key-context")).toHaveTextContent(
-        "has-context"
-      );
-    });
-
-    it("should support deprecated KeyContextProvider alias", () => {
-      render(
-        <KeyContextProvider>
-          <TestComponent />
-        </KeyContextProvider>
-      );
-
-      act(() => {
-        fireEvent.keyDown(window, { key: "a" });
-      });
-
-      expect(screen.getByTestId("pressed-keys")).toHaveTextContent("a");
-    });
-  });
-
   describe("Performance and Memory", () => {
     it("should not recreate context value unnecessarily", () => {
       const TestMemoComponent = () => {
@@ -728,13 +661,13 @@ describe("KeyPressProvider", () => {
       act(() => {
         fireEvent.keyDown(window, { key: "a" });
       });
-      
+
       expect(screen.getByTestId("key-count")).toHaveTextContent("1");
 
       act(() => {
         fireEvent.keyDown(window, { key: "b" });
       });
-      
+
       expect(screen.getByTestId("key-count")).toHaveTextContent("2");
 
       act(() => {

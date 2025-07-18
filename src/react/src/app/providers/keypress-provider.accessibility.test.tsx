@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {
   render,
   screen,
@@ -6,19 +6,16 @@ import {
   act,
   waitFor,
 } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 
 import {
   KeyPressProvider,
-  useKeyPress,
   useKeyboardShortcuts,
-  Keys,
 } from "./keypress-provider";
 
 import {
   simulateKeyCombo,
-  TestKeyCominations,
 } from "./keypress-provider.test-utils";
 
 // Accessible form component

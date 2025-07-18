@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {
   render,
   screen,
@@ -13,14 +13,11 @@ import {
   KeyPressProvider,
   useKeyPress,
   useKeyboardShortcuts,
-  Keys,
 } from "./keypress-provider";
 
 import {
   simulateKeyCombo,
   simulateShortcut,
-  simulateTyping,
-  TestKeyCominations,
   MockEventTarget,
 } from "./keypress-provider.test-utils";
 
@@ -137,7 +134,6 @@ const ComplexApp: React.FC<{
   onAction?: (action: string, data?: any) => void;
 }> = ({ onAction }) => {
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [currentFocus, setCurrentFocus] = React.useState<string>("editor");
 
   return (
     <div data-testid="complex-app">
@@ -449,7 +445,6 @@ describe("KeyPressProvider Integration Tests", () => {
     });
 
     it("should not cause memory leaks with frequent mount/unmount", () => {
-      const addEventListenerSpy = vi.spyOn(window, "addEventListener");
       const removeEventListenerSpy = vi.spyOn(window, "removeEventListener");
 
       const { rerender, unmount } = render(
@@ -457,8 +452,6 @@ describe("KeyPressProvider Integration Tests", () => {
           <TextEditor onCommand={onCommand} />
         </KeyPressProvider>
       );
-
-      const initialAddCalls = addEventListenerSpy.mock.calls.length;
 
       // Rerender multiple times
       for (let i = 0; i < 5; i++) {

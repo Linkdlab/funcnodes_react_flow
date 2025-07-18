@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
@@ -10,10 +10,6 @@ import {
 } from "./keypress-provider";
 
 import {
-  simulateKeyPress,
-  simulateKeysDown,
-  simulateKeysUp,
-  simulateShortcut,
   TestKeys,
   MockEventTarget,
   waitForAsync,
@@ -220,7 +216,7 @@ describe("KeyPressProvider Performance Tests", () => {
 
   describe("Shortcut Performance", () => {
     it("should handle many keyboard shortcuts efficiently", () => {
-      const shortcutCallbacks = Array.from({ length: 100 }, (_, i) => vi.fn());
+      const shortcutCallbacks = Array.from({ length: 100 }, () => vi.fn());
 
       const TestComponent = () => {
         const shortcuts = Object.fromEntries(
@@ -300,7 +296,7 @@ describe("KeyPressProvider Performance Tests", () => {
 
       const TestComponent = () => {
         renderCount++;
-        const { keys } = useKeyPress();
+        useKeyPress(); // Call hook to ensure it's used, but don't destructure unused variable
         return <div data-testid="render-count">{renderCount}</div>;
       };
 

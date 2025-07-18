@@ -243,22 +243,3 @@ export const Keys = {
  * Type for key constants
  */
 export type KeyConstant = (typeof Keys)[keyof typeof Keys];
-
-/* ===== BACKWARD COMPATIBILITY ===== */
-/**
- * @deprecated Use KeyPressContext instead
- */
-export const KeyContext = KeyPressContext;
-
-/**
- * @deprecated Use useKeyPress().keys instead
- */
-export const useKeysDown = (): Set<string> => {
-  const { keys } = useKeyPress();
-  return keys as Set<string>;
-};
-
-/**
- * @deprecated Use KeyPressProvider instead
- */
-export const KeyContextProvider = KeyPressProvider;
