@@ -13,7 +13,7 @@ import {
   FuncnodesReactHeaderProps,
   ReactFlowLayerProps,
   ReactFlowLibraryProps,
-} from "src/app/app.types";
+} from "./app.types";
 import { FuncNodesWorker } from "@/workers";
 import { FuncNodesContext } from "@/providers";
 import { AVAILABLE_COLOR_THEMES } from "./app-properties";
