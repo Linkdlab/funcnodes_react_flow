@@ -1,3 +1,5 @@
+export { CustomDialog } from "./frontend/dialog";
+
 export { ReactFlowLayer } from "./frontend/funcnodesreactflow/react_flow_layer";
 
 export type { FuncNodesReactFlowZustandInterface } from "./states/fnrfzst.t";
@@ -10,9 +12,7 @@ export type { ViewState, FullState } from "./states/fnrfzst.t";
 export type { GroupActionUpdate } from "./states/groups.t";
 export { update_nodeview } from "./states/node/update_node";
 export type { ProgressStateMessage } from "./states/fnrfzst.t";
-export { FuncnodesHeader, Statusbar } from "./frontend/header";
 export { LibraryItem, Library } from "./frontend/lib";
 export { NodeSettings } from "./frontend/node";
 export { RenderMappingProvider } from "./frontend/datarenderer/rendermappings";
-export { SizeContextContainer } from "./frontend/layout/components";
 export { KeyContextProvider } from "./frontend/utils/keypresslistener";

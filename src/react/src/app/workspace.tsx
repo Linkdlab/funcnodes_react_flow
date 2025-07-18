@@ -18,19 +18,19 @@ import { FuncNodesWorker } from "@/workers";
 import { FuncNodesContext } from "@/providers";
 import { AVAILABLE_COLOR_THEMES } from "./app-properties";
 import {
-  FuncnodesHeader,
   FuncNodesReactFlowZustandInterface,
   KeyContextProvider,
   Library,
   NodeSettings,
   ReactFlowLayer,
   RenderMappingProvider,
-  SizeContextContainer,
 } from "@/barrel_imports";
 import {
   FullScreenComponent,
   SmoothExpandComponent,
 } from "@/shared-components";
+import { SizeContextContainer } from "@/shared-components/auto-layouts";
+import { FuncnodesHeader } from "@/header";
 
 export const InnerFuncnodesReactFlow = ({
   fnrf_zst,

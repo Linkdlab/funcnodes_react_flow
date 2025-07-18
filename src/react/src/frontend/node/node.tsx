@@ -5,8 +5,6 @@ import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 import { useFuncNodesContext } from "@/providers";
 import { NodeInput, NodeOutput } from "./io";
 
-import CustomDialog from "../dialog";
-
 import { useBodyDataRendererForIo } from "./body_data_renderer";
 import { RenderMappingContext } from "../datarenderer/rendermappings";
 import ProgressBar from "../utils/progressbar";
@@ -20,6 +18,7 @@ import { latest } from "../../types/versioned/versions.t";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
 import { NodeSettingsOverlay } from "./nodesettings";
 import { useKeysDown } from "../utils/keypresslistener";
+import { CustomDialog } from "@/barrel_imports";
 
 interface NodeHeaderProps {
   node_data: latest.NodeType;

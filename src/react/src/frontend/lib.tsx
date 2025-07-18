@@ -7,7 +7,6 @@ import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
 import { MouseEvent } from "react";
 import { useFuncNodesContext } from "@/providers";
 
-import CustomDialog from "./dialog";
 import {
   ExternalWorkerClassDep,
   ExternalWorkerDependencies,
@@ -27,7 +26,8 @@ import {
 import {
   currentBreakpointSmallerThan,
   ExpandingContainer,
-} from "./layout/components";
+} from "@/shared-components/auto-layouts";
+import { CustomDialog } from "@/barrel_imports";
 
 const LibraryNode = ({ item }: { item: LibNode }) => {
   const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();

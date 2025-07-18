@@ -3,7 +3,6 @@ import * as Popover from "@radix-ui/react-popover";
 import { Handle, HandleProps } from "@xyflow/react";
 import * as React from "react";
 import { useState } from "react";
-import CustomDialog from "../../dialog";
 import { usePreviewHandleDataRendererForIo } from "./handle_renderer";
 
 import { LockIcon, LockOpenIcon, FullscreenIcon } from "@/icons";
@@ -11,6 +10,7 @@ import { LockIcon, LockOpenIcon, FullscreenIcon } from "@/icons";
 import { latest } from "../../../types/versioned/versions.t";
 import { IODataOverlay, IOPreviewWrapper } from "./iodataoverlay";
 import { useFuncNodesContext } from "@/providers";
+import { CustomDialog } from "@/barrel_imports";
 
 const pick_best_io_type = (
   iot: latest.SerializedType,
