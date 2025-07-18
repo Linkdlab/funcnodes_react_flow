@@ -3,35 +3,45 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import dts from "vite-plugin-dts";
 import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export function loadAliasesFromTsConfig() {
-  try {
-    const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
-    const tsconfigContent = readFileSync(tsconfigPath, "utf-8");
-    // Strip comments and trailing commas from JSONC
-    const cleanContent = tsconfigContent
-      .replace(/\/\*[\s\S]*?\*\//g, "") // Remove /* */ comments
-      .replace(/\/\/.*$/gm, "") // Remove // comments
-      .replace(/,(\s*[}\]])/g, "$1"); // Remove trailing commas
-    const tsconfig = JSON.parse(cleanContent);
-    const paths = tsconfig.compilerOptions?.paths || {};
+  const tsconfigPath = path.resolve(__dirname, "tsconfig.json");
+  const tsconfigContent = readFileSync(tsconfigPath, "utf-8");
 
-    const aliases = {};
-    for (const [alias, pathArray] of Object.entries(paths)) {
-      if (pathArray.length > 0) {
-        // Remove /* suffix from alias and path, take first path from array
-        const cleanAlias = alias.replace(/\/\*$/, "");
-        const cleanPath = pathArray[0].replace(/\/\*$/, "");
-        // Convert relative path to absolute path
-        aliases[cleanAlias] = path.resolve(__dirname, cleanPath);
-      }
+  // More robust JSONC cleaning
+  let cleanContent = tsconfigContent;
+
+  // Remove /* */ comments (including multi-line and inline)
+  cleanContent = cleanContent.replace(/\/\*\s[\s\S]+?\*\//g, "");
+
+  // Remove // comments but preserve the rest of the line
+  cleanContent = cleanContent.replace(/\/\/.*$/gm, "");
+
+  // Remove trailing commas before closing brackets/braces
+  cleanContent = cleanContent.replace(/,(\s*[}\]])/g, "$1");
+
+  // Remove any remaining whitespace-only lines
+  cleanContent = cleanContent.replace(/^\s*$/gm, "");
+
+  const tsconfig = JSON.parse(cleanContent);
+  const paths = tsconfig.compilerOptions?.paths || {};
+
+  const aliases = {};
+  for (const [alias, pathArray] of Object.entries(paths)) {
+    if (pathArray.length > 0) {
+      // Remove /* suffix from alias and path, take first path from array
+      const cleanAlias = alias.replace(/\/\*$/, "");
+      const cleanPath = pathArray[0].replace(/\/\*$/, "");
+      // Convert relative path to absolute path
+      aliases[cleanAlias] = path.resolve(__dirname, cleanPath);
     }
-
-    return aliases;
-  } catch (error) {
-    console.warn("Failed to load aliases from tsconfig.json:", error);
-    return {};
   }
+
+  return aliases;
 }
 
 export default defineConfig(({ mode }) => {
@@ -50,9 +60,8 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        // add any alias entries that you used in your rollup config
-        // For example:
-        // '@components': path.resolve(__dirname, 'src/components'),
+        ...loadAliasesFromTsConfig(),
+        // add any additional alias entries if needed
       },
     },
     define: {},

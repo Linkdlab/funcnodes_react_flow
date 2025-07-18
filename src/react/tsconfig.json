@@ -45,6 +45,9 @@
       "@/shared-components": [
         "src/shared/components"
       ],
+      "@/shared-components/*": [
+        "src/shared/components/*"
+      ],
       "@/logging": [
         "src/shared/utils/logger"
       ],
