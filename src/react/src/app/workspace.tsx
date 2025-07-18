@@ -9,14 +9,14 @@ import {
 } from "@/icons";
 
 import { KeyPressProvider, ThemeProvider } from "@/providers";
+import { FuncNodesWorker } from "@/workers";
+import { FuncNodesContext } from "@/providers";
 import {
+  AVAILABLE_COLOR_THEMES,
   FuncnodesReactHeaderProps,
   ReactFlowLayerProps,
   ReactFlowLibraryProps,
-} from "./app.types";
-import { FuncNodesWorker } from "@/workers";
-import { FuncNodesContext } from "@/providers";
-import { AVAILABLE_COLOR_THEMES } from "./app-properties";
+} from "@/app";
 import {
   FuncNodesReactFlowZustandInterface,
   ReactFlowLayer,
