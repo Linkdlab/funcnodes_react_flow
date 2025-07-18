@@ -9,11 +9,17 @@ import { RenderMappingContext } from "../datarenderer/rendermappings";
 import { INPUTCONVERTER } from "./io/nodeinput";
 import { RenderOptions } from "../../states/fnrfzst.t";
 
-import { ExpandingContainer } from "../layout/components";
 import { latest } from "../../types/versioned/versions.t";
 import { SelectionInput } from "../datarenderer/default_input_renderer";
-import CustomDialog from "../dialog";
 import * as Tabs from "@radix-ui/react-tabs";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+} from "@/icons";
+import { ExpandingContainer } from "@/shared-components/auto-layouts";
+import { CustomDialog } from "@/barrel_imports";
 
 const NodeSettingsInput = ({ iostore }: { iostore: latest.IOStore }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
@@ -152,6 +158,18 @@ const NodeSettings = () => {
       containerClassName={`pos-right pos-top bg1 h-12`}
       className="nodesettings_content"
       onExpandChange={set_expand_node_props}
+      collapseIcons={{
+        up: ChevronDownIcon,
+        down: ChevronUpIcon,
+        left: ChevronRightIcon,
+        right: ChevronLeftIcon,
+      }}
+      expandIcons={{
+        up: ChevronUpIcon,
+        down: ChevronDownIcon,
+        left: ChevronLeftIcon,
+        right: ChevronRightIcon,
+      }}
     >
       <CurrentNodeSettingsWrapper></CurrentNodeSettingsWrapper>
     </ExpandingContainer>
