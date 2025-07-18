@@ -494,7 +494,7 @@ describe("performance optimizations", () => {
   it("should not update state when dimensions haven't changed", async () => {
     let renderCount = 0;
     let mockObserver: MockResizeObserver;
-    
+
     // Capture the ResizeObserver instance
     const OriginalObserver = global.ResizeObserver;
     global.ResizeObserver = class extends MockResizeObserver {
@@ -532,7 +532,7 @@ describe("performance optimizations", () => {
     });
 
     // Wait a bit to ensure any debounced updates would have fired
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     // Should not cause additional re-renders since dimensions are the same
     expect(renderCount).toBe(initialRenderCount);
@@ -549,7 +549,7 @@ describe("component lifecycle", () => {
       observe = vi.fn();
       unobserve = vi.fn();
       disconnect = disconnectSpy;
-      constructor(callback: ResizeObserverCallback) {}
+      constructor(_callback: ResizeObserverCallback) {}
     } as any;
 
     const { unmount } = render(

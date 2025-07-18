@@ -36,6 +36,9 @@
       "@/object-helpers": [
         "src/shared/utils/object-helpers"
       ],
+      "@/utils/*": [
+        "src/shared/utils/*"
+      ],
       "@/data-helpers": [
         "src/shared/utils/data-helpers"
       ],
@@ -59,6 +62,9 @@
       ],
       "@/nodes": [
         "src/features/nodes"
+      ],
+      "@/header": [
+        "src/features/header"
       ],
       "@/groups": [
         "src/features/groups"
