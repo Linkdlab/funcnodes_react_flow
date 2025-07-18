@@ -1,4 +1,4 @@
-import { FuncNodesReactFlowZustandInterface } from "../states/fnrfzst.t";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 
 const development: boolean = !!import.meta.env.DEV; // vite
 

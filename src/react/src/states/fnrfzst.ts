@@ -31,7 +31,6 @@ import { upgradeFuncNodesReactPlugin } from "../plugin";
 import { RFNodeDataPass } from "../frontend/node/node";
 
 import { latest } from "../types/versioned/versions.t";
-import { development } from "../utils/debugger";
 import { GroupAction, GroupActionUpdate } from "./groups.t";
 import { sortByParent, split_rf_nodes } from "../utils/nodes";
 import { ConsoleLogger, DEBUG, INFO } from "@/logging";
@@ -40,6 +39,7 @@ import { FuncnodesReactFlowProps } from "@/app";
 import { FuncNodesWorker, FuncNodesWorkerState, WorkersState } from "@/workers";
 import { AnyFuncNodesRFNode, GroupRFNode } from "@/nodes";
 import { NodeGroups } from "@/groups";
+import { development } from "@/utils/debugger";
 
 const _fill_node_frontend = (
   node: latest.NodeType,
