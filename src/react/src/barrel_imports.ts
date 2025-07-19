@@ -1,4 +1,4 @@
-export { CustomDialog } from "./frontend/dialog";
+export { CustomDialog } from "./shared/components/dialog";
 
 export { ReactFlowLayer } from "./frontend/funcnodesreactflow/react_flow_layer";
 

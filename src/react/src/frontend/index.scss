@@ -3,8 +3,8 @@
 @use "./header/header.scss";
 @use "./node";
 @use "./utils";
-@use "./dialog.scss";
 @use "./edge.scss";
 @use "./group";
 @use "../features/library/library.scss";
 @use "../features/node-settings/node-settings.scss";
+@use "../shared/components/dialog/CustomDialog";
