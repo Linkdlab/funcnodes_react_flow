@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config";
 import path from "path";
+import { loadAliasesFromTsConfig } from "./vite.config";
 
 // Fast test configuration that avoids slow Vite config merging
 export default defineConfig({
@@ -36,16 +37,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      // Simplified aliases for tests only
-      "@": path.resolve(__dirname, "./src"),
-      "@/barrel_imports": path.resolve(__dirname, "./src/barrel_imports.ts"),
-      "@/shared-components": path.resolve(__dirname, "./src/shared/components"),
-      "@/utils": path.resolve(__dirname, "./src/shared/utils"),
-      "@/logging": path.resolve(__dirname, "./src/shared/utils/logger.ts"),
-      "@/workers": path.resolve(__dirname, "./src/core/workers"),
-      "@/app": path.resolve(__dirname, "./src/app"),
-      "@/providers": path.resolve(__dirname, "./src/app/providers"),
-      "@/messages": path.resolve(__dirname, "./src/shared/utils"),
+      ...loadAliasesFromTsConfig(),
     },
   },
   esbuild: {

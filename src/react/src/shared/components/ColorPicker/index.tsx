@@ -2,7 +2,7 @@ import * as React from "react";
 import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as convert from "color-convert";
-import { useFuncNodesContext } from "@/providers";
+import "./colorpicker.scss";
 
 const create_color_converter = (
   type: string,
@@ -288,14 +288,16 @@ interface CustomColorPickerProps {
   onChange?: (
     converter: { [key: string]: () => number[] | string } | null
   ) => void;
+  portalContainer?: Element | null;
 }
 
-const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
+export const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
   inicolordata,
   inicolorspace,
   allow_null = false,
   delay = 1000,
   onChange,
+  portalContainer,
 }) => {
   // Use local variables rather than mutating props.
   const initialColorData =
@@ -332,9 +334,6 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
     }
     setColor(newConverter);
   }, [JSON.stringify(inicolordata), inicolorspace]);
-
-  const fnrf_zst = useFuncNodesContext();
-  const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
 
   // useRef to store the debounce timer.
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -384,7 +383,7 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
       <Popover.Trigger asChild>
         <button style={buttonStyle} />
       </Popover.Trigger>
-      <Popover.Portal container={portal}>
+      <Popover.Portal container={portalContainer}>
         <Popover.Content side="left" className="iotooltipcontent">
           <HSLColorPicker
             onChange={innerSetColor}
@@ -397,5 +396,4 @@ const CustomColorPicker: React.FC<CustomColorPickerProps> = ({
   );
 };
 
-export default CustomColorPicker;
 export { HSLColorPicker };
