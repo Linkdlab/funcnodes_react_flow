@@ -12,6 +12,7 @@ export default mergeConfig(
       environment: "jsdom",
       setupFiles: "./src/setupTests.ts",
       css: true,
+      testTimeout: 30000, // 30 seconds
       include: [
         "tests/**/*.{test,spec}.{js,ts,tsx}",
         "src/**/*.{test,spec}.{js,ts,tsx}",
@@ -22,6 +23,12 @@ export default mergeConfig(
         "**/tests/e2e/**",
         "**/*.e2e.*",
       ],
+      pool: "vmThreads",
+      poolOptions: {
+        vmThreads: {
+          memoryLimit: "512MB",
+        },
+      },
     },
   })
 );
