@@ -108,7 +108,7 @@ const assert_reactflow_node = (
     },
     data: data,
     type: "default",
-    zIndex: 2,
+    zIndex: 1003,
     // expandParent: true,
     ...node,
   };
@@ -330,7 +330,7 @@ const FuncNodesReactFlowZustand = (
         type: "group",
         data: { group: groups[group_id], id: group_id },
         position: { x: group.position[0], y: group.position[1] },
-        zIndex: 1,
+        zIndex: 2,
       };
       if (group.parent_group) {
         group_node.data.groupID = group.parent_group;
