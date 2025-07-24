@@ -1,4 +1,4 @@
-interface ResizeTextOptions {
+export interface ResizeTextOptions {
   maxFontSize?: number; // The starting (maximum) font size to try.
   minFontSize?: number; // The minimum font size allowed.
   decrementFactor?: number; // How much to decrease font size each iteration.
@@ -11,7 +11,7 @@ interface ResizeTextOptions {
  * @param textElement - The element whose text needs to be resized.
  * @param options - Optional configuration (maxFontSize, minFontSize, decrementFactor).
  */
-function fitTextToContainer(
+export function fitTextToContainer(
   container: HTMLElement,
   textElement: HTMLElement,
   options: ResizeTextOptions = {}
@@ -74,6 +74,3 @@ if (container && textElement) {
   });
 }
 */
-
-export { fitTextToContainer };
-export type { ResizeTextOptions };

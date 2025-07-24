@@ -1,7 +1,7 @@
 import { StoreApi, UseBoundStore } from "zustand";
 import { LimitedDeepPartial } from "@/object-helpers";
 import { IOStore, PartialSerializedIOType, SerializedIOType } from "./io.t";
-import { TqdmState } from "../../../frontend/utils/progressbar";
+import { TqdmState } from "@/shared-components";
 import { v0 as v0_types } from "../../../types/versioned/versions.t";
 
 export * from "../v0/node.t";

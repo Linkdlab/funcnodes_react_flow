@@ -7,7 +7,7 @@ import { NodeInput, NodeOutput } from "./io";
 
 import { useBodyDataRendererForIo } from "./body_data_renderer";
 import { RenderMappingContext } from "../datarenderer/rendermappings";
-import ProgressBar from "../utils/progressbar";
+import { ProgressBar } from "@/shared-components";
 import {
   PlayCircleFilledIcon,
   LanIcon,

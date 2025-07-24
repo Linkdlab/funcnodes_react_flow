@@ -3,7 +3,7 @@ import { DataRenderOptions } from "./rendering.t";
 import { DeepPartial } from "@/object-helpers";
 
 import { IOType } from "./io.t";
-import { TqdmState } from "../../../frontend/utils/progressbar";
+import { TqdmState } from "@/shared-components";
 
 /**
  * Interface for the NodeActionAdd.

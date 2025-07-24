@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useEffect, useRef } from "react";
-import { fitTextToContainer } from "../../utils/autolayout/txt";
+import { fitTextToContainer } from "@/utils/layout";
+import "./progressBar.scss";
 
 /**
  * Interface representing the state of a tqdm progress bar.
@@ -156,7 +157,7 @@ function formatSize(value: number, divisor: number): [string, string] {
   return [value.toFixed(2), units[unitIndex]];
 }
 
-const ProgressBar: React.FC<
+export const ProgressBar: React.FC<
   ProgressBarProps & React.HTMLAttributes<HTMLDivElement>
 > = ({ state, className = "reacttqdm", ...rest }) => {
   const containerRef = useRef<HTMLDivElement>(null);
