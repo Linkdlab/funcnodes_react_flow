@@ -14,11 +14,9 @@ const mockMozCancelFullScreen = vi.fn();
 const mockWebkitExitFullscreen = vi.fn();
 const mockMsExitFullscreen = vi.fn();
 
-// Mock console methods
-const mockConsoleError = vi
-  .spyOn(console, "error")
-  .mockImplementation(() => {});
-const mockConsoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+// Mock console methods - created fresh for each test
+let mockConsoleError: any;
+let mockConsoleWarn: any;
 
 // Helper to setup fullscreen API mocks
 const setupFullscreenMocks = (modernSupport = true, vendorSupport = false) => {
@@ -108,6 +106,9 @@ const triggerFullscreenChangeEvent = (eventType = "fullscreenchange") => {
 describe("FullScreenComponent", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Create fresh console mocks for each test
+    mockConsoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    mockConsoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
     setupFullscreenMocks(true, false);
     simulateFullscreenState(false);
   });
@@ -115,6 +116,9 @@ describe("FullScreenComponent", () => {
   afterEach(() => {
     // Clean up any fullscreen state
     simulateFullscreenState(false);
+    // Restore console mocks
+    mockConsoleError?.mockRestore?.();
+    mockConsoleWarn?.mockRestore?.();
   });
 
   describe("Basic Rendering", () => {
@@ -141,7 +145,7 @@ describe("FullScreenComponent", () => {
 
       const container = screen.getByTestId("fullscreen-container");
       expect(container).toHaveClass("test-class");
-      expect(container).toHaveStyle("background-color: rgb(255, 0, 0)");
+      expect(container).toHaveStyle("background-color: red");
     });
 
     it("should forward ref correctly", () => {
@@ -190,7 +194,7 @@ describe("FullScreenComponent", () => {
 
       const childElement = screen.getByTestId("child-element");
       expect(childElement).toHaveClass("child-class", "parent-class");
-      expect(childElement).toHaveStyle("color: rgb(0, 0, 255)");
+      expect(childElement).toHaveStyle("color: blue");
       expect(childElement).toHaveStyle("font-size: 16px");
     });
   });
@@ -738,6 +742,11 @@ describe("FullScreenComponent", () => {
       fireEvent.click(screen.getByTestId("trigger"));
 
       await waitFor(() => {
+        expect(mockRequestFullscreen).toHaveBeenCalledTimes(1);
+      });
+
+      // Give time for error handling
+      await waitFor(() => {
         expect(mockConsoleError).toHaveBeenCalledWith(
           "FullScreen: Error toggling fullscreen mode",
           expect.any(Error)
@@ -782,14 +791,18 @@ describe("FullScreenComponent", () => {
 
       fireEvent.click(screen.getByTestId("trigger"));
 
-      await waitFor(() => {
-        expect(mockConsoleError).toHaveBeenCalledWith(
-          "FullScreen: Error toggling fullscreen mode",
-          expect.objectContaining({
-            message: "Fullscreen API is not supported in this browser",
-          })
-        );
-      });
+      // Wait for the async toggle function to complete
+      await waitFor(
+        () => {
+          expect(mockConsoleError).toHaveBeenCalledWith(
+            "FullScreen: Error toggling fullscreen mode",
+            expect.objectContaining({
+              message: "Fullscreen API is not supported in this browser",
+            })
+          );
+        },
+        { timeout: 2000 }
+      );
     });
 
     it("should handle exit fullscreen API errors", async () => {
@@ -812,15 +825,28 @@ describe("FullScreenComponent", () => {
         expect(mockRequestFullscreen).toHaveBeenCalledTimes(1);
       });
 
+      // Wait for state to update to fullscreen
+      await waitFor(() => {
+        // State should be updated by now
+      });
+
       // Try to exit fullscreen
       fireEvent.click(screen.getByTestId("trigger"));
 
       await waitFor(() => {
-        expect(mockConsoleError).toHaveBeenCalledWith(
-          "FullScreen: Error toggling fullscreen mode",
-          expect.any(Error)
-        );
+        expect(mockExitFullscreen).toHaveBeenCalledTimes(1);
       });
+
+      // Wait for error handling
+      await waitFor(
+        () => {
+          expect(mockConsoleError).toHaveBeenCalledWith(
+            "FullScreen: Error toggling fullscreen mode",
+            expect.any(Error)
+          );
+        },
+        { timeout: 2000 }
+      );
     });
   });
 

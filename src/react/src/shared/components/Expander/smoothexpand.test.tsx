@@ -67,7 +67,7 @@ describe("SmoothExpandComponent", () => {
       );
 
       const wrapper = container.firstChild as HTMLElement;
-      expect(wrapper).toHaveStyle("background-color: rgb(255, 0, 0)");
+      expect(wrapper).toHaveStyle("background-color: red");
       expect(wrapper).toHaveStyle("margin: 10px");
     });
 
@@ -113,7 +113,7 @@ describe("SmoothExpandComponent", () => {
       );
 
       const element = screen.getByTestId("merged-element");
-      expect(element).toHaveStyle("color: rgb(0, 0, 255)");
+      expect(element).toHaveStyle("color: blue");
       expect(element).toHaveStyle("font-size: 16px");
       // Parent style should override child style for same property in this implementation
       expect(element).toHaveStyle("margin: 5px");
