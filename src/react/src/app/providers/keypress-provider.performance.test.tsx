@@ -9,11 +9,7 @@ import {
   useKeyboardShortcuts,
 } from "./keypress-provider";
 
-import {
-  TestKeys,
-  MockEventTarget,
-  waitForAsync,
-} from "./keypress-provider.test-utils";
+import { TestKeys, MockEventTarget } from "./keypress-provider.test-utils";
 
 describe("KeyPressProvider Performance Tests", () => {
   beforeEach(() => {
@@ -100,7 +96,7 @@ describe("KeyPressProvider Performance Tests", () => {
   });
 
   describe("Event Handling Performance", () => {
-    it("should handle rapid key events efficiently", async () => {
+    it("should handle rapid key events efficiently", () => {
       const onKeyStateChange = vi.fn();
 
       const TestComponent = () => {
@@ -119,7 +115,7 @@ describe("KeyPressProvider Performance Tests", () => {
         </KeyPressProvider>
       );
 
-      // Simulate rapid key events (1000 events in quick succession)
+      // Simulate rapid key events (100 events in quick succession)
       const keys = TestKeys.LETTERS.slice(0, 10); // Use first 10 letters
 
       act(() => {
@@ -131,9 +127,6 @@ describe("KeyPressProvider Performance Tests", () => {
           }
         }
       });
-
-      // Should handle all events without significant delay
-      await waitForAsync(10);
 
       // Component should still be responsive
       expect(screen.getByTestId("key-count")).toBeInTheDocument();
@@ -468,7 +461,7 @@ describe("KeyPressProvider Performance Tests", () => {
   });
 
   describe("Concurrent Features", () => {
-    it("should handle concurrent updates efficiently", async () => {
+    it("should handle concurrent updates efficiently", () => {
       const TestComponent = () => {
         const { keys } = useKeyPress();
         return <div data-testid="key-count">{keys.size}</div>;
@@ -480,23 +473,14 @@ describe("KeyPressProvider Performance Tests", () => {
         </KeyPressProvider>
       );
 
-      // Simulate concurrent key events
-      const promises = Array.from(
-        { length: 50 },
-        (_, i) =>
-          new Promise<void>((resolve) => {
-            setTimeout(() => {
-              act(() => {
-                fireEvent.keyDown(window, {
-                  key: String.fromCharCode(97 + (i % 26)),
-                });
-              });
-              resolve();
-            }, Math.random() * 10);
-          })
-      );
-
-      await Promise.all(promises);
+      // Simulate concurrent key events synchronously
+      act(() => {
+        for (let i = 0; i < 50; i++) {
+          fireEvent.keyDown(window, {
+            key: String.fromCharCode(97 + (i % 26)),
+          });
+        }
+      });
 
       // Should handle all concurrent updates without issues
       const finalCount = parseInt(

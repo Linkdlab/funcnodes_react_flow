@@ -1,14 +1,12 @@
 import * as React from "react";
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableSortLabel,
-  TableBody,
-} from "../../../frontend/assets/mui";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableSortLabel from "@mui/material/TableSortLabel";
 import {
   SortableTableProps,
   SortDirection,
@@ -465,7 +463,6 @@ const SortableTable: React.FC<SortableTableProps> = ({
               {transformedTableData.header.map((column) => (
                 <TableCell
                   key={column}
-                  sortDirection={orderBy === column ? orderDirection : false}
                   className="sortable-table-header-cell"
                   aria-label={`Sort by ${column}`}
                 >

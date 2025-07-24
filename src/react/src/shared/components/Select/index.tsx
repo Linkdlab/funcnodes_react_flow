@@ -72,4 +72,3 @@ export const CustomSelect = <Option extends { value: string; label: string }>({
     />
   );
 };
-

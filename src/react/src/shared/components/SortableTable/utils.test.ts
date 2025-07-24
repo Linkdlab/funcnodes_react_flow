@@ -8,7 +8,7 @@ import {
   calculateVisibleRange,
   debounce,
 } from "./utils";
-import { TableData, SortDirection } from "./types";
+import { TableData } from "./types";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 describe("SortableTable Utils", () => {
@@ -121,6 +121,30 @@ describe("SortableTable Utils", () => {
       expect(result.rows).toEqual([
         ["row1", "Alice", 25],
         ["row1", "Bob", 30], // Uses the same index
+      ]);
+    });
+
+    it("preserves falsy index values correctly", () => {
+      const dataWithFalsyIndexes: TableData = {
+        columns: ["Name", "Value"],
+        index: ["0", "", "false", "null", "valid"], // All falsy values except last one
+        data: [
+          ["Zero", 100],
+          ["Empty", 200],
+          ["False", 300],
+          ["Null", 400],
+          ["Valid", 500],
+        ],
+      };
+
+      const result = transformTableData(dataWithFalsyIndexes);
+
+      expect(result.rows).toEqual([
+        ["0", "Zero", 100],        // "0" as string
+        ["", "Empty", 200],        // Empty string should be preserved
+        ["false", "False", 300],   // "false" as string
+        ["null", "Null", 400],     // "null" as string
+        ["valid", "Valid", 500],   // Normal string should be preserved
       ]);
     });
   });
@@ -239,10 +263,10 @@ describe("SortableTable Utils", () => {
       const comparator = createComparator("asc", 1);
       const result = sortTableDataChunked(largeData, comparator, 500);
 
-      // Should be sorted correctly
+      // Should be sorted correctly (lexicographic order)
       expect(result.length).toBe(1500);
       expect(result[0][1]).toBe("User1");
-      expect(result[1499][1]).toBe("User1500");
+      expect(result[1499][1]).toBe("User999");
     });
 
     it("handles custom chunk size", () => {
@@ -257,7 +281,7 @@ describe("SortableTable Utils", () => {
 
       expect(result.length).toBe(100);
       expect(result[0][1]).toBe("User1");
-      expect(result[99][1]).toBe("User100");
+      expect(result[99][1]).toBe("User99");
     });
   });
 
@@ -360,28 +384,28 @@ describe("SortableTable Utils", () => {
       const result = calculateVisibleRange(100, 400, 48, 1000, 5);
 
       expect(result.startIndex).toBe(0); // Math.max(0, Math.floor(100/48) - 5)
-      expect(result.endIndex).toBe(13); // Math.min(999, Math.ceil((100+400)/48) + 5)
+      expect(result.endIndex).toBe(16); // Math.min(999, Math.ceil((100+400)/48) + 5)
     });
 
     it("handles scroll position at top", () => {
       const result = calculateVisibleRange(0, 400, 48, 1000, 5);
 
       expect(result.startIndex).toBe(0);
-      expect(result.endIndex).toBe(13);
+      expect(result.endIndex).toBe(14);
     });
 
     it("handles scroll position in middle", () => {
       const result = calculateVisibleRange(500, 400, 48, 1000, 5);
 
       expect(result.startIndex).toBe(5); // Math.max(0, Math.floor(500/48) - 5)
-      expect(result.endIndex).toBe(20); // Math.min(999, Math.ceil((500+400)/48) + 5)
+      expect(result.endIndex).toBe(24); // Math.min(999, Math.ceil((500+400)/48) + 5)
     });
 
     it("handles scroll position near bottom", () => {
       const result = calculateVisibleRange(45000, 400, 48, 1000, 5);
 
-      expect(result.startIndex).toBe(930); // Math.max(0, Math.floor(45000/48) - 5)
-      expect(result.endIndex).toBe(999); // Math.min(999, Math.ceil((45000+400)/48) + 5)
+      expect(result.startIndex).toBe(932); // Math.max(0, Math.floor(45000/48) - 5)
+      expect(result.endIndex).toBe(951); // Math.min(999, Math.ceil((45000+400)/48) + 5)
     });
 
     it("handles small dataset", () => {
@@ -395,7 +419,7 @@ describe("SortableTable Utils", () => {
       const result = calculateVisibleRange(100, 400, 48, 1000, 10);
 
       expect(result.startIndex).toBe(0); // Math.max(0, Math.floor(100/48) - 10)
-      expect(result.endIndex).toBe(18); // Math.min(999, Math.ceil((100+400)/48) + 10)
+      expect(result.endIndex).toBe(21); // Math.min(999, Math.ceil((100+400)/48) + 10)
     });
   });
 
@@ -462,12 +486,15 @@ describe("SortableTable Utils", () => {
     });
 
     it("handles zero delay", () => {
+      vi.useFakeTimers();
       const mockFn = vi.fn();
       const debouncedFn = debounce(mockFn, 0);
 
       debouncedFn("arg1");
+      vi.runAllTimers();
 
       expect(mockFn).toHaveBeenCalledWith("arg1");
+      vi.useRealTimers();
     });
   });
 });

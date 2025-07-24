@@ -532,7 +532,9 @@ describe("performance optimizations", () => {
     });
 
     // Wait a bit to ensure any debounced updates would have fired
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
 
     // Should not cause additional re-renders since dimensions are the same
     expect(renderCount).toBe(initialRenderCount);

@@ -53,8 +53,9 @@ describe("HSLColorPicker", () => {
       />
     );
 
-    const hueSlider = screen.getByDisplayValue("180");
-    fireEvent.change(hueSlider, { target: { value: "90" } });
+    // Get all sliders with value "180" and select the first one (HSL Hue)
+    const hueSliders = screen.getAllByDisplayValue("180");
+    fireEvent.change(hueSliders[0], { target: { value: "90" } });
 
     expect(mockOnChange).toHaveBeenCalled();
   });
@@ -113,7 +114,7 @@ describe("CustomColorPicker", () => {
     expect(button).toHaveStyle("background: #000000");
   });
 
-  it("renders with initial color data", () => {
+  it("renders with initial color data", async () => {
     render(
       <CustomColorPicker
         onChange={mockOnChange}
@@ -123,7 +124,10 @@ describe("CustomColorPicker", () => {
     );
 
     const button = screen.getByRole("button");
-    expect(button).toHaveStyle("background: #ff0000");
+    // Wait for the button to be updated with the color style
+    await waitFor(() => {
+      expect(button).toHaveStyle({ background: "#FF0000" });
+    });
   });
 
   it("renders with hex color data", () => {
@@ -221,7 +225,7 @@ describe("CustomColorPicker", () => {
     expect(screen.getByText("Color Preview")).toBeInTheDocument();
   });
 
-  it("updates color when props change", () => {
+  it("updates color when props change", async () => {
     const { rerender } = render(
       <CustomColorPicker
         onChange={mockOnChange}
@@ -231,7 +235,9 @@ describe("CustomColorPicker", () => {
     );
 
     let button = screen.getByRole("button");
-    expect(button).toHaveStyle("background: #ff0000");
+    await waitFor(() => {
+      expect(button).toHaveStyle({ background: "#FF0000" });
+    });
 
     rerender(
       <CustomColorPicker
@@ -242,6 +248,8 @@ describe("CustomColorPicker", () => {
     );
 
     button = screen.getByRole("button");
-    expect(button).toHaveStyle("background: #00ff00");
+    await waitFor(() => {
+      expect(button).toHaveStyle({ background: "#00FF00" });
+    });
   });
 });

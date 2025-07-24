@@ -67,7 +67,7 @@ describe("FloatContainer", () => {
       );
 
       const floatContainer = container.firstChild as HTMLElement;
-      expect(floatContainer).toHaveStyle("background-color: rgb(255, 0, 0)");
+      expect(floatContainer).toHaveStyle("background-color: red");
       expect(floatContainer).toHaveStyle("margin: 10px");
     });
   });

@@ -64,30 +64,42 @@ export const simulateKeyCombo = (
   actionKey: string,
   target: Window | Document | Element = window
 ) => {
+  console.log(`UTIL: simulateKeyCombo called with modifiers: ${modifierKeys.join('+')}, action: ${actionKey}`);
+  
   // Clear any existing keys first
+  console.log("UTIL: Clearing existing keys with blur");
   act(() => {
     fireEvent.blur(target);
   });
+  console.log("UTIL: Blur completed");
 
+  console.log("UTIL: Pressing keys down");
   act(() => {
     // Press modifiers
     modifierKeys.forEach((key) => {
+      console.log(`UTIL: Pressing modifier key: ${key}`);
       fireEvent.keyDown(target, { key });
     });
 
     // Press action key
+    console.log(`UTIL: Pressing action key: ${actionKey}`);
     fireEvent.keyDown(target, { key: actionKey });
   });
+  console.log("UTIL: All keys pressed down");
 
+  console.log("UTIL: Releasing keys");
   act(() => {
     // Release action key
+    console.log(`UTIL: Releasing action key: ${actionKey}`);
     fireEvent.keyUp(target, { key: actionKey });
 
     // Release modifiers
     modifierKeys.forEach((key) => {
+      console.log(`UTIL: Releasing modifier key: ${key}`);
       fireEvent.keyUp(target, { key });
     });
   });
+  console.log("UTIL: All keys released, simulateKeyCombo completed");
 };
 
 /**

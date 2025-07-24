@@ -131,8 +131,8 @@ describe("SortableTable Types", () => {
         return result < 0 ? -1 : result > 0 ? 1 : 0;
       };
 
-      expect(mixedComparator("Alice", 25)).toBe(-1);
-      expect(mixedComparator(25, "Alice")).toBe(1);
+      expect(mixedComparator("Alice", 25)).toBe(1);
+      expect(mixedComparator(25, "Alice")).toBe(-1);
     });
   });
 

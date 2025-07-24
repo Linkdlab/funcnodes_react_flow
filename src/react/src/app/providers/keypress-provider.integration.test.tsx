@@ -176,61 +176,91 @@ describe("KeyPressProvider Integration Tests", () => {
 
   describe("Text Editor Integration", () => {
     it("should handle complete text editing workflow", async () => {
+      console.log("TEST: Starting text editor integration test");
       render(
         <KeyPressProvider>
           <TextEditor onCommand={onCommand} />
         </KeyPressProvider>
       );
+      console.log("TEST: Rendered components");
 
       // Type some content
+      console.log("TEST: Typing content");
       fireEvent.change(screen.getByTestId("editor-input"), {
         target: { value: "Hello World" },
       });
+      console.log("TEST: Content typed");
 
       // Copy content
+      console.log("TEST: Simulating copy command");
       simulateKeyCombo(["Control"], "c");
+      console.log("TEST: Copy command simulated");
       expect(onCommand).toHaveBeenCalledWith("copy", { text: "Hello World" });
+      console.log("TEST: Copy assertion passed");
 
       // Clear and paste
+      console.log("TEST: Clearing content");
       fireEvent.change(screen.getByTestId("editor-input"), {
         target: { value: "" },
       });
+      console.log("TEST: Content cleared");
 
+      console.log("TEST: Simulating paste command");
       simulateKeyCombo(["Control"], "v");
+      console.log("TEST: Paste command simulated");
       expect(onCommand).toHaveBeenCalledWith("paste", { text: "Hello World" });
+      console.log("TEST: Paste assertion passed");
 
       // Save
+      console.log("TEST: Simulating save command");
       simulateKeyCombo(["Control"], "s");
+      console.log("TEST: Save command simulated");
       expect(onCommand).toHaveBeenCalledWith("save", {
         content: "Hello World",
       });
+      console.log("TEST: Save assertion passed");
 
       // Undo
+      console.log("TEST: Simulating undo command");
       simulateKeyCombo(["Control"], "z");
+      console.log("TEST: Undo command simulated");
       expect(onCommand).toHaveBeenCalledWith("undo");
+      console.log("TEST: Undo assertion passed");
+      console.log("TEST: Text editor integration test completed");
     });
 
     it("should handle rapid keyboard shortcuts", async () => {
+      console.log("TEST: Starting rapid shortcuts test");
       render(
         <KeyPressProvider>
           <TextEditor onCommand={onCommand} />
         </KeyPressProvider>
       );
+      console.log("TEST: Rendered for rapid shortcuts test");
 
       // Rapid fire shortcuts
+      console.log("TEST: Firing rapid shortcuts");
       simulateKeyCombo(["Control"], "s");
+      console.log("TEST: Save shortcut fired");
       simulateKeyCombo(["Control"], "c");
+      console.log("TEST: Copy shortcut fired");
       simulateKeyCombo(["Control"], "v");
+      console.log("TEST: Paste shortcut fired");
       simulateKeyCombo(["Control"], "z");
+      console.log("TEST: Undo shortcut fired");
 
+      console.log("TEST: Waiting for 4 command calls");
       await waitFor(() => {
+        console.log(`TEST: Current command call count: ${onCommand.mock.calls.length}`);
         expect(onCommand).toHaveBeenCalledTimes(4);
       });
+      console.log("TEST: All 4 commands received");
 
       expect(onCommand).toHaveBeenNthCalledWith(1, "save", expect.any(Object));
       expect(onCommand).toHaveBeenNthCalledWith(2, "copy", expect.any(Object));
       expect(onCommand).toHaveBeenNthCalledWith(3, "paste", expect.any(Object));
       expect(onCommand).toHaveBeenNthCalledWith(4, "undo");
+      console.log("TEST: Rapid shortcuts test completed");
     });
   });
 

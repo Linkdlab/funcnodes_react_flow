@@ -58,10 +58,12 @@ export const transformTableData = (data: TableData): TransformedTableData => {
     data.index = data.data.map((_, i) => `row${i}`);
   }
 
-  for (let i = 0; i < data.index.length; i++) {
-    const row = [data.index[i]];
+  const maxRows = Math.max(data.index.length, data.data.length);
+  for (let i = 0; i < maxRows; i++) {
+    const indexValue = i < data.index.length ? data.index[i] : `row${i}`;
+    const row = [indexValue];
     for (let j = 0; j < data.columns.length; j++) {
-      row.push(data.data[i][j]);
+      row.push(data.data[i] ? data.data[i][j] : undefined);
     }
     rows.push(row);
   }
@@ -90,8 +92,16 @@ export const createComparator = (
   orderByIndex: number
 ): ComparerFunction => {
   return order === "desc"
-    ? (a, b) => (b[orderByIndex] < a[orderByIndex] ? -1 : 1)
-    : (a, b) => (a[orderByIndex] < b[orderByIndex] ? -1 : 1);
+    ? (a, b) => {
+        if (b[orderByIndex] < a[orderByIndex]) return -1;
+        if (b[orderByIndex] > a[orderByIndex]) return 1;
+        return 0;
+      }
+    : (a, b) => {
+        if (a[orderByIndex] < b[orderByIndex]) return -1;
+        if (a[orderByIndex] > b[orderByIndex]) return 1;
+        return 0;
+      };
 };
 
 /**
@@ -233,7 +243,8 @@ export const calculatePagination = (
 ): PaginationState => {
   const totalPages = Math.ceil(totalRows / pageSize);
   return {
-    currentPage: Math.min(Math.max(1, currentPage), totalPages),
+    currentPage:
+      totalPages === 0 ? 1 : Math.min(Math.max(1, currentPage), totalPages),
     pageSize,
     totalPages,
     totalRows,

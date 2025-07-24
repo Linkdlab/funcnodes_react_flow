@@ -1,14 +1,22 @@
 import * as React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SortableTable from "./SortableTable";
-import { TableData, SortDirection } from "./types";
+import { TableData } from "./types";
 import { transformTableData, sortTableData, createComparator } from "./utils";
 import { describe, expect, it, vi } from "vitest";
 
 // Mock MUI components
-vi.mock("../../../frontend/assets/mui", () => ({
-  TableContainer: ({ children, className, onScroll, style }: any) => (
+vi.mock("@mui/material/Table", () => ({
+  default: ({ children, size }: any) => (
+    <table data-testid="table" data-size={size}>
+      {children}
+    </table>
+  ),
+}));
+
+vi.mock("@mui/material/TableContainer", () => ({
+  default: ({ children, className, onScroll, style }: any) => (
     <div
       data-testid="table-container"
       className={className}
@@ -18,32 +26,39 @@ vi.mock("../../../frontend/assets/mui", () => ({
       {children}
     </div>
   ),
-  Table: ({ children, size }: any) => (
-    <table data-testid="table" data-size={size}>
-      {children}
-    </table>
-  ),
-  TableHead: ({ children, className }: any) => (
+}));
+
+vi.mock("@mui/material/TableHead", () => ({
+  default: ({ children, className }: any) => (
     <thead data-testid="table-head" className={className}>
       {children}
     </thead>
   ),
-  TableRow: ({ children, className, style }: any) => (
+}));
+
+vi.mock("@mui/material/TableRow", () => ({
+  default: ({ children, className, style }: any) => (
     <tr data-testid="table-row" className={className} style={style}>
       {children}
     </tr>
   ),
-  TableCell: ({ children, className, colSpan, key }: any) => (
+}));
+
+vi.mock("@mui/material/TableCell", () => ({
+  default: ({ children, className, colSpan, ...props }: any) => (
     <td
       data-testid="table-cell"
       className={className}
       colSpan={colSpan}
-      data-key={key}
+      {...props}
     >
       {children}
     </td>
   ),
-  TableSortLabel: ({
+}));
+
+vi.mock("@mui/material/TableSortLabel", () => ({
+  default: ({
     children,
     active,
     direction,
@@ -60,7 +75,10 @@ vi.mock("../../../frontend/assets/mui", () => ({
       {children}
     </button>
   ),
-  TableBody: ({ children }: any) => (
+}));
+
+vi.mock("@mui/material/TableBody", () => ({
+  default: ({ children }: any) => (
     <tbody data-testid="table-body">{children}</tbody>
   ),
 }));
@@ -329,13 +347,17 @@ describe("SortableTable", () => {
       expect(nameSortButton).toBeInTheDocument();
 
       // Click the button (this will trigger the debounced function)
-      fireEvent.click(nameSortButton!);
+      act(() => {
+        fireEvent.click(nameSortButton!);
+      });
 
       // The callback shouldn't be called immediately
       expect(mockOnSortChange).not.toHaveBeenCalled();
 
       // Fast forward time to trigger the debounced function
-      vi.advanceTimersByTime(200);
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
 
       // Now the callback should have been called
       expect(mockOnSortChange).toHaveBeenCalledWith("ID", "asc");

@@ -497,12 +497,19 @@ describe("Logger Interface Compliance", () => {
     });
 
     it("should handle all log methods without errors", () => {
+      // Suppress console output for this test
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       expect(() => {
         logger.debug("Debug test");
         logger.info("Info test");
         logger.warn("Warn test");
         logger.error("Error test");
       }).not.toThrow();
+
+      warnSpy.mockRestore();
+      errorSpy.mockRestore();
     });
   });
 

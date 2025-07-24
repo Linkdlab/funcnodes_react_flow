@@ -433,17 +433,27 @@ describe("data-helper", () => {
 
       global.fetch = vi.fn().mockResolvedValue(mockResponse);
 
+      // Suppress console.error for this test
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       await expect(
         remoteUrlToBase64("https://example.com/nonexistent.txt")
       ).rejects.toThrow("Failed to fetch from URL: 404 Not Found");
+
+      consoleSpy.mockRestore();
     });
 
     it("should throw error for network failure", async () => {
       global.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
 
+      // Suppress console.error for this test
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       await expect(
         remoteUrlToBase64("https://example.com/test.txt")
       ).rejects.toThrow("Network error");
+
+      consoleSpy.mockRestore();
     });
 
     it("should handle FileReader errors", async () => {
@@ -475,9 +485,14 @@ describe("data-helper", () => {
         .fn()
         .mockImplementation(() => mockFileReader) as any;
 
+      // Suppress console.error for this test
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       await expect(
         remoteUrlToBase64("https://example.com/test.txt")
       ).rejects.toThrow("FileReader error");
+
+      consoleSpy.mockRestore();
     });
   });
 });

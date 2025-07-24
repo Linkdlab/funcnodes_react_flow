@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as React from "react";
-import { ErrorDiv } from "./error-components";
+import { ErrorDiv } from "./index";
 
 describe("ErrorDiv", () => {
   describe("basic rendering", () => {

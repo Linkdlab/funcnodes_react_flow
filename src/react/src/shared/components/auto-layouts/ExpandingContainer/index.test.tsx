@@ -369,7 +369,7 @@ describe("ExpandingContainer", () => {
       const container = screen
         .getByTestId("test-content")
         .closest(".expanding_container");
-      expect(container).toHaveStyle({ width: "3rem" });
+      expect(container).toHaveStyle({ width: "48px" });
     });
 
     it("should apply custom containerStyle", () => {
@@ -386,7 +386,7 @@ describe("ExpandingContainer", () => {
       const container = screen
         .getByTestId("test-content")
         .closest(".expanding_container");
-      expect(container).toHaveStyle("background-color: rgb(255, 0, 0)");
+      expect(container).toHaveStyle("background-color: red");
       expect(container).toHaveStyle("margin: 10px");
       expect(container).toHaveStyle("border: 2px solid blue");
     });
