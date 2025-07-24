@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import Select, { ActionMeta, SingleValue } from "react-select";
+import "./select.scss";
 
 export interface CustomSelectProps<
   Option extends { value: string; label: string }
@@ -15,7 +16,7 @@ export interface CustomSelectProps<
   ) => void;
 }
 
-const CustomSelect = <Option extends { value: string; label: string }>({
+export const CustomSelect = <Option extends { value: string; label: string }>({
   options,
   items_per_page,
   className,
@@ -72,4 +73,3 @@ const CustomSelect = <Option extends { value: string; label: string }>({
   );
 };
 
-export default CustomSelect;

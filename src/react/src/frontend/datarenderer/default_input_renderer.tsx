@@ -8,7 +8,7 @@ import * as Slider from "@radix-ui/react-slider";
 import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
 
 import { CustomColorPicker } from "@/shared-components";
-import CustomSelect from "../utils/select";
+import { CustomSelect } from "@/shared-components";
 import { useFuncNodesContext } from "@/providers";
 
 function relativeRound(value: number) {
