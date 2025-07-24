@@ -1,5 +1,6 @@
 import * as React from "react";
 import { JsonView, darkStyles, collapseAllNested } from "react-json-view-lite";
+import "./jsonDisplay.scss";
 
 function isEmpty(obj: any) {
   for (const prop in obj) {
@@ -33,14 +34,22 @@ function isEmptyObject(value: any) {
   return isEmpty(value);
 }
 
-const JSONDataDisplay = ({ data }: { data: any }) => {
+export interface JSONDisplayProps {
+  data: any;
+  className?: string;
+}
+
+export const JSONDisplay: React.FC<JSONDisplayProps> = ({
+  data,
+  className = "json-display",
+}) => {
   return (
-    <JsonView
-      data={isEmptyObject(data) ? "" : data}
-      style={darkStyles}
-      shouldExpandNode={collapseAllNested}
-    />
+    <div className={className}>
+      <JsonView
+        data={isEmptyObject(data) ? "" : data}
+        style={darkStyles}
+        shouldExpandNode={collapseAllNested}
+      />
+    </div>
   );
 };
-
-export default JSONDataDisplay;

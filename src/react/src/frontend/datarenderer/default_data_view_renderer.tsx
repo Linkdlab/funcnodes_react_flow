@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import JSONDataDisplay from "../utils/jsondata";
+import { JSONDisplay } from "@/shared-components";
 import { SortableTable } from "@/shared-components";
 import { SVGImage, StreamingImage } from "./images";
 import { latest } from "../../types/versioned/versions.t";
@@ -199,7 +199,7 @@ const TableRender: latest.DataViewRendererType = ({
 const DictRenderer: latest.DataViewRendererType = ({
   value,
 }: latest.DataViewRendererProps) => {
-  return <JSONDataDisplay data={value} />;
+  return <JSONDisplay data={value} />;
 };
 
 export const DefaultDataView = DictRenderer;
