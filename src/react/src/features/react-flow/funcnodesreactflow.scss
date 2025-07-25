@@ -19,6 +19,7 @@
   --fn-node-handle-target-color: hsl(192, 25%, 65%);
   --fn-node-background: hsl(220, 6%, 42%);
   --fn-node-header-color: hsl(220, 5%, 32%);
+  --fn-node-border-color: hsl(220, 8%, 45%);
   --fn-node-footer-color: hsl(225, 7%, 70%);
   --fn-node-progress-color: hsl(95, 38%, 46%); /* green-ish progress bar */
 
@@ -66,6 +67,7 @@
   --fn-node-handle-target-color: hsl(204, 98%, 51%);
   --fn-node-background: hsl(245, 51%, 42%);
   --fn-node-header-color: hsl(245, 51%, 22%);
+  --fn-node-border-color: hsl(245, 35%, 35%);
   --fn-node-footer-color: hsl(266, 88%, 35%);
   --fn-node-progress-color: hsl(76, 92%, 50%);
 }
@@ -98,6 +100,7 @@
   --fn-node-handle-target-color: hsl(192, 25%, 65%);
   --fn-node-background: hsl(220, 6%, 42%);
   --fn-node-header-color: hsl(220, 5%, 32%);
+  --fn-node-border-color: hsl(220, 8%, 45%);
   --fn-node-footer-color: hsl(225, 7%, 70%);
   --fn-node-progress-color: hsl(95, 38%, 46%); /* green-ish progress bar */
 
@@ -131,6 +134,7 @@
   --fn-node-handle-target-color: hsl(204, 98%, 51%);
   --fn-node-background: hsl(0, 0%, 98%);
   --fn-node-header-color: hsl(210, 85%, 96%);
+  --fn-node-border-color: hsl(210, 70%, 85%);
   --fn-node-footer-color: hsl(210, 85%, 90%);
   --fn-node-progress-color: hsl(95, 38%, 46%);
 }
@@ -159,6 +163,7 @@
   --fn-node-handle-target-color: #cb4b16;
   --fn-node-background: #fdf6e3;
   --fn-node-header-color: #93a1a1;
+  --fn-node-border-color: #839496;
   --fn-node-footer-color: #839496;
   --fn-node-progress-color: #859900;
 }
@@ -187,6 +192,7 @@
   --fn-node-handle-target-color: #4f5dff;
   --fn-node-background: #181f3a;
   --fn-node-header-color: #232b4d;
+  --fn-node-border-color: #3a4370;
   --fn-node-footer-color: #2d3760;
   --fn-node-progress-color: #00cfff;
 }
@@ -215,6 +221,7 @@
   --fn-node-handle-target-color: #388e3c;
   --fn-node-background: #223d22;
   --fn-node-header-color: #2e4d2e;
+  --fn-node-border-color: #4a6a4a;
   --fn-node-footer-color: #3a5c3a;
   --fn-node-progress-color: #b2ff59;
 }
@@ -243,6 +250,7 @@
   --fn-node-handle-target-color: #2563eb;
   --fn-node-background: #f7fafc;
   --fn-node-header-color: #e9f1fb;
+  --fn-node-border-color: #b5c6e0;
   --fn-node-footer-color: #dbeafe;
   --fn-node-progress-color: #22d3ee;
 }
