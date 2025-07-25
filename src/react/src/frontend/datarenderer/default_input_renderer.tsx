@@ -1,11 +1,11 @@
 import * as React from "react";
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 
 import { Base64BytesRenderer } from "./default_data_view_renderer";
 
 import * as Slider from "@radix-ui/react-slider";
 // import * as ToolTip from "@radix-ui/react-tooltip";
-import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 
 import { CustomColorPicker } from "@/shared-components";
 import { CustomSelect } from "@/shared-components";
@@ -378,7 +378,7 @@ export const ColorInput = ({ iostore }: latest.InputRendererProps) => {
     allow_null = io.type.anyOf.some((x) => x === "None");
   }
   const portal = fnrf_zst.local_state(() => fnrf_zst.reactflowRef);
-  
+
   return (
     <CustomColorPicker
       onChange={on_change}

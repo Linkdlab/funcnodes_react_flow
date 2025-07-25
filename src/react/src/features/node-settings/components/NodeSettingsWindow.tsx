@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as Tabs from "@radix-ui/react-tabs";
-import { latest } from "../../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 import { GeneralTab, InputTab, OutputTab } from "./tabs";
 
 interface NodeSettingsWindowProps {

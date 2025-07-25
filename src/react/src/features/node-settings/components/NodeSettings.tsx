@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { NodeName } from "../../../frontend/node/node";
-import { latest } from "../../../types/versioned/versions.t";
+import { NodeName, latest } from "@/barrel_imports";
 import { NodeSettingsInput, NodeSettingsOutput } from "./io";
 import {
   ChevronDownIcon,

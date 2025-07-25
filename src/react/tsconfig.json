@@ -72,11 +72,17 @@
       "@/library": [
         "src/features/library"
       ],
+      "@/library/*": [
+        "src/features/library/*"
+      ],
       "@/node-settings": [
         "src/features/node-settings"
       ],
       "@/groups": [
         "src/features/groups"
+      ],
+      "@/react-flow/*": [
+        "src/features/react-flow/*"
       ],
       "@/icons": [
         "src/shared/components/icons"

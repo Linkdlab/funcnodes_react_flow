@@ -1,8 +1,10 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { NodeName } from "../../../../frontend/node/node";
-import { FuncNodesReactFlowZustandInterface } from "../../../../states/fnrfzst.t";
-import { latest } from "../../../../types/versioned/versions.t";
+import {
+  FuncNodesReactFlowZustandInterface,
+  latest,
+  NodeName,
+} from "@/barrel_imports";
 
 interface GeneralTabProps {
   node_data: latest.NodeType;

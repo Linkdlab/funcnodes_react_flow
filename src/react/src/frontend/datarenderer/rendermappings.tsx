@@ -1,10 +1,10 @@
 import * as React from "react";
 import { ReactElement, createContext, useEffect, useReducer } from "react";
 
-import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 import { NodeContext } from "../node/node";
 
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 import { DefaultInLineRenderer } from "./default_inline_renderer";
 import { DefaultInputrenderer } from "./default_input_renderer";
 import { DefaultOutputrenderer } from "./default_output_renderer";

@@ -1,6 +1,6 @@
 import * as React from "react";
-import { FuncNodesReactFlowZustandInterface } from "../../../states/fnrfzst.t";
-import { NodeContextType } from "../../../frontend/node/node";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+import { NodeContextType } from "@/barrel_imports";
 import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,

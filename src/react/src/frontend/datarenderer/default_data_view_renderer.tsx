@@ -3,7 +3,7 @@ import * as React from "react";
 import { JSONDisplay } from "@/shared-components";
 import { SortableTable } from "@/shared-components";
 import { SVGImage, StreamingImage } from "./images";
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 
 const IOSubscriptionImageRenderer: latest.DataViewRendererType = ({
   value,

@@ -1,4 +1,4 @@
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 
 export const Base64BytesInLineRenderer: latest.InLineRendererType = ({
   iostore,

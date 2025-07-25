@@ -1,5 +1,5 @@
 import { assertNever, simple_updater } from "./update_funcs";
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 import { deep_merge } from "@/object-helpers";
 const update_io = (
   iostore: latest.IOStore,

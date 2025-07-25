@@ -1,4 +1,4 @@
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 import * as React from "react";
 import { DictRenderer } from "./default_data_view_renderer";
 

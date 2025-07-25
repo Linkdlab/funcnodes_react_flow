@@ -2,7 +2,7 @@ import { NodeViewState } from "../fnrfzst.t";
 
 import { UseBoundStore, StoreApi } from "zustand";
 import { assertNever, normalize_node, simple_updater } from "./update_funcs";
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 import { deep_merge, deep_compare_objects } from "@/object-helpers";
 
 const update_node = (

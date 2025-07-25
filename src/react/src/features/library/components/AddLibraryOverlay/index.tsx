@@ -10,7 +10,7 @@ import {
   ActiveModule,
   AddableModule,
   InstallableModule,
-} from "../ModuleManagement";
+} from "@/library/components";
 
 export const AddLibraryOverlay = ({
   children,

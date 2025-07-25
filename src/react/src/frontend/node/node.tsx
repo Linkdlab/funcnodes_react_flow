@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useContext, useEffect, useState } from "react";
 
-import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
 import { NodeInput, NodeOutput } from "./io";
 
@@ -14,7 +14,7 @@ import {
   GearIcon,
   ExpandLessIcon,
 } from "@/icons";
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
 import { NodeSettingsOverlay } from "@/node-settings";
 import { useKeyPress } from "@/providers";

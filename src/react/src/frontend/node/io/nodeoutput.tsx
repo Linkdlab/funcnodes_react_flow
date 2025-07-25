@@ -8,12 +8,12 @@ import { HandleWithPreview, pick_best_io_type } from "./io";
 import {
   RenderOptions,
   FuncNodesReactFlowZustandInterface,
-} from "../../../states/fnrfzst.t";
+} from "@/barrel_imports";
 
 import * as React from "react";
-import { RenderMappingContext } from "../../datarenderer/rendermappings";
-import { latest } from "../../../types/versioned/versions.t";
-import { InLineOutput } from "../../datarenderer/default_output_renderer";
+import { RenderMappingContext } from "@/barrel_imports";
+import { latest } from "@/barrel_imports";
+import { InLineOutput } from "@/barrel_imports";
 import { useKeyPress } from "@/providers";
 
 const NodeOutput = ({

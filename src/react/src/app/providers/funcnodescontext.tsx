@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { FuncNodesReactFlowZustandInterface } from "../../barrel_imports";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 
 export const FuncNodesContext =
   createContext<FuncNodesReactFlowZustandInterface | null>(null);

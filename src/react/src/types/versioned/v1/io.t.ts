@@ -3,7 +3,7 @@ import { LimitedDeepPartial } from "@/object-helpers";
 import { IORenderOptions, IOValueOptions } from "../v0/io.t";
 import { SerializedType } from "./rendering.t";
 import { NodeStore } from "./node.t";
-import { DataStructure } from "../../../funcnodes/datastructures";
+import { DataStructure } from "@/barrel_imports";
 
 export * from "../v0/io.t";
 

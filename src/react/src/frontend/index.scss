@@ -1,10 +1,9 @@
 @use "./layout";
-@use "./funcnodesreactflow/funcnodesreactflow.scss";
 @use "./header/header.scss";
 @use "./node";
-@use "./utils";
 @use "./edge.scss";
 @use "./group";
 @use "../features/library/library.scss";
 @use "../features/node-settings/node-settings.scss";
+@use "../features/react-flow/funcnodesreactflow.scss";
 @use "../shared/components/dialog/CustomDialog";

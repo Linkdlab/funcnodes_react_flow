@@ -71,7 +71,7 @@ const DialogButton = React.memo<{
 
   const ButtonComponent = (
     <button
-      className={`dialog-send-button ${button.className || ''}`}
+      className={`dialog-send-button ${button.className || ""}`}
       onClick={handleClick}
       disabled={button.disabled}
       aria-label={button.ariaLabel}
@@ -94,7 +94,7 @@ DialogButton.displayName = "DialogButton";
 
 /**
  * CustomDialog - A reusable modal dialog component built on Radix UI
- * 
+ *
  * Features:
  * - Accessible by default with proper ARIA attributes
  * - Customizable appearance and behavior
@@ -102,7 +102,7 @@ DialogButton.displayName = "DialogButton";
  * - Portal rendering for proper z-index management
  * - Performance optimized with React.memo and useMemo
  * - Keyboard navigation support
- * 
+ *
  * @example
  * ```tsx
  * <CustomDialog
@@ -117,115 +117,118 @@ DialogButton.displayName = "DialogButton";
  * </CustomDialog>
  * ```
  */
-export const CustomDialog = React.memo<DialogProps>(({
-  trigger,
-  title,
-  description,
-  children,
-  closebutton = true,
-  onOpenChange,
-  buttons = [],
-  open,
-  setOpen,
-  modal = true,
-  dialogClassName = "default-dialog-content",
-  ariaLabel,
-  ariaDescription,
-}) => {
-  const fnrf_zst = useFuncNodesContext();
-  const portal = fnrf_zst.local_state((state) => state.funcnodescontainerRef);
 
-  // Optimize className concatenation
-  const contentClassName = React.useMemo(
-    () => `dialog-content funcnodescontainer ${dialogClassName}`,
-    [dialogClassName]
-  );
+export const CustomDialog = React.memo<DialogProps>(
+  ({
+    trigger,
+    title,
+    description,
+    children,
+    closebutton = true,
+    onOpenChange,
+    buttons = [],
+    open,
+    setOpen,
+    modal = true,
+    dialogClassName = "default-dialog-content",
+    ariaLabel,
+    ariaDescription,
+  }) => {
+    const fnrf_zst = useFuncNodesContext();
+    const portal = fnrf_zst.local_state((state) => state.funcnodescontainerRef);
 
-  // Memoize open change handler
-  const handleOpenChange = React.useCallback(
-    (isOpen: boolean) => {
-      try {
-        setOpen?.(isOpen);
-        onOpenChange?.(isOpen);
-      } catch (error) {
-        console.error("Error in dialog open change handler:", error);
-      }
-    },
-    [setOpen, onOpenChange]
-  );
+    // Optimize className concatenation
+    const contentClassName = React.useMemo(
+      () => `dialog-content funcnodescontainer ${dialogClassName}`,
+      [dialogClassName]
+    );
 
-  // Memoize button elements with proper keys
-  const buttonElements = React.useMemo(
-    () => buttons.map((button, index) => (
-      <DialogButton key={`${button.text}-${index}`} button={button} index={index} />
-    )),
-    [buttons]
-  );
+    // Memoize open change handler
+    const handleOpenChange = React.useCallback(
+      (isOpen: boolean) => {
+        try {
+          setOpen?.(isOpen);
+          onOpenChange?.(isOpen);
+        } catch (error) {
+          console.error("Error in dialog open change handler:", error);
+        }
+      },
+      [setOpen, onOpenChange]
+    );
 
-  // Memoize dialog content
-  const content = React.useMemo(
-    () => (
-      <Dialog.Content asChild>
-        <div 
-          className={contentClassName}
-          role="dialog"
-          aria-label={ariaLabel || title}
-          aria-description={ariaDescription || (typeof description === 'string' ? description : undefined)}
-        >
-          {title && (
-            <Dialog.Title className="dialog-title" id="dialog-title">
-              {title}
-            </Dialog.Title>
-          )}
-          {description && (
-            <Dialog.Description className="dialog-description" id="dialog-description">
-              {description}
-            </Dialog.Description>
-          )}
-          <div className="dialog-children" role="main">
-            {children}
-          </div>
-          {buttons.length > 0 && (
-            <div className="dialog-buttons" role="group" aria-label="Dialog actions">
-              {buttonElements}
+    // Memoize button elements with proper keys
+    const buttonElements = React.useMemo(
+      () =>
+        buttons.map((button, index) => (
+          <DialogButton
+            key={`${button.text}-${index}`}
+            button={button}
+            index={index}
+          />
+        )),
+      [buttons]
+    );
+
+    // Memoize dialog content
+
+    return (
+      <Dialog.Root open={open} onOpenChange={handleOpenChange} modal={modal}>
+        {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
+        <Dialog.Portal container={portal}>
+          <Dialog.Overlay className="dialog-overlay funcnodescontainer" />
+          <Dialog.Content asChild>
+            <div
+              className={contentClassName}
+              role="dialog"
+              aria-label={ariaLabel || title}
+              aria-description={
+                ariaDescription ||
+                (typeof description === "string" ? description : undefined)
+              }
+            >
+              {title && (
+                <Dialog.Title className="dialog-title" id="dialog-title">
+                  {title}
+                </Dialog.Title>
+              )}
+
+              {description && (
+                <Dialog.Description
+                  className="dialog-description"
+                  id="dialog-description"
+                >
+                  {description}
+                </Dialog.Description>
+              )}
+              <div className="dialog-children" role="main">
+                {children}
+              </div>
+              {buttons.length > 0 && (
+                <div
+                  className="dialog-buttons"
+                  role="group"
+                  aria-label="Dialog actions"
+                >
+                  {buttonElements}
+                </div>
+              )}
+              {closebutton && (
+                <Dialog.Close asChild>
+                  <button
+                    className="dialog-close-button"
+                    aria-label="Close dialog"
+                    type="button"
+                  >
+                    <CloseIcon />
+                  </button>
+                </Dialog.Close>
+              )}
             </div>
-          )}
-          {closebutton && (
-            <Dialog.Close asChild>
-              <button 
-                className="dialog-close-button" 
-                aria-label="Close dialog"
-                type="button"
-              >
-                <CloseIcon />
-              </button>
-            </Dialog.Close>
-          )}
-        </div>
-      </Dialog.Content>
-    ),
-    [
-      contentClassName,
-      title,
-      description,
-      children,
-      buttons.length,
-      buttonElements,
-      closebutton,
-      ariaLabel,
-      ariaDescription,
-    ]
-  );
-
-  return (
-    <Dialog.Root open={open} onOpenChange={handleOpenChange} modal={modal}>
-      {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
-      <Dialog.Portal container={portal}>
-        <Dialog.Overlay className="dialog-overlay funcnodescontainer" />
-        {content}
-      </Dialog.Portal>
-    </Dialog.Root>
-  );
-});
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    );
+  }
+);
 
 CustomDialog.displayName = "CustomDialog";

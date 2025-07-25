@@ -1,4 +1,4 @@
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 
 const simple_updater = <
   U extends string | number | boolean,

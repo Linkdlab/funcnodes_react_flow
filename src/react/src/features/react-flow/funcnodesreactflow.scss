@@ -374,14 +374,7 @@
   position: relative;
 }
 
-.reactflowlayer {
-  flex-grow: 1;
-  position: relative;
-  overflow: hidden;
-  background-color: var(--fn-container-background); // Dark background color
-  padding: var(--fn-space-s);
-  border-radius: var(--containerboarderradius);
-}
+// .reactflowlayer styles moved to component-specific ReactFlowLayer.scss
 
 .vscrollcontainer {
   overflow-y: auto;

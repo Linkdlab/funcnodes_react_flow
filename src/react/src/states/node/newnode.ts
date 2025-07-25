@@ -5,8 +5,8 @@ import { update_node } from "./update_node";
 import { update_io } from "./update_io";
 import { FuncNodesReactFlowZustandInterface } from "../fnrfzst.t";
 import { TqdmState } from "@/shared-components";
-import { latest } from "../../types/versioned/versions.t";
-import { DataStructure, JSONStructure } from "../../funcnodes/datastructures";
+import { latest } from "@/barrel_imports";
+import { DataStructure, JSONStructure } from "@/barrel_imports";
 import {
   normalize_node,
   NormalizedPartialSerializedNodeType,

@@ -1,8 +1,8 @@
 import { JSX } from "react";
 
 import { assertNever } from "../helper";
-import { v1 as v1_types } from "../../types/versioned/versions.t";
-import { v0 as v0_types } from "../../types/versioned/versions.t";
+import { v1_types } from "@/barrel_imports";
+import { v0_types } from "@/barrel_imports";
 import { upgradePlugin_v0 } from "../v0";
 
 type olderPlugins_v1 = v0_types.FuncNodesReactPlugin;

@@ -1,4 +1,4 @@
-import { v0 as v0_types } from "../../types/versioned/versions.t";
+import { v0_types } from "@/barrel_imports";
 export const upgradePlugin_v0 = (
   plugin: v0_types.FuncNodesReactPlugin
 ): v0_types.FuncNodesReactPlugin => {

@@ -15,17 +15,18 @@ import {
 } from "@xyflow/react";
 
 import { useShallow } from "zustand/react/shallow";
-import { RFState } from "../../states/reactflow.t";
-import DefaultNode from "../node";
-import DefaultEdge from "../edge";
-import { FuncNodesReactFlowZustandInterface } from "../../states/fnrfzst.t";
+import { RFState } from "../../../../states/reactflow.t";
+import DefaultNode from "../../../../frontend/node";
+import DefaultEdge from "../../../../frontend/edge";
+import { FuncNodesReactFlowZustandInterface } from "../../../../states/fnrfzst.t";
 
-import { latest } from "../../types/versioned/versions.t";
-import { groupNodes, removeGroup as removeGroups } from "../../utils/grouping";
-import { DefaultGroup } from "../group";
-import { split_rf_nodes, useNodeTools } from "../../utils/nodes";
+import { latest } from "../../../../types/versioned/versions.t";
+
 import { useFuncNodesContext } from "@/providers";
 import { ReactFlowLayerProps } from "src/app/app.types";
+import { split_rf_nodes, useNodeTools } from "../../../../utils/nodes";
+import { groupNodes } from "../../../../utils/grouping";
+import { DefaultGroup } from "../../../../frontend/group";
 
 // import { useForceGraph } from "../../utils/autolayout";
 
@@ -245,10 +246,11 @@ const KeyHandler = () => {
       const selectedNodes = getSelectedNodes();
       const { group_nodes } = getSplitNodes(selectedNodes);
       if (group_nodes.length > 0) {
-        removeGroups(
-          group_nodes.map((n) => n.id),
-          fnrf_zst
-        );
+        throw new Error("remove groups not implemented");
+        // removeGroups(
+        //   group_nodes.map((n) => n.id),
+        //   fnrf_zst
+        // );
       }
     }
   }, [ungroupPressed, getNodes, fnrf_zst]); // Dependencies for the effect

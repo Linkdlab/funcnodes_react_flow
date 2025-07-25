@@ -3,11 +3,17 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import * as React from "react";
-import { CustomDialog, type DialogProps, type DialogButtonConfig } from "./CustomDialog";
+import {
+  CustomDialog,
+  type DialogProps,
+  type DialogButtonConfig,
+} from "./CustomDialog";
 
 // Mock the FuncNodes context
 const mockFuncNodesContext = {
-  local_state: vi.fn((selector) => selector({ funcnodescontainerRef: document.body })),
+  local_state: vi.fn((selector) =>
+    selector({ funcnodescontainerRef: document.body })
+  ),
 };
 
 // Mock the providers
@@ -27,18 +33,20 @@ vi.mock("@radix-ui/react-dialog", () => ({
       {children}
     </div>
   ),
-  Trigger: ({ children, asChild }: any) => (
-    asChild ? children : <button data-testid="dialog-trigger">{children}</button>
-  ),
+  Trigger: ({ children, asChild }: any) =>
+    asChild ? (
+      children
+    ) : (
+      <button data-testid="dialog-trigger">{children}</button>
+    ),
   Portal: ({ children }: any) => (
     <div data-testid="dialog-portal">{children}</div>
   ),
   Overlay: ({ className }: any) => (
     <div data-testid="dialog-overlay" className={className} />
   ),
-  Content: ({ children, asChild }: any) => (
-    asChild ? children : <div data-testid="dialog-content">{children}</div>
-  ),
+  Content: ({ children, asChild }: any) =>
+    asChild ? children : <div data-testid="dialog-content">{children}</div>,
   Title: ({ children, className, id }: any) => (
     <h1 data-testid="dialog-title" className={className} id={id}>
       {children}
@@ -49,9 +57,8 @@ vi.mock("@radix-ui/react-dialog", () => ({
       {children}
     </div>
   ),
-  Close: ({ children, asChild }: any) => (
-    asChild ? children : <button data-testid="dialog-close">{children}</button>
-  ),
+  Close: ({ children, asChild }: any) =>
+    asChild ? children : <button data-testid="dialog-close">{children}</button>,
 }));
 
 // Mock console.error for error handling tests
@@ -96,22 +103,27 @@ describe("CustomDialog", () => {
       expect(screen.getByTestId("dialog-root")).toBeInTheDocument();
       expect(screen.getByText("Just content")).toBeInTheDocument();
       expect(screen.queryByTestId("dialog-title")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("dialog-description")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("dialog-description")
+      ).not.toBeInTheDocument();
     });
 
     it("should render with custom className", () => {
       render(
-        <CustomDialog
-          open={true}
-          dialogClassName="custom-dialog"
-        >
+        <CustomDialog open={true} dialogClassName="custom-dialog">
           <p>Custom styled dialog</p>
         </CustomDialog>
       );
 
       // Look for the dialog content div with the custom className
-      const dialogContent = screen.getByText("Custom styled dialog").closest(".dialog-content");
-      expect(dialogContent).toHaveClass("dialog-content", "funcnodescontainer", "custom-dialog");
+      const dialogContent = screen
+        .getByText("Custom styled dialog")
+        .closest(".dialog-content");
+      expect(dialogContent).toHaveClass(
+        "dialog-content",
+        "funcnodescontainer",
+        "custom-dialog"
+      );
     });
 
     it("should render with default className when none provided", () => {
@@ -121,15 +133,23 @@ describe("CustomDialog", () => {
         </CustomDialog>
       );
 
-      const dialogContent = screen.getByText("Default styled dialog").closest(".dialog-content");
-      expect(dialogContent).toHaveClass("dialog-content", "funcnodescontainer", "default-dialog-content");
+      const dialogContent = screen
+        .getByText("Default styled dialog")
+        .closest(".dialog-content");
+      expect(dialogContent).toHaveClass(
+        "dialog-content",
+        "funcnodescontainer",
+        "default-dialog-content"
+      );
     });
 
     it("should render React node description", () => {
       render(
         <CustomDialog
           title="Test Dialog"
-          description={<div data-testid="custom-description">Custom description</div>}
+          description={
+            <div data-testid="custom-description">Custom description</div>
+          }
           open={true}
         >
           <p>Content</p>
@@ -146,7 +166,10 @@ describe("CustomDialog", () => {
         </CustomDialog>
       );
 
-      expect(screen.getByTestId("dialog-root")).toHaveAttribute("data-open", "false");
+      expect(screen.getByTestId("dialog-root")).toHaveAttribute(
+        "data-open",
+        "false"
+      );
 
       rerender(
         <CustomDialog open={true}>
@@ -154,7 +177,10 @@ describe("CustomDialog", () => {
         </CustomDialog>
       );
 
-      expect(screen.getByTestId("dialog-root")).toHaveAttribute("data-open", "true");
+      expect(screen.getByTestId("dialog-root")).toHaveAttribute(
+        "data-open",
+        "true"
+      );
     });
 
     it("should handle modal state", () => {
@@ -164,7 +190,10 @@ describe("CustomDialog", () => {
         </CustomDialog>
       );
 
-      expect(screen.getByTestId("dialog-root")).toHaveAttribute("data-modal", "true");
+      expect(screen.getByTestId("dialog-root")).toHaveAttribute(
+        "data-modal",
+        "true"
+      );
 
       rerender(
         <CustomDialog open={true} modal={false}>
@@ -172,7 +201,10 @@ describe("CustomDialog", () => {
         </CustomDialog>
       );
 
-      expect(screen.getByTestId("dialog-root")).toHaveAttribute("data-modal", "false");
+      expect(screen.getByTestId("dialog-root")).toHaveAttribute(
+        "data-modal",
+        "false"
+      );
     });
   });
 
@@ -184,11 +216,7 @@ describe("CustomDialog", () => {
       ];
 
       render(
-        <CustomDialog
-          title="Confirm Dialog"
-          buttons={buttons}
-          open={true}
-        >
+        <CustomDialog title="Confirm Dialog" buttons={buttons} open={true}>
           <p>Are you sure?</p>
         </CustomDialog>
       );
@@ -208,11 +236,7 @@ describe("CustomDialog", () => {
       ];
 
       render(
-        <CustomDialog
-          title="Confirm Dialog"
-          buttons={buttons}
-          open={true}
-        >
+        <CustomDialog title="Confirm Dialog" buttons={buttons} open={true}>
           <p>Are you sure?</p>
         </CustomDialog>
       );
@@ -226,22 +250,18 @@ describe("CustomDialog", () => {
 
     it("should handle buttons with custom properties", () => {
       const buttons: DialogButtonConfig[] = [
-        { 
-          text: "Disabled", 
-          onClick: vi.fn(), 
+        {
+          text: "Disabled",
+          onClick: vi.fn(),
           disabled: true,
           className: "custom-button-class",
-          ariaLabel: "Custom disabled button"
+          ariaLabel: "Custom disabled button",
         },
         { text: "Enabled", onClick: vi.fn(), close: false },
       ];
 
       render(
-        <CustomDialog
-          title="Custom Buttons"
-          buttons={buttons}
-          open={true}
-        >
+        <CustomDialog title="Custom Buttons" buttons={buttons} open={true}>
           <p>Custom button test</p>
         </CustomDialog>
       );
@@ -249,7 +269,10 @@ describe("CustomDialog", () => {
       const disabledButton = screen.getByText("Disabled");
       expect(disabledButton).toBeDisabled();
       expect(disabledButton).toHaveClass("custom-button-class");
-      expect(disabledButton).toHaveAttribute("aria-label", "Custom disabled button");
+      expect(disabledButton).toHaveAttribute(
+        "aria-label",
+        "Custom disabled button"
+      );
 
       const enabledButton = screen.getByText("Enabled");
       expect(enabledButton).not.toBeDisabled();
@@ -264,17 +287,13 @@ describe("CustomDialog", () => {
       ];
 
       render(
-        <CustomDialog
-          title="Test Dialog"
-          buttons={buttons}
-          open={true}
-        >
+        <CustomDialog title="Test Dialog" buttons={buttons} open={true}>
           <p>Test content</p>
         </CustomDialog>
       );
 
       await user.click(screen.getByText("Test"));
-      
+
       // Check that the handler was called
       expect(mockHandler).toHaveBeenCalledTimes(1);
       expect(mockHandler).toHaveBeenCalledWith(expect.any(Object));
@@ -282,28 +301,22 @@ describe("CustomDialog", () => {
 
     it("should handle empty buttons array", () => {
       render(
-        <CustomDialog
-          open={true}
-          buttons={[]}
-        >
+        <CustomDialog open={true} buttons={[]}>
           <p>No buttons</p>
         </CustomDialog>
       );
 
       expect(screen.getByText("No buttons")).toBeInTheDocument();
-      expect(screen.queryByRole("group", { name: "Dialog actions" })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("group", { name: "Dialog actions" })
+      ).not.toBeInTheDocument();
     });
 
     it("should handle buttons with empty text", () => {
-      const buttons: DialogButtonConfig[] = [
-        { text: "", onClick: vi.fn() },
-      ];
+      const buttons: DialogButtonConfig[] = [{ text: "", onClick: vi.fn() }];
 
       render(
-        <CustomDialog
-          open={true}
-          buttons={buttons}
-        >
+        <CustomDialog open={true} buttons={buttons}>
           <p>Empty button text</p>
         </CustomDialog>
       );
@@ -341,10 +354,7 @@ describe("CustomDialog", () => {
       const onOpenChange = vi.fn();
 
       render(
-        <CustomDialog
-          open={true}
-          onOpenChange={onOpenChange}
-        >
+        <CustomDialog open={true} onOpenChange={onOpenChange}>
           <p>Dialog content</p>
         </CustomDialog>
       );
@@ -359,10 +369,7 @@ describe("CustomDialog", () => {
       });
 
       render(
-        <CustomDialog
-          open={true}
-          onOpenChange={errorHandler}
-        >
+        <CustomDialog open={true} onOpenChange={errorHandler}>
           <p>Dialog content</p>
         </CustomDialog>
       );
@@ -385,22 +392,26 @@ describe("CustomDialog", () => {
         </CustomDialog>
       );
 
-      const dialogContent = screen.getByText("Content").closest(".dialog-content");
+      const dialogContent = screen
+        .getByText("Content")
+        .closest(".dialog-content");
       expect(dialogContent).toHaveAttribute("aria-label", "Custom aria label");
-      expect(dialogContent).toHaveAttribute("aria-description", "Custom aria description");
+      expect(dialogContent).toHaveAttribute(
+        "aria-description",
+        "Custom aria description"
+      );
     });
 
     it("should use title as aria-label when no custom ariaLabel provided", () => {
       render(
-        <CustomDialog
-          title="Dialog Title"
-          open={true}
-        >
+        <CustomDialog title="Dialog Title" open={true}>
           <p>Content</p>
         </CustomDialog>
       );
 
-      const dialogContent = screen.getByText("Content").closest(".dialog-content");
+      const dialogContent = screen
+        .getByText("Content")
+        .closest(".dialog-content");
       expect(dialogContent).toHaveAttribute("aria-label", "Dialog Title");
     });
 
@@ -415,8 +426,13 @@ describe("CustomDialog", () => {
         </CustomDialog>
       );
 
-      const dialogContent = screen.getByText("Content").closest(".dialog-content");
-      expect(dialogContent).toHaveAttribute("aria-description", "String description");
+      const dialogContent = screen
+        .getByText("Content")
+        .closest(".dialog-content");
+      expect(dialogContent).toHaveAttribute(
+        "aria-description",
+        "String description"
+      );
     });
 
     it("should have proper role attributes", () => {
@@ -425,31 +441,26 @@ describe("CustomDialog", () => {
       ];
 
       render(
-        <CustomDialog
-          title="Dialog with roles"
-          buttons={buttons}
-          open={true}
-        >
+        <CustomDialog title="Dialog with roles" buttons={buttons} open={true}>
           <p>Content</p>
         </CustomDialog>
       );
 
-      const dialogContent = screen.getByText("Content").closest(".dialog-content");
+      const dialogContent = screen
+        .getByText("Content")
+        .closest(".dialog-content");
       expect(dialogContent).toHaveAttribute("role", "dialog");
-      
+
       const mainContent = screen.getByRole("main");
       expect(mainContent).toBeInTheDocument();
-      
+
       const buttonGroup = screen.getByRole("group", { name: "Dialog actions" });
       expect(buttonGroup).toBeInTheDocument();
     });
 
     it("should have proper heading structure", () => {
       render(
-        <CustomDialog
-          title="Dialog Title"
-          open={true}
-        >
+        <CustomDialog title="Dialog Title" open={true}>
           <p>Content</p>
         </CustomDialog>
       );
@@ -465,11 +476,7 @@ describe("CustomDialog", () => {
       ];
 
       render(
-        <CustomDialog
-          title="Dialog with buttons"
-          buttons={buttons}
-          open={true}
-        >
+        <CustomDialog title="Dialog with buttons" buttons={buttons} open={true}>
           <p>Content</p>
         </CustomDialog>
       );
@@ -486,10 +493,7 @@ describe("CustomDialog", () => {
   describe("trigger functionality", () => {
     it("should render trigger element", () => {
       render(
-        <CustomDialog
-          trigger={<button>Open Dialog</button>}
-          open={false}
-        >
+        <CustomDialog trigger={<button>Open Dialog</button>} open={false}>
           <p>Dialog content</p>
         </CustomDialog>
       );
@@ -524,28 +528,26 @@ describe("CustomDialog", () => {
   describe("performance optimizations", () => {
     it("should memoize className concatenation", () => {
       const { rerender } = render(
-        <CustomDialog
-          open={true}
-          dialogClassName="test-class"
-        >
+        <CustomDialog open={true} dialogClassName="test-class">
           <p>Test content</p>
         </CustomDialog>
       );
 
-      const firstDialogContent = screen.getByText("Test content").closest("div");
+      const firstDialogContent = screen
+        .getByText("Test content")
+        .closest("div");
       const firstClassName = firstDialogContent?.className;
 
       // Re-render with same props
       rerender(
-        <CustomDialog
-          open={true}
-          dialogClassName="test-class"
-        >
+        <CustomDialog open={true} dialogClassName="test-class">
           <p>Test content</p>
         </CustomDialog>
       );
 
-      const secondDialogContent = screen.getByText("Test content").closest("div");
+      const secondDialogContent = screen
+        .getByText("Test content")
+        .closest("div");
       expect(secondDialogContent?.className).toBe(firstClassName);
     });
 
@@ -555,10 +557,7 @@ describe("CustomDialog", () => {
       ];
 
       const { rerender } = render(
-        <CustomDialog
-          open={true}
-          buttons={initialButtons}
-        >
+        <CustomDialog open={true} buttons={initialButtons}>
           <p>Button test</p>
         </CustomDialog>
       );
@@ -571,10 +570,7 @@ describe("CustomDialog", () => {
       ];
 
       rerender(
-        <CustomDialog
-          open={true}
-          buttons={newButtons}
-        >
+        <CustomDialog open={true} buttons={newButtons}>
           <p>Button test</p>
         </CustomDialog>
       );
@@ -603,7 +599,8 @@ describe("CustomDialog", () => {
     });
 
     it("should handle special characters in content", () => {
-      const specialContent = 'Content with <script>alert("xss")</script> & symbols ñáéíóú';
+      const specialContent =
+        'Content with <script>alert("xss")</script> & symbols ñáéíóú';
 
       render(
         <CustomDialog

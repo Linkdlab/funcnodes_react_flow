@@ -2,7 +2,7 @@ import { useContext } from "react";
 import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
-} from "../../states/fnrfzst.t";
+} from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "./io/io";
 
@@ -10,7 +10,7 @@ import { useDataOverlayRendererForIo } from "../datarenderer/data_renderer_overl
 
 import { RenderMappingContext } from "../datarenderer/rendermappings";
 import { DefaultDataView } from "../datarenderer/default_data_view_renderer";
-import { latest } from "../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 import { DataViewRendererToDataPreviewViewRenderer } from "../datarenderer/default_data_preview_renderer";
 
 const useBodyDataRendererForIo = (

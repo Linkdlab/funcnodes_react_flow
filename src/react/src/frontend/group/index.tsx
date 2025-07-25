@@ -1,5 +1,5 @@
 import * as React from "react";
-import { removeGroup } from "../../utils/grouping";
+import { removeGroup } from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
 import { CloseIcon } from "@/icons";
 

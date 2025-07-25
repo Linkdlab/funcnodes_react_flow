@@ -1,7 +1,6 @@
 import * as React from "react";
 import { ReactSVG } from "react-svg";
-import { latest } from "../../types/versioned/versions.t";
-import { ArrayBufferDataStructure } from "../../funcnodes/datastructures";
+import { latest, ArrayBufferDataStructure } from "@/barrel_imports";
 
 const Base64ImageRenderer = ({
   value,

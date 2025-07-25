@@ -1,6 +1,6 @@
 import * as React from "react";
 import { CustomDialog } from "@/barrel_imports";
-import { latest } from "../../../types/versioned/versions.t";
+import { latest } from "@/barrel_imports";
 import { NodeSettingsWindow } from "./NodeSettingsWindow";
 
 interface NodeSettingsOverlayProps {

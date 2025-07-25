@@ -2,7 +2,7 @@ import { StoreApi, UseBoundStore } from "zustand";
 import { LimitedDeepPartial } from "@/object-helpers";
 import { IOStore, PartialSerializedIOType, SerializedIOType } from "./io.t";
 import { TqdmState } from "@/shared-components";
-import { v0 as v0_types } from "../../../types/versioned/versions.t";
+import { v0_types } from "@/barrel_imports";
 
 export * from "../v0/node.t";
 

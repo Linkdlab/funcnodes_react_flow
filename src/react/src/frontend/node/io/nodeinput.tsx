@@ -4,13 +4,13 @@ import { Position } from "@xyflow/react";
 import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
-} from "../../../states/fnrfzst.t";
+} from "@/barrel_imports";
 import { HandleWithPreview, pick_best_io_type } from "./io";
 
 import * as React from "react";
-import { RenderMappingContext } from "../../datarenderer/rendermappings";
-import { latest } from "../../../types/versioned/versions.t";
-import { SelectionInput } from "../../datarenderer/default_input_renderer";
+import { RenderMappingContext } from "@/barrel_imports";
+import { latest } from "@/barrel_imports";
+import { SelectionInput } from "@/barrel_imports";
 import { useKeyPress } from "@/providers";
 
 const INPUTCONVERTER: {

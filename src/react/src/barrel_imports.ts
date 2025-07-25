@@ -1,6 +1,6 @@
 export { CustomDialog } from "./shared/components/dialog";
 
-export { ReactFlowLayer } from "./frontend/funcnodesreactflow/react_flow_layer";
+export { ReactFlowLayer } from "./features/react-flow/components/ReactFlowLayer";
 
 export type { FuncNodesReactFlowZustandInterface } from "./states/fnrfzst.t";
 export { FuncNodesReactFlowZustand } from "./states/fnrfzst";
@@ -15,3 +15,37 @@ export type { ProgressStateMessage } from "./states/fnrfzst.t";
 export { RenderMappingProvider } from "./frontend/datarenderer/rendermappings";
 
 export * from "./states/lib.t";
+export { pick_best_io_type } from "./frontend/node/io/io";
+export { RenderMappingContext } from "./frontend/datarenderer/rendermappings";
+export { INPUTCONVERTER } from "./frontend/node/io/nodeinput";
+export { SelectionInput } from "./frontend/datarenderer/default_input_renderer";
+export type { RenderOptions } from "./states/fnrfzst.t";
+export { NodeName } from "./frontend/node/node";
+export { useNodeTools } from "./utils/nodes";
+export { groupNodes } from "./utils/grouping";
+export { split_rf_nodes } from "./utils/nodes";
+export { default as DefaultNode } from "./frontend/node";
+export { default as DefaultEdge } from "./frontend/edge";
+export { DefaultGroup } from "./frontend/group";
+export type { RFState } from "./states/reactflow.t";
+export { ArrayBufferDataStructure } from "./funcnodes/datastructures";
+export { nodeTypes } from "./features/react-flow/utils/node-types";
+export { edgeTypes } from "./features/react-flow/utils/node-types";
+export { selector } from "./features/react-flow/utils/node-types";
+export { useDataOverlayRendererForIo } from "./frontend/datarenderer/data_renderer_overlay";
+export { removeGroup } from "./utils/grouping";
+export { DataViewRendererToDataPreviewViewRenderer } from "./frontend/datarenderer/default_data_preview_renderer";
+export { DefaultDataView } from "./frontend/datarenderer/default_data_view_renderer";
+export { DataViewRendererToOverlayRenderer } from "./frontend/datarenderer/default_data_overlay_views";
+export { DefaultOverlayRenderer } from "./frontend/datarenderer/default_data_overlay_views";
+export { DefaultDataPreviewViewRenderer } from "./frontend/datarenderer/default_data_preview_renderer";
+export { DefaultDataViewRenderer } from "./frontend/datarenderer/default_data_view_renderer";
+export { DefaultInLineRenderer } from "./frontend/datarenderer/default_inline_renderer";
+export { DefaultInputrenderer } from "./frontend/datarenderer/default_input_renderer";
+export { DefaultOutputrenderer } from "./frontend/datarenderer/default_output_renderer";
+export { InLineOutput } from "./frontend/datarenderer/default_output_renderer";
+export { v0 as v0_types } from "./types/versioned/versions.t";
+export { v1 as v1_types } from "./types/versioned/versions.t";
+export { upgradePlugin_v0 } from "./plugin/v0";
+export { DataStructure, JSONStructure } from "./funcnodes/datastructures";
+export type { NodeContextType } from "./frontend/node/node";

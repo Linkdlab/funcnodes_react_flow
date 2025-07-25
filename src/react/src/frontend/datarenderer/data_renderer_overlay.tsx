@@ -2,12 +2,10 @@ import { useContext } from "react";
 import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
-} from "../../states/fnrfzst.t";
-
+  latest,
+} from "@/barrel_imports";
 import { pick_best_io_type } from "../node/io/io";
-
 import { RenderMappingContext } from "./rendermappings";
-import { latest } from "../../types/versioned/versions.t";
 import {
   DataViewRendererToOverlayRenderer,
   DefaultOverlayRenderer,
