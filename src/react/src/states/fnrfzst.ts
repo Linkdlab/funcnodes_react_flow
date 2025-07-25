@@ -280,6 +280,7 @@ const FuncNodesReactFlowZustand = (
             sourceHandle: action.src_ioid,
             targetHandle: action.trg_ioid,
             className: "funcnodes-edge animated",
+            zIndex: 1003, // just above elevated groups
           };
 
           iterf.logger.info("Adding edge", new_edge);
