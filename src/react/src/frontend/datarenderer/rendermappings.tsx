@@ -2,7 +2,7 @@ import * as React from "react";
 import { ReactElement, createContext, useEffect, useReducer } from "react";
 
 import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
-import { NodeContext } from "../node/node";
+import { NodeContext } from "@/nodes";
 
 import { latest } from "@/barrel_imports";
 import { DefaultInLineRenderer } from "./default_inline_renderer";

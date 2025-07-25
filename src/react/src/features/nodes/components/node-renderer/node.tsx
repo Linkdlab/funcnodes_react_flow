@@ -215,7 +215,6 @@ const NodeFooter = React.memo(
   }
 );
 
-
 interface NodeContextType {
   node_data: latest.NodeType;
   [key: string]: any | undefined;
@@ -226,7 +225,7 @@ interface RFNodeDataPass extends Record<string, unknown> {
 
 const NodeContext = React.createContext<NodeContextType | null>(null);
 
-const DefaultNode = ({ data }: { data: RFNodeDataPass }) => {
+export const DefaultNode = ({ data }: { data: RFNodeDataPass }) => {
   // Use the  latest.NodeStore to get the data for the node.
   const storedata = data.nodestore.use();
 
@@ -291,6 +290,5 @@ const DefaultNode = ({ data }: { data: RFNodeDataPass }) => {
   );
 };
 
-export default DefaultNode;
 export { NodeName, NodeContext };
 export type { NodeContextType, RFNodeDataPass };

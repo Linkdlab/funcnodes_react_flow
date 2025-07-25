@@ -1,14 +1,13 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
 import {
-  pick_best_io_type,
   RenderMappingContext,
-  INPUTCONVERTER,
   latest,
   SelectionInput,
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
 } from "@/barrel_imports";
+import { pick_best_io_type, INPUTCONVERTER } from "@/nodes";
 
 export const NodeSettingsInput = ({ iostore }: { iostore: latest.IOStore }) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();

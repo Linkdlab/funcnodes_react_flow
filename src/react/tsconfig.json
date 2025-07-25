@@ -66,6 +66,9 @@
       "@/nodes": [
         "src/features/nodes"
       ],
+      "@/edges": [
+        "src/features/edges"
+      ],
       "@/header": [
         "src/features/header"
       ],
@@ -83,6 +86,9 @@
       ],
       "@/react-flow/*": [
         "src/features/react-flow/*"
+      ],
+      "@/react-flow": [
+        "src/features/react-flow"
       ],
       "@/icons": [
         "src/shared/components/icons"

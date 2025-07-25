@@ -19,9 +19,9 @@ import {
 } from "@/app";
 import {
   FuncNodesReactFlowZustandInterface,
-  ReactFlowLayer,
   RenderMappingProvider,
 } from "@/barrel_imports";
+import { ReactFlowLayer } from "@/react-flow";
 import {
   FullScreenComponent,
   SmoothExpandComponent,

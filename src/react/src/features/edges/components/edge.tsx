@@ -1,7 +1,7 @@
 import { EdgeProps, getBezierPath, BaseEdge } from "@xyflow/react";
 import * as React from "react";
 
-const DefaultEdge = ({
+export const DefaultEdge = ({
   id,
   sourceX,
   sourceY,
@@ -27,5 +27,3 @@ const DefaultEdge = ({
     </>
   );
 };
-
-export default DefaultEdge;

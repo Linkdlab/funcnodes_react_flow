@@ -1,10 +1,7 @@
 import { NodeTypes, EdgeTypes } from "@xyflow/react";
-import {
-  RFState,
-  DefaultNode,
-  DefaultEdge,
-  DefaultGroup,
-} from "@/barrel_imports";
+import { RFState, DefaultGroup } from "@/barrel_imports";
+import { DefaultNode } from "@/nodes";
+import { DefaultEdge } from "@/edges";
 
 export const nodeTypes: NodeTypes = {
   default: DefaultNode,

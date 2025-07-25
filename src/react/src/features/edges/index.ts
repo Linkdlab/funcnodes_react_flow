@@ -1,1 +1,1 @@
-export { Edge } from "./components";
+export { DefaultEdge } from "./components";

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { NodeName, latest } from "@/barrel_imports";
+import { latest } from "@/barrel_imports";
 import { NodeSettingsInput, NodeSettingsOutput } from "./io";
 import {
   ChevronDownIcon,
@@ -9,6 +9,7 @@ import {
   ChevronUpIcon,
 } from "@/icons";
 import { ExpandingContainer } from "@/shared-components/auto-layouts";
+import { NodeName } from "@/nodes";
 
 const CurrentNodeSettings = ({
   nodestore,

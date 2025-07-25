@@ -2,17 +2,13 @@ import { useContext } from "react";
 import {
   FuncNodesReactFlowZustandInterface,
   RenderOptions,
-
 } from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "../components/node-renderer/io/io";
-
-import { useDataOverlayRendererForIo } from "../../../frontend/datarenderer/data_renderer_overlay";
-
-import { RenderMappingContext } from "../datarenderer/rendermappings";
-import { DefaultDataView } from "../datarenderer/default_data_view_renderer";
-import { latest } from "@/barrel_imports";
-import { DataViewRendererToDataPreviewViewRenderer } from "../datarenderer/default_data_preview_renderer";
+import { useDataOverlayRendererForIo } from "@/barrel_imports";
+import { DefaultDataView, latest } from "@/barrel_imports";
+import { DataViewRendererToDataPreviewViewRenderer } from "@/barrel_imports";
+import { RenderMappingContext } from "@/barrel_imports";
 
 const useBodyDataRendererForIo = (
   io?: latest.IOType

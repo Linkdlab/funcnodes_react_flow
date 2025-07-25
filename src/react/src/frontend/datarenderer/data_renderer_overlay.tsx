@@ -4,13 +4,13 @@ import {
   RenderOptions,
   latest,
 } from "@/barrel_imports";
-import { pick_best_io_type } from "../node/io/io";
 import { RenderMappingContext } from "./rendermappings";
 import {
   DataViewRendererToOverlayRenderer,
   DefaultOverlayRenderer,
 } from "./default_data_overlay_views";
 import { useFuncNodesContext } from "@/providers";
+import { pick_best_io_type } from "@/nodes";
 
 const useDataOverlayRendererForIo = (
   io?: latest.IOType

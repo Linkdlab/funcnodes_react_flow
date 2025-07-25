@@ -1,1 +1,1 @@
-export { default as Edge } from "./edge";
+export { DefaultEdge } from "./edge";

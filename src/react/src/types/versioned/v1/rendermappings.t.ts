@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import { IOStore } from "./io.t";
 import { NodeType } from "./node.t";
-import { NodeContextType } from "@/barrel_imports";
+import { NodeContextType } from "@/nodes";
 
 export interface DataOverlayRendererProps {
   iostore: IOStore;
