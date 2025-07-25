@@ -4,7 +4,8 @@ import {
   RenderOptions,
 } from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
-import { pick_best_io_type } from "./io";
+import { pick_best_io_type } from "../components/node-renderer/io/io";
+
 
 import { useDataOverlayRendererForIo } from "@/barrel_imports";
 

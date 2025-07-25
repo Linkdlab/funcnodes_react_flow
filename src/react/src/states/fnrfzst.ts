@@ -28,7 +28,7 @@ import type {
 } from "./fnrfzst.t";
 import { upgradeFuncNodesReactPlugin } from "../plugin";
 
-import { RFNodeDataPass } from "../frontend/node/node";
+import { RFNodeDataPass } from "../features/nodes";
 
 import { latest } from "../types/versioned/versions.t";
 import { GroupAction, GroupActionUpdate } from "./groups.t";
