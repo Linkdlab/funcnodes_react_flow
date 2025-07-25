@@ -1,6 +1,11 @@
 import * as React from "react";
 import { useCallback, useEffect, useRef } from "react";
-import { ReactFlow, Background, MiniMap } from "@xyflow/react";
+import {
+  ReactFlow,
+  Background,
+  MiniMap,
+  BackgroundVariant,
+} from "@xyflow/react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useFuncNodesContext } from "@/providers";
@@ -12,10 +17,22 @@ import { KeyHandler } from "../KeyHandler";
 // import { ContextMenu, ContextMenuProps } from "../ContextMenu";
 import "./ReactFlowLayer.scss";
 import { pasteClipboardData } from "@/react-flow/utils";
+import { useTheme } from "@/providers";
+
+const BackgroundVariantLookup: Record<string, BackgroundVariant> = {
+  default: BackgroundVariant.Dots,
+  metal: BackgroundVariant.Cross,
+  light: BackgroundVariant.Dots,
+  solarized: BackgroundVariant.Dots,
+  midnight: BackgroundVariant.Dots,
+  forest: BackgroundVariant.Dots,
+  scientific: BackgroundVariant.Lines,
+};
 
 export const ReactFlowLayer = (props: ReactFlowLayerProps) => {
   const fnrf_zst = useFuncNodesContext();
   const reactflowRef = useRef<HTMLDivElement>(null);
+  const { colorTheme } = useTheme();
   // const [menu, setMenu] = useState<ContextMenuProps | null>(null);
 
   const { onSelectionChange } = useReactFlowSelection();
@@ -81,7 +98,16 @@ export const ReactFlowLayer = (props: ReactFlowLayerProps) => {
       >
         <ReactFlowManager />
         <KeyHandler />
-        <Background color="#888" gap={16} size={1} />
+        <Background
+          color="#888"
+          gap={24}
+          size={2}
+          variant={
+            BackgroundVariantLookup[colorTheme] ||
+            BackgroundVariantLookup.default
+          }
+          patternClassName="fn-background-pattern"
+        />
         {props.minimap && (
           <MiniMap
             nodeStrokeWidth={3}
