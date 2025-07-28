@@ -26,6 +26,10 @@
   /* background patterns */
   --fn-background-pattern-color: hsla(220, 10%, 18%, 0.3);
 
+  /* grouping */
+  --group-color: hsla(210, 75%, 70%, 0.15);
+  --group-color-border: hsla(210, 75%, 70%, 0.4);
+
   //new
 
   --fn-surface-elevation-low: hsl(220, 11%, 24%); /* -new-: cards, side-bars */
@@ -76,6 +80,10 @@
 
   /* background patterns */
   --fn-background-pattern-color: hsl(245.1, 13.8%, 50%);
+
+  /* grouping */
+  --group-color: hsla(189, 100%, 70%, 0.15);
+  --group-color-border: hsla(189, 100%, 70%, 0.4);
 }
 
 [fn-data-color-theme="metal"] {
@@ -121,6 +129,10 @@
   /* background patterns */
   --fn-background-pattern-color: hsl(220, 6.6%, 55%);
 
+  /* grouping */
+  --group-color: hsla(210, 85%, 56%, 0.15);
+  --group-color-border: hsla(210, 85%, 56%, 0.4);
+
   /* micro-interactions */
   --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.6);
   --fn-transition-fast: 120ms ease-out;
@@ -157,6 +169,10 @@
 
   /* background patterns */
   --fn-background-pattern-color: hsl(0, 0%, 64%);
+
+  /* grouping */
+  --group-color: hsla(210, 85%, 56%, 0.1);
+  --group-color-border: hsla(210, 85%, 56%, 0.3);
 }
 
 [fn-data-color-theme="solarized"] {
@@ -189,6 +205,10 @@
 
   /* background patterns */
   --fn-background-pattern-color: rgb(147, 161, 161);
+
+  /* grouping */
+  --group-color: rgba(38, 139, 210, 0.15);
+  --group-color-border: rgba(38, 139, 210, 0.4);
 }
 
 [fn-data-color-theme="midnight"] {
@@ -221,6 +241,10 @@
 
   /* background patterns */
   --fn-background-pattern-color: rgb(58, 67, 112);
+
+  /* grouping */
+  --group-color: rgba(79, 93, 255, 0.15);
+  --group-color-border: rgba(79, 93, 255, 0.4);
 }
 
 [fn-data-color-theme="forest"] {
@@ -253,6 +277,10 @@
 
   /* background patterns */
   --fn-background-pattern-color: rgb(74, 106, 74);
+
+  /* grouping */
+  --group-color: rgba(129, 199, 132, 0.15);
+  --group-color-border: rgba(129, 199, 132, 0.4);
 }
 
 [fn-data-color-theme="scientific"] {
@@ -285,4 +313,44 @@
 
   /* background patterns */
   --fn-background-pattern-color: rgb(181, 198, 224);
+
+  /* grouping */
+  --group-color: rgba(37, 99, 235, 0.1);
+  --group-color-border: rgba(37, 99, 235, 0.3);
+}
+
+[fn-data-color-theme="neon"] {
+  --fn-app-background: #0a0a0a;
+  --fn-container-background: #111111;
+  --fn-surface-elevation-low: #1a1a1a;
+  --fn-surface-elevation-high: #222222;
+  --fn-text-color-neutral: #ffffff;
+  --fn-text-color-subtle: #cccccc;
+  --fn-text-color-neutral-inverted: #0a0a0a;
+  --fn-neutral-element-background: #1a1a1a;
+  --fn-neutral-element-background-hover: #2a2a2a;
+  --fn-neutral-element-border: rgba(255, 0, 255, 0.3);
+  --fn-primary-color: #ff00ff;
+  --fn-primary-color-hover: #ff44ff;
+  --fn-focus-ring: 0 0 0 2px #ff00ffaa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #00ffff;
+  --fn-edge-color-selected: #ff00ff;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgba(255, 0, 255, 0.1);
+
+  /* grouping */
+  --group-color: rgba(255, 0, 255, 0.1);
+  --group-color-border: rgba(255, 0, 255, 0.6);
+
+  // nodes
+  --fn-node-handle-source-color: #ff00ff;
+  --fn-node-handle-target-color: #00ffff;
+  --fn-node-background: #1a1a1a;
+  --fn-node-header-color: #0a0a0a;
+  --fn-node-border-color: #b271ff;
+  --fn-node-footer-color: #222222;
+  --fn-node-progress-color: #00ffff;
 }
