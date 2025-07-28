@@ -10,23 +10,25 @@ interface NodeSettingsOverlayProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export const NodeSettingsOverlay = ({
-  node_data,
-  isOpen,
-  onOpenChange,
-  nodeSettingsPath,
-}: NodeSettingsOverlayProps) => {
-  return (
-    <CustomDialog
-      title={`Node Settings: ${node_data.id}`}
-      open={isOpen}
-      onOpenChange={onOpenChange}
-      dialogClassName="nodesettings-dialog"
-    >
-      <NodeSettingsWindow
-        node_data={node_data}
-        nodeSettingsPath={nodeSettingsPath}
-      />
-    </CustomDialog>
-  );
-};
+export const NodeSettingsOverlay = React.memo(
+  ({
+    node_data,
+    isOpen,
+    onOpenChange,
+    nodeSettingsPath,
+  }: NodeSettingsOverlayProps) => {
+    return (
+      <CustomDialog
+        title={`Node Settings: ${node_data.id}`}
+        open={isOpen}
+        onOpenChange={onOpenChange}
+        dialogClassName="nodesettings-dialog"
+      >
+        <NodeSettingsWindow
+          node_data={node_data}
+          nodeSettingsPath={nodeSettingsPath}
+        />
+      </CustomDialog>
+    );
+  }
+);
