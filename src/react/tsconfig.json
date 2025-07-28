@@ -48,6 +48,9 @@
       "@/shared-components/*": [
         "src/shared/components/*"
       ],
+      "@/shared-styles/*": [
+        "src/shared/styles/*"
+      ],
       "@/logging": [
         "src/shared/utils/logger"
       ],
@@ -59,6 +62,9 @@
       ],
       "@/messages": [
         "src/core/messaging/serializer"
+      ],
+      "@/data-structures": [
+        "src/core/data-structures"
       ],
       "@/workers": [
         "src/core/workers"
