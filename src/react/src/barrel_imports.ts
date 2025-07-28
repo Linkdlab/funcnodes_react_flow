@@ -1,6 +1,5 @@
 export { CustomDialog } from "./shared/components/dialog";
 
-
 export type { FuncNodesReactFlowZustandInterface } from "./states/fnrfzst.t";
 export { FuncNodesReactFlowZustand } from "./states/fnrfzst";
 export type { latest } from "./types/versioned/versions.t";
@@ -21,7 +20,6 @@ export type { RenderOptions } from "./states/fnrfzst.t";
 export { useNodeTools } from "./utils/nodes";
 export { groupNodes } from "./utils/grouping";
 export { split_rf_nodes } from "./utils/nodes";
-export { DefaultGroup } from "./frontend/group";
 export type { RFState } from "./states/reactflow.t";
 export { ArrayBufferDataStructure } from "./funcnodes/datastructures";
 export { useDataOverlayRendererForIo } from "./frontend/datarenderer/data_renderer_overlay";
