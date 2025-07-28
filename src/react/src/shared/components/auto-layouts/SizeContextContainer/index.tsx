@@ -7,7 +7,7 @@
  */
 
 import * as React from "react";
-
+import "./size-context-container.scss";
 /**
  * Breakpoint type representing different screen size breakpoints
  * Empty string represents the default/base breakpoint

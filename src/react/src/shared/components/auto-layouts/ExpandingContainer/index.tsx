@@ -6,7 +6,7 @@
  */
 
 import * as React from "react";
-
+import "./expanding-container.scss";
 /**
  * Props for ExpandingContainer component
  */

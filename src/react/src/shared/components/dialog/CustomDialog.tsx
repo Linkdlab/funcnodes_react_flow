@@ -4,6 +4,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { CloseIcon } from "@/icons";
 import { useFuncNodesContext } from "@/providers";
 
+import "./CustomDialog.scss";
+
 /**
  * Configuration for dialog action buttons
  */
