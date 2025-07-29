@@ -8,7 +8,9 @@ import {
   ActiveModule,
   AddableModule,
   InstallableModule,
+  GroupedAvailableModules,
 } from "@/library/components";
+import { useWorkerApi } from "@/workers";
 
 export const AddLibraryOverlay = ({
   children,
@@ -21,16 +23,14 @@ export const AddLibraryOverlay = ({
   const [availableExtended, SetAvailableExtended] = useState(true);
   const [installedExtended, SetInstalledExtended] = useState(true);
 
-  const [availableModules, SetAvailableModules] = useState<{
-    installed: AvailableModule[];
-    available: AvailableModule[];
-    active: AvailableModule[];
-  }>({
-    installed: [],
-    available: [],
-    active: [],
-  });
+  const [availableModules, SetAvailableModules] =
+    useState<GroupedAvailableModules>({
+      installed: [],
+      available: [],
+      active: [],
+    });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { lib: libAPI } = useWorkerApi();
 
   const update_modules = (open: boolean) => {
     if (!open) return;
@@ -39,7 +39,7 @@ export const AddLibraryOverlay = ({
       return;
     }
 
-    zustand.worker.get_available_modules().then((modules) => {
+    libAPI?.get_available_modules().then((modules) => {
       SetAvailableModules(modules);
     });
   };
@@ -48,51 +48,48 @@ export const AddLibraryOverlay = ({
     return <></>;
   }
 
-  const add_new_lib_from_installed = (
-    module: AvailableModule,
-    release: string
-  ) => {
-    setIsDialogOpen(false);
-    if (zustand.worker === undefined) {
-      return;
-    }
-    zustand.worker.add_lib(module.name, release); // use name as module name
-  };
+  const add_new_lib_from_installed = React.useCallback(
+    (module: AvailableModule, release: string) => {
+      setIsDialogOpen(false);
+      libAPI?.add_lib(module.name, release); // use name as module name
+    },
+    [libAPI]
+  );
 
-  const add_new_lib_from_installable = (
-    module: AvailableModule,
-    release: string
-  ) => {
-    setIsDialogOpen(false);
-    if (zustand.worker === undefined) {
-      return;
-    }
-    zustand.worker.add_lib(module.name, release); // use name as module name
-  };
+  const add_new_lib_from_installable = React.useCallback(
+    (module: AvailableModule, release: string) => {
+      setIsDialogOpen(false);
+      libAPI?.add_lib(module.name, release); // use name as module name
+    },
+    [libAPI]
+  );
 
-  const remove_lib_from_active = (module: AvailableModule) => {
-    setIsDialogOpen(false);
-    if (zustand.worker === undefined) {
-      return;
-    }
-    zustand.worker.remove_lib(module.name);
-  };
+  const remove_lib_from_active = React.useCallback(
+    (module: AvailableModule) => {
+      setIsDialogOpen(false);
+      libAPI?.remove_lib(module.name);
+    },
+    [libAPI]
+  );
 
-  const update_lib = (module: AvailableModule, release: string) => {
-    setIsDialogOpen(false);
-    if (zustand.worker === undefined) {
-      return;
-    }
-    zustand.worker.add_lib(module.name, release);
-  };
+  const update_lib = React.useCallback(
+    (module: AvailableModule, release: string) => {
+      setIsDialogOpen(false);
+      libAPI?.add_lib(module.name, release);
+    },
+    [libAPI]
+  );
 
   // Filter the modules based on the search term, ignoring case
-  const filterModules = (modules: AvailableModule[]) =>
-    modules.filter(
-      (module) =>
-        module.name.toLowerCase().includes(filter.toLowerCase()) ||
-        module.description.toLowerCase().includes(filter.toLowerCase())
-    );
+  const filterModules = React.useCallback(
+    (modules: AvailableModule[]) =>
+      modules.filter(
+        (module) =>
+          module.name.toLowerCase().includes(filter.toLowerCase()) ||
+          module.description.toLowerCase().includes(filter.toLowerCase())
+      ),
+    [filter]
+  );
 
   const availableModulesFiltered = filterModules(availableModules.available);
   const installedModulesFiltered = filterModules(availableModules.installed);

@@ -17,3 +17,9 @@ export const POSSIBLE_RESTRICTIONS: Restriction[] = [
   ">",
 ];
 export const DEFAULT_RESTRICTION: Restriction = ">=";
+
+export interface GroupedAvailableModules {
+  installed: AvailableModule[];
+  available: AvailableModule[];
+  active: AvailableModule[];
+}

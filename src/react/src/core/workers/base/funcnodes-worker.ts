@@ -22,12 +22,17 @@ import {
   WorkerGroupManager,
   WorkerGroupManagerAPI,
 } from "./handlers/group-manager";
+import {
+  WorkerLibraryManager,
+  WorkerLibraryManagerAPI,
+} from "./handlers/library-manager";
 
 export type WorkerAPI = {
   node: WorkerNodeManagerAPI;
   group: WorkerGroupManagerAPI;
   edge: WorkerEdgeManagerAPI;
   hooks: WorkerHookManagerAPI;
+  lib: WorkerLibraryManagerAPI;
 };
 
 export class FuncNodesWorker {
@@ -43,6 +48,7 @@ export class FuncNodesWorker {
   private _nodeManager: WorkerNodeManager;
   private _edgeManager: WorkerEdgeManager;
   private _groupManager: WorkerGroupManager;
+  private _libraryManager: WorkerLibraryManager;
   // Public getter for handlers to access eventManager
   public getEventManager(): WorkerEventManager {
     return this._eventManager;
@@ -68,7 +74,9 @@ export class FuncNodesWorker {
   public getGroupManager(): WorkerGroupManager {
     return this._groupManager;
   }
-
+  public getLibraryManager(): WorkerLibraryManager {
+    return this._libraryManager;
+  }
   state: UseBoundStore<StoreApi<FuncNodesWorkerState>>;
   public readonly api: WorkerAPI;
   on_error: (error: any) => void;
@@ -102,6 +110,7 @@ export class FuncNodesWorker {
     this._nodeManager = new WorkerNodeManager(handlerContext);
     this._edgeManager = new WorkerEdgeManager(handlerContext);
     this._groupManager = new WorkerGroupManager(handlerContext);
+    this._libraryManager = new WorkerLibraryManager(handlerContext);
     this._communicationManager.start();
     this._connectionhealthManager.start();
     this._syncManager.start();
@@ -110,12 +119,14 @@ export class FuncNodesWorker {
     this._nodeManager.start();
     this._edgeManager.start();
     this._groupManager.start();
+    this._libraryManager.start();
     if (data.zustand) this.set_zustand(data.zustand);
     this.api = {
       node: this._nodeManager,
       group: this._groupManager,
       edge: this._edgeManager,
       hooks: this._hookManager,
+      lib: this._libraryManager,
     };
   }
 
@@ -136,21 +147,6 @@ export class FuncNodesWorker {
 
   public get is_responsive(): boolean {
     return this._connectionhealthManager.isResponsive();
-  }
-
-  async add_external_worker({
-    module,
-    cls_module,
-    cls_name,
-  }: {
-    module: string;
-    cls_module: string;
-    cls_name: string;
-  }) {
-    return await this._communicationManager._send_cmd({
-      cmd: "add_external_worker",
-      kwargs: { module, cls_module, cls_name },
-    });
   }
 
   async get_remote_node_state(nid: string) {
@@ -223,24 +219,6 @@ export class FuncNodesWorker {
     throw new Error(
       "async handle_large_message_hint({}: LargeMessageHint) not implemented "
     );
-  }
-
-  async add_lib(lib: string, release: string) {
-    const ans = await this._communicationManager._send_cmd({
-      cmd: "add_package_dependency",
-      kwargs: { name: lib, version: release },
-      wait_for_response: false,
-    });
-    return ans;
-  }
-
-  async remove_lib(lib: string) {
-    const ans = await this._communicationManager._send_cmd({
-      cmd: "remove_package_dependency",
-      kwargs: { name: lib },
-      wait_for_response: false,
-    });
-    return ans;
   }
 
   disconnect() {}
@@ -333,5 +311,26 @@ export class FuncNodesWorker {
     } finally {
       centerhook();
     }
+  }
+
+  /**
+   * @deprecated This method is deprecated. Use the API or getCommunicationManager()._send_cmd directly instead.
+   */
+  _send_cmd(params: Parameters<WorkerCommunicationManager["_send_cmd"]>[0]) {
+    return this._communicationManager._send_cmd(params);
+  }
+
+  /**
+   * @deprecated This method is deprecated. Use the API or getNodeManager().set_io_value directly instead.
+   */
+  set_io_value(params: Parameters<WorkerNodeManagerAPI["set_io_value"]>[0]) {
+    return this._nodeManager.set_io_value(params);
+  }
+
+  /**
+   * @deprecated This method is deprecated. Use the API or getNodeManager().get_io_value directly instead.
+   */
+  get_io_value(params: Parameters<WorkerNodeManagerAPI["get_io_value"]>[0]) {
+    return this._nodeManager.get_io_value(params);
   }
 }

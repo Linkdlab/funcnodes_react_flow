@@ -1,13 +1,9 @@
 import * as React from "react";
 import { useState, MouseEvent } from "react";
 import { ExpandLessIcon } from "@/icons";
-import { useFuncNodesContext } from "@/providers";
-import {
-  ExternalWorkerClassDep,
-  FuncNodesReactFlowZustandInterface,
-  Shelf,
-} from "@/barrel_imports";
+import { ExternalWorkerClassDep, Shelf } from "@/barrel_imports";
 import { ExternalWorkerInstanceEntry } from "./ExternalWorkerInstanceEntry";
+import { useWorkerApi } from "@/workers";
 
 export const ExternalWorkerClassEntry = ({
   item,
@@ -18,19 +14,18 @@ export const ExternalWorkerClassEntry = ({
   mod: string;
   lib?: Shelf;
 }) => {
-  const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
-
+  const { lib: libAPI } = useWorkerApi();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => setIsOpen(!isOpen);
 
-  const add_to_flow = () => {
-    zustand.worker?.add_external_worker({
+  const add_to_flow = React.useCallback(() => {
+    libAPI?.add_external_worker({
       module: mod,
       cls_module: item.module,
       cls_name: item.class_name,
     });
-  };
+  }, [libAPI, mod, item]);
 
   const click_new_instance = (event: MouseEvent<HTMLDivElement>) => {
     // if double click, add node to graph
