@@ -5,20 +5,21 @@ import {
 } from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "../components/node-renderer/io/io";
-
-
-import { useDataOverlayRendererForIo } from "@/barrel_imports";
-
-import { RenderMappingContext } from "@/barrel_imports";
-import { DefaultDataView } from "@/barrel_imports";
 import { latest } from "@/barrel_imports";
-import { DataViewRendererToDataPreviewViewRenderer } from "@/barrel_imports";
+import {
+  DataOverlayRendererType,
+  DataPreviewViewRendererType,
+  DataViewRendererToDataPreviewViewRenderer,
+  RenderMappingContext,
+  useDataOverlayRendererForIo,
+  FallbackDataViewRenderer,
+} from "@/data-rendering";
 
 const usePreviewHandleDataRendererForIo = (
   io?: latest.IOType
 ): [
-  latest.DataPreviewViewRendererType | undefined,
-  latest.DataOverlayRendererType | undefined
+  DataPreviewViewRendererType | undefined,
+  DataOverlayRendererType | undefined
 ] => {
   // Always call hooks at the top
   const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
@@ -26,27 +27,28 @@ const usePreviewHandleDataRendererForIo = (
   const { HandlePreviewRenderer, DataPreviewViewRenderer } =
     useContext(RenderMappingContext);
 
-  const overlayhandle: latest.DataOverlayRendererType | undefined =
+  const overlayhandle: DataOverlayRendererType | undefined =
     useDataOverlayRendererForIo(io);
 
   // Prepare default values
-  let previewRenderer: latest.DataPreviewViewRendererType | undefined =
-    undefined;
+  let previewRenderer: DataPreviewViewRendererType | undefined = undefined;
 
   // If io is defined, calculate the renderers; otherwise, keep them as undefined.
   if (io) {
     const [typestring] = pick_best_io_type(io.type, render.typemap || {});
 
     if (!typestring) {
-      previewRenderer =
-        DataViewRendererToDataPreviewViewRenderer(DefaultDataView);
+      previewRenderer = DataViewRendererToDataPreviewViewRenderer(
+        FallbackDataViewRenderer
+      );
     } else if (HandlePreviewRenderer[typestring]) {
       previewRenderer = HandlePreviewRenderer[typestring];
     } else if (DataPreviewViewRenderer[typestring]) {
       previewRenderer = DataPreviewViewRenderer[typestring];
     } else {
-      previewRenderer =
-        DataViewRendererToDataPreviewViewRenderer(DefaultDataView);
+      previewRenderer = DataViewRendererToDataPreviewViewRenderer(
+        FallbackDataViewRenderer
+      );
     }
   }
 

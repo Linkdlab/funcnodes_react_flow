@@ -4,7 +4,12 @@ export {
   CTypeStructure,
   JSONStructure,
   TextStructure,
-  interfereDataStructure
+  interfereDataStructure,
 } from "./data-structures";
 
-export type { DataStructureProps } from "./data-structures";
+export type {
+  DataStructureProps,
+  JSONObject,
+  JSONType,
+  AnyDataType,
+} from "./data-structures";

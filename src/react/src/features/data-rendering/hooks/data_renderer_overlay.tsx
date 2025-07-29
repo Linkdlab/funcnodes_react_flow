@@ -4,17 +4,19 @@ import {
   RenderOptions,
   latest,
 } from "@/barrel_imports";
-import { RenderMappingContext } from "./rendermappings";
-import {
-  DataViewRendererToOverlayRenderer,
-  DefaultOverlayRenderer,
-} from "./default_data_overlay_views";
+
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "@/nodes";
+import { RenderMappingContext } from "../providers";
+import {
+  DataOverlayRendererType,
+  FallbackOverlayRenderer,
+} from "../components";
+import { DataViewRendererToOverlayRenderer } from "../utils";
 
-const useDataOverlayRendererForIo = (
+export const useDataOverlayRendererForIo = (
   io?: latest.IOType
-): latest.DataOverlayRendererType | undefined => {
+): DataOverlayRendererType | undefined => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const { DataOverlayRenderer, DataViewRenderer } =
     useContext(RenderMappingContext);
@@ -24,14 +26,12 @@ const useDataOverlayRendererForIo = (
 
   const [typestring] = pick_best_io_type(io.type, render.typemap || {});
 
-  if (!typestring) return DefaultOverlayRenderer;
+  if (!typestring) return FallbackOverlayRenderer;
 
   if (DataOverlayRenderer[typestring]) return DataOverlayRenderer[typestring];
 
   if (DataViewRenderer[typestring])
     return DataViewRendererToOverlayRenderer(DataViewRenderer[typestring]);
 
-  return DefaultOverlayRenderer;
+  return FallbackOverlayRenderer;
 };
-
-export { useDataOverlayRendererForIo };

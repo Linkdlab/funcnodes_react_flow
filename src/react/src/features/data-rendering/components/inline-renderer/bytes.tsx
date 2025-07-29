@@ -1,6 +1,7 @@
 import { latest } from "@/barrel_imports";
+import { InLineRendererType } from ".";
 
-export const Base64BytesInLineRenderer: latest.InLineRendererType = ({
+export const Base64BytesInLineRenderer: InLineRendererType = ({
   iostore,
 }: {
   iostore: latest.IOStore;
@@ -10,10 +11,4 @@ export const Base64BytesInLineRenderer: latest.InLineRendererType = ({
 
   const length = Math.round((3 * disp.length) / 4); // 3/4 is the ratio of base64 encoding
   return `Bytes(${length})`;
-};
-
-export const DefaultInLineRenderer: {
-  [key: string]: latest.InLineRendererType | undefined;
-} = {
-  bytes: Base64BytesInLineRenderer,
 };

@@ -21,10 +21,10 @@ import {
   ViewState,
   update_nodeview,
   GroupActionUpdate,
-  interfereDataStructure,
   FullState,
 } from "@/barrel_imports";
 import { NodeGroup, NodeGroups } from "@/groups";
+import { interfereDataStructure } from "@/data-structures";
 
 export class FuncNodesWorker {
   messagePromises: Map<string, any>;

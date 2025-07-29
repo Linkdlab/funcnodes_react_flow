@@ -1,3 +1,4 @@
+import { JSONType } from "@/data-structures";
 import {
   TableData,
   TransformedTableData,
@@ -61,7 +62,7 @@ export const transformTableData = (data: TableData): TransformedTableData => {
   const maxRows = Math.max(data.index.length, data.data.length);
   for (let i = 0; i < maxRows; i++) {
     const indexValue = i < data.index.length ? data.index[i] : `row${i}`;
-    const row = [indexValue];
+    const row: (JSONType | undefined)[] = [indexValue];
     for (let j = 0; j < data.columns.length; j++) {
       row.push(data.data[i] ? data.data[i][j] : undefined);
     }
@@ -93,13 +94,13 @@ export const createComparator = (
 ): ComparerFunction => {
   return order === "desc"
     ? (a, b) => {
-        if (b[orderByIndex] < a[orderByIndex]) return -1;
-        if (b[orderByIndex] > a[orderByIndex]) return 1;
+        if (b[orderByIndex]! < a[orderByIndex]!) return -1;
+        if (b[orderByIndex]! > a[orderByIndex]!) return 1;
         return 0;
       }
     : (a, b) => {
-        if (a[orderByIndex] < b[orderByIndex]) return -1;
-        if (a[orderByIndex] > b[orderByIndex]) return 1;
+        if (a[orderByIndex]! < b[orderByIndex]!) return -1;
+        if (a[orderByIndex]! > b[orderByIndex]!) return 1;
         return 0;
       };
 };

@@ -14,3 +14,8 @@ export { JSONDisplay } from "./JSONDisplay";
 export type { JSONDisplayProps } from "./JSONDisplay";
 export { ProgressBar } from "./ProgressBar";
 export type { ProgressBarProps, TqdmState } from "./ProgressBar";
+export {
+  Base64ImageRenderer,
+  StreamingImage,
+  SVGImage,
+} from "./renderers/images";

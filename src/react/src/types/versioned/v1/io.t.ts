@@ -3,13 +3,13 @@ import { LimitedDeepPartial } from "@/object-helpers";
 import { IORenderOptions, IOValueOptions } from "../v0/io.t";
 import { SerializedType } from "./rendering.t";
 import { NodeStore } from "./node.t";
-import { DataStructure } from "@/barrel_imports";
+import { DataStructure, JSONType, AnyDataType } from "@/data-structures";
 
 export * from "../v0/io.t";
 
 export interface ValueStoreInterface {
-  preview: DataStructure<any, any> | undefined;
-  full: DataStructure<any, any> | undefined;
+  preview: DataStructure<AnyDataType, JSONType | undefined> | undefined;
+  full: DataStructure<AnyDataType, JSONType | undefined> | undefined;
 }
 
 export interface IOStore {

@@ -1,29 +1,106 @@
-export type DataStructureProps<D> = {
+/**
+ * Union type representing all supported data types for DataStructure instances.
+ * Includes primitive types and ArrayBufferLike for binary data.
+ */
+export interface JSONObject {
+  [key: string]: JSONType;
+}
+export type JSONType =
+  | string
+  | number
+  | boolean
+  | null
+  | JSONObject
+  | JSONType[];
+
+export type AnyDataType = JSONType | ArrayBufferLike;
+/**
+ * Properties for constructing a DataStructure instance.
+ *
+ * @template D - The type of data being wrapped, must extend AnyDataType
+ */
+export type DataStructureProps<D extends AnyDataType> = {
+  /** The actual data to be wrapped */
   data: D;
+  /** MIME type string describing the data format */
   mime: string;
 };
 
-export class DataStructure<D, R> {
+/**
+ * Base class for wrapping data with MIME type information.
+ * Provides a consistent interface for accessing typed data with metadata.
+ *
+ * @template D - The type of the wrapped data, must extend AnyDataType
+ * @template R - The return type when accessing the value property, must extend JSONType or be undefined
+ *
+ * @example
+ * ```typescript
+ * const textData = new DataStructure({
+ *   data: "Hello World",
+ *   mime: "text/plain"
+ * });
+ * console.log(textData.data); // "Hello World"
+ * console.log(textData.mime); // "text/plain"
+ * ```
+ */
+export class DataStructure<
+  D extends AnyDataType,
+  R extends JSONType | undefined
+> {
+  /** The wrapped data */
   private _data: D;
+  /** MIME type describing the data format */
   private _mime: string;
 
+  /**
+   * Creates a new DataStructure instance.
+   *
+   * @param props - Configuration object containing data and MIME type
+   */
   constructor({ data, mime }: DataStructureProps<D>) {
     this._data = data;
     this._mime = mime;
   }
 
+  /**
+   * Gets the raw wrapped data.
+   *
+   * @returns The original data in its native type
+   */
   get data(): D {
     return this._data;
   }
 
+  /**
+   * Gets the data cast to the expected return type.
+   * This is a type assertion and should be overridden in subclasses for proper type conversion.
+   *
+   * @returns The data cast to type R
+   */
   get value(): R {
     return this._data as unknown as R;
   }
 
+  /**
+   * Gets the MIME type of the wrapped data.
+   *
+   * @returns The MIME type string
+   */
   get mime(): string {
     return this._mime;
   }
 
+  /**
+   * Returns a string representation of the DataStructure.
+   * The format varies based on the data type:
+   * - ArrayBuffer: shows byte length
+   * - Blob: shows size
+   * - String/Array: shows length
+   * - Object: shows number of keys
+   * - Other types: shows only MIME type
+   *
+   * @returns String representation in format "DataStructure(size,mime)" or "DataStructure(mime)"
+   */
   toString(): string {
     if (this._data instanceof ArrayBuffer) {
       return `DataStructure(${this._data.byteLength},${this._mime})`;
@@ -43,10 +120,20 @@ export class DataStructure<D, R> {
     return `DataStructure(${this._mime})`;
   }
 
+  /**
+   * Returns the JSON representation of this DataStructure.
+   * Currently delegates to toString() method.
+   *
+   * @returns JSON string representation
+   */
   toJSON(): string {
     return this.toString();
   }
 
+  /**
+   * Cleans up resources associated with this DataStructure.
+   * Base implementation does nothing, but subclasses may override to release resources.
+   */
   dispose() {}
 }
 
@@ -224,11 +311,6 @@ export class CTypeStructure extends DataStructure<
     return this._value.toString();
   }
 }
-
-interface JSONObject {
-  [key: string]: JSONType;
-}
-type JSONType = string | number | boolean | null | JSONObject | JSONType[];
 
 export class JSONStructure extends DataStructure<
   ArrayBufferLike,

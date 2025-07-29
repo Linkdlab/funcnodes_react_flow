@@ -8,9 +8,8 @@ import {
 import { HandleWithPreview, pick_best_io_type } from "./io";
 
 import * as React from "react";
-import { RenderMappingContext } from "@/barrel_imports";
 import { latest } from "@/barrel_imports";
-import { SelectionInput } from "@/barrel_imports";
+import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 import { useKeyPress } from "@/providers";
 
 const INPUTCONVERTER: {

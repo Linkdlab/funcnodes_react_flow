@@ -103,36 +103,38 @@ describe("SortableTable Types", () => {
   describe("ComparerFunction", () => {
     it("accepts valid comparator function", () => {
       const numericComparator: ComparerFunction = (a, b) => {
-        if (a < b) return -1;
-        if (a > b) return 1;
+        if (a[0]! < b[0]!) return -1;
+        if (a[0]! > b[0]!) return 1;
         return 0;
       };
 
-      expect(numericComparator(1, 2)).toBe(-1);
-      expect(numericComparator(2, 1)).toBe(1);
-      expect(numericComparator(1, 1)).toBe(0);
+      expect(numericComparator([1], [2])).toBe(-1);
+      expect(numericComparator([2], [1])).toBe(1);
+      expect(numericComparator([1], [1])).toBe(0);
     });
 
     it("accepts string comparator", () => {
       const stringComparator: ComparerFunction = (a, b) => {
-        return a.localeCompare(b);
+        if (a[0]! < b[0]!) return -1;
+        if (a[0]! > b[0]!) return 1;
+        return 0;
       };
 
-      expect(stringComparator("Alice", "Bob")).toBe(-1);
-      expect(stringComparator("Bob", "Alice")).toBe(1);
-      expect(stringComparator("Alice", "Alice")).toBe(0);
+      expect(stringComparator(["Alice"], ["Bob"])).toBe(-1);
+      expect(stringComparator(["Bob"], ["Alice"])).toBe(1);
+      expect(stringComparator(["Alice"], ["Alice"])).toBe(0);
     });
 
     it("can be used with any data types", () => {
       const mixedComparator: ComparerFunction = (a, b) => {
-        const aStr = String(a);
-        const bStr = String(b);
+        const aStr = String(a[0]);
+        const bStr = String(b[0]);
         const result = aStr.localeCompare(bStr);
         return result < 0 ? -1 : result > 0 ? 1 : 0;
       };
 
-      expect(mixedComparator("Alice", 25)).toBe(1);
-      expect(mixedComparator(25, "Alice")).toBe(-1);
+      expect(mixedComparator(["Alice"], [25])).toBe(1);
+      expect(mixedComparator([25], ["Alice"])).toBe(-1);
     });
   });
 
@@ -291,7 +293,8 @@ describe("SortableTable Types", () => {
         ["row1", "Alice", 25],
         ["row2", "Bob", 30],
       ];
-      const comparator: ComparerFunction = (a, b) => a[1].localeCompare(b[1]);
+      const comparator: ComparerFunction = (a, b) =>
+        a[1]! < b[1]! ? -1 : a[1]! > b[1]! ? 1 : 0;
 
       const sorted = [...data].sort(comparator);
 

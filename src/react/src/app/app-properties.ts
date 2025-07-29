@@ -43,4 +43,6 @@ export const AVAILABLE_COLOR_THEMES: string[] = [
   "forest",
   "scientific",
   "neon",
+  "ocean",
+  "sunset",
 ];

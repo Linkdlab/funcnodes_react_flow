@@ -5,16 +5,21 @@ import {
 } from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "../components/node-renderer/io/io";
-import { useDataOverlayRendererForIo } from "@/barrel_imports";
-import { DefaultDataView, latest } from "@/barrel_imports";
-import { DataViewRendererToDataPreviewViewRenderer } from "@/barrel_imports";
-import { RenderMappingContext } from "@/barrel_imports";
+import { latest } from "@/barrel_imports";
+import {
+  DataOverlayRendererType,
+  DataPreviewViewRendererType,
+  DataViewRendererToDataPreviewViewRenderer,
+  FallbackDataViewRenderer,
+  useDataOverlayRendererForIo,
+} from "@/data-rendering";
+import { RenderMappingContext } from "@/data-rendering";
 
 const useBodyDataRendererForIo = (
   io?: latest.IOType
 ): [
-  latest.DataPreviewViewRendererType | undefined,
-  latest.DataOverlayRendererType | undefined
+  DataPreviewViewRendererType | undefined,
+  DataOverlayRendererType | undefined
 ] => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const overlayhandle = useDataOverlayRendererForIo(io);
@@ -29,7 +34,7 @@ const useBodyDataRendererForIo = (
 
   if (!typestring)
     return [
-      DataViewRendererToDataPreviewViewRenderer(DefaultDataView),
+      DataViewRendererToDataPreviewViewRenderer(FallbackDataViewRenderer),
       overlayhandle,
     ];
 
@@ -43,7 +48,7 @@ const useBodyDataRendererForIo = (
     ];
 
   return [
-    DataViewRendererToDataPreviewViewRenderer(DefaultDataView),
+    DataViewRendererToDataPreviewViewRenderer(FallbackDataViewRenderer),
     overlayhandle,
   ];
 };

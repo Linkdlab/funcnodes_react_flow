@@ -1,9 +1,8 @@
 import * as React from "react";
 import { useContext, useEffect, useState } from "react";
-import { FuncNodesReactFlowZustandInterface } from "../../../states/fnrfzst.t";
+import { FuncNodesReactFlowZustandInterface, latest } from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
-import { RenderMappingContext } from "../../../frontend/datarenderer/rendermappings";
-import { latest } from "../../../types/versioned/versions.t";
+import { RenderMappingContext } from "@/data-rendering";
 
 export const useDefaultNodeInjection = (storedata: latest.NodeType) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();

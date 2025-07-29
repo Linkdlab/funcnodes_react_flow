@@ -64,7 +64,10 @@
         "src/core/messaging/serializer"
       ],
       "@/data-structures": [
-        "src/core/data-structures"
+        "src/shared/data-structures"
+      ],
+      "@/data-rendering": [
+        "src/features/data-rendering"
       ],
       "@/workers": [
         "src/core/workers"

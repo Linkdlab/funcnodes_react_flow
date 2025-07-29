@@ -1,10 +1,12 @@
+import { JSONType } from "@/data-structures";
+
 /**
  * Represents the structure of table data with columns, row indices, and data values.
  *
  * @interface TableData
  * @property {string[]} columns - Array of column names/headers
  * @property {string[]} index - Array of row index identifiers
- * @property {any[][]} data - 2D array where each inner array represents a row of data
+ * @property {JSONType[][]} data - 2D array where each inner array represents a row of data
  *
  * @example
  * ```typescript
@@ -22,7 +24,7 @@
 export interface TableData {
   columns: string[];
   index: string[];
-  data: any[][];
+  data: JSONType[][];
 }
 
 /**
@@ -31,7 +33,7 @@ export interface TableData {
  *
  * @interface TransformedTableData
  * @property {string[]} header - Combined array of index column name and data column names
- * @property {any[][]} rows - 2D array where each row includes the index value as the first element
+ * @property {JSONType[][]} rows - 2D array where each row includes the index value as the first element
  *
  * @example
  * ```typescript
@@ -47,7 +49,7 @@ export interface TableData {
  */
 export interface TransformedTableData {
   header: string[];
-  rows: any[][];
+  rows: (JSONType | undefined)[][];
 }
 
 /**
@@ -63,8 +65,8 @@ export type SortDirection = "asc" | "desc";
  * Function type for comparing two values during sorting operations.
  *
  * @typedef {function} ComparerFunction
- * @param {any} a - First value to compare
- * @param {any} b - Second value to compare
+ * @param {JSONType} a - First value to compare
+ * @param {JSONType} b - Second value to compare
  * @returns {1 | -1 | 0} - Returns 1 if a > b, -1 if a < b, 0 if a === b
  *
  * @example
@@ -76,7 +78,7 @@ export type SortDirection = "asc" | "desc";
  * };
  * ```
  */
-export type ComparerFunction = (a: any, b: any) => 1 | -1 | 0;
+export type ComparerFunction = (a: JSONType[], b: JSONType[]) => 1 | -1 | 0;
 
 /**
  * Props interface for the SortableTable component.

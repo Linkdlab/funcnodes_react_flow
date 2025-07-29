@@ -4,6 +4,14 @@ import { assertNever } from "../helper";
 import { v1_types } from "@/barrel_imports";
 import { v0_types } from "@/barrel_imports";
 import { upgradePlugin_v0 } from "../v0";
+import {
+  DataOverlayRendererType,
+  DataPreviewViewRendererType,
+  DataViewRendererType,
+  HandlePreviewRendererType,
+  InputRendererType,
+  OutputRendererType,
+} from "@/data-rendering";
 
 type olderPlugins_v1 = v0_types.FuncNodesReactPlugin;
 
@@ -133,7 +141,7 @@ const upgradePlugin_v1 = (
       switch (key) {
         case "input_renderers":
           const new_input_renderers: {
-            [key: string]: v1_types.InputRendererType | undefined;
+            [key: string]: InputRendererType | undefined;
           } = {};
           for (const [k, v] of Object.entries(renderer.input_renderers || {})) {
             if (v === undefined) continue;
@@ -143,7 +151,7 @@ const upgradePlugin_v1 = (
           break;
         case "output_renderers":
           const new_output_renderers: {
-            [key: string]: v1_types.OutputRendererType | undefined;
+            [key: string]: OutputRendererType | undefined;
           } = {};
           for (const [k, v] of Object.entries(
             renderer.output_renderers || {}
@@ -155,7 +163,7 @@ const upgradePlugin_v1 = (
           break;
         case "handle_preview_renderers":
           const new_handle_preview_renderers: {
-            [key: string]: v1_types.HandlePreviewRendererType | undefined;
+            [key: string]: HandlePreviewRendererType | undefined;
           } = {};
           for (const [k, v] of Object.entries(
             renderer.handle_preview_renderers || {}
@@ -168,7 +176,7 @@ const upgradePlugin_v1 = (
           break;
         case "data_overlay_renderers":
           const new_data_overlay_renderers: {
-            [key: string]: v1_types.DataOverlayRendererType | undefined;
+            [key: string]: DataOverlayRendererType | undefined;
           } = {};
           for (const [k, v] of Object.entries(
             renderer.data_overlay_renderers || {}
@@ -180,7 +188,7 @@ const upgradePlugin_v1 = (
           break;
         case "data_preview_renderers":
           const new_data_preview_renderers: {
-            [key: string]: v1_types.DataPreviewViewRendererType | undefined;
+            [key: string]: DataPreviewViewRendererType | undefined;
           } = {};
           for (const [k, v] of Object.entries(
             renderer.data_preview_renderers || {}
@@ -192,7 +200,7 @@ const upgradePlugin_v1 = (
           break;
         case "data_view_renderers":
           const new_data_view_renderers: {
-            [key: string]: v1_types.DataViewRendererType | undefined;
+            [key: string]: DataViewRendererType | undefined;
           } = {};
           for (const [k, v] of Object.entries(
             renderer.data_view_renderers || {}

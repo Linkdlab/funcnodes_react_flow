@@ -1,31 +1,24 @@
-import * as React from "react";
-import { latest } from "@/barrel_imports";
+import { DataPreviewViewRendererType } from ".";
 import {
   Base64BytesRenderer,
+  DefaultDataViewRenderer,
   DefaultImageRenderer,
   DictRenderer,
   StringValueRenderer,
   SVGImageRenderer,
   TableRender,
-} from "./default_data_view_renderer";
-
-export const DataViewRendererToDataPreviewViewRenderer = (
-  DV: latest.DataViewRendererType,
-  defaultValue: any = undefined,
-  props: any = {}
-): latest.DataPreviewViewRendererType => {
-  return ({ iostore }: latest.DataPreviewViewRendererProps) => {
-    const { full, preview } = iostore.valuestore();
-    const val = full === undefined ? preview : full;
-    const renderval = val?.value || defaultValue;
-
-    return <DV iostore={iostore} value={renderval} {...props} />;
-  };
-};
+  DataViewRendererToDataPreviewViewRenderer,
+} from "@/data-rendering";
 
 export const DefaultDataPreviewViewRenderer: {
-  [key: string]: latest.DataPreviewViewRendererType | undefined;
+  [key: string]: DataPreviewViewRendererType | undefined;
 } = {
+  ...Object.fromEntries(
+    Object.entries(DefaultDataViewRenderer).map(([key, value]) => [
+      key,
+      value ? DataViewRendererToDataPreviewViewRenderer(value) : undefined,
+    ])
+  ),
   string: DataViewRendererToDataPreviewViewRenderer(StringValueRenderer),
   str: DataViewRendererToDataPreviewViewRenderer(StringValueRenderer),
   table: DataViewRendererToDataPreviewViewRenderer(TableRender, undefined, {
@@ -36,3 +29,6 @@ export const DefaultDataPreviewViewRenderer: {
   dict: DataViewRendererToDataPreviewViewRenderer(DictRenderer, "{}"),
   bytes: DataViewRendererToDataPreviewViewRenderer(Base64BytesRenderer, ""),
 };
+
+export const FallbackDataPreviewViewRenderer: DataPreviewViewRendererType =
+  DataViewRendererToDataPreviewViewRenderer(DictRenderer);

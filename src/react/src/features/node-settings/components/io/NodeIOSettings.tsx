@@ -1,7 +1,8 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { RenderMappingContext, latest, SelectionInput } from "@/barrel_imports";
+import { latest } from "@/barrel_imports";
 import { pick_best_io_type, INPUTCONVERTER } from "@/nodes";
+import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 
 interface NodeIOSettingsProps {
   iostore: latest.IOStore;

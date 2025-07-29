@@ -1,19 +1,21 @@
 import {
+  DataOverlayRendererType,
+  DataPreviewViewRendererType,
+  DataViewRendererType,
+  HandlePreviewRendererType,
+  InputRendererType,
+  OutputRendererType,
+} from "@/data-rendering";
+import {
   RenderPluginFactoryProps,
   FuncNodesReactPlugin as FuncNodesReactPlugin_v0,
   RendererPlugin as RendererPlugin_v0,
   RenderPluginFactoryProps as RenderPluginFactoryProps_v0,
 } from "../v0/plugins.t";
 import {
-  DataOverlayRendererType,
-  DataPreviewViewRendererType,
-  DataViewRendererType,
-  HandlePreviewRendererType,
-  InputRendererType,
   NodeContextExtenderType,
   NodeHooksType,
   NodeRendererType,
-  OutputRendererType,
 } from "./rendermappings.t";
 export * from "../v0/plugins.t";
 

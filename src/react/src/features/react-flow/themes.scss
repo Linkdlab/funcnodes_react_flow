@@ -354,3 +354,75 @@
   --fn-node-footer-color: #222222;
   --fn-node-progress-color: #00ffff;
 }
+
+[fn-data-color-theme="ocean"] {
+  --fn-app-background: #0d1b2a;
+  --fn-container-background: #1b263b;
+  --fn-surface-elevation-low: #415a77;
+  --fn-surface-elevation-high: #778da9;
+  --fn-text-color-neutral: #e0e1dd;
+  --fn-text-color-subtle: #a8dadc;
+  --fn-text-color-neutral-inverted: #0d1b2a;
+  --fn-neutral-element-background: #415a77;
+  --fn-neutral-element-background-hover: #778da9;
+  --fn-neutral-element-border: rgba(168, 218, 220, 0.3);
+  --fn-primary-color: #1d3557;
+  --fn-primary-color-hover: #457b9d;
+  --fn-focus-ring: 0 0 0 2px #457b9daa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #a8dadc;
+  --fn-edge-color-selected: #f1faee;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgba(65, 90, 119, 0.3);
+
+  /* grouping */
+  --group-color: rgba(168, 218, 220, 0.15);
+  --group-color-border: rgba(168, 218, 220, 0.4);
+
+  // nodes
+  --fn-node-handle-source-color: #457b9d;
+  --fn-node-handle-target-color: #a8dadc;
+  --fn-node-background: #1b263b;
+  --fn-node-header-color: #0d1b2a;
+  --fn-node-border-color: #415a77;
+  --fn-node-footer-color: #778da9;
+  --fn-node-progress-color: #f1faee;
+}
+
+[fn-data-color-theme="sunset"] {
+  --fn-app-background: #2d1b14;
+  --fn-container-background: #4a2c1a;
+  --fn-surface-elevation-low: #663d20;
+  --fn-surface-elevation-high: #824e26;
+  --fn-text-color-neutral: #fff8e7;
+  --fn-text-color-subtle: #ffd4a3;
+  --fn-text-color-neutral-inverted: #2d1b14;
+  --fn-neutral-element-background: #663d20;
+  --fn-neutral-element-background-hover: #824e26;
+  --fn-neutral-element-border: rgba(255, 212, 163, 0.3);
+  --fn-primary-color: #d2691e;
+  --fn-primary-color-hover: #ff8c42;
+  --fn-focus-ring: 0 0 0 2px #ff8c42aa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #ff8c42;
+  --fn-edge-color-selected: #ffb347;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgba(130, 78, 38, 0.3);
+
+  /* grouping */
+  --group-color: rgba(255, 140, 66, 0.15);
+  --group-color-border: rgba(255, 140, 66, 0.4);
+
+  // nodes
+  --fn-node-handle-source-color: #ff8c42;
+  --fn-node-handle-target-color: #d2691e;
+  --fn-node-background: #4a2c1a;
+  --fn-node-header-color: #2d1b14;
+  --fn-node-border-color: #663d20;
+  --fn-node-footer-color: #824e26;
+  --fn-node-progress-color: #ffb347;
+}

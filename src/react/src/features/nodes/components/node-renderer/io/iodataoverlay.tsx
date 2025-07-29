@@ -1,11 +1,15 @@
 import * as React from "react";
 import { latest } from "@/barrel_imports";
+import {
+  DataOverlayRendererType,
+  DataPreviewViewRendererType,
+} from "@/data-rendering";
 
 export const IODataOverlay = ({
   iostore,
   Component,
 }: {
-  Component: latest.DataOverlayRendererType;
+  Component: DataOverlayRendererType;
   iostore: latest.IOStore;
 }): React.JSX.Element => {
   // State for the value currently being displayed
@@ -45,7 +49,7 @@ export const IOPreviewWrapper = ({
   iostore,
   Component,
 }: {
-  Component: latest.DataPreviewViewRendererType;
+  Component: DataPreviewViewRendererType;
   iostore: latest.IOStore;
 }): React.JSX.Element => {
   return <Component iostore={iostore} />;

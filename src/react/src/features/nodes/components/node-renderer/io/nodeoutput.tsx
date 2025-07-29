@@ -11,10 +11,9 @@ import {
 } from "@/barrel_imports";
 
 import * as React from "react";
-import { RenderMappingContext } from "@/barrel_imports";
 import { latest } from "@/barrel_imports";
-import { InLineOutput } from "@/barrel_imports";
 import { useKeyPress } from "@/providers";
+import { InLineOutput, RenderMappingContext } from "@/data-rendering";
 
 const NodeOutput = ({
   iostore,
@@ -65,7 +64,7 @@ const NodeOutput = ({
           </div>
         ) : (
           <div className="iovaluefield">
-            <InLineOutput iostore={iostore} typestring={typestring} />
+            <InLineOutput iostore={iostore} />
           </div>
         )}
       </div>
