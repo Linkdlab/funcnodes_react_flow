@@ -1,4 +1,4 @@
-import { OutputRendererType } from ".";
+import { OutputRendererType } from "./types";
 
 import * as React from "react";
 import { latest } from "@/barrel_imports";

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SortableTable } from "@/shared-components";
-import { DataViewRendererProps, DataViewRendererType } from ".";
+import { DataViewRendererProps, DataViewRendererType } from "./types";
 
 export const TableRender: DataViewRendererType = React.memo(
   ({ value }: DataViewRendererProps) => {

@@ -9,7 +9,7 @@ import {
   HandlePreviewRendererType,
   InputRendererProps,
   InputRendererType,
-} from "..";
+} from "@/data-rendering-types";
 
 export const DataViewRendererToOverlayRenderer = (
   DV: DataViewRendererType

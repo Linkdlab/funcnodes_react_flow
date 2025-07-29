@@ -11,7 +11,7 @@ import {
   HandlePreviewRendererType,
   InputRendererType,
   OutputRendererType,
-} from "@/data-rendering";
+} from "@/data-rendering-types";
 
 type olderPlugins_v1 = v0_types.FuncNodesReactPlugin;
 

@@ -14,7 +14,7 @@ import {
   HandlePreviewRendererType,
   InputRendererType,
   OutputRendererType,
-} from "@/data-rendering";
+} from "@/data-rendering-types";
 
 /**
  * RenderMappingProvider is a React component that provides a context for managing and extending the mappings of input renderers, handle preview renderers, data overlay renderers, data preview view renderers, and data view renderers. These mappings are used throughout the application to render various types of inputs, previews, and data views dynamically.

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { InputRendererProps } from ".";
+import { InputRendererProps } from "./types";
 import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 
 export const BooleanInput = ({

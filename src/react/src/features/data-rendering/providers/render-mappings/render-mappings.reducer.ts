@@ -8,7 +8,7 @@ import {
   DefaultInLineRenderer,
   DefaultInputRenderer,
   DefaultOutputRenderer,
-} from "@/data-rendering";
+} from "../../components";
 import {
   RenderMappingState,
   RenderMappingAction,

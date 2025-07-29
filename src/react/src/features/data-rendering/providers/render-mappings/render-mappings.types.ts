@@ -9,7 +9,7 @@ import {
   InLineRendererType,
   InputRendererType,
   OutputRendererType,
-} from "@/data-rendering"; // Note: this import will also be updated later
+} from "@/data-rendering-types"; // Note: this import will also be updated later
 
 // State shape for the render mappings
 export interface RenderMappingState {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DataViewRendererProps, DataViewRendererType } from ".";
+import { DataViewRendererProps, DataViewRendererType } from "./types";
 import { SingleValueRenderer } from "./json";
 
 export const StringValueRenderer: DataViewRendererType = (

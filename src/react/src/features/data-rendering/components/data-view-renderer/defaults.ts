@@ -1,12 +1,9 @@
-import {
-  DataViewRendererType,
-  DefaultImageRenderer,
-  SVGImageRenderer,
-  TableRender,
-  StringValueRenderer,
-  DictRenderer,
-  Base64BytesRenderer,
-} from ".";
+import { Base64BytesRenderer } from "./bytes";
+import { DefaultImageRenderer, SVGImageRenderer } from "./images";
+import { DictRenderer } from "./json";
+import { TableRender } from "./tables";
+import { StringValueRenderer } from "./text";
+import { DataViewRendererType } from "./types";
 
 export const FallbackDataViewRenderer = DictRenderer;
 

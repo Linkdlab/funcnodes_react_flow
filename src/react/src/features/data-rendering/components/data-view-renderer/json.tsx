@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DataViewRendererProps, DataViewRendererType } from ".";
+import { DataViewRendererProps, DataViewRendererType } from "./types";
 import { JSONDisplay } from "@/shared-components";
 
 export const SingleValueRenderer: DataViewRendererType = React.memo(

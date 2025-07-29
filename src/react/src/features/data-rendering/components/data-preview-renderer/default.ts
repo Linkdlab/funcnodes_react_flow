@@ -1,14 +1,6 @@
-import { DataPreviewViewRendererType } from ".";
-import {
-  Base64BytesRenderer,
-  DefaultDataViewRenderer,
-  DefaultImageRenderer,
-  DictRenderer,
-  StringValueRenderer,
-  SVGImageRenderer,
-  TableRender,
-  DataViewRendererToDataPreviewViewRenderer,
-} from "@/data-rendering";
+import { DataViewRendererToDataPreviewViewRenderer } from "../../utils";
+import { Base64BytesRenderer, DefaultDataViewRenderer, DefaultImageRenderer, DictRenderer, StringValueRenderer, SVGImageRenderer, TableRender } from "../data-view-renderer";
+import { DataPreviewViewRendererType } from "./types";
 
 export const DefaultDataPreviewViewRenderer: {
   [key: string]: DataPreviewViewRendererType | undefined;

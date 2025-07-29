@@ -1,4 +1,4 @@
-import { InLineRendererType } from ".";
+import { InLineRendererType } from "./types";
 import { Base64BytesInLineRenderer } from "./bytes";
 
 export const DefaultInLineRenderer: {

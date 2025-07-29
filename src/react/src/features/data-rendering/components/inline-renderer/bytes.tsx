@@ -1,5 +1,5 @@
 import { latest } from "@/barrel_imports";
-import { InLineRendererType } from ".";
+import { InLineRendererType } from "./types";
 
 export const Base64BytesInLineRenderer: InLineRendererType = ({
   iostore,

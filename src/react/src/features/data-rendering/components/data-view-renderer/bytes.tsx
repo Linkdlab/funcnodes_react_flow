@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DataViewRendererProps, DataViewRendererType } from ".";
+import { DataViewRendererProps, DataViewRendererType } from "./types";
 
 export const Base64BytesRenderer: DataViewRendererType = React.memo(
   ({ value }: DataViewRendererProps) => {

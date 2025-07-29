@@ -3,7 +3,7 @@ import { latest } from "@/barrel_imports";
 import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
-} from "@/data-rendering";
+} from "@/data-rendering-types";
 
 export const IODataOverlay = ({
   iostore,

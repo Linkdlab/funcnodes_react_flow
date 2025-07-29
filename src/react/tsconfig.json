@@ -69,6 +69,9 @@
       "@/data-rendering": [
         "src/features/data-rendering"
       ],
+      "@/data-rendering-types": [
+        "src/features/data-rendering/types"
+      ],
       "@/workers": [
         "src/core/workers"
       ],

@@ -8,11 +8,9 @@ import {
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "@/nodes";
 import { RenderMappingContext } from "../providers";
-import {
-  DataOverlayRendererType,
-  FallbackOverlayRenderer,
-} from "../components";
+import { FallbackOverlayRenderer } from "../components";
 import { DataViewRendererToOverlayRenderer } from "../utils";
+import { DataOverlayRendererType } from "../types";
 
 export const useDataOverlayRendererForIo = (
   io?: latest.IOType

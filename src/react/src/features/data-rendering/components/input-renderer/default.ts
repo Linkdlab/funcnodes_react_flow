@@ -1,10 +1,11 @@
-import {
-  Base64BytesRenderer,
-  DataViewRendererToInputRenderer,
-} from "@/data-rendering";
-import { BooleanInput, ColorInput, InputRendererType, StringInput } from ".";
+import { DataViewRendererToInputRenderer } from "../../utils";
+import { Base64BytesRenderer } from "../data-view-renderer";
+import { BooleanInput } from "./boolean";
+import { ColorInput } from "./color";
 import { FloatInput, IntegerInput } from "./numbers";
 import { SelectionInput } from "./selection";
+import { StringInput } from "./text";
+import { InputRendererType } from "./types";
 
 export const DefaultInputRenderer: {
   [key: string]: InputRendererType | undefined;

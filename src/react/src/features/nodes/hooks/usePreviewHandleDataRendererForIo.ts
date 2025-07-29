@@ -7,13 +7,15 @@ import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "../components/node-renderer/io/io";
 import { latest } from "@/barrel_imports";
 import {
-  DataOverlayRendererType,
-  DataPreviewViewRendererType,
   DataViewRendererToDataPreviewViewRenderer,
   RenderMappingContext,
   useDataOverlayRendererForIo,
   FallbackDataViewRenderer,
 } from "@/data-rendering";
+import {
+  DataOverlayRendererType,
+  DataPreviewViewRendererType,
+} from "@/data-rendering-types";
 
 const usePreviewHandleDataRendererForIo = (
   io?: latest.IOType

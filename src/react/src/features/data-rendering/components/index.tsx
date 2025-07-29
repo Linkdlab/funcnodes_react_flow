@@ -8,52 +8,31 @@ export {
   DefaultImageRenderer,
   SVGImageRenderer,
 } from "./data-view-renderer";
-export type {
-  DataViewRendererType,
-  DataViewRendererProps,
-} from "./data-view-renderer";
 
 export {
   DefaultInLineRenderer,
   Base64BytesInLineRenderer,
 } from "./inline-renderer";
-export type { InLineRendererType } from "./inline-renderer";
 
 export {
   DefaultDataOverlayRenderer,
   FallbackOverlayRenderer,
-} from "./data-overlay-renderer";
-export type {
-  DataOverlayRendererType,
-  DataOverlayRendererProps,
 } from "./data-overlay-renderer";
 
 export {
   DefaultDataPreviewViewRenderer,
   FallbackDataPreviewViewRenderer,
 } from "./data-preview-renderer";
-export type {
-  DataPreviewViewRendererType,
-  DataPreviewViewRendererProps,
-} from "./data-preview-renderer";
 
 export {
   DefaultHandlePreviewRenderer,
   FallbackHandlePreviewRenderer,
-} from "./data-handle-renderer";
-export type {
-  HandlePreviewRendererType,
-  HandlePreviewRendererProps,
 } from "./data-handle-renderer";
 
 export {
   DefaultOutputRenderer,
   FallbackOutputRenderer,
   InLineOutput,
-} from "./output-renderer";
-export type {
-  OutputRendererType,
-  OutputRendererProps,
 } from "./output-renderer";
 
 export {
@@ -66,4 +45,3 @@ export {
   IntegerInput,
   NumberInput,
 } from "./input-renderer";
-export type { InputRendererType, InputRendererProps } from "./input-renderer";

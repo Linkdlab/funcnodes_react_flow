@@ -5,7 +5,7 @@ import {
   HandlePreviewRendererType,
   InputRendererType,
   OutputRendererType,
-} from "@/data-rendering";
+} from "@/data-rendering-types";
 import {
   RenderPluginFactoryProps,
   FuncNodesReactPlugin as FuncNodesReactPlugin_v0,

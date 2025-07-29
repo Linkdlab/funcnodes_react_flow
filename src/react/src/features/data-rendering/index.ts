@@ -27,21 +27,7 @@ export {
   IntegerInput,
   NumberInput,
 } from "./components";
-export type {
-  DataViewRendererType,
-  DataViewRendererProps,
-  InLineRendererType,
-  DataOverlayRendererType,
-  DataOverlayRendererProps,
-  DataPreviewViewRendererType,
-  DataPreviewViewRendererProps,
-  HandlePreviewRendererType,
-  HandlePreviewRendererProps,
-  OutputRendererType,
-  OutputRendererProps,
-  InputRendererType,
-  InputRendererProps,
-} from "./components";
+
 
 export {
   DataViewRendererToOverlayRenderer,
@@ -56,18 +42,6 @@ export {
   renderMappingReducer,
   initialRenderMappings,
 } from "./providers";
-export type {
-  ExtendInputRendererAction,
-  ExtendOutputRendererAction,
-  ExtendHandlePreviewRendererAction,
-  ExtendDataOverlayRendererAction,
-  ExtendDataPreviewRendererAction,
-  ExtendDataViewRendererAction,
-  ExtendFromPluginAction,
-  ExtendNodeContextExtenderAction,
-  ExtendNodeRendererAction,
-  ExtendNodeHooksAction,
-  RenderMappingAction,
-} from "./providers";
+
 
 export { useDataOverlayRendererForIo } from "./hooks";
