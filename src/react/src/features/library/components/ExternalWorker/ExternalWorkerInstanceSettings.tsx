@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useFuncNodesContext } from "@/providers";
 import { ExternalWorkerInstance } from "@/barrel_imports";
 import { CustomDialog } from "@/shared-components";
+import { useWorkerApi } from "@/workers";
 
 export const ExternalWorkerInstanceSettings = ({
   ins,
@@ -11,10 +12,11 @@ export const ExternalWorkerInstanceSettings = ({
 }) => {
   const [tempName, setTempName] = useState(ins.name);
   const fnrz = useFuncNodesContext();
+  const { lib: libAPI } = useWorkerApi();
 
   const stop_instance = () => {
     if (!fnrz.worker) return;
-    fnrz.worker.remove_external_worker(ins.uuid, ins.nodeclassid);
+    libAPI?.remove_external_worker(ins.uuid, ins.nodeclassid);
   };
 
   const save_instance = () => {

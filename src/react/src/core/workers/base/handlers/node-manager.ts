@@ -22,6 +22,7 @@ export interface WorkerNodeManagerAPI {
   remove_node: (node_id: string) => Promise<void>;
   trigger_node: (node_id: string) => Promise<void>;
   locally_update_node: (action: latest.NodeActionUpdate) => void;
+  get_remote_node_state: (nid: string) => Promise<void>;
 }
 
 export class WorkerNodeManager
@@ -216,6 +217,22 @@ export class WorkerNodeManager
       wait_for_response: true,
     });
     return res;
+  }
+
+  async get_remote_node_state(nid: string) {
+    const ans: latest.SerializedNodeType =
+      await this.communicationManager._send_cmd({
+        cmd: "get_node_state",
+        kwargs: { nid },
+        wait_for_response: true,
+      });
+    if (!this.context.worker._zustand) return;
+    this.context.worker._zustand.on_node_action({
+      type: "update",
+      node: ans,
+      id: ans.id,
+      from_remote: true,
+    });
   }
 }
 

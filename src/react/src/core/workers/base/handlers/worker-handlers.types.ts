@@ -52,4 +52,8 @@ export abstract class AbstractWorkerHandler {
   protected get groupManager() {
     return this.context.worker.getGroupManager();
   }
+
+  protected get libraryManager() {
+    return this.context.worker.getLibraryManager();
+  }
 }

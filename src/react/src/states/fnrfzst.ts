@@ -289,8 +289,8 @@ const FuncNodesReactFlowZustand = (
           iterf.logger.info("Adding edge", new_edge);
 
           rfstate.update_edges([...edges, new_edge]);
-          iterf.worker?.get_remote_node_state(action.src_nid);
-          iterf.worker?.get_remote_node_state(action.trg_nid);
+          iterf.worker?.api.node.get_remote_node_state(action.src_nid);
+          iterf.worker?.api.node.get_remote_node_state(action.trg_nid);
         } else {
         }
         break;
@@ -302,8 +302,8 @@ const FuncNodesReactFlowZustand = (
           iterf.logger.info("Deleting edge", del_edge_id);
           const new_edges = edges.filter((edge) => edge.id !== del_edge_id);
           rfstate.update_edges(new_edges);
-          iterf.worker?.get_remote_node_state(action.src_nid);
-          iterf.worker?.get_remote_node_state(action.trg_nid);
+          iterf.worker?.api.node.get_remote_node_state(action.src_nid);
+          iterf.worker?.api.node.get_remote_node_state(action.trg_nid);
         } else {
         }
         break;

@@ -1,7 +1,7 @@
 import { UseBoundStore, StoreApi, create } from "zustand";
 import { FuncNodesWorkerState, WorkerProps } from "@/workers";
 import { LargeMessageHint } from "@/messages";
-import { FuncNodesReactFlowZustandInterface, latest } from "@/barrel_imports";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 import { WorkerConnectionHealthManager } from "./handlers/connection-health-manager";
 import { WorkerSyncManager } from "./handlers/sync-manager";
 import { WorkerCommunicationManager } from "./handlers/communication-manager";
@@ -149,22 +149,6 @@ export class FuncNodesWorker {
     return this._connectionhealthManager.isResponsive();
   }
 
-  async get_remote_node_state(nid: string) {
-    const ans: latest.SerializedNodeType =
-      await this._communicationManager._send_cmd({
-        cmd: "get_node_state",
-        kwargs: { nid },
-        wait_for_response: true,
-      });
-    if (!this._zustand) return;
-    this._zustand.on_node_action({
-      type: "update",
-      node: ans,
-      id: ans.id,
-      from_remote: true,
-    });
-  }
-
   clear() {
     return this._communicationManager._send_cmd({ cmd: "clear", unique: true });
   }
@@ -247,15 +231,6 @@ export class FuncNodesWorker {
     };
   }
 
-  async get_available_modules() {
-    const res = await this._communicationManager._send_cmd({
-      cmd: "get_available_modules",
-      wait_for_response: true,
-      unique: true,
-    });
-    return res;
-  }
-
   async update_external_worker(
     worker_id: string,
     class_id: string,
@@ -266,15 +241,6 @@ export class FuncNodesWorker {
     const res = await this._communicationManager._send_cmd({
       cmd: "update_external_worker",
       kwargs: { worker_id, class_id, ...data },
-      wait_for_response: true,
-    });
-    return res;
-  }
-
-  async remove_external_worker(worker_id: string, class_id: string) {
-    const res = await this._communicationManager._send_cmd({
-      cmd: "remove_external_worker",
-      kwargs: { worker_id, class_id },
       wait_for_response: true,
     });
     return res;
