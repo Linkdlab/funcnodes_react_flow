@@ -3,6 +3,7 @@ import { useFuncNodesContext } from "@/providers";
 import { latest } from "@/barrel_imports";
 import { pick_best_io_type, INPUTCONVERTER } from "@/nodes";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
+import { useWorkerApi } from "@/workers";
 
 interface NodeIOSettingsProps {
   iostore: latest.IOStore;
@@ -10,6 +11,7 @@ interface NodeIOSettingsProps {
 
 export const NodeIOSettings = ({ iostore }: NodeIOSettingsProps) => {
   const fnrf_zst = useFuncNodesContext();
+  const { node } = useWorkerApi();
   const io = iostore.use();
   const renderOpts = fnrf_zst.render_options();
 
@@ -17,17 +19,19 @@ export const NodeIOSettings = ({ iostore }: NodeIOSettingsProps) => {
   const [tempName, setTempName] = React.useState(io.name);
   React.useEffect(() => setTempName(io.name), [io.name]);
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setTempName(e.target.value);
-  const saveName = () => {
+  const handleNameChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => setTempName(e.target.value),
+    []
+  );
+  const saveName = React.useCallback(() => {
     if (tempName !== io.name) {
-      fnrf_zst.worker?.update_io_options({
+      node?.update_io_options({
         nid: io.node,
         ioid: io.id,
         options: { name: tempName },
       });
     }
-  };
+  }, [io, node, tempName]);
 
   // For editing default value (inputs only)
   const [_typestring, otypestring] = pick_best_io_type(

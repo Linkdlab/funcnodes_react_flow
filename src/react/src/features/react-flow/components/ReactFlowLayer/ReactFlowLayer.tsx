@@ -16,7 +16,7 @@ import { ReactFlowManager } from "../ReactFlowManager";
 import { KeyHandler } from "../KeyHandler";
 // import { ContextMenu, ContextMenuProps } from "../ContextMenu";
 import "./ReactFlowLayer.scss";
-import { pasteClipboardData } from "@/react-flow/utils";
+import { usePasteClipboardData } from "@/react-flow/utils";
 import { useTheme } from "@/providers";
 
 const BackgroundVariantLookup: Record<string, BackgroundVariant> = {
@@ -46,12 +46,7 @@ export const ReactFlowLayer = (props: ReactFlowLayerProps) => {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
     fnrf_zst.useReactFlowStore(useShallow(selector));
 
-  const pasteFromClipboard = useCallback(
-    async (clipboardData: string, onNodesChange: any) => {
-      await pasteClipboardData(clipboardData, fnrf_zst, onNodesChange);
-    },
-    [fnrf_zst]
-  );
+  const pasteClipboardData = usePasteClipboardData();
 
   const handlePasteCapture = useCallback(
     (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -68,13 +63,13 @@ export const ReactFlowLayer = (props: ReactFlowLayerProps) => {
       }
       fnrf_zst.logger.debug(`onPasteCapture: ${steps} steps to reactflow`);
       if (steps <= 2) {
-        pasteFromClipboard(
+        pasteClipboardData(
           e.clipboardData.getData("text/plain"),
           onNodesChange
         );
       }
     },
-    [pasteFromClipboard, onNodesChange, fnrf_zst.logger]
+    [pasteClipboardData, onNodesChange, fnrf_zst.logger]
   );
 
   return (

@@ -1,21 +1,24 @@
 import * as React from "react";
 import { MouseEvent } from "react";
-import { useFuncNodesContext } from "@/providers";
-import { FuncNodesReactFlowZustandInterface, LibNode } from "@/barrel_imports";
+import { LibNode } from "@/barrel_imports";
+import { useWorkerApi } from "@/workers";
 
 export const LibraryNode = ({ item }: { item: LibNode }) => {
-  const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const { node } = useWorkerApi();
 
-  const add_to_flow = () => {
-    zustand.worker?.add_node(item.node_id);
-  };
+  const add_to_flow = React.useCallback(() => {
+    node?.add_node(item.node_id);
+  }, [item.node_id, node]);
 
-  const nodeclick = (event: MouseEvent<HTMLDivElement>) => {
-    // if double click, add node to graph
-    if (event.detail === 2) {
-      add_to_flow();
-    }
-  };
+  const nodeclick = React.useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      // if double click, add node to graph
+      if (event.detail === 2) {
+        add_to_flow();
+      }
+    },
+    [add_to_flow]
+  );
 
   return (
     <div className="libnodeentry" onClick={nodeclick} title={item.description}>

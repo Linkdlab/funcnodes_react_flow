@@ -68,7 +68,7 @@ const deserialize_io = (
     if (io.node === undefined || io.id === undefined) {
       return;
     }
-    fnrfz.worker?.get_io_full_value({ nid: io.node, ioid: io.id });
+    fnrfz.worker?.api.node.get_io_full_value({ nid: io.node, ioid: io.id });
   };
 
   if (io.value === "<NoValue>") {
@@ -86,7 +86,7 @@ const deserialize_io = (
     if (io.node === undefined || io.id === undefined) {
       return;
     }
-    fnrfz.worker?.update_io_options({
+    fnrfz.worker?.api.node.update_io_options({
       nid: io.node,
       ioid: io.id,
       options: { hidden: v },

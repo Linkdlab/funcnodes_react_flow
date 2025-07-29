@@ -3,13 +3,14 @@ import { useFuncNodesContext } from "@/providers";
 import { InputRendererProps } from "./types";
 import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 import { CustomColorPicker } from "@/shared-components";
+import { useSetIOValue } from "@/nodes";
 
 export const ColorInput = ({ iostore }: InputRendererProps) => {
   const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const io = iostore.use();
   const { preview, full } = iostore.valuestore();
   const display = full === undefined ? preview?.value : full.value;
-
+  const set_io_value = useSetIOValue(io);
   const typeddisplay: string | number[] | undefined =
     typeof display === "string"
       ? display
@@ -19,27 +20,26 @@ export const ColorInput = ({ iostore }: InputRendererProps) => {
 
   const colorspace = io.value_options?.colorspace || "hex";
 
-  const on_change = (
-    colorconverter?: {
-      [key: string]: () => number[] | string;
-    } | null
-  ) => {
-    let new_value: string | number[] | null = "<NoValue>";
-    if (colorconverter) {
-      if (colorconverter[colorspace]) new_value = colorconverter[colorspace]();
-      else new_value = colorconverter.hex();
-    }
-    if (colorconverter === null) new_value = null;
-    try {
-      new_value = new_value;
-    } catch (e) {}
-    fnrf_zst.worker?.set_io_value({
-      nid: io.node,
-      ioid: io.id,
-      value: new_value,
-      set_default: io.render_options.set_default,
-    });
-  };
+  const on_change = React.useCallback(
+    (
+      colorconverter?: {
+        [key: string]: () => number[] | string;
+      } | null
+    ) => {
+      let new_value: string | number[] | null = "<NoValue>";
+      if (colorconverter) {
+        if (colorconverter[colorspace])
+          new_value = colorconverter[colorspace]();
+        else new_value = colorconverter.hex();
+      }
+      if (colorconverter === null) new_value = null;
+      try {
+        new_value = new_value;
+      } catch (e) {}
+      set_io_value(new_value);
+    },
+    [set_io_value, colorspace]
+  );
 
   let allow_null = false;
   if (

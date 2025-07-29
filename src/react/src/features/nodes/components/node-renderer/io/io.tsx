@@ -10,7 +10,7 @@ import { LockIcon, LockOpenIcon, FullscreenIcon } from "@/icons";
 import { latest } from "@/barrel_imports";
 import { IODataOverlay, IOPreviewWrapper } from "./iodataoverlay";
 import { useFuncNodesContext } from "@/providers";
-import { CustomDialog } from "@/barrel_imports";
+import { CustomDialog } from "@/shared-components";
 
 const pick_best_io_type = (
   iot: latest.SerializedType,

@@ -148,18 +148,20 @@ export const FuncNodes = (
     fullProps.logger?.debug("Loading fnw_url data");
 
     let cancelled = false;
-    const originalOnSyncComplete = fullProps.worker.on_sync_complete;
+    const originalOnSyncComplete =
+      fullProps.worker.getSyncManager().on_sync_complete;
 
     const loadFnwData = async () => {
       try {
         const fnw_data = await remoteUrlToBase64(fullProps.fnw_url!);
 
         if (!cancelled && fullProps.worker) {
-          fullProps.worker.on_sync_complete = async (
+          fullProps.worker.getSyncManager().on_sync_complete = async (
             worker: FuncNodesWorker
           ) => {
             await worker.update_from_export(fnw_data);
-            fullProps.worker!.on_sync_complete = originalOnSyncComplete;
+            fullProps.worker!.getSyncManager().on_sync_complete =
+              originalOnSyncComplete;
             if (originalOnSyncComplete) {
               originalOnSyncComplete(worker);
             }
@@ -175,7 +177,8 @@ export const FuncNodes = (
     return () => {
       cancelled = true;
       if (fullProps.worker) {
-        fullProps.worker.on_sync_complete = originalOnSyncComplete;
+        fullProps.worker.getSyncManager().on_sync_complete =
+          originalOnSyncComplete;
       }
     };
   }, [fullProps?.fnw_url, fullProps?.worker]);

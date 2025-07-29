@@ -47,7 +47,7 @@ export class WebSocketWorker extends FuncNodesWorker {
         if (event.data instanceof Blob) {
           event.data.arrayBuffer().then((arrayBuffer) => {
             const bytes = new Uint8Array(arrayBuffer);
-            this.onbytes(bytes);
+            this.getCommunicationManager().onbytes(bytes);
           });
         }
       }
@@ -92,7 +92,7 @@ export class WebSocketWorker extends FuncNodesWorker {
         json
       );
 
-      await this.receive(json);
+      await this.getCommunicationManager().receive(json);
     } catch (e) {
       console.error("Websocketworker: onmessage JSON.parse error", e, data);
       return;
@@ -183,7 +183,7 @@ export class WebSocketWorker extends FuncNodesWorker {
       },
     });
     const json = await resp.json();
-    this.receive(json);
+    this.getCommunicationManager().receive(json);
   }
 
   onopen() {
@@ -191,7 +191,7 @@ export class WebSocketWorker extends FuncNodesWorker {
     this.is_open = true;
     if (this._zustand) this._zustand.auto_progress();
     this.reconnectAttempts = 0;
-    this.stepwise_fullsync();
+    this.getSyncManager().stepwise_fullsync();
   }
   onclose() {
     this._zustand?.logger.info("Websocket closed");
@@ -290,7 +290,7 @@ export class WebSocketWorker extends FuncNodesWorker {
           });
         }
         if (this._websocket.readyState === WebSocket.OPEN) {
-          this.stepwise_fullsync();
+          this.getSyncManager().stepwise_fullsync();
           return;
         }
       }

@@ -1,7 +1,8 @@
 import * as React from "react";
 import { useState } from "react";
 import { useFuncNodesContext } from "@/providers";
-import { CustomDialog, ExternalWorkerInstance } from "@/barrel_imports";
+import { ExternalWorkerInstance } from "@/barrel_imports";
+import { CustomDialog } from "@/shared-components";
 
 export const ExternalWorkerInstanceSettings = ({
   ins,

@@ -1,37 +1,34 @@
 import * as React from "react";
-import { useFuncNodesContext } from "@/providers";
 import { InputRendererProps } from "./types";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+import { useSetIOValue } from "@/nodes";
 
 export const BooleanInput = ({
   iostore,
   inputconverter,
 }: InputRendererProps) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const { preview } = iostore.valuestore();
   const io = iostore.use();
 
   const indeterminate = preview?.value === undefined;
   const cRef = React.useRef<HTMLInputElement>(null);
 
+  const set_io_value = useSetIOValue(io);
+
   React.useEffect(() => {
     if (!cRef.current) return;
     cRef.current.indeterminate = indeterminate;
   }, [cRef, indeterminate]);
 
-  const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let new_value: boolean = e.target.checked;
-    try {
-      new_value = inputconverter[0](e.target.checked);
-    } catch (e) {}
-
-    fnrf_zst.worker?.set_io_value({
-      nid: io.node,
-      ioid: io.id,
-      value: new_value,
-      set_default: io.render_options.set_default,
-    });
-  };
+  const on_change = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let new_value: boolean = e.target.checked;
+      try {
+        new_value = inputconverter[0](e.target.checked);
+      } catch (e) {}
+      set_io_value(new_value);
+    },
+    [set_io_value, inputconverter]
+  );
   return (
     <input
       ref={cRef}

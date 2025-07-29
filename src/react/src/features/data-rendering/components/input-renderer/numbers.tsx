@@ -1,8 +1,8 @@
 import * as React from "react";
-import { useFuncNodesContext } from "@/providers";
 import { InputRendererProps } from "./types";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 import * as Slider from "@radix-ui/react-slider";
+import { useWorkerApi } from "@/workers";
+import { useSetIOValue } from "@/nodes";
 
 function relativeRound(value: number) {
   if (value === 0) return 0;
@@ -19,11 +19,9 @@ export const NumberInput = ({
 }: InputRendererProps & {
   parser: (n: string) => number;
 }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
-
   const { preview } = iostore.valuestore();
   const io = iostore.use();
-
+  const set_io_value = useSetIOValue(io);
   const [tempvalue, setTempValue] = React.useState(
     inputconverter[1](preview?.value)
   );
@@ -32,45 +30,46 @@ export const NumberInput = ({
     setTempValue(inputconverter[1](preview?.value));
   }, [preview]);
 
-  const set_new_value = (new_value: number | string) => {
-    new_value = parser(
-      parseFloat(new_value.toString()).toString() // parse float first for e notation
-    );
+  const set_new_value = React.useCallback(
+    (new_value: number | string) => {
+      new_value = parser(
+        parseFloat(new_value.toString()).toString() // parse float first for e notation
+      );
 
-    if (isNaN(new_value)) {
-      new_value = "<NoValue>";
-      setTempValue("");
-    } else {
-      if (
-        io.value_options?.min !== undefined &&
-        new_value < io.value_options.min
-      )
-        new_value = io.value_options.min;
-      if (
-        io.value_options?.max !== undefined &&
-        new_value > io.value_options.max
-      )
-        new_value = io.value_options.max;
-      new_value = relativeRound(new_value);
-      setTempValue(new_value.toString());
-    }
-    try {
-      new_value = inputconverter[0](new_value);
-    } catch (e) {}
+      if (isNaN(new_value)) {
+        new_value = "<NoValue>";
+        setTempValue("");
+      } else {
+        if (
+          io.value_options?.min !== undefined &&
+          new_value < io.value_options.min
+        )
+          new_value = io.value_options.min;
+        if (
+          io.value_options?.max !== undefined &&
+          new_value > io.value_options.max
+        )
+          new_value = io.value_options.max;
+        new_value = relativeRound(new_value);
+        setTempValue(new_value.toString());
+      }
+      try {
+        new_value = inputconverter[0](new_value);
+      } catch (e) {}
 
-    if (new_value === preview?.value) return; // no change
+      if (new_value === preview?.value) return; // no change
 
-    fnrf_zst.worker?.set_io_value({
-      nid: io.node,
-      ioid: io.id,
-      value: new_value,
-      set_default: io.render_options.set_default,
-    });
-  };
+      set_io_value(new_value);
+    },
+    [io, inputconverter, set_io_value]
+  );
 
-  const on_change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    set_new_value(e.target.value);
-  };
+  const on_change = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      set_new_value(e.target.value);
+    },
+    [set_new_value]
+  );
   let v = io.connected ? inputconverter[1](preview?.value) : tempvalue;
   if (v === undefined) v = io.value_options?.min;
   if (v === undefined) v = io.value_options?.max;

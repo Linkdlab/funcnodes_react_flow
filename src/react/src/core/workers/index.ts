@@ -11,3 +11,4 @@ export type {
   WorkersState,
   WorkerRepresentation,
 } from "./manager/worker-manager.types";
+export { useWorkerApi } from "./hooks";

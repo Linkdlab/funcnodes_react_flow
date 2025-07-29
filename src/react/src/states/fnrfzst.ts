@@ -159,12 +159,15 @@ const FuncNodesReactFlowZustand = (
       for (const io in action.node.io) {
         const ioid = action.node.io[io]!.id;
         if (ioid !== undefined) {
-          iterf.worker?.get_io_value({ nid: action.node.id, ioid: ioid });
+          iterf.worker?.api.node.get_io_value({
+            nid: action.node.id,
+            ioid: ioid,
+          });
         }
       }
 
       setTimeout(() => {
-        iterf.worker?.call_hooks("node_added", { node: node.id });
+        iterf.worker?.api.hooks.call_hooks("node_added", { node: node.id });
       }, 0);
       return node;
     }
@@ -189,7 +192,7 @@ const FuncNodesReactFlowZustand = (
       return store.getState();
     } else {
       if (iterf.worker) {
-        iterf.worker.locally_update_node(action);
+        iterf.worker.api.node.locally_update_node(action);
       }
     }
     return undefined;
@@ -205,7 +208,7 @@ const FuncNodesReactFlowZustand = (
         },
       ]);
     } else {
-      iterf.worker?.remove_node(action.id);
+      iterf.worker?.api.node.remove_node(action.id);
     }
     return undefined;
   };
@@ -235,7 +238,7 @@ const FuncNodesReactFlowZustand = (
         from_remote: true,
       });
     } else {
-      iterf.worker?.trigger_node(action.id);
+      iterf.worker?.api.node.trigger_node(action.id);
     }
     return undefined;
   };
@@ -374,7 +377,7 @@ const FuncNodesReactFlowZustand = (
       rfstate.partial_update_nodes([group]);
     } else {
       if (iterf.worker) {
-        iterf.worker.locally_update_group(action);
+        iterf.worker.api.group.locally_update_group(action);
       }
     }
   };
@@ -597,7 +600,7 @@ const FuncNodesReactFlowZustand = (
     ) {
       return;
     }
-    iterf.worker.add_edge({
+    iterf.worker.api.edge.add_edge({
       src_nid: connection.source,
       src_ioid: connection.sourceHandle,
       trg_nid: connection.target,

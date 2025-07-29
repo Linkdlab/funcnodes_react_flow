@@ -1,10 +1,8 @@
 import * as React from "react";
 import { useState } from "react";
 import { useFuncNodesContext } from "@/providers";
-import {
-  CustomDialog,
-  FuncNodesReactFlowZustandInterface,
-} from "@/barrel_imports";
+import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+import { CustomDialog } from "@/shared-components";
 import {
   AvailableModule,
   ActiveModule,

@@ -17,7 +17,8 @@ import { latest } from "@/barrel_imports";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
 import { NodeSettingsOverlay } from "@/node-settings";
 import { useKeyPress } from "@/providers";
-import { CustomDialog } from "@/barrel_imports";
+import { CustomDialog } from "@/shared-components";
+import { useWorkerApi } from "@/workers";
 
 interface NodeHeaderProps {
   node_data: latest.NodeType;
@@ -27,6 +28,7 @@ interface NodeHeaderProps {
 const NodeHeader = React.memo(
   ({ node_data, toogleShowSettings }: NodeHeaderProps) => {
     const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+    const { node } = useWorkerApi();
 
     const clicktrigger = () => {
       fnrf_zst.on_node_action({
@@ -50,10 +52,12 @@ const NodeHeader = React.memo(
             fontSize="inherit"
             className="nodestatusbutton nodeheaderbutton"
             onClick={async () => {
-              console.log(
-                "nodestatus",
-                await fnrf_zst.worker?.get_node_status(node_data.id)
-              );
+              if (node) {
+                console.log(
+                  "nodestatus",
+                  await node.get_node_status(node_data.id)
+                );
+              }
             }}
           />
           <GearIcon

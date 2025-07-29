@@ -1,7 +1,7 @@
 import * as React from "react";
-import { removeGroup } from "@/barrel_imports";
-import { useFuncNodesContext } from "@/providers";
+import { useRemoveGroups } from "../hooks";
 import { CloseIcon } from "@/icons";
+import "./groups.scss";
 
 export interface NodeGroup {
   node_ids: string[];
@@ -17,14 +17,17 @@ export interface NodeGroups {
 
 // The default Node rendering component for groups
 export const DefaultGroup = ({ data }: { data: any }) => {
-  const fnrf_zst = useFuncNodesContext();
   const groupId = data?.group?.id || data?.id;
-  const handleRemove = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (groupId) {
-      removeGroup([groupId], fnrf_zst);
-    }
-  };
+  const removeGroups = useRemoveGroups();
+  const handleRemove = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (groupId) {
+        removeGroups([groupId]);
+      }
+    },
+    [groupId, removeGroups]
+  );
   return (
     <div className="fn-group">
       <button

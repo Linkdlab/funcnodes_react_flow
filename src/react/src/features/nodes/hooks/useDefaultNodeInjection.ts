@@ -1,13 +1,14 @@
 import * as React from "react";
 import { useContext, useEffect, useState } from "react";
-import { FuncNodesReactFlowZustandInterface, latest } from "@/barrel_imports";
-import { useFuncNodesContext } from "@/providers";
+import { latest } from "@/barrel_imports";
 import { RenderMappingContext } from "@/data-rendering";
+import { useWorkerApi } from "@/workers";
 
 export const useDefaultNodeInjection = (storedata: latest.NodeType) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
   const [visualTrigger, setVisualTrigger] = useState(false);
   const intrigger = storedata.in_trigger();
+
+  const { hooks } = useWorkerApi();
 
   const renderplugins = useContext(RenderMappingContext);
 
@@ -33,8 +34,8 @@ export const useDefaultNodeInjection = (storedata: latest.NodeType) => {
 
   // Call a hook when the node is mounted.
   useEffect(() => {
-    fnrf_zst.worker?.call_hooks("node_mounted", storedata.id);
-  }, [fnrf_zst.worker, storedata.id]);
+    hooks?.call_hooks("node_mounted", storedata.id);
+  }, [hooks, storedata.id]);
 
   // Manage visual trigger state based on the node's in_trigger flag.
   useEffect(() => {

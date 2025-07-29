@@ -1,8 +1,8 @@
 import * as React from "react";
-import { useFuncNodesContext } from "@/providers";
 import { InputRendererProps } from "./types";
-import { FuncNodesReactFlowZustandInterface, latest } from "@/barrel_imports";
+import { latest } from "@/barrel_imports";
 import { CustomSelect } from "@/shared-components";
+import { useSetIOValue } from "@/nodes";
 
 const _parse_string = (s: string) => s;
 const _parse_number = (s: string) => parseFloat(s);
@@ -38,7 +38,7 @@ export const SelectionInput = ({
   const io = iostore.use();
   const { preview, full } = iostore.valuestore();
   const display = full === undefined ? preview?.value : full.value;
-
+  const set_io_value = useSetIOValue(io);
   let options: (string | number)[] | latest.EnumOf | any =
     io.value_options?.options || [];
 
@@ -88,32 +88,28 @@ export const SelectionInput = ({
     optionsmap.push([options.keys[i], v.toString(), t]);
   }
 
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const on_change_value = React.useCallback(
+    ({
+      value,
+      // label
+      datatype,
+    }: {
+      value: string;
+      // label: string;
+      datatype: string;
+    }) => {
+      // Use the existing parser or get a new one based on the datatype
+      const p = parser || get_parser(datatype);
 
-  const on_change_value = ({
-    value,
-    // label
-    datatype,
-  }: {
-    value: string;
-    // label: string;
-    datatype: string;
-  }) => {
-    // Use the existing parser or get a new one based on the datatype
-    const p = parser || get_parser(datatype);
+      let new_value: string | number = p(value);
+      try {
+        new_value = inputconverter[0](value);
+      } catch (e) {}
 
-    let new_value: string | number = p(value);
-    try {
-      new_value = inputconverter[0](value);
-    } catch (e) {}
-
-    fnrf_zst.worker?.set_io_value({
-      nid: io.node,
-      ioid: io.id,
-      value: new_value,
-      set_default: io.render_options.set_default,
-    });
-  };
+      set_io_value(new_value);
+    },
+    [io, inputconverter, set_io_value]
+  );
 
   let v = display;
   if (v === null) {

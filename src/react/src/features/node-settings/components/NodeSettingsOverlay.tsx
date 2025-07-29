@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CustomDialog } from "@/barrel_imports";
+import { CustomDialog } from "@/shared-components";
 import { latest } from "@/barrel_imports";
 import { NodeSettingsWindow } from "./NodeSettingsWindow";
 
