@@ -36,6 +36,9 @@
       "@/object-helpers": [
         "src/shared/utils/object-helpers"
       ],
+      "@/zustand-helpers": [
+        "src/shared/utils/zustand-helpers"
+      ],
       "@/utils/*": [
         "src/shared/utils/*"
       ],
