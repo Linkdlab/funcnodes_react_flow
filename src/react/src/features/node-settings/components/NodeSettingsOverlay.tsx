@@ -1,33 +1,26 @@
 import * as React from "react";
 import { CustomDialog } from "@/shared-components";
-import { latest } from "@/barrel_imports";
 import { NodeSettingsWindow } from "./NodeSettingsWindow";
+import { NodeContext } from "@/nodes";
 
 interface NodeSettingsOverlayProps {
-  node_data: latest.NodeType;
   nodeSettingsPath: string;
   isOpen: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
 export const NodeSettingsOverlay = React.memo(
-  ({
-    node_data,
-    isOpen,
-    onOpenChange,
-    nodeSettingsPath,
-  }: NodeSettingsOverlayProps) => {
+  ({ isOpen, onOpenChange, nodeSettingsPath }: NodeSettingsOverlayProps) => {
+    const nodestore = React.useContext(NodeContext);
+    const id = nodestore.use((state) => state.id);
     return (
       <CustomDialog
-        title={`Node Settings: ${node_data.id}`}
+        title={`Node Settings: ${id}`}
         open={isOpen}
         onOpenChange={onOpenChange}
         dialogClassName="nodesettings-dialog"
       >
-        <NodeSettingsWindow
-          node_data={node_data}
-          nodeSettingsPath={nodeSettingsPath}
-        />
+        <NodeSettingsWindow nodeSettingsPath={nodeSettingsPath} />
       </CustomDialog>
     );
   }

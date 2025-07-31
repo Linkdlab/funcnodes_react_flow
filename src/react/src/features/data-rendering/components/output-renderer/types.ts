@@ -1,8 +1,8 @@
-import { latest } from "@/barrel_imports";
+import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
 export type OutputRendererProps = {
-  iostore: latest.IOStore;
+  iostore: IOStore;
 };
 
 type BasicOutputRendererType = (props: OutputRendererProps) => JSX.Element;

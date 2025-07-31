@@ -1,9 +1,9 @@
 import { JSX } from "react";
-import { latest } from "@/barrel_imports";
-import { JSONType } from "src/shared/data-structures/data-structures";
+import { IOStore } from "@/nodes-core";
+import { JSONType } from "@/data-structures";
 
 export type DataViewRendererProps = {
-  iostore: latest.IOStore;
+  iostore: IOStore;
   value: JSONType | undefined;
   preValue?: JSONType | undefined;
   onLoaded?: () => void;

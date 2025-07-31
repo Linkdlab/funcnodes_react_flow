@@ -1,11 +1,11 @@
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 const development: boolean = !!import.meta.env.DEV; // vite
 
 const print_object_size = (
   obj: any,
   message: string,
-  fnrf_zst: FuncNodesReactFlowZustandInterface | undefined
+  fnrf_zst: FuncNodesReactFlow | undefined
 ): void => {
   if (!fnrf_zst) {
     return;
@@ -19,7 +19,7 @@ const print_object_size = (
 
 const print_object = (
   obj: any,
-  fnrf_zst: FuncNodesReactFlowZustandInterface | undefined
+  fnrf_zst: FuncNodesReactFlow | undefined
 ): void => {
   if (!fnrf_zst) {
     return;

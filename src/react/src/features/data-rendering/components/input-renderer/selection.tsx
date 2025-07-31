@@ -1,8 +1,9 @@
 import * as React from "react";
 import { InputRendererProps } from "./types";
-import { latest } from "@/barrel_imports";
+
 import { CustomSelect } from "@/shared-components";
 import { useSetIOValue } from "@/nodes";
+import { EnumOf } from "@/nodes-core";
 
 const _parse_string = (s: string) => s;
 const _parse_number = (s: string) => parseFloat(s);
@@ -39,7 +40,7 @@ export const SelectionInput = ({
   const { preview, full } = iostore.valuestore();
   const display = full === undefined ? preview?.value : full.value;
   const set_io_value = useSetIOValue(io);
-  let options: (string | number)[] | latest.EnumOf | any =
+  let options: (string | number)[] | EnumOf | any =
     io.value_options?.options || [];
 
   if (Array.isArray(options)) {
@@ -60,7 +61,7 @@ export const SelectionInput = ({
     };
   }
 
-  options = options as latest.EnumOf;
+  options = options as EnumOf;
   if (
     options.nullable &&
     !options.values.includes(null) &&

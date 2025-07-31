@@ -6,8 +6,9 @@ export type {
   ExtendDataPreviewRendererAction,
   ExtendDataViewRendererAction,
   ExtendFromPluginAction,
-  ExtendNodeContextExtenderAction,
   ExtendNodeRendererAction,
   ExtendNodeHooksAction,
   RenderMappingAction,
+  NodeRendererType,
+  NodeHooksType,
 } from "./render-mappings/render-mappings.types";

@@ -1,7 +1,5 @@
-import {
-  FuncNodesReactFlowZustandInterface,
-  ProgressStateMessage,
-} from "@/barrel_imports";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
+import { ProgressStateMessage } from "@/messages";
 import { FuncNodesWorker, WebSocketWorker, WorkersState } from "@/workers";
 
 export class WorkerManager {
@@ -12,10 +10,10 @@ export class WorkerManager {
   private maxReconnectAttempts: number = 999;
   private initialTimeout: number = 200; // Initial reconnect delay in ms
   private maxTimeout: number = 2000; // Maximum reconnect delay
-  private zustand: FuncNodesReactFlowZustandInterface;
+  private zustand: FuncNodesReactFlow;
   private connectionTimeout?: ReturnType<typeof setTimeout>;
   on_setWorker: (worker: FuncNodesWorker | undefined) => void;
-  constructor(wsuri: string, zustand: FuncNodesReactFlowZustandInterface) {
+  constructor(wsuri: string, zustand: FuncNodesReactFlow) {
     this._wsuri = wsuri;
     this.zustand = zustand;
     this.workers = {};

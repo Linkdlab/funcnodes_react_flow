@@ -1,6 +1,6 @@
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 import { Logger } from "@/logging";
 import { FuncNodesWorker } from "@/workers";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 
 export interface ReactFlowLayerProps {
   minimap: boolean;
@@ -34,9 +34,5 @@ export interface FuncnodesReactFlowProps {
   fnw_url?: string;
   workermanager_url?: string;
   logger?: Logger;
-  on_ready?: ({
-    fnrf_zst,
-  }: {
-    fnrf_zst: FuncNodesReactFlowZustandInterface;
-  }) => void;
+  on_ready?: ({ fnrf_zst }: { fnrf_zst: FuncNodesReactFlow }) => void;
 }

@@ -1,41 +1,36 @@
-import * as React from "react";
 import { useContext, useEffect, useState } from "react";
-import { latest } from "@/barrel_imports";
 import { RenderMappingContext } from "@/data-rendering";
 import { useWorkerApi } from "@/workers";
+import { NodeStore } from "@/nodes-core";
+import { useFuncNodesContext } from "@/providers";
 
-export const useDefaultNodeInjection = (storedata: latest.NodeType) => {
+export const useDefaultNodeInjection = (nodestore: NodeStore) => {
   const [visualTrigger, setVisualTrigger] = useState(false);
-  const intrigger = storedata.in_trigger();
+  const intrigger = nodestore.use((state) => state.in_trigger);
+  const node_id = nodestore.use((state) => state.node_id);
+  const instance_id = nodestore.use((state) => state.id);
+  const fnrf_zst = useFuncNodesContext();
 
   const { hooks } = useWorkerApi();
 
   const renderplugins = useContext(RenderMappingContext);
 
-  // Memoize additionalContext so that it only recomputes when
-  // either the extender function or storedata changes.
-  const nodeContextExtender =
-    renderplugins.NodeContextExtenders[storedata.node_id];
-  const additionalContext = React.useMemo(
-    () => nodeContextExtender?.({ node_data: storedata }) || {},
-    [nodeContextExtender, storedata]
-  );
-
-  // Memoize nodecontext so that it's recreated only if additionalContext or storedata change.
-  const nodecontext = React.useMemo(
-    () => ({ ...additionalContext, node_data: storedata }),
-    [additionalContext, storedata]
-  );
-
-  const nodeHooks = renderplugins.NodeHooks[storedata.node_id];
+  const nodeHooks = renderplugins.NodeHooks[node_id];
   for (const hook of nodeHooks || []) {
-    hook({ nodecontext: nodecontext });
+    try {
+      hook({ nodestore: nodestore });
+    } catch (error) {
+      fnrf_zst.logger.error(
+        "Error calling node hook",
+        error instanceof Error ? error.message : String(error)
+      );
+    }
   }
 
   // Call a hook when the node is mounted.
   useEffect(() => {
-    hooks?.call_hooks("node_mounted", storedata.id);
-  }, [hooks, storedata.id]);
+    hooks?.call_hooks("node_mounted", instance_id);
+  }, [hooks, instance_id]);
 
   // Manage visual trigger state based on the node's in_trigger flag.
   useEffect(() => {
@@ -48,5 +43,5 @@ export const useDefaultNodeInjection = (storedata: latest.NodeType) => {
     return () => clearTimeout(timeoutId);
   }, [intrigger, visualTrigger]);
 
-  return { visualTrigger, nodecontext };
+  return { visualTrigger, nodestore };
 };

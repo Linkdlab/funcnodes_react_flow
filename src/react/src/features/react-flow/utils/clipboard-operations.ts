@@ -1,8 +1,9 @@
 import { OnNodesChange } from "@xyflow/react";
-import { latest } from "@/barrel_imports";
 import { useWorkerApi } from "@/workers";
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
+import { SerializedNodeType } from "@/nodes-core";
+import { SerializedEdge } from "@/edges-core";
 
 export const usePasteClipboardData = () => {
   const { node: nodeApi, edge: edgeApi } = useWorkerApi();
@@ -15,8 +16,8 @@ export const usePasteClipboardData = () => {
         if (!nodeApi) return;
         if (!edgeApi) return;
         const copydata: {
-          nodes: latest.SerializedNodeType[];
-          edges: latest.SerializedEdge[];
+          nodes: SerializedNodeType[];
+          edges: SerializedEdge[];
         } = JSON.parse(data);
         if (!copydata) return;
         if (!fnrf_zst.worker) return;

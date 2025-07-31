@@ -10,10 +10,11 @@ export type {
   ExtendDataPreviewRendererAction,
   ExtendDataViewRendererAction,
   ExtendFromPluginAction,
-  ExtendNodeContextExtenderAction,
   ExtendNodeRendererAction,
   ExtendNodeHooksAction,
   RenderMappingAction,
+  NodeRendererType,
+  NodeHooksType,
 } from "./render-mappings.types";
 export {
   renderMappingReducer,

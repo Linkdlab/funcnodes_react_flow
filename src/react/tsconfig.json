@@ -78,6 +78,21 @@
       "@/workers": [
         "src/core/workers"
       ],
+      "@/funcnodes-context": [
+        "src/core/funcnodes-context"
+      ],
+      "@/nodes-core": [
+        "src/core/nodes"
+      ],
+      "@/edges-core": [
+        "src/core/edges"
+      ],
+      "@/plugins": [
+        "src/core/plugins"
+      ],
+      "@/nodespace": [
+        "src/core/nodespace"
+      ],
       "@/nodes": [
         "src/features/nodes"
       ],

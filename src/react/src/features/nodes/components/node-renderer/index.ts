@@ -1,5 +1,5 @@
-export { DefaultNode } from "./node";
-export { NodeName, NodeContext } from "./node";
-export type { NodeContextType, RFNodeDataPass } from "./node";
+export { DefaultNode, NodeContext } from "./node";
+export { NodeName } from "./node";
+export type { RFNodeDataPass } from "./node";
 export * from "./io";
 import "./index.scss";

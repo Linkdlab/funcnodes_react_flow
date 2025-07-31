@@ -1,8 +1,9 @@
 import * as React from "react";
 import { useState } from "react";
 import { ExpandLessIcon } from "@/icons";
-import { ExternalWorkerDependencies, Shelf } from "@/barrel_imports";
+
 import { ExternalWorkerClassEntry } from "./ExternalWorkerClassEntry";
+import { ExternalWorkerDependencies, Shelf } from "@/library";
 
 export const ExternalWorkerShelf = ({
   externalworkermod,

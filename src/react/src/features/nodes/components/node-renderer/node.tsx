@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 import { useFuncNodesContext } from "@/providers";
 import { NodeInput, NodeOutput } from "./io";
 
@@ -13,148 +13,150 @@ import {
   GearIcon,
   ExpandLessIcon,
 } from "@/icons";
-import { latest } from "@/barrel_imports";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
 import { NodeSettingsOverlay } from "@/node-settings";
 import { useKeyPress } from "@/providers";
 import { CustomDialog } from "@/shared-components";
 import { useWorkerApi } from "@/workers";
+import { IOStore, NodeStore } from "@/nodes-core";
+import { IOContext } from "./io/io";
 
 interface NodeHeaderProps {
-  node_data: latest.NodeType;
   toogleShowSettings?: () => void;
 }
 
-const NodeHeader = React.memo(
-  ({ node_data, toogleShowSettings }: NodeHeaderProps) => {
-    const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
-    const { node } = useWorkerApi();
+const NodeHeader = React.memo(({ toogleShowSettings }: NodeHeaderProps) => {
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
+  const { node } = useWorkerApi();
+  const nodestore = React.useContext(NodeContext);
+  const { id, description, node_name } = nodestore.useShallow((state) => ({
+    id: state.id,
+    description: state.description,
+    node_name: state.node_name,
+  }));
 
-    const clicktrigger = () => {
-      fnrf_zst.on_node_action({
-        type: "trigger",
-        from_remote: false,
-        id: node_data.id,
-      });
-    };
-    return (
-      <div
-        className="nodeheader"
-        title={node_data.description || node_data.node_name}
-      >
-        <div className="nodeheader_element">
-          <PlayCircleFilledIcon
-            fontSize="inherit"
-            className="triggerbutton nodeheaderbutton "
-            onClick={clicktrigger}
-          />
-          <LanIcon
-            fontSize="inherit"
-            className="nodestatusbutton nodeheaderbutton"
-            onClick={async () => {
-              if (node) {
-                console.log(
-                  "nodestatus",
-                  await node.get_node_status(node_data.id)
-                );
-              }
-            }}
-          />
-          <GearIcon
-            fontSize="inherit"
-            className="nodesettingsbutton nodeheaderbutton"
-            onClick={() => {
-              toogleShowSettings?.();
-            }}
-          />
-        </div>
-        <div className="nodeheader_element nodeheader_title">
-          <div className="nodeheader_title_text">{node_data.node_name}</div>
-        </div>
-        <div className="nodeheader_element">
-          <ExpandLessIcon fontSize="inherit" />
-        </div>
+  const clicktrigger = React.useCallback(() => {
+    fnrf_zst.on_node_action({
+      type: "trigger",
+      from_remote: false,
+      id: id,
+    });
+  }, [fnrf_zst, id]);
+  return (
+    <div className="nodeheader" title={description || node_name}>
+      <div className="nodeheader_element">
+        <PlayCircleFilledIcon
+          fontSize="inherit"
+          className="triggerbutton nodeheaderbutton "
+          onClick={clicktrigger}
+        />
+        <LanIcon
+          fontSize="inherit"
+          className="nodestatusbutton nodeheaderbutton"
+          onClick={async () => {
+            if (node) {
+              console.log("nodestatus", await node.get_node_status(id));
+            }
+          }}
+        />
+        <GearIcon
+          fontSize="inherit"
+          className="nodesettingsbutton nodeheaderbutton"
+          onClick={() => {
+            toogleShowSettings?.();
+          }}
+        />
       </div>
-    );
-  }
-);
+      <div className="nodeheader_element nodeheader_title">
+        <div className="nodeheader_title_text">{node_name}</div>
+      </div>
+      <div className="nodeheader_element">
+        <ExpandLessIcon fontSize="inherit" />
+      </div>
+    </div>
+  );
+});
 
 interface NodeBodyProps {
-  node_data: latest.NodeType;
   setNodeSettingsPath?: (path: string) => void;
   setShowSettings?: (show: boolean) => void;
 }
 
-const NodeIODataRenderer = React.memo(
-  ({
-    iostore,
-    node_data,
-  }: {
-    node_data: latest.NodeType;
-    iostore: latest.IOStore;
-  }) => {
-    const io = iostore.use();
+const NodeIODataRenderer = React.memo(({ iostore }: { iostore: IOStore }) => {
+  const io = iostore.use();
+  const nodestore = React.useContext(NodeContext);
+  const render_options = nodestore.use((state) => state.render_options);
 
-    const [pvhandle, overlayhandle] = useBodyDataRendererForIo(io);
+  const [pvhandle, overlayhandle] = useBodyDataRendererForIo(io);
 
-    return (
-      <div
-        className="nodrag nodedatabody"
-        data-src={node_data.render_options?.data?.src || ""}
-      >
-        {pvhandle && io && (
-          <CustomDialog
-            title={io.full_id}
-            trigger={
-              <div className="nodedatabutton">
-                {<IOPreviewWrapper Component={pvhandle} iostore={iostore} />}
-              </div>
+  return (
+    <div
+      className="nodrag nodedatabody"
+      data-src={render_options?.data?.src || ""}
+    >
+      {pvhandle && io && (
+        <CustomDialog
+          title={io.full_id}
+          trigger={
+            <div className="nodedatabutton">
+              {<IOPreviewWrapper Component={pvhandle} iostore={iostore} />}
+            </div>
+          }
+          onOpenChange={(open: boolean) => {
+            if (open) {
+              iostore.try_get_full_value();
             }
-            onOpenChange={(open: boolean) => {
-              if (open) {
-                if (io?.try_get_full_value) io?.try_get_full_value();
-              }
-            }}
-          >
-            {overlayhandle && (
-              <IODataOverlay Component={overlayhandle} iostore={iostore} />
-            )}
-          </CustomDialog>
-        )}
-      </div>
-    );
-  }
-);
+          }}
+        >
+          {overlayhandle && (
+            <IODataOverlay Component={overlayhandle} iostore={iostore} />
+          )}
+        </CustomDialog>
+      )}
+    </div>
+  );
+});
 
 const NodeBody = React.memo(
-  ({ node_data, setShowSettings, setNodeSettingsPath }: NodeBodyProps) => {
-    const datarenderio = node_data.render_options?.data?.src
-      ? node_data.io[node_data.render_options?.data?.src]
+  ({ setShowSettings, setNodeSettingsPath }: NodeBodyProps) => {
+    const nodestore = React.useContext(NodeContext);
+    const { render_options, outputs, inputs } = nodestore.useShallow(
+      (state) => ({
+        render_options: state.render_options,
+        outputs: state.outputs,
+        inputs: state.inputs,
+      })
+    );
+
+    const datarenderio = render_options?.data?.src
+      ? nodestore.io_stores.get(render_options?.data?.src)
       : undefined;
 
     return (
       <div className="nodebody nowheel ">
-        {node_data.outputs.map((ioname) => {
+        {outputs.map((ioname) => {
+          const io = nodestore.io_stores.get(ioname);
+          if (!io) return;
           return (
-            <NodeOutput
-              key={ioname}
-              iostore={node_data.io[ioname]!}
-              setNodeSettingsPath={setNodeSettingsPath}
-              setShowSettings={setShowSettings}
-            />
+            <IOContext.Provider value={io} key={ioname}>
+              <NodeOutput
+                setNodeSettingsPath={setNodeSettingsPath}
+                setShowSettings={setShowSettings}
+              />
+            </IOContext.Provider>
           );
         })}
-        {datarenderio && (
-          <NodeIODataRenderer node_data={node_data} iostore={datarenderio} />
-        )}
-        {node_data.inputs.map((ioname) => {
+        {datarenderio && <NodeIODataRenderer iostore={datarenderio} />}
+        {inputs.map((ioname) => {
+          const io = nodestore.io_stores.get(ioname);
+          if (!io) return;
           return (
-            <NodeInput
-              key={ioname}
-              iostore={node_data.io[ioname]!}
-              setNodeSettingsPath={setNodeSettingsPath}
-              setShowSettings={setShowSettings}
-            />
+            <IOContext.Provider value={io} key={ioname}>
+              <NodeInput
+                setNodeSettingsPath={setNodeSettingsPath}
+                setShowSettings={setShowSettings}
+              />
+            </IOContext.Provider>
           );
         })}
       </div>
@@ -162,14 +164,20 @@ const NodeBody = React.memo(
   }
 );
 
-const NodeName = React.memo(({ node_data }: { node_data: latest.NodeType }) => {
-  const [name, setName] = useState(node_data.name);
+export const NodeName = () => {
+  const nodestore = React.useContext(NodeContext);
+  const { original_name, id } = nodestore.useShallow((state) => ({
+    original_name: state.name,
+    id: state.id,
+  }));
+
+  const [name, setName] = useState(original_name);
 
   useEffect(() => {
-    setName(node_data.name);
-  }, [node_data]);
+    setName(original_name);
+  }, [original_name]);
 
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -177,12 +185,14 @@ const NodeName = React.memo(({ node_data }: { node_data: latest.NodeType }) => {
 
   const finalSetName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const new_name = e.target.value;
-    fnrf_zst.on_node_action({
-      type: "update",
-      from_remote: false,
-      id: node_data.id,
-      node: { name: new_name },
-    });
+    if (new_name !== original_name) {
+      fnrf_zst.on_node_action({
+        type: "update",
+        from_remote: false,
+        id: id,
+        node: { name: new_name },
+      });
+    }
   };
   return (
     <input
@@ -192,11 +202,12 @@ const NodeName = React.memo(({ node_data }: { node_data: latest.NodeType }) => {
       onBlur={finalSetName}
     />
   );
-});
+};
 
-const NodeProgressBar = ({ node_data }: { node_data: latest.NodeType }) => {
-  if (!node_data.progress) return null;
-  const progress = node_data.progress();
+const NodeProgressBar = () => {
+  const nodestore = React.useContext(NodeContext);
+  const progress = nodestore.use((state) => state.progress);
+  if (!progress) return null;
   return (
     <ProgressBar
       // style={{
@@ -208,42 +219,41 @@ const NodeProgressBar = ({ node_data }: { node_data: latest.NodeType }) => {
   );
 };
 
-const NodeFooter = React.memo(
-  ({ node_data }: { node_data: latest.NodeType }) => {
-    return (
-      <div className="nodefooter">
-        {node_data.error && <div className="nodeerror">{node_data.error}</div>}
-        <NodeProgressBar node_data={node_data} />
-      </div>
-    );
-  }
-);
+const NodeFooter = React.memo(() => {
+  const nodestore = React.useContext(NodeContext);
+  const error = nodestore.use((state) => state.error);
 
-interface NodeContextType {
-  node_data: latest.NodeType;
-  [key: string]: any | undefined;
-}
-interface RFNodeDataPass extends Record<string, unknown> {
-  nodestore: latest.NodeStore;
+  return (
+    <div className="nodefooter">
+      {error && <div className="nodeerror">{error}</div>}
+      <NodeProgressBar />
+    </div>
+  );
+});
+
+export interface RFNodeDataPass extends Record<string, unknown> {
+  nodestore: NodeStore;
 }
 
-const NodeContext = React.createContext<NodeContextType | null>(null);
+export const NodeContext = React.createContext<NodeStore>({} as NodeStore);
 
-export const DefaultNode = ({ data }: { data: RFNodeDataPass }) => {
-  // Use the  latest.NodeStore to get the data for the node.
+export const DefaultNode = React.memo(({ data }: { data: RFNodeDataPass }) => {
+  // Use the  NodeStore to get the data for the node.
   const storedata = data.nodestore.use();
 
   const collapsed = storedata.properties["frontend:collapsed"] || false;
 
-  const { visualTrigger, nodecontext } = useDefaultNodeInjection(storedata);
+  const { visualTrigger, nodestore: nodecontext } = useDefaultNodeInjection(
+    data.nodestore
+  );
 
   const [showSettings, setShowSettings] = useState(false);
   const [nodeSettingsPath, setNodeSettingsPath] = useState<string>("");
   const { keys: pressedKeys } = useKeyPress();
 
-  const toogleShowSettings = () => {
+  const toogleShowSettings = React.useCallback(() => {
     setShowSettings((prev) => !prev);
-  };
+  }, []);
 
   const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     if (pressedKeys.has("s") && !showSettings) {
@@ -270,21 +280,16 @@ export const DefaultNode = ({ data }: { data: RFNodeDataPass }) => {
         }
         onClick={onClickHandler}
       >
-        <NodeHeader
-          node_data={storedata}
-          toogleShowSettings={toogleShowSettings}
-        />
-        <NodeName node_data={storedata} />
+        <NodeHeader toogleShowSettings={toogleShowSettings} />
+        <NodeName />
         {collapsed ? null : (
           <NodeBody
-            node_data={storedata}
             setNodeSettingsPath={setNodeSettingsPath}
             setShowSettings={setShowSettings}
           />
         )}
-        <NodeFooter node_data={storedata} />
+        <NodeFooter />
         <NodeSettingsOverlay
-          node_data={storedata}
           isOpen={showSettings}
           onOpenChange={setShowSettings}
           nodeSettingsPath={nodeSettingsPath}
@@ -292,7 +297,4 @@ export const DefaultNode = ({ data }: { data: RFNodeDataPass }) => {
       </div>
     </NodeContext.Provider>
   );
-};
-
-export { NodeName, NodeContext };
-export type { NodeContextType, RFNodeDataPass };
+});

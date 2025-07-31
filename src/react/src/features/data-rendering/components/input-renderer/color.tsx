@@ -1,12 +1,13 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
 import { InputRendererProps } from "./types";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+
 import { CustomColorPicker } from "@/shared-components";
 import { useSetIOValue } from "@/nodes";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const ColorInput = ({ iostore }: InputRendererProps) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const io = iostore.use();
   const { preview, full } = iostore.valuestore();
   const display = full === undefined ? preview?.value : full.value;

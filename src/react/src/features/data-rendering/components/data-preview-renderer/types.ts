@@ -1,8 +1,8 @@
-import { latest } from "@/barrel_imports";
+import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
 export type DataPreviewViewRendererProps = {
-  iostore: latest.IOStore;
+  iostore: IOStore;
 };
 
 type BasicDataPreviewViewRendererType = (
@@ -11,5 +11,3 @@ type BasicDataPreviewViewRendererType = (
 export type DataPreviewViewRendererType =
   | BasicDataPreviewViewRendererType
   | React.MemoExoticComponent<BasicDataPreviewViewRendererType>;
-
-

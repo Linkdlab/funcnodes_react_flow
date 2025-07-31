@@ -1,18 +1,16 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { latest } from "@/barrel_imports";
-import { pick_best_io_type, INPUTCONVERTER } from "@/nodes";
+import { pick_best_io_type, INPUTCONVERTER, IOContext } from "@/nodes";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 import { useWorkerApi } from "@/workers";
 
-interface NodeIOSettingsProps {
-  iostore: latest.IOStore;
-}
+interface NodeIOSettingsProps {}
 
-export const NodeIOSettings = ({ iostore }: NodeIOSettingsProps) => {
+export const NodeIOSettings = ({}: NodeIOSettingsProps) => {
   const fnrf_zst = useFuncNodesContext();
   const { node } = useWorkerApi();
-  const io = iostore.use();
+  const io_store = React.useContext(IOContext);
+  const io = io_store.use();
   const renderOpts = fnrf_zst.render_options();
 
   // For editing name
@@ -35,7 +33,7 @@ export const NodeIOSettings = ({ iostore }: NodeIOSettingsProps) => {
 
   // For editing default value (inputs only)
   const [_typestring, otypestring] = pick_best_io_type(
-    io.type,
+    io,
     renderOpts.typemap || {}
   );
   const inputconverterf =
@@ -70,7 +68,7 @@ export const NodeIOSettings = ({ iostore }: NodeIOSettingsProps) => {
       </div>
       <div className="funcnodes-control-row">
         <label>Value:</label>
-        {Input && <Input iostore={iostore} inputconverter={inputconverterf} />}
+        {Input && <Input iostore={io_store} inputconverter={inputconverterf} />}
       </div>
       <div className="funcnodes-control-row">
         <label>Type:</label>

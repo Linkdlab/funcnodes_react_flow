@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { latest } from "@/barrel_imports";
 import { NodeSettingsInput, NodeSettingsOutput } from "./io";
 import {
   ChevronDownIcon,
@@ -9,38 +8,49 @@ import {
   ChevronUpIcon,
 } from "@/icons";
 import { ExpandingContainer } from "@/shared-components/auto-layouts";
-import { NodeName } from "@/nodes";
+import { IOContext, NodeContext, NodeName } from "@/nodes";
+import { NodeStore } from "@/nodes-core";
 
-const CurrentNodeSettings = ({
-  nodestore,
-}: {
-  nodestore: latest.NodeStore;
-}) => {
+const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
   const node = nodestore.use();
 
   return (
-    <div className="nodesettings_content">
-      <div className="nodesettings_section">
-        <div className="nodesettings_component">
-          <div>Name</div>
-          <div>
-            <NodeName node_data={node} />
+    <NodeContext.Provider value={nodestore}>
+      <div className="nodesettings_content">
+        <div className="nodesettings_section">
+          <div className="nodesettings_component">
+            <div>Name</div>
+            <div>
+              <NodeName />
+            </div>
           </div>
         </div>
+        <div className="nodesettings_section">
+          <div>Inputs</div>
+          {node.inputs.map((ioname) => {
+            const io = nodestore.io_stores.get(ioname);
+            if (!io) return;
+            return (
+              <IOContext.Provider value={io} key={ioname}>
+                <NodeSettingsInput />
+              </IOContext.Provider>
+            );
+          })}
+        </div>
+        <div className="nodesettings_section">
+          <div>Outputs</div>
+          {node.outputs.map((ioname) => {
+            const io = nodestore.io_stores.get(ioname);
+            if (!io) return;
+            return (
+              <IOContext.Provider value={io} key={ioname}>
+                <NodeSettingsOutput />
+              </IOContext.Provider>
+            );
+          })}
+        </div>
       </div>
-      <div className="nodesettings_section">
-        <div>Inputs</div>
-        {node.inputs.map((ioname) => (
-          <NodeSettingsInput iostore={node.io[ioname]!} key={ioname} />
-        ))}
-      </div>
-      <div className="nodesettings_section">
-        <div>Outputs</div>
-        {node.outputs.map((ioname) => (
-          <NodeSettingsOutput iostore={node.io[ioname]!} key={ioname} />
-        ))}
-      </div>
-    </div>
+    </NodeContext.Provider>
   );
 };
 
@@ -67,12 +77,8 @@ export const NodeSettings = () => {
     (state) => state.view_settings.expand_node_props
   );
 
-  const update_view_settings = fnrf_zst.local_settings(
-    (state) => state.update_view_settings
-  );
-
   const set_expand_node_props = (expand: boolean) => {
-    update_view_settings({ expand_node_props: expand });
+    fnrf_zst.update_view_settings({ expand_node_props: expand });
   };
 
   return (

@@ -1,8 +1,8 @@
-import { latest } from "@/barrel_imports";
+import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
 export interface DataOverlayRendererProps {
-  iostore: latest.IOStore;
+  iostore: IOStore;
   value: any;
   preValue?: any;
   onLoaded?: () => void;

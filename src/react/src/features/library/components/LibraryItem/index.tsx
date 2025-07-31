@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useState } from "react";
 import { ExpandLessIcon } from "@/icons";
-import { Shelf } from "@/barrel_imports";
 import { LibraryNode } from "@/library/components";
+import { Shelf } from "@/library";
 
 const filterShelf = (shelf: Shelf, filter: string): boolean => {
   const hasFilteredNodes =

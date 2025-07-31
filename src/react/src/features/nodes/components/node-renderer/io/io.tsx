@@ -6,14 +6,23 @@ import { useState } from "react";
 import { usePreviewHandleDataRendererForIo } from "./handle_renderer";
 
 import { LockIcon, LockOpenIcon, FullscreenIcon } from "@/icons";
-
-import { latest } from "@/barrel_imports";
 import { IODataOverlay, IOPreviewWrapper } from "./iodataoverlay";
 import { useFuncNodesContext } from "@/providers";
 import { CustomDialog } from "@/shared-components";
+import { IOStore, IOType, RenderType } from "@/nodes-core";
+import { DeepPartial } from "@/object-helpers";
+
+export const IOContext = React.createContext<IOStore>({} as IOStore);
 
 const pick_best_io_type = (
-  iot: latest.SerializedType,
+  io: IOType,
+  typemap: { [key: string]: string | undefined }
+): [string | undefined, string | undefined] => {
+  return _inner_pick_best_io_type(io.render_options?.type ?? "any", typemap);
+};
+
+const _inner_pick_best_io_type = (
+  iot: DeepPartial<RenderType>,
   typemap: { [key: string]: string | undefined }
 ): [string | undefined, string | undefined] => {
   // check if iot is string
@@ -27,7 +36,9 @@ const pick_best_io_type = (
     return [undefined, undefined];
   }
   if ("anyOf" in iot && iot.anyOf !== undefined) {
-    const picks = iot.anyOf.map((x) => pick_best_io_type(x, typemap));
+    const picks = iot.anyOf.map((x) =>
+      _inner_pick_best_io_type(x || "any", typemap)
+    );
     for (const pick of picks) {
       switch (pick[0]) {
         case "bool":
@@ -58,13 +69,11 @@ const pick_best_io_type = (
 };
 
 type HandleWithPreviewProps = {
-  iostore: latest.IOStore;
   typestring: string | undefined;
-  preview?: React.FC<{ io: latest.IOType }>;
+  preview?: React.FC<{ io: IOType }>;
 } & HandleProps;
 
 const HandleWithPreview = ({
-  iostore,
   typestring,
   preview,
   ...props
@@ -72,6 +81,7 @@ const HandleWithPreview = ({
   const [locked, setLocked] = useState(false);
   const [opened, setOpened] = useState(false);
   const fnrf_zst = useFuncNodesContext();
+  const iostore = React.useContext(IOContext);
   const io = iostore.use();
 
   const [pvhandle, overlayhandle] = usePreviewHandleDataRendererForIo(io);

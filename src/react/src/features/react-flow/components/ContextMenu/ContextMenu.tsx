@@ -2,9 +2,9 @@ import * as React from "react";
 import { useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { useFuncNodesContext } from "@/providers";
-import { latest } from "@/barrel_imports";
 import { ContextMenuProps } from "./ContextMenu.types";
 import "./ContextMenu.scss";
+import { NodeType } from "@/nodes-core";
 
 export const ContextMenu = ({
   id,
@@ -34,7 +34,7 @@ export const ContextMenu = ({
 
   const nodestore = fnrf_zst.nodespace.get_node(id, false);
   if (!nodestore) return <></>;
-  const node: latest.NodeType = nodestore.use();
+  const node: NodeType = nodestore.use();
 
   return (
     <div

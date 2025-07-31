@@ -1,8 +1,8 @@
-import { latest } from "@/barrel_imports";
+import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
 export type InputRendererProps = {
-  iostore: latest.IOStore;
+  iostore: IOStore;
   inputconverter: [(v: any) => any, (v: any) => any];
 };
 

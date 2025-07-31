@@ -1,8 +1,8 @@
-import { latest } from "@/barrel_imports";
+import { IOType } from "@/nodes-core";
 import { useWorkerApi } from "@/workers";
 import * as React from "react";
 
-export const useSetIOValue = (io: latest.IOType) => {
+export const useSetIOValue = (io: IOType) => {
   const { node } = useWorkerApi();
 
   const func = React.useCallback(

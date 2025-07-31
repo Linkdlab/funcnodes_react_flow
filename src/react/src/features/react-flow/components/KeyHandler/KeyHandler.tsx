@@ -2,10 +2,10 @@ import * as React from "react";
 import { useEffect } from "react";
 import { useKeyPress, useReactFlow } from "@xyflow/react";
 
-import { useNodeTools } from "@/barrel_imports";
 import { useClipboardOperations } from "@/react-flow/hooks/useClipboardOperations";
 import { useGroupNodes } from "@/groups";
 import { useWorkerApi } from "@/workers";
+import { useNodeTools } from "@/nodes-core";
 
 export const KeyHandler = () => {
   const delPressed = useKeyPress("Delete");

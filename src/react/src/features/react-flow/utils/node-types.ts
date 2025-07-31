@@ -2,7 +2,7 @@ import { NodeTypes, EdgeTypes } from "@xyflow/react";
 import { DefaultGroup } from "@/groups";
 import { DefaultNode } from "@/nodes";
 import { DefaultEdge } from "@/edges";
-import { RFState } from "@/barrel_imports";
+import { RFState } from "@/funcnodes-context";
 
 export const nodeTypes: NodeTypes = {
   default: DefaultNode,

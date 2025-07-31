@@ -14,15 +14,21 @@ export type {
   InputRendererProps,
 } from "./components/types";
 export type {
-    ExtendInputRendererAction,
-    ExtendOutputRendererAction,
-    ExtendHandlePreviewRendererAction,
-    ExtendDataOverlayRendererAction,
-    ExtendDataPreviewRendererAction,
-    ExtendDataViewRendererAction,
-    ExtendFromPluginAction,
-    ExtendNodeContextExtenderAction,
-    ExtendNodeRendererAction,
-    ExtendNodeHooksAction,
-    RenderMappingAction,
-  } from "./providers/types";
+  ExtendInputRendererAction,
+  ExtendOutputRendererAction,
+  ExtendHandlePreviewRendererAction,
+  ExtendDataOverlayRendererAction,
+  ExtendDataPreviewRendererAction,
+  ExtendDataViewRendererAction,
+  ExtendFromPluginAction,
+  ExtendNodeRendererAction,
+  ExtendNodeHooksAction,
+  RenderMappingAction,
+  NodeRendererType,
+  NodeHooksType,
+} from "./providers/types";
+
+export interface RenderOptions {
+  typemap?: { [key: string]: string | undefined };
+  inputconverter?: { [key: string]: string | undefined };
+}

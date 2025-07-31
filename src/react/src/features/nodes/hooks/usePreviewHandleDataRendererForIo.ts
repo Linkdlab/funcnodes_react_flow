@@ -1,11 +1,7 @@
 import { useContext } from "react";
-import {
-  FuncNodesReactFlowZustandInterface,
-  RenderOptions,
-} from "@/barrel_imports";
+import { RenderOptions } from "@/data-rendering-types";
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "../components/node-renderer/io/io";
-import { latest } from "@/barrel_imports";
 import {
   DataViewRendererToDataPreviewViewRenderer,
   RenderMappingContext,
@@ -16,15 +12,17 @@ import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
 } from "@/data-rendering-types";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
+import { IOType } from "@/nodes-core";
 
 const usePreviewHandleDataRendererForIo = (
-  io?: latest.IOType
+  io?: IOType
 ): [
   DataPreviewViewRendererType | undefined,
   DataOverlayRendererType | undefined
 ] => {
   // Always call hooks at the top
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
   const { HandlePreviewRenderer, DataPreviewViewRenderer } =
     useContext(RenderMappingContext);
@@ -37,7 +35,7 @@ const usePreviewHandleDataRendererForIo = (
 
   // If io is defined, calculate the renderers; otherwise, keep them as undefined.
   if (io) {
-    const [typestring] = pick_best_io_type(io.type, render.typemap || {});
+    const [typestring] = pick_best_io_type(io, render.typemap || {});
 
     if (!typestring) {
       previewRenderer = DataViewRendererToDataPreviewViewRenderer(

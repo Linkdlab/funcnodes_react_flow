@@ -1,4 +1,3 @@
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 import { useFuncNodesContext } from "@/providers";
 import {
   WorkerEdgeManagerAPI,
@@ -7,6 +6,7 @@ import {
   WorkerLibraryManagerAPI,
   WorkerNodeManagerAPI,
 } from "../base/handlers";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const useWorkerApi = (): {
   node: WorkerNodeManagerAPI | undefined;
@@ -15,7 +15,7 @@ export const useWorkerApi = (): {
   hooks: WorkerHookManagerAPI | undefined;
   lib: WorkerLibraryManagerAPI | undefined;
 } => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   if (!fnrf_zst.worker) {
     return {
       node: undefined,

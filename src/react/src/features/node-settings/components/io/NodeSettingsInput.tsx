@@ -1,22 +1,19 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import {
-  latest,
-  FuncNodesReactFlowZustandInterface,
-  RenderOptions,
-} from "@/barrel_imports";
+import { RenderOptions } from "@/data-rendering-types";
 import { pick_best_io_type, INPUTCONVERTER } from "@/nodes";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 
-export const NodeSettingsInput = ({ iostore }: { iostore: latest.IOStore }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+import { FuncNodesReactFlow } from "@/funcnodes-context";
+import { IOContext } from "@/nodes";
+
+export const NodeSettingsInput = () => {
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
+  const iostore = React.useContext(IOContext);
   const io = iostore.use();
 
-  const [typestring, otypestring] = pick_best_io_type(
-    io.render_options.type,
-    render.typemap || {}
-  );
+  const [typestring, otypestring] = pick_best_io_type(io, render.typemap || {});
   const { Inputrenderer } = React.useContext(RenderMappingContext);
   const Input = typestring
     ? io.value_options?.options

@@ -1,9 +1,10 @@
 import * as React from "react";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+
 import { useFuncNodesContext } from "@/providers";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const Statusbar = () => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const progress = fnrf_zst.progress_state();
 
   return (

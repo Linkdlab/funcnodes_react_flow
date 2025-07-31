@@ -1,12 +1,16 @@
 import * as React from "react";
 import { ReactElement, createContext, useEffect, useReducer } from "react";
-import { FuncNodesReactFlowZustandInterface, latest } from "@/barrel_imports";
+
 import { NodeContext } from "@/nodes";
 import {
   renderMappingReducer,
   initialRenderMappings,
 } from "./render-mappings.reducer";
-import { DispatchOptions } from "./render-mappings.types";
+import {
+  DispatchOptions,
+  NodeHooksType,
+  NodeRendererType,
+} from "./render-mappings.types";
 import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
@@ -15,6 +19,8 @@ import {
   InputRendererType,
   OutputRendererType,
 } from "@/data-rendering-types";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
+import { FuncNodesReactPlugin, RendererPlugin } from "@/plugins";
 
 /**
  * RenderMappingProvider is a React component that provides a context for managing and extending the mappings of input renderers, handle preview renderers, data overlay renderers, data preview view renderers, and data view renderers. These mappings are used throughout the application to render various types of inputs, previews, and data views dynamically.
@@ -57,9 +63,9 @@ export const RenderMappingProvider = ({
 }: {
   children: ReactElement;
   plugins: {
-    [key: string]: latest.FuncNodesReactPlugin | undefined;
+    [key: string]: FuncNodesReactPlugin | undefined;
   };
-  fnrf_zst: FuncNodesReactFlowZustandInterface;
+  fnrf_zst: FuncNodesReactFlow;
 }) => {
   const [state, dispatch] = useReducer(
     renderMappingReducer,
@@ -138,21 +144,9 @@ export const RenderMappingProvider = ({
     });
   };
 
-  const extendNodeContextExtender = (
-    type: string,
-    component: latest.NodeContextExtenderType,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_NODE_CONTEXT_EXTENDER",
-      payload: { type, component },
-      options,
-    });
-  };
-
   const extendNodeRenderer = (
     type: string,
-    component: latest.NodeRendererType,
+    component: NodeRendererType,
     options?: DispatchOptions
   ) => {
     dispatch({
@@ -164,7 +158,7 @@ export const RenderMappingProvider = ({
 
   const extendNodeHooks = (
     type: string,
-    component: latest.NodeHooksType[],
+    component: NodeHooksType[],
     options?: DispatchOptions
   ) => {
     dispatch({
@@ -175,7 +169,7 @@ export const RenderMappingProvider = ({
   };
 
   const extendFromPlugin = (
-    plugin: latest.RendererPlugin,
+    plugin: RendererPlugin,
     options?: DispatchOptions
   ) => {
     dispatch({
@@ -205,17 +199,15 @@ export const RenderMappingProvider = ({
         DataPreviewViewRenderer: state.DataPreviewViewRenderer,
         DataViewRenderer: state.DataViewRenderer,
         InLineRenderer: state.InLineRenderer,
-        NodeContextExtenders: state.NodeContextExtenders,
         NodeRenderer: state.NodeRenderer,
         NodeHooks: state.NodeHooks,
+        extendNodeRenderer,
         extendInputRenderMapping,
         extendOutputRenderMapping,
         extendHandlePreviewRenderMapping,
         extendDataOverlayRenderMapping,
         extendDataPreviewRenderMapping,
         extendDataViewRenderMapping,
-        extendNodeContextExtender,
-        extendNodeRenderer,
         extendNodeHooks,
         extendFromPlugin,
       }}
@@ -233,7 +225,6 @@ export const RenderMappingContext = createContext({
   DataPreviewViewRenderer: initialRenderMappings.DataPreviewViewRenderer,
   DataViewRenderer: initialRenderMappings.DataViewRenderer,
   InLineRenderer: initialRenderMappings.InLineRenderer,
-  NodeContextExtenders: initialRenderMappings.NodeContextExtenders,
   NodeRenderer: initialRenderMappings.NodeRenderer,
   NodeHooks: initialRenderMappings.NodeHooks,
   extendInputRenderMapping: (
@@ -266,23 +257,16 @@ export const RenderMappingContext = createContext({
     _component: DataViewRendererType,
     _options: DispatchOptions
   ) => {},
-  extendNodeContextExtender: (
-    _type: string,
-    _component: latest.NodeContextExtenderType,
-    _options: DispatchOptions
-  ) => {},
+
   extendNodeRenderer: (
     _type: string,
-    _component: latest.NodeRendererType,
+    _component: NodeRendererType,
     _options: DispatchOptions
   ) => {},
   extendNodeHooks: (
     _type: string,
-    _component: latest.NodeHooksType[],
+    _component: NodeHooksType[],
     _options: DispatchOptions
   ) => {},
-  extendFromPlugin: (
-    _plugin: latest.RendererPlugin,
-    _options: DispatchOptions
-  ) => {},
+  extendFromPlugin: (_plugin: RendererPlugin, _options: DispatchOptions) => {},
 });

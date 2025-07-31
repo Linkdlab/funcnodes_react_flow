@@ -3,33 +3,28 @@ import { useContext } from "react";
 import { Position } from "@xyflow/react";
 import { useFuncNodesContext } from "@/providers";
 
-import { HandleWithPreview, pick_best_io_type } from "./io";
-
-import {
-  RenderOptions,
-  FuncNodesReactFlowZustandInterface,
-} from "@/barrel_imports";
+import { HandleWithPreview, IOContext, pick_best_io_type } from "./io";
 
 import * as React from "react";
-import { latest } from "@/barrel_imports";
 import { useKeyPress } from "@/providers";
 import { InLineOutput, RenderMappingContext } from "@/data-rendering";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
+import { RenderOptions } from "@/data-rendering-types";
 
 const NodeOutput = ({
-  iostore,
   setNodeSettingsPath,
   setShowSettings,
 }: {
-  iostore: latest.IOStore;
   setNodeSettingsPath?: (path: string) => void;
   setShowSettings?: (show: boolean) => void;
 }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
 
-  const io = iostore.use();
+  const io_store = useContext(IOContext);
+  const io = io_store.use();
 
-  const [typestring] = pick_best_io_type(io.type, render.typemap || {});
+  const [typestring] = pick_best_io_type(io, render.typemap || {});
   const { Outputrenderer } = useContext(RenderMappingContext);
   const { keys: pressedKeys } = useKeyPress();
   const Output = typestring ? Outputrenderer[typestring] : undefined;
@@ -51,7 +46,6 @@ const NodeOutput = ({
       onClick={onClickHandler}
     >
       <HandleWithPreview
-        iostore={iostore}
         typestring={typestring}
         position={Position.Right}
         type="source"
@@ -60,11 +54,11 @@ const NodeOutput = ({
         <div className="ioname">{io.name}</div>
         {Output ? (
           <div className="iovaluefield nodrag">
-            <Output iostore={iostore} />
+            <Output iostore={io_store} />
           </div>
         ) : (
           <div className="iovaluefield">
-            <InLineOutput iostore={iostore} />
+            <InLineOutput iostore={io_store} />
           </div>
         )}
       </div>

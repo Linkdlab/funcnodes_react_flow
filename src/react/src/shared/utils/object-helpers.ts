@@ -787,3 +787,29 @@ export const object_factory_maker = <T extends {}>(
     return deep_update(obj, new_obj).new_obj;
   };
 };
+
+export const simple_updater = <
+  U extends string | number | boolean,
+  T extends U | undefined
+>(
+  oldvalue: U,
+  newvalue: T
+): [U, boolean] => {
+  return newvalue === undefined
+    ? [oldvalue, false]
+    : [newvalue, oldvalue !== newvalue];
+};
+
+export function assertNever(x: never, y: any): never {
+  throw new Error("Unhandled case: " + x + " with: " + JSON.stringify(y));
+}
+
+export const deep_updater = <T extends {}>(
+  oldvalue: T | undefined,
+  newvalue: DeepPartial<T> | undefined
+): [T | DeepPartial<T> | undefined, boolean] => {
+  if (newvalue === undefined) return [oldvalue, false];
+  if (oldvalue === undefined) return [newvalue, newvalue !== undefined];
+  const { new_obj, change } = deep_merge<T>(oldvalue, newvalue);
+  return [new_obj, change];
+};

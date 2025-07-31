@@ -17,7 +17,7 @@ import {
   ReactFlowLayerProps,
   ReactFlowLibraryProps,
 } from "@/app";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+
 import { ReactFlowLayer } from "@/react-flow";
 import {
   FullScreenComponent,
@@ -28,6 +28,7 @@ import { FuncnodesHeader } from "@/header";
 import { Library } from "@/library";
 import { NodeSettings } from "@/node-settings";
 import { RenderMappingProvider } from "@/data-rendering";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const InnerFuncnodesReactFlow = ({
   fnrf_zst,
@@ -35,7 +36,7 @@ export const InnerFuncnodesReactFlow = ({
   flow,
   library,
 }: {
-  fnrf_zst: FuncNodesReactFlowZustandInterface;
+  fnrf_zst: FuncNodesReactFlow;
   header: FuncnodesReactHeaderProps;
   flow: ReactFlowLayerProps;
   library: ReactFlowLibraryProps;

@@ -1,5 +1,3 @@
-// src/core/rendering/render-mappings.reducer.ts
-
 import {
   DefaultDataOverlayRenderer,
   DefaultDataPreviewViewRenderer,
@@ -12,16 +10,13 @@ import {
 import {
   RenderMappingState,
   RenderMappingAction,
+  NodeRendererType,
+  NodeHooksType,
 } from "./render-mappings.types";
-import { latest } from "@/barrel_imports";
 
 // Initial empty mappings for plugin extensions
-const _NodeRenderer: { [key: string]: latest.NodeRendererType | undefined } =
-  {};
-const _NodeHooks: { [key: string]: latest.NodeHooksType[] | undefined } = {};
-const _NodeContextExtenders: {
-  [key: string]: latest.NodeContextExtenderType | undefined;
-} = {};
+const _NodeRenderer: { [key: string]: NodeRendererType | undefined } = {};
+const _NodeHooks: { [key: string]: NodeHooksType[] | undefined } = {};
 
 // Initial state for the reducer
 export const initialRenderMappings: RenderMappingState = {
@@ -32,7 +27,7 @@ export const initialRenderMappings: RenderMappingState = {
   DataPreviewViewRenderer: DefaultDataPreviewViewRenderer,
   DataViewRenderer: DefaultDataViewRenderer,
   InLineRenderer: DefaultInLineRenderer,
-  NodeContextExtenders: _NodeContextExtenders,
+
   NodeRenderer: _NodeRenderer,
   NodeHooks: _NodeHooks,
 };
@@ -57,7 +52,6 @@ export const renderMappingReducer = (
           [action.payload.type]: action.payload.component,
         },
       };
-    // ... other cases from the original file ...
 
     case "EXTEND_FROM_PLUGIN": {
       // Scoped to prevent redeclaration
@@ -81,10 +75,6 @@ export const renderMappingReducer = (
           [
             action.payload.plugin.data_view_renderers || {},
             state.DataViewRenderer,
-          ],
-          [
-            action.payload.plugin.node_context_extenders || {},
-            state.NodeContextExtenders,
           ],
           [action.payload.plugin.node_renderers || {}, state.NodeRenderer],
           [action.payload.plugin.node_hooks || {}, state.NodeHooks],

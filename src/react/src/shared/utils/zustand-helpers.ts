@@ -1,5 +1,6 @@
-import { StoreApi } from "zustand";
+import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 import { deep_merge, DeepPartial } from "./object-helpers";
+import { JSONObject } from "@/data-structures";
 
 /**
  * Efficiently updates a Zustand store with partial data using deep merging.
@@ -112,4 +113,12 @@ export const update_zustand_store = <T extends {}>(
   if (change) {
     store.setState(new_obj);
   }
+};
+
+export type UseJSONStore<T extends JSONObject> = UseBoundStore<StoreApi<T>>;
+
+export const create_json_safe = <T extends JSONObject>(
+  stateCreatorFn: StateCreator<T, [], []>
+): UseJSONStore<T> => {
+  return create<T>(stateCreatorFn);
 };

@@ -1,16 +1,13 @@
 import { useContext } from "react";
 import { useFuncNodesContext } from "@/providers";
 import { Position } from "@xyflow/react";
-import {
-  FuncNodesReactFlowZustandInterface,
-  RenderOptions,
-} from "@/barrel_imports";
-import { HandleWithPreview, pick_best_io_type } from "./io";
+import { RenderOptions } from "@/data-rendering-types";
+import { HandleWithPreview, IOContext, pick_best_io_type } from "./io";
 
 import * as React from "react";
-import { latest } from "@/barrel_imports";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 import { useKeyPress } from "@/providers";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 const INPUTCONVERTER: {
   [key: string]: [(v: any) => any, (v: any) => any] | undefined;
@@ -44,23 +41,22 @@ const INPUTCONVERTER: {
 };
 
 const NodeInput = ({
-  iostore,
   setNodeSettingsPath,
   setShowSettings,
 }: {
-  iostore: latest.IOStore;
   setNodeSettingsPath?: (path: string) => void;
   setShowSettings?: (show: boolean) => void;
 }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
 
-  const io = iostore.use();
-  const [typestring, otypestring] = pick_best_io_type(
-    io.render_options.type,
-    render.typemap || {}
-  );
+  const io_store = useContext(IOContext);
+  const io = io_store.use();
+
+  const [typestring, otypestring] = pick_best_io_type(io, render.typemap || {});
+
   const { Inputrenderer } = useContext(RenderMappingContext);
+
   const Input = typestring
     ? io.value_options?.options
       ? SelectionInput
@@ -80,6 +76,7 @@ const NodeInput = ({
     }
   };
 
+  console.log(Input, io);
   if (io.hidden) return null;
   return (
     <div
@@ -88,7 +85,6 @@ const NodeInput = ({
       onClick={onClickHandler}
     >
       <HandleWithPreview
-        iostore={iostore}
         typestring={typestring}
         position={Position.Left}
         type="target"
@@ -96,13 +92,12 @@ const NodeInput = ({
       <div className="inner_nodeio">
         {Input && (
           <div className="iovaluefield nodrag" {...{ "data-type": typestring }}>
-            <Input iostore={iostore} inputconverter={inputconverterf} />
+            <Input inputconverter={inputconverterf} iostore={io_store} />
           </div>
         )}
         <div className="ioname">{io.name}</div>
       </div>
       <HandleWithPreview
-        iostore={iostore}
         typestring={typestring}
         position={Position.Right}
         type="source"

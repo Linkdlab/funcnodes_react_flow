@@ -1,6 +1,11 @@
 import { interfereDataStructure } from "@/data-structures";
 import { AbstractWorkerHandler } from "./worker-handlers.types";
-import { latest } from "@/barrel_imports";
+import { NodeActionUpdate } from "@/funcnodes-context";
+import {
+  NodeType,
+  SerializedNodeType,
+  UpdateableIOOptions,
+} from "@/nodes-core";
 
 export interface WorkerNodeManagerAPI {
   set_io_value: (params: {
@@ -16,12 +21,12 @@ export interface WorkerNodeManagerAPI {
   update_io_options: (params: {
     nid: string;
     ioid: string;
-    options: latest.UpdateableIOOptions;
+    options: UpdateableIOOptions;
   }) => any;
-  add_node: (node_id: string) => Promise<latest.NodeType | undefined>;
+  add_node: (node_id: string) => Promise<NodeType | undefined>;
   remove_node: (node_id: string) => Promise<void>;
   trigger_node: (node_id: string) => Promise<void>;
-  locally_update_node: (action: latest.NodeActionUpdate) => void;
+  locally_update_node: (action: NodeActionUpdate) => void;
   get_remote_node_state: (nid: string) => Promise<void>;
 }
 
@@ -50,9 +55,7 @@ export class WorkerNodeManager
       cmd: "add_node",
       kwargs: { id: node_id },
     });
-    return this.eventManager._receive_node_added(
-      resp as latest.SerializedNodeType
-    );
+    return this.eventManager._receive_node_added(resp as SerializedNodeType);
   }
 
   async remove_node(node_id: string) {
@@ -62,7 +65,7 @@ export class WorkerNodeManager
     });
   }
 
-  locally_update_node(action: latest.NodeActionUpdate) {
+  locally_update_node(action: NodeActionUpdate) {
     this.syncManager.locally_update_node(action);
   }
 
@@ -187,7 +190,7 @@ export class WorkerNodeManager
   }: {
     nid: string;
     ioid: string;
-    options: latest.UpdateableIOOptions;
+    options: UpdateableIOOptions;
   }) {
     const res = await this.communicationManager._send_cmd({
       cmd: "update_io_options",
@@ -220,12 +223,11 @@ export class WorkerNodeManager
   }
 
   async get_remote_node_state(nid: string) {
-    const ans: latest.SerializedNodeType =
-      await this.communicationManager._send_cmd({
-        cmd: "get_node_state",
-        kwargs: { nid },
-        wait_for_response: true,
-      });
+    const ans: SerializedNodeType = await this.communicationManager._send_cmd({
+      cmd: "get_node_state",
+      kwargs: { nid },
+      wait_for_response: true,
+    });
     if (!this.context.worker._zustand) return;
     this.context.worker._zustand.on_node_action({
       type: "update",

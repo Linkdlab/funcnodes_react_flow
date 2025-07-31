@@ -1,8 +1,4 @@
 import * as React from "react";
-import {
-  FuncNodesReactFlowZustandInterface,
-  FuncNodesReactFlowZustand,
-} from "@/barrel_imports";
 import { remoteUrlToBase64 } from "@/data-helpers";
 import { LimitedDeepPartial, object_factory_maker } from "@/object-helpers";
 import { ErrorDiv } from "@/shared-components";
@@ -12,11 +8,12 @@ import { FuncnodesReactFlowProps } from "./app.types";
 import { DEFAULT_FN_PROPS } from "./app-properties";
 import { InnerFuncnodesReactFlow } from "./workspace";
 import { v4 as uuidv4 } from "uuid";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 declare global {
   interface Window {
     fnrf_zst?: {
-      [key: string]: FuncNodesReactFlowZustandInterface | undefined;
+      [key: string]: FuncNodesReactFlow | undefined;
     };
   }
 }
@@ -44,7 +41,7 @@ const guard_check_props = (props: FuncnodesReactFlowProps) => {
 };
 
 const FUNCNODESREACTFLOW_MAPPER: {
-  [key: string]: FuncNodesReactFlowZustandInterface | undefined;
+  [key: string]: FuncNodesReactFlow | undefined;
 } = {};
 
 if (window.fnrf_zst === undefined) {
@@ -58,9 +55,9 @@ export const FuncNodes = (
     FuncnodesReactFlowProps | undefined
   >(undefined);
 
-  const [fnrfzst, setFnrfZst] = React.useState<
-    FuncNodesReactFlowZustandInterface | undefined
-  >(undefined);
+  const [fnrfzst, setFnrfZst] = React.useState<FuncNodesReactFlow | undefined>(
+    undefined
+  );
 
   const [readyCallbackFired, setReadyCallbackFired] = React.useState(false);
 
@@ -87,7 +84,7 @@ export const FuncNodes = (
     // Initialize or get existing zustand store
     const existing = FUNCNODESREACTFLOW_MAPPER[fullProps.id];
     if (existing === undefined) {
-      const newStore = FuncNodesReactFlowZustand(fullProps);
+      const newStore = new FuncNodesReactFlow(fullProps);
       FUNCNODESREACTFLOW_MAPPER[fullProps.id] = newStore;
       setFnrfZst(newStore);
     } else {

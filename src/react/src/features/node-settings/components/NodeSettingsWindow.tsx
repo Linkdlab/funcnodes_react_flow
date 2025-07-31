@@ -1,15 +1,12 @@
 import * as React from "react";
 import * as Tabs from "@radix-ui/react-tabs";
-import { latest } from "@/barrel_imports";
 import { GeneralTab, InputTab, OutputTab } from "./tabs";
 
 interface NodeSettingsWindowProps {
-  node_data: latest.NodeType;
   nodeSettingsPath: string;
 }
 
 export const NodeSettingsWindow = ({
-  node_data,
   nodeSettingsPath,
 }: NodeSettingsWindowProps) => {
   const splitnodesettingsPath = nodeSettingsPath.split("/") || ["general"];
@@ -34,7 +31,7 @@ export const NodeSettingsWindow = ({
       </Tabs.List>
 
       <Tabs.Content value="general" className="nodesettings-tabs-content">
-        <GeneralTab node_data={node_data} />
+        <GeneralTab />
       </Tabs.Content>
 
       <Tabs.Content
@@ -42,7 +39,6 @@ export const NodeSettingsWindow = ({
         className="nodesettings-tabs-content nodesettings-io-list"
       >
         <InputTab
-          node_data={node_data}
           splitnodesettingsPath={
             // all but first element
             splitnodesettingsPath.slice(1)
@@ -55,7 +51,6 @@ export const NodeSettingsWindow = ({
         className="nodesettings-tabs-content nodesettings-io-list"
       >
         <OutputTab
-          node_data={node_data}
           splitnodesettingsPath={
             // all but first element
             splitnodesettingsPath.slice(1)

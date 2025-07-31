@@ -1,7 +1,7 @@
 import { UseBoundStore, StoreApi, create } from "zustand";
 import { FuncNodesWorkerState, WorkerProps } from "@/workers";
 import { LargeMessageHint } from "@/messages";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+
 import { WorkerConnectionHealthManager } from "./handlers/connection-health-manager";
 import { WorkerSyncManager } from "./handlers/sync-manager";
 import { WorkerCommunicationManager } from "./handlers/communication-manager";
@@ -26,6 +26,7 @@ import {
   WorkerLibraryManager,
   WorkerLibraryManagerAPI,
 } from "./handlers/library-manager";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export type WorkerAPI = {
   node: WorkerNodeManagerAPI;
@@ -36,7 +37,7 @@ export type WorkerAPI = {
 };
 
 export class FuncNodesWorker {
-  _zustand?: FuncNodesReactFlowZustandInterface;
+  _zustand?: FuncNodesReactFlow;
 
   uuid: string;
 
@@ -130,7 +131,7 @@ export class FuncNodesWorker {
     };
   }
 
-  set_zustand(zustand: FuncNodesReactFlowZustandInterface) {
+  set_zustand(zustand: FuncNodesReactFlow) {
     if (zustand === this._zustand) return;
     this._zustand = zustand;
     zustand.set_worker(this);

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Node, Edge } from "@xyflow/react";
 import { useFuncNodesContext } from "@/providers";
-import { split_rf_nodes } from "@/barrel_imports";
+import { split_rf_nodes } from "@/nodes-core";
 
 export const useReactFlowSelection = () => {
   const fnrf_zst = useFuncNodesContext();

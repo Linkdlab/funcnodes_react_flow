@@ -1,7 +1,8 @@
-import { latest } from "@/barrel_imports";
 import { AbstractWorkerHandler } from "./worker-handlers.types";
 import { NodeSpaceEvent, WorkerEvent } from "@/messages";
 import { NodeGroups } from "@/groups";
+import { NodeActionError } from "@/funcnodes-context";
+import { SerializedNodeType } from "@/nodes-core";
 
 export class WorkerEventManager extends AbstractWorkerHandler {
   private _ns_event_intercepts: Map<
@@ -38,7 +39,7 @@ export class WorkerEventManager extends AbstractWorkerHandler {
     });
   }
 
-  async _receive_node_added(data: latest.SerializedNodeType) {
+  async _receive_node_added(data: SerializedNodeType) {
     if (!this.context.worker._zustand) return;
     return this.context.worker._zustand.on_node_action({
       type: "add",
@@ -182,7 +183,7 @@ export class WorkerEventManager extends AbstractWorkerHandler {
           id: data.node,
           tb: data.tb,
           from_remote: true,
-        } as latest.NodeActionError);
+        } as NodeActionError);
 
       case "node_removed":
         if (!this.context.worker._zustand) return;
@@ -197,7 +198,7 @@ export class WorkerEventManager extends AbstractWorkerHandler {
         return;
 
       case "node_added":
-        this._receive_node_added(data.node as latest.SerializedNodeType);
+        this._receive_node_added(data.node as SerializedNodeType);
         return;
 
       case "after_disconnect":

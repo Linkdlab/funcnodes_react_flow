@@ -11,16 +11,16 @@ import {
   currentBreakpointSmallerThan,
   ExpandingContainer,
 } from "@/shared-components/auto-layouts";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
 import {
   LibraryItem,
   LibraryFilter,
   AddLibraryOverlay,
   ExternalWorkerShelf,
 } from "./components";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const Library = () => {
-  const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const zustand: FuncNodesReactFlow = useFuncNodesContext();
   const libstate = zustand.lib.libstate();
 
   const fnrf_zst = useFuncNodesContext();
@@ -28,12 +28,8 @@ export const Library = () => {
     (state) => state.view_settings.expand_lib
   );
 
-  const update_view_settings = fnrf_zst.local_settings(
-    (state) => state.update_view_settings
-  );
-
   const set_expand_lib = (expand: boolean) => {
-    update_view_settings({ expand_lib: expand });
+    fnrf_zst.update_view_settings({ expand_lib: expand });
   };
 
   const on_small_screen = currentBreakpointSmallerThan("m");
@@ -110,3 +106,13 @@ export const Library = () => {
 };
 
 export { LibraryItem } from "./components";
+export type {
+  LibState,
+  LibZustandInterface,
+  LibNode,
+  Shelf,
+  LibType,
+  ExternalWorkerDependencies,
+  ExternalWorkerClassDep,
+  ExternalWorkerInstance,
+} from "./states";

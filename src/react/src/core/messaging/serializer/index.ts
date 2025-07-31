@@ -7,8 +7,9 @@ export type { LargeMessageHint, PongMessage };
 import { ResultMessage } from "./result-messages";
 export type { ResultMessage };
 import { CmdMessage } from "./cmd-messages";
-import { ProgressStateMessage } from "@/barrel_imports";
 export type { CmdMessage };
+import { ProgressStateMessage } from "./progress-message";
+export type { ProgressStateMessage };
 
 export type JSONMessage =
   | ProgressStateMessage

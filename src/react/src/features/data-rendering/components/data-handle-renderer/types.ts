@@ -1,8 +1,8 @@
-import { latest } from "@/barrel_imports";
+import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
 export type HandlePreviewRendererProps = {
-  iostore: latest.IOStore;
+  iostore: IOStore;
 };
 
 type BasicHandlePreviewRendererType = (

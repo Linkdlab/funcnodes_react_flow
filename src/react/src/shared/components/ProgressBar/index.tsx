@@ -2,6 +2,7 @@ import * as React from "react";
 import { useEffect, useRef } from "react";
 import { fitTextToContainer } from "@/utils/layout";
 import "./progressBar.scss";
+import { DeepPartial } from "@/object-helpers";
 
 /**
  * Interface representing the state of a tqdm progress bar.
@@ -44,12 +45,12 @@ export interface TqdmState {
 }
 
 export interface ProgressBarProps {
-  state: TqdmState; // Progress bar state
+  state: DeepPartial<TqdmState>; // Progress bar state
   className?: string; // Custom className, defaults to "reacttqdm"
 }
 
 function formatMeter(
-  options: TqdmState = {
+  options: DeepPartial<TqdmState> = {
     n: 0,
     elapsed: 0,
     ascii: false,
@@ -61,12 +62,12 @@ function formatMeter(
   let total = options.total ?? null;
 
   const {
-    n,
-    unit_scale,
-    elapsed,
+    n = 0,
+    unit_scale = false,
+    elapsed = 0,
     // ascii,
-    unit,
-    unit_divisor,
+    unit = "it",
+    unit_divisor = 1000,
     // ncols = undefined,
     prefix = "",
     rate = undefined,
@@ -75,6 +76,7 @@ function formatMeter(
     initial = 0,
     // colour = undefined,
   } = options;
+
   if (total !== null && n >= total + 0.5) {
     total = null;
   }
@@ -180,7 +182,9 @@ export const ProgressBar: React.FC<
     };
   }, [state]);
 
-  const progressPercentage = state.total ? (state.n / state.total) * 100 : 0;
+  const progressPercentage = state.total
+    ? ((state.n ?? 0) / state.total) * 100
+    : 0;
 
   return (
     <div ref={containerRef} className={className} {...rest}>

@@ -1,27 +1,25 @@
 import * as React from "react";
 import * as Tabs from "@radix-ui/react-tabs";
-import { latest } from "@/barrel_imports";
 import { NodeIOSettings } from "../io";
+import { IOContext, NodeContext } from "@/nodes";
 
 interface InputTabProps {
-  node_data: latest.NodeType;
   splitnodesettingsPath?: string[];
 }
 
-export const InputTab = ({
-  node_data,
-  splitnodesettingsPath = [],
-}: InputTabProps) => {
+export const InputTab = ({ splitnodesettingsPath = [] }: InputTabProps) => {
+  const nodestore = React.useContext(NodeContext);
+  const inputs = nodestore.use((state) => state.inputs);
   return (
     <Tabs.Root
-      defaultValue={splitnodesettingsPath[0] || node_data.inputs[0]}
+      defaultValue={splitnodesettingsPath[0] || inputs[0]}
       className="nodesettings-tabs funcnodes-control-root"
     >
       <Tabs.List
         className="nodesettings-tabs-list"
         aria-label="Manage node inputs"
       >
-        {node_data.inputs.map((inputID) => (
+        {inputs.map((inputID) => (
           <Tabs.Trigger
             key={inputID}
             value={inputID}
@@ -32,17 +30,22 @@ export const InputTab = ({
         ))}
       </Tabs.List>
 
-      {node_data.inputs.map((inputID) => (
-        <Tabs.Content
-          key={inputID}
-          value={inputID}
-          className="nodesettings-tabs-content nodesettings-io-list"
-        >
-          {node_data.io[inputID] && (
-            <NodeIOSettings iostore={node_data.io[inputID]!} />
-          )}
-        </Tabs.Content>
-      ))}
+      {inputs.map((inputID) => {
+        const io_store = nodestore.io_stores.get(inputID);
+        return (
+          <Tabs.Content
+            key={inputID}
+            value={inputID}
+            className="nodesettings-tabs-content nodesettings-io-list"
+          >
+            {io_store && (
+              <IOContext.Provider value={io_store}>
+                <NodeIOSettings />
+              </IOContext.Provider>
+            )}
+          </Tabs.Content>
+        );
+      })}
     </Tabs.Root>
   );
 };

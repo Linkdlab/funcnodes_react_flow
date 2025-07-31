@@ -1,10 +1,10 @@
-import { latest } from "@/barrel_imports";
 import { InLineRendererType } from "./types";
+import { IOStore } from "@/nodes-core";
 
 export const Base64BytesInLineRenderer: InLineRendererType = ({
   iostore,
 }: {
-  iostore: latest.IOStore;
+  iostore: IOStore;
 }) => {
   const { full, preview } = iostore.valuestore();
   const disp = JSON.stringify(full?.value || preview?.value) || "";

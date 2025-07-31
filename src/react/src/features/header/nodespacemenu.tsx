@@ -4,10 +4,10 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useFuncNodesContext } from "@/providers";
 import { MenuRoundedIcon } from "@/icons";
 import { FloatContainer } from "@/shared-components/auto-layouts";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const NodeSpaceMenu = () => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
 
   const onNew = () => {
     const alert = window.confirm("Are you sure you want to start a new flow?");

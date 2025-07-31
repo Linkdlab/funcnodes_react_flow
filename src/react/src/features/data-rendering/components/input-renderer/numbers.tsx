@@ -1,7 +1,6 @@
 import * as React from "react";
 import { InputRendererProps } from "./types";
 import * as Slider from "@radix-ui/react-slider";
-import { useWorkerApi } from "@/workers";
 import { useSetIOValue } from "@/nodes";
 
 function relativeRound(value: number) {

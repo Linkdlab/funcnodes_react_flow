@@ -1,11 +1,7 @@
 import { useContext } from "react";
-import {
-  FuncNodesReactFlowZustandInterface,
-  RenderOptions,
-} from "@/barrel_imports";
+import { RenderOptions } from "@/data-rendering-types";
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "../components/node-renderer/io/io";
-import { latest } from "@/barrel_imports";
 import {
   DataViewRendererToDataPreviewViewRenderer,
   FallbackDataViewRenderer,
@@ -16,14 +12,16 @@ import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
 } from "@/data-rendering-types";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
+import { IOType } from "@/nodes-core";
 
 const useBodyDataRendererForIo = (
-  io?: latest.IOType
+  io?: IOType
 ): [
   DataPreviewViewRendererType | undefined,
   DataOverlayRendererType | undefined
 ] => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const overlayhandle = useDataOverlayRendererForIo(io);
   const { DataPreviewViewRenderer, DataViewRenderer } =
     useContext(RenderMappingContext);
@@ -32,7 +30,7 @@ const useBodyDataRendererForIo = (
 
   if (io === undefined) return [undefined, overlayhandle];
 
-  const [typestring] = pick_best_io_type(io.type, render.typemap || {});
+  const [typestring] = pick_best_io_type(io, render.typemap || {});
 
   if (!typestring)
     return [

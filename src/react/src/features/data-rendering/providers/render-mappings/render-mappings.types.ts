@@ -1,6 +1,3 @@
-// src/core/rendering/render-mappings.types.ts
-
-import { latest } from "@/barrel_imports";
 import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
@@ -10,6 +7,19 @@ import {
   InputRendererType,
   OutputRendererType,
 } from "@/data-rendering-types"; // Note: this import will also be updated later
+import { NodeStore } from "@/nodes-core";
+import { RendererPlugin } from "@/plugins";
+import { JSX } from "react";
+
+export interface NodeRendererProps {
+  nodestore: NodeStore;
+}
+export type NodeRendererType = (renderprops: NodeRendererProps) => JSX.Element;
+
+export type NodeHooksProps = {
+  nodestore: NodeStore;
+};
+export type NodeHooksType = (hookprops: NodeHooksProps) => void;
 
 // State shape for the render mappings
 export interface RenderMappingState {
@@ -26,11 +36,9 @@ export interface RenderMappingState {
   };
   DataViewRenderer: { [key: string]: DataViewRendererType | undefined };
   InLineRenderer: { [key: string]: InLineRendererType | undefined };
-  NodeContextExtenders: {
-    [key: string]: latest.NodeContextExtenderType | undefined;
-  };
-  NodeRenderer: { [key: string]: latest.NodeRendererType | undefined };
-  NodeHooks: { [key: string]: latest.NodeHooksType[] | undefined };
+
+  NodeRenderer: { [key: string]: NodeRendererType | undefined };
+  NodeHooks: { [key: string]: NodeHooksType[] | undefined };
 }
 
 // Options for dispatching actions
@@ -77,25 +85,19 @@ export interface ExtendDataViewRendererAction {
 
 export interface ExtendFromPluginAction {
   type: "EXTEND_FROM_PLUGIN";
-  payload: { plugin: latest.RendererPlugin };
-  options?: DispatchOptions;
-}
-
-export interface ExtendNodeContextExtenderAction {
-  type: "EXTEND_NODE_CONTEXT_EXTENDER";
-  payload: { type: string; component: latest.NodeContextExtenderType };
+  payload: { plugin: RendererPlugin };
   options?: DispatchOptions;
 }
 
 export interface ExtendNodeRendererAction {
   type: "EXTEND_NODE_RENDERER";
-  payload: { type: string; component: latest.NodeRendererType };
+  payload: { type: string; component: NodeRendererType };
   options?: DispatchOptions;
 }
 
 export interface ExtendNodeHooksAction {
   type: "EXTEND_NODE_HOOKS";
-  payload: { type: string; component: latest.NodeHooksType[] };
+  payload: { type: string; component: NodeHooksType[] };
   options?: DispatchOptions;
 }
 
@@ -108,6 +110,5 @@ export type RenderMappingAction =
   | ExtendDataPreviewRendererAction
   | ExtendDataViewRendererAction
   | ExtendFromPluginAction
-  | ExtendNodeContextExtenderAction
   | ExtendNodeRendererAction
   | ExtendNodeHooksAction;

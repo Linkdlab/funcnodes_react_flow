@@ -1,6 +1,6 @@
-import { latest } from "@/barrel_imports";
+import { IOStore } from "@/nodes-core";
 
 export interface InLineRendererProps {
-  iostore: latest.IOStore;
+  iostore: IOStore;
 }
 export type InLineRendererType = ({ iostore }: InLineRendererProps) => string;

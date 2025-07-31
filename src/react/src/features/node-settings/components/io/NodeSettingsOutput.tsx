@@ -1,11 +1,8 @@
 import * as React from "react";
-import { latest } from "@/barrel_imports";
+import { IOContext } from "@/nodes";
 
-export const NodeSettingsOutput = ({
-  iostore,
-}: {
-  iostore: latest.IOStore;
-}) => {
+export const NodeSettingsOutput = () => {
+  const iostore = React.useContext(IOContext);
   const io = iostore.use();
   return (
     <div className="nodesettings_component">

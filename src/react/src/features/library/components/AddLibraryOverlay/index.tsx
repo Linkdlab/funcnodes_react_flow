@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { useFuncNodesContext } from "@/providers";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+
 import { CustomDialog } from "@/shared-components";
 import {
   AvailableModule,
@@ -11,6 +11,7 @@ import {
   GroupedAvailableModules,
 } from "@/library/components";
 import { useWorkerApi } from "@/workers";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const AddLibraryOverlay = ({
   children,
@@ -18,7 +19,7 @@ export const AddLibraryOverlay = ({
   children: React.ReactNode;
 }) => {
   const [filter, setFilter] = useState(""); // State for the filter input
-  const zustand: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const zustand: FuncNodesReactFlow = useFuncNodesContext();
   const [activeExtended, SetActiveExtended] = useState(true);
   const [availableExtended, SetAvailableExtended] = useState(true);
   const [installedExtended, SetInstalledExtended] = useState(true);

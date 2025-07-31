@@ -3,26 +3,38 @@ import {
   AbstractWorkerHandler,
 } from "./worker-handlers.types";
 import { FuncNodesWorker } from "../funcnodes-worker";
+import { NodeGroup, NodeGroups } from "@/groups";
+import { deep_merge } from "@/object-helpers";
 import {
   FullState,
   GroupActionUpdate,
-  latest,
-  LibType,
-  PackedPlugin,
-  update_nodeview,
+  NodeActionUpdate,
+  NodeViewState,
   ViewState,
-} from "@/barrel_imports";
-import { NodeGroup, NodeGroups } from "@/groups";
-import { deep_merge } from "@/object-helpers";
+} from "@/funcnodes-context";
+import { PartialSerializedNodeType, SerializedNodeType } from "@/nodes-core";
+import { PackedPlugin } from "@/plugins";
+import { LibType } from "@/library";
 
 interface WorkerSyncManagerContext extends WorkerHandlerContext {
   on_sync_complete: ((worker: FuncNodesWorker) => Promise<void>) | undefined;
 }
 
+const update_nodeview = (
+  node: PartialSerializedNodeType,
+  view: Partial<NodeViewState>
+): void => {
+  node.properties = node.properties || {};
+  if (view.pos) node.properties["frontend:pos"] = view.pos;
+  if (view.size) node.properties["frontend:size"] = view.size;
+  if (view.collapsed !== undefined)
+    node.properties["frontend:collapsed"] = !!view.collapsed; // convert to boolean
+};
+
 export class WorkerSyncManager extends AbstractWorkerHandler {
   on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
   _nodeupdatetimer: ReturnType<typeof setTimeout> | undefined;
-  _local_nodeupdates: Map<string, latest.PartialSerializedNodeType> = new Map();
+  _local_nodeupdates: Map<string, PartialSerializedNodeType> = new Map();
   _local_groupupdates: Map<string, Partial<NodeGroup>> = new Map();
   _groupupdatetimer: ReturnType<typeof setTimeout> | undefined;
   constructor(context: WorkerSyncManagerContext) {
@@ -161,7 +173,7 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     const nodeview = resp.nodes;
     if (nodeview) {
       for (const nodeid in nodeview) {
-        const partnode: latest.PartialSerializedNodeType = {};
+        const partnode: PartialSerializedNodeType = {};
         update_nodeview(partnode, nodeview[nodeid]!);
 
         this.context.worker._zustand.on_node_action({
@@ -184,7 +196,7 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
         kwargs: { with_frontend: true },
         wait_for_response: true,
         unique: true,
-      })) as latest.SerializedNodeType[];
+      })) as SerializedNodeType[];
     for (const node of resp) {
       this.eventManager._receive_node_added(node);
     }
@@ -298,7 +310,7 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     }, 200);
   }
 
-  locally_update_node(action: latest.NodeActionUpdate) {
+  locally_update_node(action: NodeActionUpdate) {
     // Add the type to the parameter
     //log current stack trace
     const currentstate = this._local_nodeupdates.get(action.id);

@@ -4,10 +4,11 @@ import * as React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MenuRoundedIcon, ChevronRightIcon } from "@/icons";
 import { downloadBase64, fileDialogToBase64 } from "@/data-helpers";
-import { FuncNodesReactFlowZustandInterface } from "@/barrel_imports";
+
 import { CustomDialog } from "@/shared-components";
 import { development } from "@/utils/debugger";
 import { FloatContainer } from "@/shared-components/auto-layouts";
+import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 const NewWorkerDialog = ({
   trigger,
@@ -22,7 +23,7 @@ const NewWorkerDialog = ({
   const [inVenv, setInVenv] = useState<boolean>(true);
   // const [copyLib, setCopyLib] = useState<boolean>(false);
   // const [copyNS, setCopyNS] = useState<boolean>(false);
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
 
   // const workersstate = fnrf_zst.workers();
 
@@ -147,7 +148,7 @@ const ExportWorkerDialog = ({
   setOpen: (open: boolean) => void;
   open?: boolean;
 }) => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
 
   const [withFiles, setWithFiles] = useState<boolean>(false);
   const workersstate = fnrf_zst.workers();
@@ -193,7 +194,7 @@ const ExportWorkerDialog = ({
 };
 
 export const WorkerMenu = () => {
-  const fnrf_zst: FuncNodesReactFlowZustandInterface = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const workersstate = fnrf_zst.workers();
 
   const [isNewWorkerDialogOpen, setNewWorkerDialogOpen] = useState(false);

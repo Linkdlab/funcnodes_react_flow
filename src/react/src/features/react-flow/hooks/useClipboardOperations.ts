@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { useFuncNodesContext } from "@/providers";
-import { useNodeTools } from "@/barrel_imports";
-import { latest } from "@/barrel_imports";
+import { SerializedNodeType, useNodeTools } from "@/nodes-core";
+import { SerializedEdge } from "@/edges-core";
 
 export const useClipboardOperations = () => {
   const fnrf_zst = useFuncNodesContext();
@@ -16,8 +16,8 @@ export const useClipboardOperations = () => {
     if (selectedNodes.length === 0) return;
 
     const copydata: {
-      nodes: latest.SerializedNodeType[];
-      edges: latest.SerializedEdge[];
+      nodes: SerializedNodeType[];
+      edges: SerializedEdge[];
     } = { nodes: [], edges: [] };
 
     for (const node of selectedNodes) {
