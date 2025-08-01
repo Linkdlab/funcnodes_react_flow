@@ -33,10 +33,18 @@ export class PluginManagerHandler
 
   add_plugin(name: string, plugin: FuncNodesReactPlugin) {
     if (plugin === undefined) return;
-    const latestplugin = upgradeFuncNodesReactPlugin(plugin);
-    this.plugins.setState((prev) => {
-      return { ...prev, [name]: latestplugin };
-    });
+    try {
+      const latestplugin = upgradeFuncNodesReactPlugin(plugin);
+      this.plugins.setState((prev) => {
+        return { ...prev, [name]: latestplugin };
+      });
+    } catch (e) {
+      this.stateManager.toaster?.error({
+        title: "Error",
+        description: `Error upgrading plugin ${name}: ${e}`,
+        duration: 10000,
+      });
+    }
   }
   update_render_options(options: RenderOptions) {
     update_zustand_store(this.render_options, options);
