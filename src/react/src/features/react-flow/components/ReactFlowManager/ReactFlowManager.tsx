@@ -6,7 +6,6 @@ export const ReactFlowManager = () => {
   const rfinstance = useReactFlow();
   const fnrf_zst = useFuncNodesContext();
   fnrf_zst.rf_instance = rfinstance;
-  // useForceGraph();
 
   return <></>;
 };
