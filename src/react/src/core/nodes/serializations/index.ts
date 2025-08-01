@@ -23,15 +23,14 @@ export type SerializedNodeIOMappingType = {
 
 export interface SerializedNodeType extends BasicNodeType {
   in_trigger: boolean;
-  io: SerializedNodeIOMappingType;
+  io: SerializedNodeIOMappingType | SerializedIOType[];
   io_order?: string[];
   progress: DeepPartial<TqdmState>;
 }
 
-export type PartialSerializedNodeType = LimitedDeepPartial<SerializedNodeType>;
+export type PartialSerializedNodeType = LimitedDeepPartial<SerializedNodeType> ;
 export type PartialSerializedIOType = LimitedDeepPartial<SerializedIOType>;
-export type PartialSerializedNodeIOMappingType =
-  LimitedDeepPartial<SerializedNodeIOMappingType>;
+
 export type {
   SerializedType,
   AllOf,

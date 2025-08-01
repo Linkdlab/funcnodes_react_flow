@@ -18,6 +18,7 @@ import { KeyHandler } from "../KeyHandler";
 import "./ReactFlowLayer.scss";
 import { usePasteClipboardData } from "@/react-flow/utils";
 import { useTheme } from "@/providers";
+import { useToast } from "@/shared-components";
 
 const BackgroundVariantLookup: Record<string, BackgroundVariant> = {
   default: BackgroundVariant.Dots,
@@ -36,7 +37,12 @@ export const ReactFlowLayer = (props: ReactFlowLayerProps) => {
   // const [menu, setMenu] = useState<ContextMenuProps | null>(null);
 
   const { onSelectionChange } = useReactFlowSelection();
+  const toast = useToast();
 
+  // useForceGraph();
+  React.useEffect(() => {
+    fnrf_zst.getStateManager().toaster = toast;
+  }, []);
   useEffect(() => {
     fnrf_zst.reactflowRef = reactflowRef.current;
   }, [reactflowRef]);

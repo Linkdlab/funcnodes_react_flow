@@ -21,14 +21,16 @@ export const update_node = (
 ): void => {
   const old_state = old_store.getState();
   const updatedstate: Partial<NodeType> = {};
+  console.log("update_node", old_state, new_state);
+  const norm_new_state = normalize_node(new_state);
 
-  const keys = Object.keys(new_state) as (keyof SerializedNodeType)[];
+  const keys = Object.keys(norm_new_state) as (keyof SerializedNodeType)[];
   for (const key of keys) {
     switch (key) {
       case "id": {
         const [newvalue, needs_update] = simple_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
 
@@ -37,7 +39,7 @@ export const update_node = (
       case "node_id": {
         const [newvalue, needs_update] = simple_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
 
@@ -46,7 +48,7 @@ export const update_node = (
       case "node_name": {
         const [newvalue, needs_update] = simple_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
 
@@ -55,7 +57,7 @@ export const update_node = (
       case "name": {
         const [newvalue, needs_update] = simple_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
 
@@ -64,21 +66,21 @@ export const update_node = (
       case "in_trigger": {
         const [newvalue, needs_update] = simple_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
         break;
       }
 
       case "error": {
-        if (new_state[key] !== old_state[key])
-          updatedstate[key] = new_state[key];
+        if (norm_new_state[key] !== old_state[key])
+          updatedstate[key] = norm_new_state[key];
         break;
       }
       case "render_options": {
         const [newvalue, needs_update] = deep_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
 
@@ -88,14 +90,14 @@ export const update_node = (
         const [newvalue, needs_update] = ((oldvalue, newvalue) => {
           if (newvalue === undefined) return [oldvalue, false];
           return [newvalue, !deep_compare_objects(oldvalue, newvalue)];
-        })(old_state[key], new_state[key]);
+        })(old_state[key], norm_new_state[key]);
         if (needs_update)
           updatedstate[key] = newvalue.filter((io) => io !== undefined);
 
         break;
       }
       case "io": {
-        const newvalue = new_state[key];
+        const newvalue = norm_new_state[key];
         if (newvalue === undefined) break;
         for (const iokey in newvalue) {
           const oldvalue = old_store.io_stores.get(iokey);
@@ -110,19 +112,19 @@ export const update_node = (
       case "progress": {
         const [newvalue, needs_update] = deep_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
         break;
       }
       case "description": {
-        updatedstate[key] = new_state[key];
+        updatedstate[key] = norm_new_state[key];
         break;
       }
       case "properties": {
         const [newvalue, needs_update] = deep_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue as NodeProperties;
         break;
@@ -130,7 +132,7 @@ export const update_node = (
       case "status": {
         const [newvalue, needs_update] = deep_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
         break;
@@ -138,14 +140,14 @@ export const update_node = (
       case "reset_inputs_on_trigger": {
         const [newvalue, needs_update] = simple_updater(
           old_state[key],
-          new_state[key]
+          norm_new_state[key]
         );
         if (needs_update) updatedstate[key] = newvalue;
         break;
       }
       default:
         try {
-          assertNever(key, new_state[key]);
+          assertNever(key, norm_new_state[key]);
         } catch (e) {
           console.error(e);
         }
@@ -163,7 +165,6 @@ export const update_io = (
   new_state: PartialSerializedIOType
 ): void => {
   const old_state = iostore.getState();
-  console.log("update_io", old_state, new_state);
 
   const updatedstate: Partial<IOType> = {};
   const newValueStoreState: { preview?: any; full?: any } = {};

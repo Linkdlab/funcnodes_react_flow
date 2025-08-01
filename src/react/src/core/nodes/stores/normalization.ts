@@ -1,68 +1,90 @@
-import { IOType } from "../interfaces/io";
+import { LimitedDeepPartial } from "@/object-helpers";
 import {
-  PartialSerializedIOType,
-  PartialSerializedNodeIOMappingType,
   PartialSerializedNodeType,
+  SerializedIOType,
   SerializedNodeIOMappingType,
 } from "../serializations";
-import { assert_full_nodeio } from "./full-io";
 
 export interface NormalizedPartialSerializedNodeType
-  extends PartialSerializedNodeType {
+  extends Omit<PartialSerializedNodeType, 'io'> {
   io_order: string[];
-  io: SerializedNodeIOMappingType;
+  io: { [key: string]: LimitedDeepPartial<SerializedIOType> };
+}
+
+type WithRequiredId<T> = Omit<LimitedDeepPartial<T>, "id"> & { id: string };
+
+function hasId<T>(io: unknown): io is WithRequiredId<T> {
+  return (
+    io !== undefined &&
+    io !== null &&
+    typeof io === "object" &&
+    "id" in io &&
+    typeof io.id === "string"
+  );
 }
 
 export const normalize_node = (
   node: PartialSerializedNodeType
 ): NormalizedPartialSerializedNodeType => {
-  let node_ios: PartialSerializedNodeIOMappingType = node.io ?? {};
-
+  let node_ios = node.io ?? {};
   let io_order = node.io_order as string[] | undefined;
+
+  let new_io_order: string[] = [];
+  const new_io: {
+    [key: string]: LimitedDeepPartial<SerializedIOType>;
+  } = {};
+
   if (io_order === undefined) {
     if (Array.isArray(node_ios)) {
-      io_order = node_ios.map((io) => io.id);
-      const new_io: { [key: string]: IOType | undefined } = {};
-      for (const io of node_ios) {
+      const node_ios_w_id = node_ios.filter(hasId);
+      new_io_order = node_ios_w_id.map((io) => io.id);
+      for (const io of node_ios_w_id) {
         new_io[io.id] = io;
       }
-      node_ios = new_io;
     } else {
-      io_order = Object.keys(node_ios);
+      new_io_order = Object.keys(node_ios);
+      for (const id in node_ios) {
+        if (node_ios[id] !== undefined) {
+          new_io[id] = node_ios[id];
+        }
+      }
     }
   } else {
+    new_io_order = io_order;
     if (Array.isArray(node_ios)) {
-      const new_io: { [key: string]: IOType | undefined } = {};
-      for (const io of node_ios) {
+      const node_ios_w_id = node_ios.filter(hasId);
+      for (const io of node_ios_w_id) {
         new_io[io.id] = io;
-        if (!io_order.includes(io.id)) {
-          io_order.push(io.id);
+        if (!new_io_order.includes(io.id)) {
+          new_io_order.push(io.id);
         }
       }
-      node_ios = new_io;
     } else {
       for (const io in node_ios) {
-        if (!io_order.includes(io)) {
-          io_order.push(io);
+        if (node_ios[io] !== undefined) {
+          new_io[io] = node_ios[io];
+        }
+        if (!new_io_order.includes(io)) {
+          new_io_order.push(io);
         }
       }
     }
   }
 
-  const new_io: SerializedNodeIOMappingType = {};
-  for (const io of io_order) {
-    const psio: PartialSerializedIOType | undefined = node_ios[io];
-    if (psio === undefined) continue;
-    const [io_type, value, fullvalue] = assert_full_nodeio({
-      ...psio,
-      id: io,
-    });
-    new_io[io] = {
-      ...io_type,
-      value: value,
-      fullvalue: fullvalue,
-    };
-  }
+  // const new_io: SerializedNodeIOMappingType = {};
+  // for (const io of io_order) {
+  //   const psio: PartialSerializedIOType | undefined = node_ios[io];
+  //   if (psio === undefined) continue;
+  //   const [io_type, value, fullvalue] = assert_full_nodeio({
+  //     ...psio,
+  //     id: io,
+  //   });
+  //   new_io[io] = {
+  //     ...io_type,
+  //     value: value,
+  //     fullvalue: fullvalue,
+  //   };
+  // }
 
-  return { ...node, io_order, io: new_io };
+  return { ...node, io_order: new_io_order, io: new_io };
 };

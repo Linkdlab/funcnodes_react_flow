@@ -76,7 +76,6 @@ const NodeInput = ({
     }
   };
 
-  console.log(Input, io);
   if (io.hidden) return null;
   return (
     <div

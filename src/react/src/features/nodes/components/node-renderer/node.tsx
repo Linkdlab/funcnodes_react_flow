@@ -237,64 +237,70 @@ export interface RFNodeDataPass extends Record<string, unknown> {
 
 export const NodeContext = React.createContext<NodeStore>({} as NodeStore);
 
-export const DefaultNode = React.memo(({ data }: { data: RFNodeDataPass }) => {
-  // Use the  NodeStore to get the data for the node.
-  const storedata = data.nodestore.use();
+export const DefaultNode = React.memo(
+  ({ data }: { data: RFNodeDataPass }) => {
+    // Use useShallow to only subscribe to specific properties that affect rendering
+    const { collapsed, error } = data.nodestore.useShallow((state) => ({
+      collapsed: state.properties["frontend:collapsed"] || false,
+      error: state.error,
+    }));
 
-  const collapsed = storedata.properties["frontend:collapsed"] || false;
+    const { visualTrigger, nodestore: nodecontext } = useDefaultNodeInjection(
+      data.nodestore
+    );
 
-  const { visualTrigger, nodestore: nodecontext } = useDefaultNodeInjection(
-    data.nodestore
-  );
+    const [showSettings, setShowSettings] = useState(false);
+    const [nodeSettingsPath, setNodeSettingsPath] = useState<string>("");
+    const { keys: pressedKeys } = useKeyPress();
 
-  const [showSettings, setShowSettings] = useState(false);
-  const [nodeSettingsPath, setNodeSettingsPath] = useState<string>("");
-  const { keys: pressedKeys } = useKeyPress();
+    const toogleShowSettings = React.useCallback(() => {
+      setShowSettings((prev) => !prev);
+    }, []);
 
-  const toogleShowSettings = React.useCallback(() => {
-    setShowSettings((prev) => !prev);
-  }, []);
+    const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (pressedKeys.has("s") && !showSettings) {
+        setNodeSettingsPath("");
+        setShowSettings(true);
+        e.stopPropagation();
+      }
+    };
 
-  const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (pressedKeys.has("s") && !showSettings) {
-      setNodeSettingsPath("");
-      setShowSettings(true);
-      e.stopPropagation();
-    }
-  };
-
-  return (
-    <NodeContext.Provider value={nodecontext}>
-      {/* <NodeResizeControl
+    return (
+      <NodeContext.Provider value={nodecontext}>
+        {/* <NodeResizeControl
         minWidth={100}
         minHeight={100}
         className="noderesizecontrol"
       >
         <ExpandIcon fontSize="inherit" className="noderesizeicon" />
       </NodeResizeControl> */}
-      <div
-        className={
-          "innernode" +
-          (visualTrigger ? " intrigger" : "") +
-          (storedata.error ? " error" : "")
-        }
-        onClick={onClickHandler}
-      >
-        <NodeHeader toogleShowSettings={toogleShowSettings} />
-        <NodeName />
-        {collapsed ? null : (
-          <NodeBody
-            setNodeSettingsPath={setNodeSettingsPath}
-            setShowSettings={setShowSettings}
-          />
-        )}
-        <NodeFooter />
-        <NodeSettingsOverlay
-          isOpen={showSettings}
-          onOpenChange={setShowSettings}
-          nodeSettingsPath={nodeSettingsPath}
-        ></NodeSettingsOverlay>
-      </div>
-    </NodeContext.Provider>
-  );
-});
+        <div
+          className={
+            "innernode" +
+            (visualTrigger ? " intrigger" : "") +
+            (error ? " error" : "")
+          }
+          onClick={onClickHandler}
+        >
+          <NodeHeader toogleShowSettings={toogleShowSettings} />
+          <NodeName />
+          {collapsed ? null : (
+            <NodeBody
+              setNodeSettingsPath={setNodeSettingsPath}
+              setShowSettings={setShowSettings}
+            />
+          )}
+          <NodeFooter />
+          <NodeSettingsOverlay
+            isOpen={showSettings}
+            onOpenChange={setShowSettings}
+            nodeSettingsPath={nodeSettingsPath}
+          ></NodeSettingsOverlay>
+        </div>
+      </NodeContext.Provider>
+    );
+  },
+  (prev, next) => {
+    return prev.data.nodestore === next.data.nodestore;
+  }
+);

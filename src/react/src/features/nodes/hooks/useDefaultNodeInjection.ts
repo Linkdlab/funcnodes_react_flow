@@ -6,9 +6,11 @@ import { useFuncNodesContext } from "@/providers";
 
 export const useDefaultNodeInjection = (nodestore: NodeStore) => {
   const [visualTrigger, setVisualTrigger] = useState(false);
-  const intrigger = nodestore.use((state) => state.in_trigger);
-  const node_id = nodestore.use((state) => state.node_id);
-  const instance_id = nodestore.use((state) => state.id);
+  const { intrigger, node_id, instance_id } = nodestore.useShallow((state) => ({
+    intrigger: state.in_trigger,
+    node_id: state.node_id,
+    instance_id: state.id,
+  }));
   const fnrf_zst = useFuncNodesContext();
 
   const { hooks } = useWorkerApi();
