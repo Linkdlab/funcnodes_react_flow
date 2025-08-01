@@ -1,14 +1,15 @@
 import * as React from "react";
 import { remoteUrlToBase64 } from "@/data-helpers";
 import { LimitedDeepPartial, object_factory_maker } from "@/object-helpers";
-import { ErrorDiv } from "@/shared-components";
+import { Toasts, ErrorDiv } from "@/shared-components";
 import { ConsoleLogger, Logger } from "@/logging";
 import { FuncNodesWorker, WebSocketWorker, WorkerManager } from "@/workers";
 import { FuncnodesReactFlowProps } from "./app.types";
-import { DEFAULT_FN_PROPS } from "./app-properties";
+import { AVAILABLE_COLOR_THEMES, DEFAULT_FN_PROPS } from "./app-properties";
 import { InnerFuncnodesReactFlow } from "./workspace";
 import { v4 as uuidv4 } from "uuid";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
+import { ThemeProvider } from "./providers";
 
 declare global {
   interface Window {
@@ -280,12 +281,16 @@ export const FuncNodes = (
 
   return (
     <div className="FuncnodesApp">
-      <InnerFuncnodesReactFlow
-        fnrf_zst={fnrfzst}
-        header={fullProps.header}
-        library={fullProps.library}
-        flow={fullProps.flow}
-      />
+      <ThemeProvider available_themes={AVAILABLE_COLOR_THEMES}>
+        <Toasts duration={5000}>
+          <InnerFuncnodesReactFlow
+            fnrf_zst={fnrfzst}
+            header={fullProps.header}
+            library={fullProps.library}
+            flow={fullProps.flow}
+          />
+        </Toasts>
+      </ThemeProvider>
     </div>
   );
 };

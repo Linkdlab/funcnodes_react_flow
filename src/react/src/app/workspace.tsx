@@ -8,11 +8,10 @@ import {
   CloseFullscreenIcon,
 } from "@/icons";
 
-import { KeyPressProvider, ThemeProvider } from "@/providers";
+import { KeyPressProvider } from "@/providers";
 import { FuncNodesWorker } from "@/workers";
 import { FuncNodesContext } from "@/providers";
 import {
-  AVAILABLE_COLOR_THEMES,
   FuncnodesReactHeaderProps,
   ReactFlowLayerProps,
   ReactFlowLibraryProps,
@@ -64,79 +63,77 @@ export const InnerFuncnodesReactFlow = ({
   const plugins = fnrf_zst.plugins();
 
   return (
-    <ThemeProvider available_themes={AVAILABLE_COLOR_THEMES}>
-      <RenderMappingProvider plugins={plugins} fnrf_zst={fnrf_zst}>
-        <KeyPressProvider>
-          <FuncNodesContext.Provider value={fnrf_zst}>
-            <SmoothExpandComponent asChild>
-              <FullScreenComponent asChild>
-                <SizeContextContainer
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    flex: 1,
-                  }}
+    <RenderMappingProvider plugins={plugins} fnrf_zst={fnrf_zst}>
+      <KeyPressProvider>
+        <FuncNodesContext.Provider value={fnrf_zst}>
+          <SmoothExpandComponent asChild>
+            <FullScreenComponent asChild>
+              <SizeContextContainer
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  flex: 1,
+                }}
+              >
+                <div
+                  ref={ref}
+                  className="funcnodesreactflowcontainer funcnodescontainer"
                 >
-                  <div
-                    ref={ref}
-                    className="funcnodesreactflowcontainer funcnodescontainer"
-                  >
-                    {header.show && (
-                      <FuncnodesHeader {...header}></FuncnodesHeader>
-                    )}
+                  {header.show && (
+                    <FuncnodesHeader {...header}></FuncnodesHeader>
+                  )}
 
-                    <div className="funcnodesreactflowbody">
-                      <ReactFlowLayer {...flow}></ReactFlowLayer>
-                      {worker && library.show && <Library></Library>}
-                      {worker && flow.showNodeSettings && (
-                        <NodeSettings></NodeSettings>
-                      )}
-                    </div>
-                    <div className="funcnodesflaotingmenu">
-                      <FullScreenComponent.OutFullScreen>
-                        {flow.allowExpand && (
-                          <SmoothExpandComponent.Trigger>
-                            <SmoothExpandComponent.Expanded>
-                              <CloseFullscreenIcon
-                                size="xl"
-                                style={{ padding: "4px" }}
-                              />
-                            </SmoothExpandComponent.Expanded>
-                            <SmoothExpandComponent.Collapsed>
-                              <OpenInFullIcon
-                                size="xl"
-                                style={{ padding: "4px" }}
-                              />
-                            </SmoothExpandComponent.Collapsed>
-                          </SmoothExpandComponent.Trigger>
-                        )}
-                      </FullScreenComponent.OutFullScreen>
-                      {flow.allowFullScreen && (
-                        <FullScreenComponent.Trigger>
-                          <FullScreenComponent.OutFullScreen>
-                            <FullscreenIcon
-                              size="xl"
-                              style={{ padding: "4px" }}
-                            />
-                          </FullScreenComponent.OutFullScreen>
-                          <FullScreenComponent.InFullScreen>
-                            <FullscreenExitIcon
-                              size="xl"
-                              style={{ padding: "4px" }}
-                            />
-                          </FullScreenComponent.InFullScreen>
-                        </FullScreenComponent.Trigger>
-                      )}
-                    </div>
+                  <div className="funcnodesreactflowbody">
+                    <ReactFlowLayer {...flow}></ReactFlowLayer>
+                    {worker && library.show && <Library></Library>}
+                    {worker && flow.showNodeSettings && (
+                      <NodeSettings></NodeSettings>
+                    )}
                   </div>
-                </SizeContextContainer>
-              </FullScreenComponent>
-            </SmoothExpandComponent>
-          </FuncNodesContext.Provider>
-        </KeyPressProvider>
-      </RenderMappingProvider>
-    </ThemeProvider>
+                  <div className="funcnodesflaotingmenu">
+                    <FullScreenComponent.OutFullScreen>
+                      {flow.allowExpand && (
+                        <SmoothExpandComponent.Trigger>
+                          <SmoothExpandComponent.Expanded>
+                            <CloseFullscreenIcon
+                              size="xl"
+                              style={{ padding: "4px" }}
+                            />
+                          </SmoothExpandComponent.Expanded>
+                          <SmoothExpandComponent.Collapsed>
+                            <OpenInFullIcon
+                              size="xl"
+                              style={{ padding: "4px" }}
+                            />
+                          </SmoothExpandComponent.Collapsed>
+                        </SmoothExpandComponent.Trigger>
+                      )}
+                    </FullScreenComponent.OutFullScreen>
+                    {flow.allowFullScreen && (
+                      <FullScreenComponent.Trigger>
+                        <FullScreenComponent.OutFullScreen>
+                          <FullscreenIcon
+                            size="xl"
+                            style={{ padding: "4px" }}
+                          />
+                        </FullScreenComponent.OutFullScreen>
+                        <FullScreenComponent.InFullScreen>
+                          <FullscreenExitIcon
+                            size="xl"
+                            style={{ padding: "4px" }}
+                          />
+                        </FullScreenComponent.InFullScreen>
+                      </FullScreenComponent.Trigger>
+                    )}
+                  </div>
+                </div>
+              </SizeContextContainer>
+            </FullScreenComponent>
+          </SmoothExpandComponent>
+        </FuncNodesContext.Provider>
+      </KeyPressProvider>
+    </RenderMappingProvider>
   );
 };
