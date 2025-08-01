@@ -39,7 +39,7 @@ export interface PackedPlugin {
   css?: string[];
 }
 
-export interface FuncNodesReactPlugin {
+export interface FuncNodesReactPlugin<V extends string = string> {
   renderpluginfactory?: (props: RenderPluginFactoryProps) => RendererPlugin;
-  v: string;
+  v: V;
 }
