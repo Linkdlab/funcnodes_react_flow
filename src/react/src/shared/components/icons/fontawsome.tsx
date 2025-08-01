@@ -20,6 +20,8 @@ import {
   faCirclePlay,
   faMagnifyingGlass,
   faGear,
+  faCircleCheck,
+  faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
@@ -38,88 +40,76 @@ const _InnerIcon = (props: FontAwesomeIconProps) => {
   );
 };
 
-const MenuRoundedIcon = (props: FontAwesomeWrapperIconProps) => {
+export const MenuRoundedIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faBars} />;
 };
 
-const ChevronRightIcon = (props: FontAwesomeWrapperIconProps) => {
+export const ChevronRightIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faChevronRight} />;
 };
 
-const ChevronLeftIcon = (props: FontAwesomeWrapperIconProps) => {
+export const ChevronLeftIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faChevronLeft} />;
 };
 
-const FullscreenIcon = (props: FontAwesomeWrapperIconProps) => {
+export const FullscreenIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faExpand} />;
 };
 
-const FullscreenExitIcon = (props: FontAwesomeWrapperIconProps) => {
+export const FullscreenExitIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faCompress} />;
 };
 
-const CloseFullscreenIcon = (props: FontAwesomeWrapperIconProps) => {
+export const CloseFullscreenIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faDownLeftAndUpRightToCenter} />;
 };
 
-const OpenInFullIcon = (props: FontAwesomeWrapperIconProps) => {
+export const OpenInFullIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faUpRightAndDownLeftFromCenter} />;
 };
 
-const ChevronDownIcon = (props: FontAwesomeWrapperIconProps) => {
+export const ChevronDownIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faChevronDown} />;
 };
 
-const ChevronUpIcon = (props: FontAwesomeWrapperIconProps) => {
+export const ChevronUpIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faChevronUp} />;
 };
 
-const ExpandLessIcon = ChevronUpIcon;
+export const ExpandLessIcon = ChevronUpIcon;
 
-const CloseIcon = (props: FontAwesomeWrapperIconProps) => {
+export const CloseIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faXmark} />;
 };
 
-const LockOpenIcon = (props: FontAwesomeWrapperIconProps) => {
+export const LockOpenIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faLockOpen} />;
 };
 
-const LockIcon = (props: FontAwesomeWrapperIconProps) => {
+export const LockIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faLock} />;
 };
 
-const LanIcon = (props: FontAwesomeWrapperIconProps) => {
+export const LanIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faNetworkWired} />;
 };
 
-const PlayCircleFilledIcon = (props: FontAwesomeWrapperIconProps) => {
+export const PlayCircleFilledIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faCirclePlay} />;
 };
 
-const SearchIcon = (props: FontAwesomeWrapperIconProps) => {
+export const SearchIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faMagnifyingGlass} />;
 };
 
-const GearIcon = (props: FontAwesomeWrapperIconProps) => {
+export const GearIcon = (props: FontAwesomeWrapperIconProps) => {
   return <_InnerIcon {...props} icon={faGear} />;
 };
 
-export {
-  MenuRoundedIcon,
-  ChevronRightIcon,
-  ChevronLeftIcon,
-  FullscreenIcon,
-  FullscreenExitIcon,
-  OpenInFullIcon,
-  CloseFullscreenIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  ExpandLessIcon,
-  CloseIcon,
-  LockOpenIcon,
-  LockIcon,
-  LanIcon,
-  PlayCircleFilledIcon,
-  SearchIcon,
-  GearIcon,
+export const CheckmarkIcon = (props: FontAwesomeWrapperIconProps) => {
+  return <_InnerIcon {...props} icon={faCircleCheck} />;
+};
+
+export const ErrorIcon = (props: FontAwesomeWrapperIconProps) => {
+  return <_InnerIcon {...props} icon={faCircleXmark} />;
 };
