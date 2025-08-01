@@ -1,8 +1,6 @@
-import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
 export interface DataOverlayRendererProps {
-  iostore: IOStore;
   value: any;
   preValue?: any;
   onLoaded?: () => void;

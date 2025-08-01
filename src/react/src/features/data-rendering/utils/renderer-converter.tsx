@@ -14,15 +14,8 @@ import {
 export const DataViewRendererToOverlayRenderer = (
   DV: DataViewRendererType
 ): DataOverlayRendererType => {
-  return ({ iostore, value, preValue, onLoaded }: DataOverlayRendererProps) => {
-    return (
-      <DV
-        iostore={iostore}
-        value={value}
-        preValue={preValue}
-        onLoaded={onLoaded}
-      />
-    );
+  return ({ value, preValue, onLoaded }: DataOverlayRendererProps) => {
+    return <DV value={value} preValue={preValue} onLoaded={onLoaded} />;
   };
 };
 

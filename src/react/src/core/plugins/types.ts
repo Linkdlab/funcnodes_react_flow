@@ -27,11 +27,7 @@ export interface RendererPlugin {
   node_renderers?: { [key: string]: NodeRendererType | undefined };
   node_hooks?: { [key: string]: NodeHooksType[] | undefined };
 }
-export type RenderPluginFactoryProps = {
-  React?: typeof React;
-  fnrf_zst?: FuncNodesReactFlow;
-  NodeContext?: typeof NodeContext;
-};
+export type RenderPluginFactoryProps = {};
 
 export interface PackedPlugin {
   module: string;
