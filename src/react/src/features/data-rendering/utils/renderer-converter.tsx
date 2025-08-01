@@ -50,6 +50,6 @@ export const DataViewRendererToInputRenderer = (
     const val = full === undefined ? preview : full;
     const renderval = val?.value || defaultValue;
 
-    return <DV iostore={iostore} value={renderval} />;
+    return <DV value={renderval} />;
   };
 };
