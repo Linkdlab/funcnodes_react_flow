@@ -6,10 +6,12 @@ import { deep_merge } from "@/object-helpers";
 import { UseBoundStore, StoreApi, create } from "zustand";
 import { update_zustand_store } from "@/zustand-helpers";
 import { ProgressState } from "../states/progress";
+import { ToastDispatcher } from "@/shared-components";
 
 export interface StateManagerManagerAPI {
   set_progress: (progress: ProgressState) => void;
   auto_progress: () => void;
+  toast?: ToastDispatcher;
 }
 
 export interface FuncnodesReactFlowViewSettings {
@@ -34,6 +36,7 @@ export class StateManagerHandler
   progress_state: UseBoundStore<StoreApi<ProgressState>>;
   local_settings: UseBoundStore<StoreApi<FuncnodesReactFlowLocalSettings>>;
   local_state: UseBoundStore<StoreApi<FuncnodesReactFlowLocalState>>;
+  toaster?: ToastDispatcher;
   constructor(context: FuncNodesReactFlowHandlerContext) {
     super(context);
     this.progress_state = create<ProgressState>((_set, _get) => ({
