@@ -31,8 +31,7 @@
     "test": "vitest run --config vitest.config.fast.ts",
     "test:fast": "vitest run --config vitest.config.fast.ts",
     "e2e": "playwright test",
-    "e2eserver": "vite --port 5061 --config vite.browser.config.js",
-    "dev-full": "node dev_full.cjs"
+    "e2eserver": "vite --port 5061 --config vite.browser.config.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

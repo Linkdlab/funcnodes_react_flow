@@ -70,7 +70,7 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: false, // disable CSS code splitting, css will be in a separate file
       assetsInlineLimit: 0, // disable inlining assets; output them as separate files
       outDir: production
-        ? `../funcnodes_react_flow/static/`
+        ? `../../../funcnodes_react_flow/static/`
         : `build/${production ? "prod" : "dev"}`, // output directory for the build
 
       lib: {
@@ -83,6 +83,10 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           banner: "var global = window;",
+          // Ensure browser build outputs to separate directory
+          dir: production
+            ? path.resolve(__dirname, "../funcnodes_react_flow/static/")
+            : path.resolve(__dirname, `build/${production ? "prod" : "dev"}`),
         },
         // If you need to bundle all dependencies (i.e. non-externalized) for a browser IIFE,
         // you can adjust the external config accordingly (or leave external: [] as desired)
