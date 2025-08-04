@@ -2,10 +2,12 @@ import { IOType, NodeType } from "../interfaces";
 import {
   IOValueType,
   SerializedIOType,
-  SerializedNodeType,
+  NormalizedSerializedNodeType,
 } from "../serializations";
 
-export const deserialize_node = (node: SerializedNodeType): NodeType => {
+export const deserialize_node = (
+  node: NormalizedSerializedNodeType
+): NodeType => {
   const io_order = node.io_order;
   if (io_order === undefined) {
     throw new Error("Node must have io_order");

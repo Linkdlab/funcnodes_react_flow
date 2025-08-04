@@ -389,13 +389,10 @@ export class NodeSpaceManager
         .update_nodes(new_ndoes);
 
       for (const io in action.node.io) {
-        const ioid = action.node.io[io]!.id;
-        if (ioid !== undefined) {
-          this.workerManager.worker?.api.node.get_io_value({
-            nid: action.node.id,
-            ioid: ioid,
-          });
-        }
+        this.workerManager.worker?.api.node.get_io_value({
+          nid: action.node.id,
+          ioid: io,
+        });
       }
 
       setTimeout(() => {

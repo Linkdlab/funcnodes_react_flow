@@ -1,12 +1,8 @@
 import { LimitedDeepPartial } from "@/object-helpers";
-import {
-  PartialSerializedNodeType,
-  SerializedIOType,
-  SerializedNodeIOMappingType,
-} from "../serializations";
+import { PartialSerializedNodeType, SerializedIOType } from "../serializations";
 
 export interface NormalizedPartialSerializedNodeType
-  extends Omit<PartialSerializedNodeType, 'io'> {
+  extends Omit<PartialSerializedNodeType, "io"> {
   io_order: string[];
   io: { [key: string]: LimitedDeepPartial<SerializedIOType> };
 }

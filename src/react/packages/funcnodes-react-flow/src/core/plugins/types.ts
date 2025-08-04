@@ -8,9 +8,6 @@ import {
   NodeRendererType,
   OutputRendererType,
 } from "@/data-rendering-types";
-import { NodeContext } from "@/nodes";
-import { FuncNodesReactFlow } from "@/funcnodes-context";
-import * as React from "react";
 export interface RendererPlugin {
   input_renderers?: { [key: string]: InputRendererType | undefined };
   output_renderers?: { [key: string]: OutputRendererType | undefined };

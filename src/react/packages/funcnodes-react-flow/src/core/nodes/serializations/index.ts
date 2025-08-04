@@ -28,7 +28,16 @@ export interface SerializedNodeType extends BasicNodeType {
   progress: DeepPartial<TqdmState>;
 }
 
-export type PartialSerializedNodeType = LimitedDeepPartial<SerializedNodeType> ;
+export interface NormalizedSerializedNodeType
+  extends Omit<SerializedNodeType, "io"> {
+  io_order: string[];
+  io: { [key: string]: LimitedDeepPartial<SerializedIOType> };
+}
+
+export type PartialNormalizedSerializedNodeType =
+  LimitedDeepPartial<NormalizedSerializedNodeType>;
+
+export type PartialSerializedNodeType = LimitedDeepPartial<SerializedNodeType>;
 export type PartialSerializedIOType = LimitedDeepPartial<SerializedIOType>;
 
 export type {

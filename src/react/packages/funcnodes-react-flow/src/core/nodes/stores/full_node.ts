@@ -1,10 +1,10 @@
 import { NodeType } from "../interfaces/node";
-import { NormalizedPartialSerializedNodeType } from "./normalization";
 import { default_node_factory } from "./default";
 import { deserialize_node } from "./deserialization";
+import { PartialNormalizedSerializedNodeType } from "../serializations";
 
 export const assert_full_node = (
-  node: NormalizedPartialSerializedNodeType
+  node: PartialNormalizedSerializedNodeType
 ): NodeType => {
   if (!node.id) {
     throw new Error("Node must have an id");

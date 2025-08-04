@@ -1,7 +1,10 @@
 import { object_factory_maker } from "@/object-helpers";
-import { SerializedIOType, SerializedNodeType } from "../serializations";
+import {
+  NormalizedSerializedNodeType,
+  SerializedIOType,
+} from "../serializations";
 
-const dummy_node: SerializedNodeType = {
+const dummy_node: NormalizedSerializedNodeType = {
   id: "dummy",
   node_id: "dummy",
   node_name: "dummy",
@@ -11,6 +14,7 @@ const dummy_node: SerializedNodeType = {
     "frontend:collapsed": false,
   },
   io: {},
+  io_order: [],
   name: "dummy",
   in_trigger: false,
   reset_inputs_on_trigger: false,

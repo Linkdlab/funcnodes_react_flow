@@ -56,6 +56,7 @@ export default defineConfig(({ mode }) => {
         // Options for generating .d.ts files;
         // This serves as an alternative to your rollup-plugin-dts usage.
         insertTypesEntry: true,
+        rollupTypes: true,
       }),
     ],
     resolve: {

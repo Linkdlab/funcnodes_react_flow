@@ -37,7 +37,6 @@ export const IODataOverlay = ({
 
   return (
     <Component
-      iostore={iostore}
       value={pendingValue} // currently rendered value
       preValue={displayValue} // new value, not yet swapped in
       onLoaded={handleLoaded} // callback to swap in the new value when ready

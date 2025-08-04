@@ -10,7 +10,7 @@ import { FuncNodesWorker, useWorkerApi } from "@/workers";
 
 export const createIOStore = (
   node_id: string,
-  io: SerializedIOType
+  io: PartialSerializedIOType
 ): IOStore => {
   let iostore: IOStore;
   const [io_type, value, fullvalue] = assert_full_nodeio(io);
