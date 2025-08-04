@@ -1,0 +1,21 @@
+{
+    "name": "@linkdlab/funcnodes-react-flow-plugin",
+    "version": "0.4.11",
+    "type": "module",
+    "description": "Type definitions for FuncNodes React Flow plugins",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "rollup -c",
+        "typecheck": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "@linkdlab/funcnodes_react_flow": "workspace:*",
+        "rollup": "^4.46.2",
+        "rollup-plugin-dts": "^6.2.1",
+        "typescript": "^5.8.3"
+    }
+}
