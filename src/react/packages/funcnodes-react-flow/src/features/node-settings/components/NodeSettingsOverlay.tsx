@@ -1,7 +1,7 @@
 import * as React from "react";
 import { CustomDialog } from "@/shared-components";
 import { NodeSettingsWindow } from "./NodeSettingsWindow";
-import { NodeContext } from "@/nodes";
+import { useNodeStore } from "@/nodes";
 
 interface NodeSettingsOverlayProps {
   nodeSettingsPath: string;
@@ -11,7 +11,7 @@ interface NodeSettingsOverlayProps {
 
 export const NodeSettingsOverlay = React.memo(
   ({ isOpen, onOpenChange, nodeSettingsPath }: NodeSettingsOverlayProps) => {
-    const nodestore = React.useContext(NodeContext);
+    const nodestore = useNodeStore();
     const id = nodestore.use((state) => state.id);
     return (
       <CustomDialog

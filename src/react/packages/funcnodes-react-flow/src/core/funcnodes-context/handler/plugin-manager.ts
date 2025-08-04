@@ -5,7 +5,11 @@ import {
 import { UseBoundStore, StoreApi, create } from "zustand";
 import { RenderOptions } from "@/data-rendering-types";
 import { update_zustand_store } from "@/zustand-helpers";
-import { FuncNodesReactPlugin, upgradeFuncNodesReactPlugin } from "@/plugins";
+import {
+  FuncNodesReactPlugin,
+  VersionedFuncNodesReactPlugin,
+  upgradeFuncNodesReactPlugin,
+} from "@/plugins";
 export interface PluginManagerManagerAPI {
   plugins: UseBoundStore<
     StoreApi<{ [key: string]: FuncNodesReactPlugin | undefined }>
@@ -31,7 +35,7 @@ export class PluginManagerHandler
     this.render_options = create<RenderOptions>((_set, _get) => ({}));
   }
 
-  add_plugin(name: string, plugin: FuncNodesReactPlugin) {
+  add_plugin(name: string, plugin: VersionedFuncNodesReactPlugin) {
     if (plugin === undefined) return;
     try {
       const latestplugin = upgradeFuncNodesReactPlugin(plugin);

@@ -1,4 +1,4 @@
-import { object_factory_maker } from "@/object-helpers";
+import { object_factory_maker, LimitedDeepPartial } from "@/object-helpers";
 import {
   NormalizedSerializedNodeType,
   SerializedIOType,
@@ -50,7 +50,7 @@ const dummy_nodeio: SerializedIOType = {
   required: false,
 };
 
-const default_node_factory = object_factory_maker(dummy_node);
-const default_nodeio_factory = object_factory_maker(dummy_nodeio);
+const default_node_factory: (obj?: LimitedDeepPartial<NormalizedSerializedNodeType>) => NormalizedSerializedNodeType = object_factory_maker(dummy_node);
+const default_nodeio_factory: (obj?: LimitedDeepPartial<SerializedIOType>) => SerializedIOType = object_factory_maker(dummy_nodeio);
 
 export { default_node_factory, default_nodeio_factory };

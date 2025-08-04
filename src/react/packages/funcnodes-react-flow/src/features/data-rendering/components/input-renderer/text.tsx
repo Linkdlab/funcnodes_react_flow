@@ -1,11 +1,9 @@
 import * as React from "react";
 import { InputRendererProps } from "./types";
-import { useSetIOValue } from "@/nodes";
+import { useIOStore, useSetIOValue } from "@/nodes";
 
-export const StringInput = ({
-  iostore,
-  inputconverter,
-}: InputRendererProps) => {
+export const StringInput = ({ inputconverter }: InputRendererProps) => {
+  const iostore = useIOStore();
   const { preview, full } = iostore.valuestore();
   // const [expanded, setExpanded] = React.useState(false);
   // const textareaRef = React.useRef<HTMLTextAreaElement>(null);

@@ -10,5 +10,7 @@ export type {
   ExtendNodeHooksAction,
   RenderMappingAction,
   NodeRendererType,
+  NodeRendererProps,
   NodeHooksType,
+  NodeHooksProps,
 } from "./render-mappings/render-mappings.types";

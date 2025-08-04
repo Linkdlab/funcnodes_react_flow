@@ -6,7 +6,10 @@ export type {
   DataViewRendererType,
   DataViewRendererProps,
 } from "./data-view-renderer/types";
-export type { InLineRendererType } from "./inline-renderer/types";
+export type {
+  InLineRendererType,
+  InLineRendererProps,
+} from "./inline-renderer/types";
 export type {
   DataOverlayRendererType,
   DataOverlayRendererProps,

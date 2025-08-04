@@ -9,10 +9,9 @@ import { LockIcon, LockOpenIcon, FullscreenIcon } from "@/icons";
 import { IODataOverlay, IOPreviewWrapper } from "./iodataoverlay";
 import { useFuncNodesContext } from "@/providers";
 import { CustomDialog } from "@/shared-components";
-import { IOStore, IOType, RenderType } from "@/nodes-core";
+import { io_try_get_full_value, IOType, RenderType } from "@/nodes-core";
 import { DeepPartial } from "@/object-helpers";
-
-export const IOContext = React.createContext<IOStore>({} as IOStore);
+import { useIOStore } from "@/nodes";
 
 const pick_best_io_type = (
   io: IOType,
@@ -81,7 +80,7 @@ const HandleWithPreview = ({
   const [locked, setLocked] = useState(false);
   const [opened, setOpened] = useState(false);
   const fnrf_zst = useFuncNodesContext();
-  const iostore = React.useContext(IOContext);
+  const iostore = useIOStore();
   const io = iostore.use();
 
   const [pvhandle, overlayhandle] = usePreviewHandleDataRendererForIo(io);
@@ -119,7 +118,7 @@ const HandleWithPreview = ({
                   trigger={<FullscreenIcon />}
                   onOpenChange={(open: boolean) => {
                     if (open) {
-                      if (io.try_get_full_value) io.try_get_full_value();
+                      io_try_get_full_value(iostore);
                     }
                     setLocked(open);
                   }}
@@ -134,7 +133,7 @@ const HandleWithPreview = ({
               )}
             </div>
             {pvhandle ? (
-              <IOPreviewWrapper Component={pvhandle} iostore={iostore} />
+              <IOPreviewWrapper Component={pvhandle} />
             ) : (
               `no preview available for "${typestring}"`
             )}

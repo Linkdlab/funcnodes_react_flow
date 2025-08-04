@@ -18,8 +18,9 @@ import { NodeSettingsOverlay } from "@/node-settings";
 import { useKeyPress } from "@/providers";
 import { CustomDialog } from "@/shared-components";
 import { useWorkerApi } from "@/workers";
-import { IOStore, NodeStore } from "@/nodes-core";
-import { IOContext } from "./io/io";
+import { io_try_get_full_value, IOStore, NodeStore } from "@/nodes-core";
+
+import { IOContext, NodeContext, useNodeStore } from "../../provider";
 
 interface NodeHeaderProps {
   toogleShowSettings?: () => void;
@@ -28,7 +29,7 @@ interface NodeHeaderProps {
 const NodeHeader = React.memo(({ toogleShowSettings }: NodeHeaderProps) => {
   const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const { node } = useWorkerApi();
-  const nodestore = React.useContext(NodeContext);
+  const nodestore = useNodeStore();
   const { id, description, node_name } = nodestore.useShallow((state) => ({
     id: state.id,
     description: state.description,
@@ -84,7 +85,7 @@ interface NodeBodyProps {
 
 const NodeIODataRenderer = React.memo(({ iostore }: { iostore: IOStore }) => {
   const io = iostore.use();
-  const nodestore = React.useContext(NodeContext);
+  const nodestore = useNodeStore();
   const render_options = nodestore.use((state) => state.render_options);
 
   const [pvhandle, overlayhandle] = useBodyDataRendererForIo(io);
@@ -95,23 +96,25 @@ const NodeIODataRenderer = React.memo(({ iostore }: { iostore: IOStore }) => {
       data-src={render_options?.data?.src || ""}
     >
       {pvhandle && io && (
-        <CustomDialog
-          title={io.full_id}
-          trigger={
-            <div className="nodedatabutton">
-              {<IOPreviewWrapper Component={pvhandle} iostore={iostore} />}
-            </div>
-          }
-          onOpenChange={(open: boolean) => {
-            if (open) {
-              iostore.try_get_full_value();
+        <IOContext.Provider value={iostore}>
+          <CustomDialog
+            title={io.full_id}
+            trigger={
+              <div className="nodedatabutton">
+                {<IOPreviewWrapper Component={pvhandle} />}
+              </div>
             }
-          }}
-        >
-          {overlayhandle && (
-            <IODataOverlay Component={overlayhandle} iostore={iostore} />
-          )}
-        </CustomDialog>
+            onOpenChange={(open: boolean) => {
+              if (open) {
+                io_try_get_full_value(iostore);
+              }
+            }}
+          >
+            {overlayhandle && (
+              <IODataOverlay Component={overlayhandle} iostore={iostore} />
+            )}
+          </CustomDialog>
+        </IOContext.Provider>
       )}
     </div>
   );
@@ -119,7 +122,7 @@ const NodeIODataRenderer = React.memo(({ iostore }: { iostore: IOStore }) => {
 
 const NodeBody = React.memo(
   ({ setShowSettings, setNodeSettingsPath }: NodeBodyProps) => {
-    const nodestore = React.useContext(NodeContext);
+    const nodestore = useNodeStore();
     const { render_options, outputs, inputs } = nodestore.useShallow(
       (state) => ({
         render_options: state.render_options,
@@ -165,7 +168,7 @@ const NodeBody = React.memo(
 );
 
 export const NodeName = () => {
-  const nodestore = React.useContext(NodeContext);
+  const nodestore = useNodeStore();
   const { original_name, id } = nodestore.useShallow((state) => ({
     original_name: state.name,
     id: state.id,
@@ -205,7 +208,7 @@ export const NodeName = () => {
 };
 
 const NodeProgressBar = () => {
-  const nodestore = React.useContext(NodeContext);
+  const nodestore = useNodeStore();
   const progress = nodestore.use((state) => state.progress);
   if (!progress) return null;
   return (
@@ -220,7 +223,7 @@ const NodeProgressBar = () => {
 };
 
 const NodeFooter = React.memo(() => {
-  const nodestore = React.useContext(NodeContext);
+  const nodestore = useNodeStore();
   const error = nodestore.use((state) => state.error);
 
   return (
@@ -234,8 +237,6 @@ const NodeFooter = React.memo(() => {
 export interface RFNodeDataPass extends Record<string, unknown> {
   nodestore: NodeStore;
 }
-
-export const NodeContext = React.createContext<NodeStore>({} as NodeStore);
 
 export const DefaultNode = React.memo(
   ({ data }: { data: RFNodeDataPass }) => {

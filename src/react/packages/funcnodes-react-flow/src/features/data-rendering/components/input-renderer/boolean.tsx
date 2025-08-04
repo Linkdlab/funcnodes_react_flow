@@ -1,11 +1,9 @@
 import * as React from "react";
 import { InputRendererProps } from "./types";
-import { useSetIOValue } from "@/nodes";
+import { useIOStore, useSetIOValue } from "@/nodes";
 
-export const BooleanInput = ({
-  iostore,
-  inputconverter,
-}: InputRendererProps) => {
+export const BooleanInput = ({ inputconverter }: InputRendererProps) => {
+  const iostore = useIOStore();
   const { preview } = iostore.valuestore();
   const io = iostore.use();
 

@@ -2,6 +2,7 @@ export type {
   DataViewRendererType,
   DataViewRendererProps,
   InLineRendererType,
+  InLineRendererProps,
   DataOverlayRendererType,
   DataOverlayRendererProps,
   DataPreviewViewRendererType,
@@ -25,7 +26,9 @@ export type {
   ExtendNodeHooksAction,
   RenderMappingAction,
   NodeRendererType,
+  NodeRendererProps,
   NodeHooksType,
+  NodeHooksProps,
 } from "./providers/types";
 
 export interface RenderOptions {

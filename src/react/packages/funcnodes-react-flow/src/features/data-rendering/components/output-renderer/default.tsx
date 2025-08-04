@@ -1,9 +1,10 @@
 import { OutputRendererType } from "./types";
 
 import * as React from "react";
-import { IOStore } from "@/nodes-core";
+import { useIOStore } from "@/nodes";
 
-export const InLineOutput = ({ iostore }: { iostore: IOStore }) => {
+export const InLineOutput = () => {
+  const iostore = useIOStore();
   const { preview, full } = iostore.valuestore();
 
   let disp = (JSON.stringify(full || preview) || "").replace(/\\n/g, "\n");

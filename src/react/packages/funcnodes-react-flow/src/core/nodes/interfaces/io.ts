@@ -8,7 +8,6 @@ import {
 import { BaseRenderOptions } from "./rendering";
 import { UseBoundStore, StoreApi } from "zustand";
 import { UseJSONStore } from "@/zustand-helpers";
-import { FuncNodesWorker } from "@/workers";
 
 export interface IORenderOptions extends BaseRenderOptions {
   set_default: boolean;
@@ -60,8 +59,6 @@ export interface IOStore {
   node: string;
   updateValueStore: (newData: Partial<ValueStoreInterface>) => void;
   serialize: () => SerializedIOType;
-  try_get_full_value: (worker?: FuncNodesWorker) => void;
-  set_hidden: (v: boolean, worker?: FuncNodesWorker) => void;
 }
 
 export interface UpdateableIOOptions {

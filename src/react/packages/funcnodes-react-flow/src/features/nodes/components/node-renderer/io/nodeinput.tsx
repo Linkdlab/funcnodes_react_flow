@@ -2,12 +2,13 @@ import { useContext } from "react";
 import { useFuncNodesContext } from "@/providers";
 import { Position } from "@xyflow/react";
 import { RenderOptions } from "@/data-rendering-types";
-import { HandleWithPreview, IOContext, pick_best_io_type } from "./io";
+import { HandleWithPreview, pick_best_io_type } from "./io";
 
 import * as React from "react";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 import { useKeyPress } from "@/providers";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
+import { useIOStore } from "@/nodes";
 
 const INPUTCONVERTER: {
   [key: string]: [(v: any) => any, (v: any) => any] | undefined;
@@ -50,7 +51,7 @@ const NodeInput = ({
   const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
 
-  const io_store = useContext(IOContext);
+  const io_store = useIOStore();
   const io = io_store.use();
 
   const [typestring, otypestring] = pick_best_io_type(io, render.typemap || {});
@@ -91,7 +92,7 @@ const NodeInput = ({
       <div className="inner_nodeio">
         {Input && (
           <div className="iovaluefield nodrag" {...{ "data-type": typestring }}>
-            <Input inputconverter={inputconverterf} iostore={io_store} />
+            <Input inputconverter={inputconverterf} />
           </div>
         )}
         <div className="ioname">{io.name}</div>

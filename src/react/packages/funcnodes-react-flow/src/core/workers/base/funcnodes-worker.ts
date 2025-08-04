@@ -188,11 +188,7 @@ export class FuncNodesWorker {
     throw new Error("async send(data: any)  not implemented");
   }
 
-  async upload_file({
-    files: _files,
-    onProgressCallback: _onProgressCallback,
-    root: _root,
-  }: {
+  async upload_file(_params: {
     files: File[] | FileList;
     onProgressCallback?: (loaded: number, total?: number) => void;
     root?: string;

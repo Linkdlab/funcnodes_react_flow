@@ -14,6 +14,13 @@ export interface WorkerNodeManagerAPI {
     value: any;
     set_default: boolean;
   }) => any;
+  set_io_value_options: (params: {
+    nid: string;
+    ioid: string;
+    values: any[];
+    keys: string[];
+    nullable: boolean;
+  }) => Promise<void>;
   get_io_full_value: (params: { nid: string; ioid: string }) => any;
   get_io_value: (params: { nid: string; ioid: string }) => any;
   get_ios_values: (params: { nid: string }) => any;
@@ -86,6 +93,37 @@ export class WorkerNodeManager
       wait_for_response: true,
     });
   }
+
+  set_io_value_options({
+    nid,
+    ioid,
+    values,
+    keys,
+    nullable,
+  }: {
+    nid: string;
+    ioid: string;
+    values: any[];
+    keys: string[];
+    nullable: boolean;
+  }) {
+    return this.communicationManager._send_cmd({
+      cmd: "update_io_value_options",
+      kwargs: {
+        nid,
+        ioid,
+        options: {
+          options: {
+            type: "enum",
+            values: values,
+            keys: keys,
+            nullable: nullable,
+          },
+        },
+      },
+    });
+  }
+
   async get_io_value({ nid, ioid }: { nid: string; ioid: string }) {
     const res = await this.communicationManager._send_cmd({
       cmd: "get_io_value",

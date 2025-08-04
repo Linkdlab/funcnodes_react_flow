@@ -10,6 +10,7 @@ import {
   InputRendererProps,
   InputRendererType,
 } from "@/data-rendering-types";
+import { useIOStore } from "@/nodes";
 
 export const DataViewRendererToOverlayRenderer = (
   DV: DataViewRendererType
@@ -24,20 +25,21 @@ export const DataViewRendererToDataPreviewViewRenderer = (
   defaultValue: any = undefined,
   props: any = {}
 ): DataPreviewViewRendererType => {
-  return ({ iostore }: DataPreviewViewRendererProps) => {
+  return ({}: DataPreviewViewRendererProps) => {
+    const iostore = useIOStore();
     const { full, preview } = iostore.valuestore();
     const val = full === undefined ? preview : full;
     const renderval = val?.value || defaultValue;
 
-    return <DV iostore={iostore} value={renderval} {...props} />;
+    return <DV value={renderval} {...props} />;
   };
 };
 
 export const DataPreviewViewRendererToHandlePreviewRenderer = (
   DPR: DataPreviewViewRendererType
 ): HandlePreviewRendererType => {
-  return ({ iostore }: HandlePreviewRendererProps) => {
-    return <DPR iostore={iostore} />;
+  return ({}: HandlePreviewRendererProps) => {
+    return <DPR />;
   };
 };
 
@@ -45,7 +47,8 @@ export const DataViewRendererToInputRenderer = (
   DV: DataViewRendererType,
   defaultValue: any = undefined
 ): InputRendererType => {
-  return ({ iostore }: InputRendererProps) => {
+  return ({}: InputRendererProps) => {
+    const iostore = useIOStore();
     const { full, preview } = iostore.valuestore();
     const val = full === undefined ? preview : full;
     const renderval = val?.value || defaultValue;

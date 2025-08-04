@@ -5,6 +5,7 @@ export type {
   IOType,
   UpdateableIOOptions,
   RenderType,
+  ValueStoreInterface,
 } from "./interfaces";
 export type {
   SerializedNodeType,
@@ -20,5 +21,11 @@ export type {
   TypeOf,
 } from "./serializations";
 
-export { split_rf_nodes, sortByParent, useNodeTools } from "./utils";
+export {
+  split_rf_nodes,
+  sortByParent,
+  useNodeTools,
+  io_try_get_full_value,
+  io_set_hidden,
+} from "./utils";
 export { createNodeStore } from "./stores";

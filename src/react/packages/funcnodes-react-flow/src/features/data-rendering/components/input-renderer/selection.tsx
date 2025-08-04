@@ -2,7 +2,7 @@ import * as React from "react";
 import { InputRendererProps } from "./types";
 
 import { CustomSelect } from "@/shared-components";
-import { useSetIOValue } from "@/nodes";
+import { useIOStore, useSetIOValue } from "@/nodes";
 import { EnumOf } from "@/nodes-core";
 
 const _parse_string = (s: string) => s;
@@ -30,12 +30,12 @@ type SelectionInputOptionType = {
 };
 
 export const SelectionInput = ({
-  iostore,
   inputconverter,
   parser,
 }: InputRendererProps & {
   parser?(s: string): any;
 }) => {
+  const iostore = useIOStore();
   const io = iostore.use();
   const { preview, full } = iostore.valuestore();
   const display = full === undefined ? preview?.value : full.value;

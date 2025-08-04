@@ -19,7 +19,9 @@ declare global {
   }
 }
 
-export const DEFAULT_FN_PROPS_FACTORY = object_factory_maker(
+export const DEFAULT_FN_PROPS_FACTORY: (
+  obj?: LimitedDeepPartial<FuncnodesReactFlowProps>
+) => FuncnodesReactFlowProps = object_factory_maker(
   DEFAULT_FN_PROPS,
   (obj: FuncnodesReactFlowProps) => {
     obj.id = uuidv4();

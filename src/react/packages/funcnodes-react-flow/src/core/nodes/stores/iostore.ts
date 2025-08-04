@@ -6,7 +6,6 @@ import { assert_full_nodeio } from "./full-io";
 import { create } from "zustand";
 import { DataStructure, JSONStructure } from "@/data-structures";
 import { update_io } from "./update";
-import { FuncNodesWorker, useWorkerApi } from "@/workers";
 
 export const createIOStore = (
   node_id: string,
@@ -97,33 +96,6 @@ export const createIOStore = (
         emit_value_set: state.emit_value_set,
       };
       return serialized_io;
-    },
-    try_get_full_value: (worker?: FuncNodesWorker) => {
-      const io = iostore.io_state.getState();
-      if (!worker) {
-        const { node } = useWorkerApi();
-        node?.get_io_full_value({ nid: io.node, ioid: io.id });
-      } else {
-        worker.api.node.get_io_full_value({ nid: io.node, ioid: io.id });
-      }
-    },
-
-    set_hidden: (v: boolean, worker?: FuncNodesWorker) => {
-      const io = iostore.io_state.getState();
-      if (!worker) {
-        const { node } = useWorkerApi();
-        node?.update_io_options({
-          nid: io.node,
-          ioid: io.id,
-          options: { hidden: v },
-        });
-      } else {
-        worker.api.node.update_io_options({
-          nid: io.node,
-          ioid: io.id,
-          options: { hidden: v },
-        });
-      }
     },
   };
 

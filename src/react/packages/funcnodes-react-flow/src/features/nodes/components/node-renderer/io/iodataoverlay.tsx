@@ -3,7 +3,7 @@ import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
 } from "@/data-rendering-types";
-import { IOStore } from "@/nodes-core";
+import { io_try_get_full_value, IOStore } from "@/nodes-core";
 
 export const IODataOverlay = ({
   iostore,
@@ -21,7 +21,7 @@ export const IODataOverlay = ({
 
   React.useEffect(() => {
     if (full === undefined) {
-      iostore.getState().try_get_full_value();
+      io_try_get_full_value(iostore);
     } else {
       // When a new value arrives, store it as pending
       setPendingValue(full.value);
@@ -45,11 +45,9 @@ export const IODataOverlay = ({
 };
 
 export const IOPreviewWrapper = ({
-  iostore,
   Component,
 }: {
   Component: DataPreviewViewRendererType;
-  iostore: IOStore;
 }): React.JSX.Element => {
-  return <Component iostore={iostore} />;
+  return <Component />;
 };

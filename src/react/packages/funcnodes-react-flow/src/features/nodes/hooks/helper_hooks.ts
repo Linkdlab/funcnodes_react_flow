@@ -1,9 +1,32 @@
 import { IOType } from "@/nodes-core";
 import { useWorkerApi } from "@/workers";
 import * as React from "react";
+import { useIOStore } from "../provider";
+import { ValueStoreInterface } from "@/nodes-core";
 
-export const useSetIOValue = (io: IOType) => {
+export function useSetIOValue(): (value: any, set_default?: boolean) => void;
+export function useSetIOValue(
+  io: string
+): (value: any, set_default?: boolean) => void;
+export function useSetIOValue(
+  io: IOType
+): (value: any, set_default?: boolean) => void;
+export function useSetIOValue(io?: IOType | string | undefined) {
   const { node } = useWorkerApi();
+  if (!io) {
+    const iostore = useIOStore();
+    io = iostore.use();
+  }
+  if (typeof io === "string") {
+    const iostore = useIOStore(io);
+    io = iostore?.use();
+    if (!io) {
+      throw new Error(`No IO found for ${io}`);
+    }
+  }
+  if (!io) {
+    throw new Error("No IO found");
+  }
 
   const func = React.useCallback(
     (value: any, set_default?: boolean) => {
@@ -21,4 +44,59 @@ export const useSetIOValue = (io: IOType) => {
   );
 
   return func;
-};
+}
+
+type IOValueOptionsSetter = (data: {
+  values?: any[];
+  keys: string[];
+  nullable?: boolean;
+}) => void;
+
+export function useSetIOValueOptions(): IOValueOptionsSetter;
+export function useSetIOValueOptions(io: string): IOValueOptionsSetter;
+export function useSetIOValueOptions(io: IOType): IOValueOptionsSetter;
+export function useSetIOValueOptions(
+  io?: IOType | string | undefined
+): IOValueOptionsSetter {
+  const { node } = useWorkerApi();
+  if (!io) {
+    const iostore = useIOStore();
+    io = iostore.use();
+  }
+  if (typeof io === "string") {
+    const iostore = useIOStore(io);
+    io = iostore?.use();
+    if (!io) {
+      throw new Error(`No IO found for ${io}`);
+    }
+  }
+  if (!io) {
+    throw new Error("No IO found");
+  }
+
+  const func = React.useCallback(
+    (data: { values?: any[]; keys: string[]; nullable?: boolean }) => {
+      node?.set_io_value_options({
+        nid: io.node,
+        ioid: io.id,
+        values: data.values ?? data.keys,
+        keys: data.keys,
+        nullable: data.nullable ?? false,
+      });
+    },
+    [io, node]
+  );
+
+  return func;
+}
+
+export function useIOValueStore(): ValueStoreInterface;
+export function useIOValueStore(io: string): ValueStoreInterface | undefined;
+export function useIOValueStore(
+  io: string | undefined
+): ValueStoreInterface | undefined;
+export function useIOValueStore(io?: string) {
+  const iostore = useIOStore(io);
+
+  return iostore?.valuestore();
+}

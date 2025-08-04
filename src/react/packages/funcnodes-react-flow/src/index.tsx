@@ -20,7 +20,7 @@ import "./index.scss";
 
 declare const __FN_VERSION__: string;
 
-const FuncNodesRenderer = (
+export const FuncNodesRenderer = (
   id_or_element: string | HTMLElement,
   options?: Partial<FuncnodesReactFlowProps>
 ) => {
@@ -56,9 +56,41 @@ window.FuncNodes.utils = {
     ERROR,
   },
 };
-export default FuncNodesRenderer;
 
-export type { FuncNodesReactPlugin } from "@/plugins";
+export type {
+  FuncNodesReactPlugin,
+  VersionedFuncNodesReactPlugin,
+  RenderPluginFactoryProps,
+  LATEST_VERSION,
+  RendererPlugin,
+} from "@/plugins";
+export type {
+  InputRendererType,
+  InputRendererProps,
+  OutputRendererType,
+  OutputRendererProps,
+  HandlePreviewRendererType,
+  HandlePreviewRendererProps,
+  DataOverlayRendererType,
+  DataOverlayRendererProps,
+  DataPreviewViewRendererType,
+  DataPreviewViewRendererProps,
+  DataViewRendererType,
+  DataViewRendererProps,
+  InLineRendererType,
+  InLineRendererProps,
+  NodeRendererType,
+  NodeRendererProps,
+  NodeHooksType,
+  NodeHooksProps,
+} from "@/data-rendering-types";
+export {
+  useNodeStore,
+  useIOStore,
+  useSetIOValue,
+  useIOValueStore,
+  useSetIOValueOptions,
+} from "@/nodes";
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

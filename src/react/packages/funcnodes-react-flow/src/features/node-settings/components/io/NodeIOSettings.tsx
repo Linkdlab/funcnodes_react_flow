@@ -1,15 +1,16 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { pick_best_io_type, INPUTCONVERTER, IOContext } from "@/nodes";
+import { pick_best_io_type, INPUTCONVERTER, useIOStore } from "@/nodes";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 import { useWorkerApi } from "@/workers";
+import { io_set_hidden } from "@/nodes-core";
 
 interface NodeIOSettingsProps {}
 
 export const NodeIOSettings = ({}: NodeIOSettingsProps) => {
   const fnrf_zst = useFuncNodesContext();
   const { node } = useWorkerApi();
-  const io_store = React.useContext(IOContext);
+  const io_store = useIOStore();
   const io = io_store.use();
   const renderOpts = fnrf_zst.render_options();
 
@@ -68,7 +69,7 @@ export const NodeIOSettings = ({}: NodeIOSettingsProps) => {
       </div>
       <div className="funcnodes-control-row">
         <label>Value:</label>
-        {Input && <Input iostore={io_store} inputconverter={inputconverterf} />}
+        {Input && <Input inputconverter={inputconverterf} />}
       </div>
       <div className="funcnodes-control-row">
         <label>Type:</label>
@@ -80,7 +81,7 @@ export const NodeIOSettings = ({}: NodeIOSettingsProps) => {
           id={`io-hidden-${io.id}`}
           type="checkbox"
           checked={io.hidden}
-          onChange={(e) => io.set_hidden(e.target.checked)}
+          onChange={(e) => io_set_hidden(io_store, e.target.checked)}
           className="styledcheckbox"
           disabled={io.connected && io.is_input}
         />

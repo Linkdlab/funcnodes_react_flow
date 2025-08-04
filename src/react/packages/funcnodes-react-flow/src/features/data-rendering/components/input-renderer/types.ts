@@ -1,8 +1,6 @@
-import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
 export type InputRendererProps = {
-  iostore: IOStore;
   inputconverter: [(v: any) => any, (v: any) => any];
 };
 

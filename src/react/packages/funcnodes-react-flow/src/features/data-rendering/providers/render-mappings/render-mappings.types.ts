@@ -6,18 +6,17 @@ import {
   InLineRendererType,
   InputRendererType,
   OutputRendererType,
-} from "@/data-rendering-types"; // Note: this import will also be updated later
-import { NodeStore } from "@/nodes-core";
+} from "@/data-rendering-types";
 import { RendererPlugin } from "@/plugins";
 import { JSX } from "react";
 
 export interface NodeRendererProps {
-  nodestore: NodeStore;
+  // nodestore: NodeStore;
 }
 export type NodeRendererType = (renderprops: NodeRendererProps) => JSX.Element;
 
 export type NodeHooksProps = {
-  nodestore: NodeStore;
+  // nodestore: NodeStore;
 };
 export type NodeHooksType = (hookprops: NodeHooksProps) => void;
 

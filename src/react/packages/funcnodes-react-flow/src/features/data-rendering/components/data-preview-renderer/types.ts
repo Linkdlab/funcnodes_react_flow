@@ -1,9 +1,6 @@
-import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
-export type DataPreviewViewRendererProps = {
-  iostore: IOStore;
-};
+export type DataPreviewViewRendererProps = {};
 
 type BasicDataPreviewViewRendererType = (
   props: DataPreviewViewRendererProps

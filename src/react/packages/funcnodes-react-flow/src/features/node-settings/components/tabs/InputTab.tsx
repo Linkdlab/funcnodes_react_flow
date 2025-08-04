@@ -1,14 +1,14 @@
 import * as React from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { NodeIOSettings } from "../io";
-import { IOContext, NodeContext } from "@/nodes";
+import { IOContext, useNodeStore } from "@/nodes";
 
 interface InputTabProps {
   splitnodesettingsPath?: string[];
 }
 
 export const InputTab = ({ splitnodesettingsPath = [] }: InputTabProps) => {
-  const nodestore = React.useContext(NodeContext);
+  const nodestore = useNodeStore();
   const inputs = nodestore.use((state) => state.inputs);
   return (
     <Tabs.Root

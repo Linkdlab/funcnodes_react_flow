@@ -32,7 +32,13 @@ export interface PackedPlugin {
   css?: string[];
 }
 
-export interface FuncNodesReactPlugin<V extends string = string> {
+export const LATEST_VERSION = "1.0.0";
+
+export interface VersionedFuncNodesReactPlugin<V extends string = string> {
   renderpluginfactory?: (props: RenderPluginFactoryProps) => RendererPlugin;
   v: V;
 }
+
+export type FuncNodesReactPlugin = VersionedFuncNodesReactPlugin<
+  typeof LATEST_VERSION
+>;

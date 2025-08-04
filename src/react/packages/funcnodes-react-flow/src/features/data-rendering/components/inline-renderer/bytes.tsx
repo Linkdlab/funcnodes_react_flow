@@ -1,11 +1,8 @@
+import { useIOStore } from "@/nodes";
 import { InLineRendererType } from "./types";
-import { IOStore } from "@/nodes-core";
 
-export const Base64BytesInLineRenderer: InLineRendererType = ({
-  iostore,
-}: {
-  iostore: IOStore;
-}) => {
+export const Base64BytesInLineRenderer: InLineRendererType = () => {
+  const iostore = useIOStore();
   const { full, preview } = iostore.valuestore();
   const disp = JSON.stringify(full?.value || preview?.value) || "";
 

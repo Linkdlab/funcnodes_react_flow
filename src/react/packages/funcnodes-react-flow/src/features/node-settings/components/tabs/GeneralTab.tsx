@@ -1,13 +1,13 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { NodeContext, NodeName } from "@/nodes";
+import { NodeName, useNodeStore } from "@/nodes";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 interface GeneralTabProps {}
 
 export const GeneralTab = ({}: GeneralTabProps) => {
   const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
-  const nodestore = React.useContext(NodeContext);
+  const nodestore = useNodeStore();
   const { description, id, node_id, node_name, reset_inputs_on_trigger } =
     nodestore.useShallow((state) => ({
       description: state.description,

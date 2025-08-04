@@ -1,7 +1,7 @@
 import * as React from "react";
 import { InputRendererProps } from "./types";
 import * as Slider from "@radix-ui/react-slider";
-import { useSetIOValue } from "@/nodes";
+import { useIOStore, useSetIOValue } from "@/nodes";
 
 function relativeRound(value: number) {
   if (value === 0) return 0;
@@ -12,12 +12,12 @@ function relativeRound(value: number) {
 }
 
 export const NumberInput = ({
-  iostore,
   inputconverter,
   parser = (n: string) => parseFloat(n),
 }: InputRendererProps & {
   parser: (n: string) => number;
 }) => {
+  const iostore = useIOStore();
   const { preview } = iostore.valuestore();
   const io = iostore.use();
   const set_io_value = useSetIOValue(io);
@@ -187,13 +187,10 @@ export const NumberInput = ({
   );
 };
 
-export const FloatInput = ({ iostore, inputconverter }: InputRendererProps) => {
-  return NumberInput({ iostore, inputconverter, parser: parseFloat });
+export const FloatInput = ({ inputconverter }: InputRendererProps) => {
+  return NumberInput({ inputconverter, parser: parseFloat });
 };
 
-export const IntegerInput = ({
-  iostore,
-  inputconverter,
-}: InputRendererProps) => {
-  return NumberInput({ iostore, inputconverter, parser: parseInt });
+export const IntegerInput = ({ inputconverter }: InputRendererProps) => {
+  return NumberInput({ inputconverter, parser: parseInt });
 };

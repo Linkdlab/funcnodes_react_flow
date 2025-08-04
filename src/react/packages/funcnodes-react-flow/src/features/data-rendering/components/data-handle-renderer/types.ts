@@ -1,9 +1,6 @@
-import { IOStore } from "@/nodes-core";
 import { JSX } from "react";
 
-export type HandlePreviewRendererProps = {
-  iostore: IOStore;
-};
+export type HandlePreviewRendererProps = {};
 
 type BasicHandlePreviewRendererType = (
   props: HandlePreviewRendererProps
