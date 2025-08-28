@@ -48,9 +48,19 @@ export class PluginManagerHandler
         return { ...prev, [name]: latestplugin };
       });
     } catch (e) {
+      if (e instanceof Error) {
+        this.context.rf.logger.error(`Error loading plugin ${name}`, e);
+      } else {
+        this.context.rf.logger.error(
+          `Error loading plugin ${name}`,
+          new Error(String(e))
+        );
+      }
       this.stateManager.toaster?.error({
         title: "Error",
-        description: `Error loading plugin ${name}: ${e}`,
+        description: `Error loading plugin ${name}: ${
+          e instanceof Error ? e.message : String(e)
+        }`,
         duration: 5000,
       });
     }
@@ -95,6 +105,14 @@ export class PluginManagerHandler
         const module = await factory(React, FuncNodesReactFlow);
         this.add_plugin(name, module);
       } catch (e) {
+        if (e instanceof Error) {
+          this.context.rf.logger.error(`Error building plugin ${name}`, e);
+        } else {
+          this.context.rf.logger.error(
+            `Error building plugin ${name}`,
+            new Error(String(e))
+          );
+        }
         this.stateManager.toaster?.error({
           title: "Error",
           description: `Error building plugin ${name}: ${e}`,
