@@ -16,7 +16,7 @@
         "typecheck": "npm run pretypecheck && tsc --noEmit"
     },
     "devDependencies": {
-        "@linkdlab/funcnodes_react_flow": "workspace:../funcnodes-react-flow",
+        "@linkdlab/funcnodes_react_flow": "workspace:*",
         "@vitejs/plugin-react": "^4.7.0",
         "rollup": "^4.46.2",
         "rollup-plugin-dts": "^6.2.1",
