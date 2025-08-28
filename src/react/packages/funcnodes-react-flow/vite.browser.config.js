@@ -61,6 +61,9 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       "process.env.NODE_ENV": JSON.stringify(mode),
+      "process.env.FA_VERSION": JSON.stringify(
+        process.env.FA_VERSION || "7.0.0"
+      ),
       __FN_VERSION__: JSON.stringify(version), // Define the version number
       global: "window", // replacement if you need the global object in browser builds.
     },
