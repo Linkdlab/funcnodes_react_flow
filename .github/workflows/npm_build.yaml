@@ -29,12 +29,12 @@ jobs:
           cache: yarn
           cache-dependency-path: src/react/yarn.lock
 
-      # Install dependencies in the src/react directory.
+      # Install dependencies in the src/react directory (workspace root).
       - name: Install dependencies
         working-directory: src/react
         run: yarn install
 
-      # Run the build script in the src/react directory.
+      # Run the build script in the src/react directory (workspace root).
       - name: Build project
         working-directory: src/react
         run: yarn build
