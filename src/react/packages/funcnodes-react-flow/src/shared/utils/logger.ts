@@ -82,13 +82,13 @@ export interface Logger {
    * Log an error message. Only outputs if current level <= ERROR.
    *
    * @param {string} message - The primary log message
-   * @param {...any[]} args - Additional arguments for context (will be JSON serialized)
+   * @param {Error} [error] - Optional Error object for stack trace handling
    * @example
    * ```typescript
-   * logger.error("Operation failed", error, { retryCount: 3, userId: 123 });
+   * logger.error("Operation failed", error);
    * ```
    */
-  error: (message: string, ...args: any[]) => void;
+  error: (message: string, error?: Error) => void;
 }
 
 /**
@@ -363,8 +363,9 @@ export abstract class BaseLogger implements Logger {
    * @abstract
    * @protected
    * @param {string} formatted_message - The pre-formatted message to output
+   * @param {Error | undefined} error - Optional Error object for stack trace handling
    */
-  protected abstract out_error(formatted_message: string): void;
+  protected abstract out_error(formatted_message: string, error?: Error): void;
 
   /**
    * Log a debug message if the current level allows it.
@@ -406,11 +407,11 @@ export abstract class BaseLogger implements Logger {
    * Log an error message if the current level allows it.
    *
    * @param {string} message - The primary log message
-   * @param {...any[]} args - Additional context arguments
+   * @param {Error} [error] - Optional Error object for stack trace handling
    */
-  error(message: string, ...args: any[]) {
+  error(message: string, error?: Error) {
     if (this.level <= LEVELS.ERROR) {
-      this.out_error(this.format_message("ERROR", message, ...args));
+      this.out_error(this.format_message("ERROR", message), error);
     }
   }
 }
@@ -480,9 +481,13 @@ export class ConsoleLogger extends BaseLogger {
    *
    * @protected
    * @param {string} formatted_message - The formatted message to output
+   * @param {Error | undefined} error - Optional Error object for stack trace handling
    */
-  protected out_error(formatted_message: string): void {
+  protected out_error(formatted_message: string, error?: Error): void {
     console.error(formatted_message);
+    if (error) {
+      console.error(error);
+    }
   }
 }
 
@@ -607,8 +612,14 @@ export class DivLogger extends BaseLogger {
    *
    * @protected
    * @param {string} formatted_message - The pre-formatted and HTML-escaped message to output
+   * @param {Error | undefined} error - Optional Error object for stack trace handling
    */
-  protected out_error(formatted_message: string): void {
-    this._div.innerHTML += `<div class="error">${formatted_message}</div>`;
+  protected out_error(formatted_message: string, error?: Error): void {
+    let errorContent = formatted_message;
+    if (error) {
+      const stackTrace = error.stack ? escapeHtml(error.stack) : escapeHtml(error.message);
+      errorContent += `<br><pre>${stackTrace}</pre>`;
+    }
+    this._div.innerHTML += `<div class="error">${errorContent}</div>`;
   }
 }
