@@ -25,7 +25,7 @@
   "scripts": {
     "typewatch": "tsc --noEmit --watch",
     "typecheck": "tsc --noEmit",
-    "build": " vite build && vite build --config vite.browser.config.js",
+    "build": "vite build --config vite.browser.config.js && vite build",
     "watch": "vite --config vite.browser.config.js",
     "preview": "vite build --config vite.browser.config.js && vite preview --config vite.browser.config.js",
     "test": "vitest run --config vitest.config.fast.ts",

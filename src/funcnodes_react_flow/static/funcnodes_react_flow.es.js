@@ -28921,7 +28921,10 @@ class MX extends di {
         });
         break;
       } catch (o) {
-        this.context.worker._zustand.logger.error("Error in fullsync", o);
+        o instanceof Error ? this.context.worker._zustand.logger.error("Error in fullsync", o) : this.context.worker._zustand.logger.error(
+          "Error in fullsync",
+          new Error(JSON.stringify(o))
+        );
       }
     this.context.worker._zustand.logger.debug("Full state", t), this.context.worker._zustand.lib.libstate.getState().set({
       lib: t.backend.lib,
@@ -52266,7 +52269,10 @@ class Ape extends ql {
       }
     }, this._update_node = (n) => {
       if (Object.keys(n.node).length === 0) {
-        this.context.rf.logger.error("Node update is empty", n);
+        this.context.rf.logger.error(
+          "Node update is empty",
+          new Error(JSON.stringify(n))
+        );
         return;
       }
       if (n.node.in_trigger && (n.node.error = void 0), n.from_remote) {
@@ -52285,7 +52291,7 @@ class Ape extends ql {
           id: n.id
         }
       ]) : this.workerManager.worker?.api.node.remove_node(n.id);
-    }, this._error_action = (n) => (this.context.rf.logger.error("Error", n), this.on_node_action({
+    }, this._error_action = (n) => (this.context.rf.logger.error("Error", new Error(JSON.stringify(n))), this.on_node_action({
       type: "update",
       id: n.id,
       node: {
@@ -52416,7 +52422,10 @@ class jpe extends ql {
         const r = Ppe(n);
         this.plugins.setState((o) => ({ ...o, [t]: r }));
       } catch (r) {
-        this.context.rf.logger.error(`Error loading plugin ${t}`, r), this.stateManager.toaster?.error({
+        r instanceof Error ? this.context.rf.logger.error(`Error loading plugin ${t}`, r) : this.context.rf.logger.error(
+          `Error loading plugin ${t}`,
+          new Error(String(r))
+        ), this.stateManager.toaster?.error({
           title: "Error",
           description: `Error loading plugin ${t}: ${r instanceof Error ? r.message : String(r)}`,
           duration: 5e3
@@ -52452,7 +52461,10 @@ class jpe extends ql {
         )(gl, a6);
         this.add_plugin(t, a);
       } catch (o) {
-        this.context.rf.logger.error(`Error building plugin ${t}`, o), this.stateManager.toaster?.error({
+        o instanceof Error ? this.context.rf.logger.error(`Error building plugin ${t}`, o) : this.context.rf.logger.error(
+          `Error building plugin ${t}`,
+          new Error(String(o))
+        ), this.stateManager.toaster?.error({
           title: "Error",
           description: `Error building plugin ${t}: ${o}`,
           duration: 5e3
@@ -52700,7 +52712,10 @@ const $pe = (e) => {
           await p.update_from_export(h), t.worker.getSyncManager().on_sync_complete = c, c && c(p);
         });
       } catch (h) {
-        t.logger?.error("Failed to load fnw_url:", h);
+        h instanceof Error ? t.logger?.error("Failed to load fnw_url:", h) : t.logger?.error(
+          "Failed to load fnw_url:",
+          new Error(String(h))
+        );
       }
     })(), () => {
       u = !0, t.worker && (t.worker.getSyncManager().on_sync_complete = c);
