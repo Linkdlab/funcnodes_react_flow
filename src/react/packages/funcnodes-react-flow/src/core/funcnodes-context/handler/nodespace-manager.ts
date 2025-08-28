@@ -405,7 +405,10 @@ export class NodeSpaceManager
   _update_node = (action: NodeActionUpdate): NodeType | undefined => {
     // some action reset the error, so far trigger does, so errors should remove the in_trigger flag
     if (Object.keys(action.node).length === 0) {
-      this.context.rf.logger.error("Node update is empty", action);
+      this.context.rf.logger.error(
+        "Node update is empty",
+        new Error(JSON.stringify(action))
+      );
       return undefined;
     }
     if (action.node.in_trigger) {
@@ -444,7 +447,7 @@ export class NodeSpaceManager
   };
 
   _error_action = (action: NodeActionError) => {
-    this.context.rf.logger.error("Error", action);
+    this.context.rf.logger.error("Error", new Error(JSON.stringify(action)));
     return this.on_node_action({
       type: "update",
       id: action.id,

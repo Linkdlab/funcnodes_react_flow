@@ -167,7 +167,14 @@ export const FuncNodes = (
           };
         }
       } catch (error) {
-        fullProps.logger?.error("Failed to load fnw_url:", error);
+        if (error instanceof Error) {
+          fullProps.logger?.error("Failed to load fnw_url:", error);
+        } else {
+          fullProps.logger?.error(
+            "Failed to load fnw_url:",
+            new Error(String(error))
+          );
+        }
       }
     };
 
