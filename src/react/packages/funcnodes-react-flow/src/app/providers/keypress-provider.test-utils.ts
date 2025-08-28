@@ -65,7 +65,7 @@ export const simulateKeyCombo = (
   target: Window | Document | Element = window
 ) => {
   console.log(`UTIL: simulateKeyCombo called with modifiers: ${modifierKeys.join('+')}, action: ${actionKey}`);
-  
+
   // Clear any existing keys first
   console.log("UTIL: Clearing existing keys with blur");
   act(() => {

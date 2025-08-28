@@ -22,8 +22,8 @@
 
   &-progress {
     height: 100%;
-    background: linear-gradient(90deg, 
-      var(--primary-color, #007acc) 0%, 
+    background: linear-gradient(90deg,
+      var(--primary-color, #007acc) 0%,
       var(--primary-light, #4fc3f7) 100%);
     transition: width 0.3s ease-in-out;
     border-radius: inherit;
@@ -44,7 +44,7 @@
   // Dark theme support
   @media (prefers-color-scheme: dark) {
     background-color: var(--bg-secondary, #2d2d2d);
-    
+
     &-text {
       color: var(--text-primary, #e0e0e0);
       text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
@@ -55,7 +55,7 @@
   @media (max-width: 480px) {
     font-size: 0.75rem;
     min-height: 1.25rem;
-    
+
     &-text {
       padding: 0.125rem 0.375rem;
     }
