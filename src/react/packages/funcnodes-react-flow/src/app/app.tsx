@@ -99,7 +99,6 @@ export const FuncNodes = (
   // Effect 3: Manage Worker lifecycle
   React.useEffect(() => {
     if (!fullProps || !fnrfzst) return;
-
     // Skip if using worker manager or no worker URL provided
     if (fullProps.useWorkerManager || !fullProps.worker_url) return;
 
@@ -216,6 +215,9 @@ export const FuncNodes = (
         fnrfzst
       );
       fnrfzst.workermanager = workermanager;
+
+      // set zustand
+      setFullProps((prev) => (prev ? { ...prev, workermanager } : prev));
 
       // Cleanup only removes if this exact instance matches
       return () => {
