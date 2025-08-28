@@ -127,10 +127,10 @@ describe("CustomSelect", () => {
     );
 
     const input = screen.getByRole("combobox");
-    
+
     // First search
     fireEvent.change(input, { target: { value: "option1" } });
-    
+
     // Change search - should reset to page 0
     fireEvent.change(input, { target: { value: "option2" } });
 

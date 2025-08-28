@@ -7,7 +7,7 @@ describe("JSONDisplay", () => {
   it("renders simple object data", () => {
     const testData = { key: "value", number: 42 };
     render(<JSONDisplay data={testData} />);
-    
+
     // JsonView renders the data, so we check for the container
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
@@ -16,7 +16,7 @@ describe("JSONDisplay", () => {
   it("renders array data", () => {
     const testData = [1, 2, 3, "test"];
     render(<JSONDisplay data={testData} />);
-    
+
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
   });
@@ -24,28 +24,28 @@ describe("JSONDisplay", () => {
   it("renders empty object as empty string", () => {
     const testData = {};
     render(<JSONDisplay data={testData} />);
-    
+
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
   });
 
   it("renders null value", () => {
     render(<JSONDisplay data={null} />);
-    
+
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
   });
 
   it("renders undefined value", () => {
     render(<JSONDisplay data={undefined} />);
-    
+
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
   });
 
   it("renders primitive values", () => {
     render(<JSONDisplay data="string value" />);
-    
+
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
   });
@@ -59,7 +59,7 @@ describe("JSONDisplay", () => {
       }
     };
     render(<JSONDisplay data={testData} />);
-    
+
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
   });
@@ -67,7 +67,7 @@ describe("JSONDisplay", () => {
   it("applies custom className", () => {
     const customClass = "custom-json-class";
     render(<JSONDisplay data={{ test: "data" }} className={customClass} />);
-    
+
     const container = document.querySelector(`.${customClass}`);
     expect(container).toBeInTheDocument();
   });
@@ -76,7 +76,7 @@ describe("JSONDisplay", () => {
     const nullProtoObj = Object.create(null);
     nullProtoObj.key = "value";
     render(<JSONDisplay data={nullProtoObj} />);
-    
+
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
   });
@@ -96,7 +96,7 @@ describe("JSONDisplay", () => {
       undefinedValue: undefined
     };
     render(<JSONDisplay data={complexData} />);
-    
+
     const container = document.querySelector(".json-display");
     expect(container).toBeInTheDocument();
   });

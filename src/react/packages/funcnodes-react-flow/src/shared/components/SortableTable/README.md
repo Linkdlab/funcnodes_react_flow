@@ -44,7 +44,7 @@ const data = {
 
 ### With Pagination
 ```tsx
-<SortableTable 
+<SortableTable
   tabledata={largeDataset}
   enablePagination={true}
   pageSize={50}
@@ -53,7 +53,7 @@ const data = {
 
 ### With Virtual Scrolling
 ```tsx
-<SortableTable 
+<SortableTable
   tabledata={veryLargeDataset}
   enableVirtualScrolling={true}
   virtualScrollingHeight={400}
@@ -67,7 +67,7 @@ const handleLoadMore = async (page: number) => {
   // Update your data source
 };
 
-<SortableTable 
+<SortableTable
   tabledata={dataset}
   enablePagination={true}
   enableLazyLoading={true}
@@ -77,7 +77,7 @@ const handleLoadMore = async (page: number) => {
 
 ### Combined Performance Features
 ```tsx
-<SortableTable 
+<SortableTable
   tabledata={massiveDataset}
   enablePagination={true}
   pageSize={100}
@@ -148,4 +148,4 @@ The component uses CSS variables for theming:
 
 - Modern browsers with ES6+ support
 - Virtual scrolling requires CSS `position: sticky` support
-- Pagination works in all browsers 
+- Pagination works in all browsers

@@ -17310,23 +17310,23 @@ var G8 = function() {
     n === "padding" && "padding-right: ".concat(u, "px ").concat(r, ";")
   ].filter(Boolean).join(""), `
   }
-  
+
   .`).concat(Nh, ` {
     right: `).concat(u, "px ").concat(r, `;
   }
-  
+
   .`).concat(Dh, ` {
     margin-right: `).concat(u, "px ").concat(r, `;
   }
-  
+
   .`).concat(Nh, " .").concat(Nh, ` {
     right: 0 `).concat(r, `;
   }
-  
+
   .`).concat(Dh, " .").concat(Dh, ` {
     margin-right: 0 `).concat(r, `;
   }
-  
+
   body[`).concat(ll, `] {
     `).concat(P8, ": ").concat(u, `px;
   }
@@ -51580,8 +51580,8 @@ const Cw = ({
 }) => {
   const [t, n] = _.useState(!1), r = () => n(!t), o = 150, a = e.description.length > o ? e.description.substring(0, o) + "..." : e.description;
   return /* @__PURE__ */ x.jsxs("div", { className: "module-description", children: [
-    /* @__PURE__ */ x.jsx(ode, { remarkPlugins: [ype], children: t ? e.description.replace(/\\n/g, `  
-`) : a.replace(/\\n/g, `  
+    /* @__PURE__ */ x.jsx(ode, { remarkPlugins: [ype], children: t ? e.description.replace(/\\n/g, `
+`) : a.replace(/\\n/g, `
 `) }),
     e.description.length > o && /* @__PURE__ */ x.jsx("button", { onClick: r, className: "toggle-description", children: t ? "Show less" : "Show more" })
   ] });

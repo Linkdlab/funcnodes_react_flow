@@ -10,7 +10,7 @@ vi.mock("@/utils/autolayout/txt", () => ({
 
 describe("ProgressBar", () => {
   const mockFitTextToContainer = vi.fn();
-  
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(mockFitTextToContainer).mockImplementation(() => {});
@@ -35,10 +35,10 @@ describe("ProgressBar", () => {
 
   it("renders with default state", () => {
     render(<ProgressBar state={defaultState} />);
-    
+
     const container = document.querySelector(".reacttqdm");
     expect(container).toBeInTheDocument();
-    
+
     const progressBar = document.querySelector(".reacttqdm-progress");
     expect(progressBar).toBeInTheDocument();
     expect(progressBar).toHaveStyle({ width: "50%" });
@@ -47,7 +47,7 @@ describe("ProgressBar", () => {
   it("renders with custom className", () => {
     const customClass = "custom-progress";
     render(<ProgressBar state={defaultState} className={customClass} />);
-    
+
     const container = document.querySelector(`.${customClass}`);
     expect(container).toBeInTheDocument();
   });
@@ -59,7 +59,7 @@ describe("ProgressBar", () => {
       total: 100,
     };
     render(<ProgressBar state={state} />);
-    
+
     const progressBar = document.querySelector(".reacttqdm-progress");
     expect(progressBar).toHaveStyle({ width: "75%" });
   });
@@ -70,14 +70,14 @@ describe("ProgressBar", () => {
       total: undefined,
     };
     render(<ProgressBar state={state} />);
-    
+
     const progressBar = document.querySelector(".reacttqdm-progress");
     expect(progressBar).toHaveStyle({ width: "0%" });
   });
 
   it("renders progress text", () => {
     render(<ProgressBar state={defaultState} />);
-    
+
     const textContainer = document.querySelector(".reacttqdm-text");
     expect(textContainer).toBeInTheDocument();
     expect(textContainer).toHaveTextContent("50%");
@@ -89,7 +89,7 @@ describe("ProgressBar", () => {
       prefix: "Processing",
     };
     render(<ProgressBar state={state} />);
-    
+
     const textContainer = document.querySelector(".reacttqdm-text");
     expect(textContainer).toHaveTextContent("Processing:");
   });
@@ -100,7 +100,7 @@ describe("ProgressBar", () => {
       postfix: " items/sec",
     };
     render(<ProgressBar state={state} />);
-    
+
     const textContainer = document.querySelector(".reacttqdm-text");
     expect(textContainer).toHaveTextContent("items/sec");
   });
@@ -113,7 +113,7 @@ describe("ProgressBar", () => {
       total: 3000,
     };
     render(<ProgressBar state={state} />);
-    
+
     const progressBar = document.querySelector(".reacttqdm-progress");
     expect(progressBar).toHaveStyle({ width: "50%" });
   });
@@ -124,7 +124,7 @@ describe("ProgressBar", () => {
       unit: "files",
     };
     render(<ProgressBar state={state} />);
-    
+
     const textContainer = document.querySelector(".reacttqdm-text");
     expect(textContainer).toHaveTextContent("files");
   });
@@ -135,7 +135,7 @@ describe("ProgressBar", () => {
       rate: 5.5,
     };
     render(<ProgressBar state={state} />);
-    
+
     const textContainer = document.querySelector(".reacttqdm-text");
     expect(textContainer).toBeInTheDocument();
     // Rate should be displayed in the text
@@ -148,7 +148,7 @@ describe("ProgressBar", () => {
       total: 100,
     };
     render(<ProgressBar state={state} />);
-    
+
     const progressBar = document.querySelector(".reacttqdm-progress");
     expect(progressBar).toHaveStyle({ width: "100%" });
   });
@@ -160,7 +160,7 @@ describe("ProgressBar", () => {
       total: 100,
     };
     render(<ProgressBar state={state} />);
-    
+
     const progressBar = document.querySelector(".reacttqdm-progress");
     expect(progressBar).toHaveStyle({ width: "150%" });
   });
@@ -171,20 +171,20 @@ describe("ProgressBar", () => {
       elapsed: 0,
     };
     render(<ProgressBar state={state} />);
-    
+
     const textContainer = document.querySelector(".reacttqdm-text");
     expect(textContainer).toBeInTheDocument();
   });
 
   it("passes through HTML attributes", () => {
     render(
-      <ProgressBar 
-        state={defaultState} 
+      <ProgressBar
+        state={defaultState}
         data-testid="progress-bar"
         style={{ marginTop: "10px" }}
       />
     );
-    
+
     const container = screen.getByTestId("progress-bar");
     expect(container).toHaveStyle({ marginTop: "10px" });
   });
@@ -195,7 +195,7 @@ describe("ProgressBar", () => {
       postfix: { loss: "0.123", acc: "0.456" },
     };
     render(<ProgressBar state={state} />);
-    
+
     const textContainer = document.querySelector(".reacttqdm-text");
     expect(textContainer).toBeInTheDocument();
   });
