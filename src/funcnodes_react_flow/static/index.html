@@ -8,14 +8,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="theme-color" content="#000000"/>
 <meta name="description" content="Funcnodes via react"/>
-<title>FuncNodes</title>
+<title>FuncNodes</title>
   <script type="module" crossorigin src="/static/funcnodes_react_flow.es.js"></script>
   <link rel="stylesheet" crossorigin href="/static/funcnodes_react_flow.css">
 </head>
 <body style="margin: 0; padding: 0;">
 <noscript>You need to enable JavaScript to run this app.</noscript>
 <div id="root" style="height: 100vh; width: 100vw;"></div>
-<script>window.onload = async function () {
+<script>window.FN_WORKER_PORT=9380;</script><script>window.onload = async function () {
   const _init_wm = async () => {
     res = await fetch("/worker_manager", {
       method: "GET",

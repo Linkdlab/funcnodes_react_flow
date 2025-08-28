@@ -1,18 +1,18 @@
 [project]
 name = "funcnodes-react-flow"
-version = "0.4.11"
+version = "1.0.0a0"
 description = "funcnodes frontend for react flow"
 readme = "README.md"
 classifiers = [ "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",]
 requires-python = ">=3.11"
-dependencies = [ "funcnodes-core>=0.3.51", "funcnodes-worker>=0.3.0", "funcnodes>=0.5.36; sys_platform != 'emscripten'", "funcnodes>=0.5.35",]
+dependencies = [ "funcnodes-core>=1.0.0a0", "funcnodes-worker>=0.3.0", "funcnodes>=0.5.36; sys_platform != 'emscripten'", "funcnodes>=0.5.35",]
 [[project.authors]]
 name = "Julian Kimmig"
 email = "julian.kimmig@linkdlab.de"
 
 [build-system]
-requires = [ "setuptools>=42",]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [ "funcnodes-module>=0.2.9", "pre-commit>=4.2.0", "pytest>=8.3.5",]
@@ -36,14 +36,5 @@ paths = [ "funcnodes_react_flow",]
 [project.entry-points."funcnodes.module"]
 plugin_setup = "funcnodes_react_flow.plugin_setup:setup"
 
-[tool.setuptools.package-dir]
-"" = "src"
-
-[tool.setuptools.packages.find]
-where = [ "src",]
-
-[tool.poetry.group.dev.dependencies]
-pytest = "*"
-pre-commit = "*"
-funcnodes-module = ">=0.1.19"
-funcnodes-worker = ">=0.1.4"
+[tool.hatch.build.targets.wheel]
+packages = ["src/funcnodes_react_flow"]
