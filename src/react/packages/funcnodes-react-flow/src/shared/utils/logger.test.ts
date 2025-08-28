@@ -498,8 +498,8 @@ describe("Logger Interface Compliance", () => {
 
     it("should handle all log methods without errors", () => {
       // Suppress console output for this test
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       expect(() => {
         logger.debug("Debug test");
@@ -696,7 +696,7 @@ describe("Performance Considerations", () => {
     expect(formatSpy).not.toHaveBeenCalled();
 
     // This should call format_message
-    logger.error("Heavy error", heavyObject);
+    logger.error("Heavy error", new Error("Heavy error"));
     expect(formatSpy).toHaveBeenCalledOnce();
   });
 });
@@ -730,10 +730,7 @@ describe("Real-world Usage Scenarios", () => {
       throw new Error("Something went wrong");
     } catch (error) {
       debugLogger.debug("Operation attempted", { operation: "dataProcessing" });
-      debugLogger.error("Operation failed", error, {
-        context: "user-action",
-        retryable: true,
-      });
+      debugLogger.error("Operation failed", error as Error);
     }
 
     expect(consoleSpies.debug).toHaveBeenCalledOnce();

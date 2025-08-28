@@ -200,7 +200,14 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
         })) as FullState;
         break;
       } catch (e) {
-        this.context.worker._zustand.logger.error("Error in fullsync", e);
+        if (e instanceof Error) {
+          this.context.worker._zustand.logger.error("Error in fullsync", e);
+        } else {
+          this.context.worker._zustand.logger.error(
+            "Error in fullsync",
+            new Error(JSON.stringify(e))
+          );
+        }
       }
     }
     this.context.worker._zustand.logger.debug("Full state", resp);
