@@ -1,7 +1,7 @@
 {
     "name": "funcnodes-react-flow-monorepo",
     "private": true,
-    "packageManager": "yarn@>=4.9",
+    "packageManager": "yarn@4.9.2",
     "workspaces": [
         "packages/*"
     ],
