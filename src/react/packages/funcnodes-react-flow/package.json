@@ -1,0 +1,89 @@
+{
+  "name": "@linkdlab/funcnodes_react_flow",
+  "version": "0.4.11",
+  "description": "Frontend with React Flow for FuncNodes",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Linkdlab/FuncNodesReact.git"
+  },
+  "author": "Julian Kimmig",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Linkdlab/FuncNodesReact/issues"
+  },
+  "homepage": "https://github.com/Linkdlab/FuncNodesReact#readme",
+  "type": "module",
+  "source": "src/index.tsx",
+  "module": "dist/index.es.js",
+  "main": "dist/index.cjs.js",
+  "umd:main": "dist/index.umd.js",
+  "types": "dist/index.d.ts",
+  "style": "dist/funcnodes_react_flow.css",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "typewatch": "tsc --noEmit --watch",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build --config vite.browser.config.js && vite build",
+    "watch": "vite --config vite.browser.config.js",
+    "preview": "vite build --config vite.browser.config.js && vite preview --config vite.browser.config.js",
+    "test": "vitest run --config vitest.config.fast.ts",
+    "test:fast": "vitest run --config vitest.config.fast.ts",
+    "e2e": "playwright test",
+    "e2eserver": "vite --port 5061 --config vite.browser.config.js"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fortawesome/fontawesome-svg-core": "7.0.0",
+    "@fortawesome/free-solid-svg-icons": "7.0.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@mui/material": "7.2.0",
+    "@radix-ui/react-dialog": "^1.1.7",
+    "@radix-ui/react-dropdown-menu": "^2.1.7",
+    "@radix-ui/react-popover": "^1.1.7",
+    "@radix-ui/react-slider": "^1.2.4",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "@radix-ui/react-toast": "^1.2.14",
+    "@xyflow/react": "^12.5.5",
+    "axios": "^1.8.4",
+    "color-convert": "^3.0.1",
+    "react-json-view-lite": "^2.4.1",
+    "react-markdown": "^10.1.0",
+    "react-select": "^5.10.1",
+    "react-svg": "^16.3.0",
+    "remark-gfm": "^4.0.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/color-convert": "^2.0.4",
+    "@types/node": "24.1.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.2",
+    "@types/uuid": "^10.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "9.2.0",
+    "happy-dom": "18.0.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jsdom": "26.1.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sass": "^1.86.3",
+    "typescript": "^5.8.3",
+    "vite": "7.0.5",
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "3.2.4"
+  },
+  "peerDependencies": {
+    "react": "^19.0",
+    "react-dom": "^19.0"
+  },
+  "packageManager": "yarn@4.9.2"
+}

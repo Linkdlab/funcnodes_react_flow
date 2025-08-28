@@ -1,0 +1,36 @@
+.context-menu {
+  position: absolute;
+  background-color: var(--fn-surface-elevation-high);
+  border: 1px solid var(--fn-neutral-element-border);
+  border-radius: var(--fn-border-radius-s);
+  padding: var(--fn-space-s);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  min-width: 120px;
+
+  p {
+    margin: 0 0 var(--fn-space-xs) 0;
+    color: var(--fn-text-color-neutral);
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    padding: var(--fn-space-xs) var(--fn-space-s);
+    margin: var(--fn-space-xs) 0;
+    background-color: var(--fn-neutral-element-background);
+    border: 1px solid var(--fn-neutral-element-border);
+    border-radius: var(--fn-border-radius-xs);
+    color: var(--fn-text-color-neutral);
+    cursor: pointer;
+    transition: var(--fn-transition-fast);
+
+    &:hover {
+      background-color: var(--fn-neutral-element-background-hover);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+}

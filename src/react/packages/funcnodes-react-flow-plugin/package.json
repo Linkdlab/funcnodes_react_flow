@@ -1,0 +1,32 @@
+{
+    "name": "@linkdlab/funcnodes-react-flow-plugin",
+    "version": "0.4.11",
+    "type": "module",
+    "description": "Type definitions for FuncNodes React Flow plugins",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "copy-types": "cp ../funcnodes-react-flow/dist/index.d.ts src/rf_types.ts",
+        "prebuild": "npm run copy-types",
+        "build": "npm run prebuild && vite build",
+        "pretypecheck": "npm run copy-types",
+        "typecheck": "npm run pretypecheck && tsc --noEmit"
+    },
+    "devDependencies": {
+        "@linkdlab/funcnodes_react_flow": "workspace:*",
+        "@vitejs/plugin-react": "^4.7.0",
+        "rollup": "^4.46.2",
+        "rollup-plugin-dts": "^6.2.1",
+        "typescript": "^5.8.3",
+        "vite": "^7.0.6",
+        "vite-plugin-dts": "^4.5.4"
+    },
+    "peerDependencies": {
+        "@linkdlab/funcnodes_react_flow": "*",
+        "react": "^19.0",
+        "react-dom": "^19.0"
+    }
+}

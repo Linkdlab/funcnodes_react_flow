@@ -1,0 +1,149 @@
+.basicstyleelement {
+  background-color: var(--fn-app-background);
+  color: var(--fn-color-primary-text);
+  border-radius: var(--fn-border-radius-s);
+  border: 1px solid var(--fn-primary-color);
+}
+.styleelement {
+  @extend .basicstyleelement;
+  &:hover {
+    background-color: var(--fn-neutral-element-background);
+  }
+
+  &:active {
+    background-color: var(--fn-primary-color);
+    color: var(--fn-app-background);
+  }
+
+  &:focus {
+    outline: 1px solid var(--fn-primary-color);
+  }
+
+  height: var(--fn-space-l);
+  min-height: var(--fn-space-l);
+  padding-left: var(--fn-space-s);
+  padding-right: var(--fn-space-s);
+}
+
+.styleddropdown {
+  @extend .styleelement;
+  padding-right: var(--fn-space-xs);
+}
+
+.styledbtn {
+  @extend .styleelement;
+  cursor: pointer;
+}
+
+.styledinput {
+  @extend .styleelement;
+
+  :focus {
+    outline: none;
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.5;
+  background-color: transparent;
+}
+
+.styledcheckbox {
+  @extend .styleelement;
+  height: auto;
+  min-height: auto;
+  &:focus {
+    outline: none;
+  }
+  &:after {
+    content: "";
+    background-color: var(--fn-primary-color);
+  }
+  &.checked {
+    background-color: var(--fn-primary-color);
+    color: var(--fn-app-background);
+  }
+  accent-color: var(--fn-primary-color);
+}
+
+.SliderContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 20px;
+  padding: 0 4px;
+}
+
+.SliderRoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  width: 100%;
+  height: fit-content;
+}
+
+.SliderTrack {
+  background-color: var(--fn-app-background);
+  position: relative;
+  flex-grow: 1;
+  border-radius: 9999px;
+  height: 3px;
+}
+
+.SliderRange {
+  position: absolute;
+  background-color: var(--fn-primary-color);
+  border-radius: 9999px;
+  height: 100%;
+}
+
+.SliderThumb {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  box-shadow: 0 2px 5px #00000055;
+  border-radius: 10px;
+}
+.SliderThumb:hover {
+  background-color: #999;
+}
+.SliderThumb:focus {
+  outline: none;
+  box-shadow: 0 0 0 5px #00000055;
+}
+
+.styled-select {
+  &__control {
+    height: 100%;
+    min-height: initial;
+  }
+
+  &__input-container {
+  }
+
+  &__menu-list {
+    max-height: 12.5rem !important;
+    padding-left: 0;
+    height: initial;
+  }
+
+  &__menu {
+    @extend .basicstyleelement;
+    // margin-left: -0.5rem;
+  }
+  &__option {
+    &:hover {
+      background-color: var(--fn-neutral-element-background);
+    }
+  }
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+}

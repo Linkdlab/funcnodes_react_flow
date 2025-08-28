@@ -1,0 +1,58 @@
+.fn-group {
+  /* Default color, will be overridden by color classes */
+
+  --group-border-width: -30px;
+  background-color: var(--group-color);
+  position: absolute;
+  border: 2.5px solid var(--group-color-border, #007bff);
+  border-radius: 18px;
+  box-sizing: border-box;
+  top: var(--group-border-width);
+  left: var(--group-border-width);
+  bottom: var(--group-border-width);
+  right: var(--group-border-width);
+}
+.selected .fn-group {
+  // border-width: 5px;
+  // add a glow effect
+  box-shadow: 0 0 10px 0 var(--group-color-border, #007bff);
+}
+
+.react-flow {
+  &__node-group {
+    max-width: unset !important;
+    max-height: unset !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+.fn-group .fn-group-remove {
+  display: none;
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  color: inherit;
+
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+  line-height: 18px;
+
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  &:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.selected .fn-group .fn-group-remove {
+  display: flex;
+}

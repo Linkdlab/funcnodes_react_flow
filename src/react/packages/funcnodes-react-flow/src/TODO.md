@@ -1,0 +1,1 @@
+- immplement a way to make datarenderer use memo by default, maybe warp them in a object lile {component:memorized_component(or not), is_memo:true/fale, or accept simple components which then will be automatically wrapped in such an object and memorized}. maybe its even possible if the component is a memo component or not?

@@ -1,0 +1,187 @@
+.nodesettings {
+  &_content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 5px;
+    overflow: auto;
+
+    &.expanded {
+      width: 15.625rem;
+    }
+    &.collapsed {
+      width: 0;
+    }
+  }
+
+  &_section {
+    margin-bottom: 10px;
+    margin-left: var(--fn-space-s);
+    margin-right: var(--fn-space-s);
+  }
+  &_component {
+    margin-bottom: var(--fn-space-s);
+    margin-left: var(--fn-space-s);
+    margin-top: var(--fn-space-s);
+
+    & > textarea {
+      max-height: 10rem;
+      height: auto;
+      width: 100%;
+    }
+  }
+}
+
+// Styling for the Radix UI Tabs components within the NodeSettingsOverlay
+.nodesettings-tabs {
+  // This is the Tabs.Root element
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.nodesettings-tabs-list {
+  display: flex;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--fn-color-border-subtle);
+}
+
+.nodesettings-tabs-trigger {
+  font-family: inherit;
+  background-color: var(--fn-color-bg-tab-inactive);
+  height: 45px; // Consistent height for tabs
+  flex: 1; // Distribute space evenly among tabs
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fn-font-size-s);
+  line-height: 1;
+  color: var(--fn-color-primary-text);
+  user-select: none;
+  outline: none;
+  border: none; // Remove default browser button border
+  border-bottom: 2px solid transparent; // For active indicator
+  cursor: pointer;
+  transition: color 0.2s ease-out, border-color 0.2s ease-out,
+    background-color 0.2s ease-out;
+
+  &:hover {
+    color: var(--fn-color-primary-text);
+    background-color: var(--fn-color-bg-tab-hover);
+  }
+
+  &[data-state="active"] {
+    color: var(--fn-color-text-accent);
+    font-weight: 600;
+    border-bottom-color: var(--fn-color-border-strong);
+  }
+
+  &:focus-visible {
+    // For keyboard navigation
+    position: relative;
+    box-shadow: 0 0 0 2px var(--fn-color-border-strong); // Focus ring
+  }
+}
+
+.nodesettings-tabs-content {
+  flex-grow: 1;
+  background-color: transparent; // Content area background
+  border-radius: 0 0 var(--fn-border-radius-medium)
+    var(--fn-border-radius-medium);
+  outline: none;
+  overflow-y: auto; // Allow scrolling for content
+  max-height: 60vh; // Limit height in dialog
+
+  // General styling for control groups and rows within tab content
+  .funcnodes-control-group {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--fn-color-border-subtle);
+    border-radius: var(--fn-border-radius-medium);
+    background-color: var(
+      --fn-color-bg-surface
+    ); // Slightly different background
+  }
+
+  .funcnodes-control-row {
+    display: grid; // Use grid for better alignment
+    grid-template-columns: minmax(100px, auto) 1fr; // Label column and control column
+    align-items: center;
+    label {
+      font-size: var(--fn-font-size-s);
+      color: var(--fn-color-primary-text);
+      justify-self: start; // Align label text to the start
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    .styledinput {
+      width: 100%;
+      background-color: var(--fn-input-bg);
+      border: 1px solid var(--fn-input-border);
+      color: var(--fn-input-text);
+      border-radius: var(--fn-border-radius-small);
+      font-size: var(--fn-font-size-s);
+
+      &:focus {
+        outline: none;
+        border-color: var(--fn-input-focus-border);
+        box-shadow: 0 0 0 1px var(--fn-input-focus-border);
+      }
+    }
+
+    textarea.styledinput {
+      min-height: 60px; // Give textareas a bit more default height
+      resize: vertical;
+    }
+
+    .styledcheckbox {
+      // Basic checkbox styling, can be enhanced
+      accent-color: var(--fn-checkbox-accent);
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .code-display {
+      background-color: var(--fn-input-bg);
+      border-radius: var(--fn-border-radius-small);
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 150px;
+      overflow-y: auto;
+      font-size: var(--fn-font-size-s);
+      border: 1px solid var(--fn-input-border);
+      color: var(--fn-input-text);
+      &.readonly {
+        background-color: var(--fn-color-bg-disabled);
+        color: var(--fn-color-text-disabled);
+      }
+    }
+  }
+
+  .nodesettings-io-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nodesettings-io-entry {
+    // This is already a .funcnodes-control-group, so above styles apply
+    // Add any specific overrides if needed
+  }
+
+  p {
+    // For "No inputs/outputs defined" messages
+    color: var(--fn-color-primary-text);
+    text-align: center;
+  }
+}
+
+// Ensure the CustomDialog content area can accommodate the tabs
+// This assumes .dialogchildren is a class within your CustomDialog
+.dialogchildren .nodesettings-tabs {
+  // Add specific sizing or padding if the dialog doesn't provide enough space
+  // For example:
+  // min-width: 400px; // Or a percentage like 90vw for larger dialogs
+}

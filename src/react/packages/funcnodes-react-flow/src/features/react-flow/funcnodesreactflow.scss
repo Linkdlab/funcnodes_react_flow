@@ -1,0 +1,176 @@
+@use "./themes.scss";
+:root {
+  --fn-space-xs: 0.25rem; /* 4px */
+  --fn-space-s: 0.5rem; /* 8px */
+  --fn-space-m: 1rem; /* 16px */
+  --fn-space-l: 2rem; /* 32px */
+  --fn-space-xl: 4rem; /* 64px */
+  --fn-border-radius-xs: 0.25rem; /* 4px */
+  --fn-border-radius-s: 0.5rem; /* 8px */
+  --fn-border-radius-m: 1rem; /* 16px */
+  --fn-border-radius-l: 2rem; /* 32px */
+  --fn-border-radius-xl: 4rem; /* 64px */
+  --fn-font-size-xs: 0.75rem; /* 12px */
+  --fn-font-size-s: 0.875rem; /* 14px */
+  --fn-font-size-m: 1rem; /* 16px */
+  --fn-font-size-l: 1.25rem; /* 20px */
+  --fn-font-size-xl: 1.5rem; /* 24px */
+  --fn-font-size-xxl: 2rem; /* 32px */
+}
+
+.m-xs {
+  margin: var(--fn-space-xs);
+}
+.m-s {
+  margin: var(--fn-space-s);
+}
+.m-m {
+  margin: var(--fn-space-m);
+}
+.m-l {
+  margin: var(--fn-space-l);
+}
+.m-xl {
+  margin: var(--fn-space-xl);
+}
+
+.m-x-xs {
+  margin-left: var(--fn-space-xs);
+  margin-right: var(--fn-space-xs);
+}
+.m-x-s {
+  margin-left: var(--fn-space-s);
+  margin-right: var(--fn-space-s);
+}
+.m-x-m {
+  margin-left: var(--fn-space-m);
+  margin-right: var(--fn-space-m);
+}
+.m-x-l {
+  margin-left: var(--fn-space-l);
+  margin-right: var(--fn-space-l);
+}
+.m-x-xl {
+  margin-left: var(--fn-space-xl);
+  margin-right: var(--fn-space-xl);
+}
+.m-y-xs {
+  margin-top: var(--fn-space-xs);
+  margin-bottom: var(--fn-space-xs);
+}
+.m-y-s {
+  margin-top: var(--fn-space-s);
+  margin-bottom: var(--fn-space-s);
+}
+.m-y-m {
+  margin-top: var(--fn-space-m);
+  margin-bottom: var(--fn-space-m);
+}
+.m-y-l {
+  margin-top: var(--fn-space-l);
+  margin-bottom: var(--fn-space-l);
+}
+.m-y-xl {
+  margin-top: var(--fn-space-xl);
+  margin-bottom: var(--fn-space-xl);
+}
+
+:root {
+  --containerboarderradius: 1rem;
+  --funcnodes-z-index: 1000;
+}
+
+.bg1 {
+  background-color: var(--fn-app-background);
+}
+.bg2 {
+  background-color: var(--fn-container-background);
+}
+
+.funcnodescontainer {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  & code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+      monospace;
+  }
+}
+.funcnodesreactflowcontainer {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  z-index: var(--funcnodes-z-index);
+  background-color: var(--fn-app-background); // Dark background color
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  color: var(--fn-text-color-neutral);
+  overflow: hidden;
+
+  & * {
+    box-sizing: border-box;
+  }
+}
+
+.funcnodesreactflowbody {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  padding: var(--fn-space-s);
+  position: relative;
+}
+
+// .reactflowlayer styles moved to component-specific ReactFlowLayer.scss
+
+.vscrollcontainer {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-grow: 1;
+  padding: var(--fn-space-s);
+  box-sizing: border-box;
+}
+
+.workerselect {
+  max-width: 140px;
+}
+.workerselectoption {
+  &.selected {
+    color: var(--fn-text-color-neutral);
+  }
+  &.active {
+    color: green;
+  }
+  &.inactive {
+    color: red;
+  }
+}
+
+.funcnodesflaotingmenu {
+  position: absolute;
+  right: 0;
+  padding: 10px;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  margin-right: 10px;
+}
+
+.FuncnodesApp {
+  height: 100%;
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fn-background-pattern {
+  background-color: var(--fn-background-pattern-color) !important;
+  fill: var(--fn-background-pattern-color) !important;
+  stroke: var(--fn-background-pattern-color) !important;
+}

@@ -1,0 +1,137 @@
+@use "sass:list";
+
+$breakpoints: (
+  xxs: 0px,
+  xs: 320px,
+  s: 480px,
+  m: 768px,
+  l: 960px,
+  xl: 1280px,
+  xxl: 1920px,
+);
+
+// An ordered list to compare breakpoints:
+$breakpoints-order: (xxs, xs, s, m, l, xl, xxl);
+
+$binary-classes: (
+  direction-row: (
+    flex-direction: row,
+  ),
+  direction-column: (
+    flex-direction: column,
+  ),
+  grow: (
+    flex-grow: 1,
+  ),
+  no-grow: (
+    flex-grow: 0,
+  ),
+  full-width: (
+    width: 100%,
+  ),
+  w-1: (
+    width: 8.3333333333%,
+  ),
+  w-2: (
+    width: 16.6666666667%,
+  ),
+  w-3: (
+    width: 25%,
+  ),
+  w-4: (
+    width: 33.3333333333%,
+  ),
+  w-5: (
+    width: 41.6666666667%,
+  ),
+  w-6: (
+    width: 50%,
+  ),
+  w-7: (
+    width: 58.3333333333%,
+  ),
+  w-8: (
+    width: 66.6666666667%,
+  ),
+  w-9: (
+    width: 75%,
+  ),
+  w-10: (
+    width: 83.3333333333%,
+  ),
+  w-11: (
+    width: 91.6666666667%,
+  ),
+  w-12: (
+    width: 100%,
+  ),
+
+  h-1: (
+    height: 8.3333333333%,
+  ),
+  h-2: (
+    height: 16.6666666667%,
+  ),
+  h-3: (
+    height: 25%,
+  ),
+  h-4: (
+    height: 33.3333333333%,
+  ),
+  h-5: (
+    height: 41.6666666667%,
+  ),
+  h-6: (
+    height: 50%,
+  ),
+  h-7: (
+    height: 58.3333333333%,
+  ),
+  h-8: (
+    height: 66.6666666667%,
+  ),
+  h-9: (
+    height: 75%,
+  ),
+  h-10: (
+    height: 83.3333333333%,
+  ),
+  h-11: (
+    height: 91.6666666667%,
+  ),
+  h-12: (
+    height: 100%,
+  ),
+);
+
+.size-context {
+  // Always available binary classes (no breakpoint prefix)
+  @each $classkey, $classoptsvalue in $binary-classes {
+    .#{$classkey} {
+      @each $property, $value in $classoptsvalue {
+        #{$property}: $value;
+      }
+    }
+  }
+
+  // For each container breakpoint
+  @each $container-bp in $breakpoints-order {
+    &.w-#{$container-bp} {
+      // Loop through each breakpoint in our ordered list
+      @each $child-bp in $breakpoints-order {
+        // If the child's breakpoint is lower than or equal to the container's breakpoint
+        @if list.index($breakpoints-order, $child-bp) <=
+          list.index($breakpoints-order, $container-bp)
+        {
+          @each $classkey, $classoptsvalue in $binary-classes {
+            .#{$child-bp}-#{$classkey} {
+              @each $property, $value in $classoptsvalue {
+                #{$property}: $value;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

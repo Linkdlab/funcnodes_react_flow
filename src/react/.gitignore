@@ -24,4 +24,6 @@ yarn-error.log*
 /dist
 */dist/
 old/
-/app/dist/
+/test-reports/
+/test-results/
+.yarn/
