@@ -1,0 +1,16 @@
+@use "react-json-view-lite/dist/index.css";
+
+.json-display {
+  font-family: monospace;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  border-radius: 4px;
+  padding: 0.5rem;
+  overflow: auto;
+  max-height: 400px;
+
+  // Ensure proper contrast and readability
+  .json-view-lite {
+    background: transparent;
+  }
+}

@@ -1,0 +1,23 @@
+.float-container {
+  display: flex;
+}
+
+.direction-row {
+  flex-direction: row;
+}
+
+.direction-column {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.grow {
+  flex-grow: 1;
+}
+
+.no-grow {
+  flex-grow: 0;
+}

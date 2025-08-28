@@ -19,3 +19,5 @@ __pycache__/
 /**/dist/
 /.funcnodes
 /src/*.egg-info/
+_development_workers
+**/__snapshots__/

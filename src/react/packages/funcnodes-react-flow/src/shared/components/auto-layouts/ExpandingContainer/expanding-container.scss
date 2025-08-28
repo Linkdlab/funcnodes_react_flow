@@ -1,0 +1,62 @@
+.expanding_container {
+  &.pos-left {
+    position: absolute;
+    left: 0;
+  }
+  &.pos-right {
+    position: absolute;
+    right: 0;
+  }
+  &.pos-top {
+    position: absolute;
+    top: 0;
+  }
+  &.pos-bottom {
+    position: absolute;
+    bottom: 0;
+  }
+
+  display: flex;
+  transition: width 0.5s, height 0.5s;
+  &.right,
+  &.left {
+    flex-direction: row;
+  }
+  &.up,
+  &.down {
+    flex-direction: column;
+  }
+
+  &_expander {
+    min-width: var(--fn-space-m);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  &_content {
+    transition: width 0.5s, height 0.5s;
+
+    &.right,
+    &.left {
+      overflow-y: hidden;
+
+      &.collapsed {
+        width: 0;
+      }
+    }
+    &.up,
+    &.down {
+      overflow-x: hidden;
+
+      &.collapsed {
+        height: 0;
+      }
+    }
+
+    &.collapsed {
+      padding: 0;
+    }
+  }
+}

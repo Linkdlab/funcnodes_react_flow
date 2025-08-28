@@ -1,0 +1,251 @@
+.ToastViewport {
+  --stack-gap: 10px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 390px;
+  max-width: 100vw;
+  margin: 0;
+  list-style: none;
+  z-index: 1000000;
+  outline: none;
+  transition: transform 400ms ease;
+}
+
+.ToastRoot {
+  --opacity: 0;
+  --x: var(--radix-toast-swipe-move-x, 0);
+  --y: calc(1px - (var(--stack-gap) * var(--index)));
+  --scale: calc(1 - 0.05 * var(--index));
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  left: 15px;
+  transition-property: transform, opacity;
+  transition-duration: 400ms;
+  transition-timing-function: ease;
+  opacity: var(--opacity);
+  transform: translate3d(var(--x), calc(100% + 30px), 0);
+  outline: none;
+  border-radius: 5px;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px black;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    width: 100%;
+    height: 1000px;
+    background: transparent;
+  }
+
+  &[data-front="true"] {
+    transform: translate3d(var(--x), var(--y, 0), 0);
+  }
+
+  &[data-front="false"] {
+    transform: translate3d(var(--x), var(--y, 0), 0) scale(var(--scale));
+  }
+
+  &[data-state="closed"] {
+    animation: slideDown 350ms ease;
+  }
+
+  &[data-hidden="false"] {
+    --opacity: 1;
+  }
+
+  &[data-hidden="true"] {
+    --opacity: 0;
+  }
+
+  &[data-hovering="true"] {
+    --scale: 1;
+    --y: calc(var(--hover-offset-y) - var(--stack-gap) * var(--index));
+    transition-duration: 350ms;
+  }
+
+  &[data-swipe="move"] {
+    transition-duration: 0ms;
+  }
+
+  &[data-swipe="cancel"] {
+    --x: 0;
+  }
+
+  &[data-swipe-direction="right"][data-swipe="end"] {
+    animation: slideRight 150ms ease-out;
+  }
+
+  &[data-swipe-direction="left"][data-swipe="end"] {
+    animation: slideLeft 150ms ease-out;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translate3d(0, var(--y), 0);
+  }
+  to {
+    transform: translate3d(0, calc(100% + 30px), 0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translate3d(var(--radix-toast-swipe-end-x), var(--y), 0);
+  }
+  to {
+    transform: translate3d(100%, var(--y), 0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translate3d(var(--radix-toast-swipe-end-x), var(--y), 0);
+  }
+  to {
+    transform: translate3d(-100%, var(--y), 0);
+  }
+}
+
+.ToastInner {
+  padding: 15px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  height: var(--height);
+  background-color: white;
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+  display: grid;
+  grid-template-areas: "title action" "description action";
+  grid-template-columns: auto max-content;
+  column-gap: 10px;
+  align-items: center;
+  align-content: center;
+  position: relative;
+
+  &:not([data-status="default"]) {
+    grid-template-areas: "icon title action" "icon description action";
+    grid-template-columns: max-content auto max-content;
+  }
+
+  &:not([data-front="true"]) {
+    height: var(--front-height);
+  }
+
+  .ToastRoot[data-hovering="true"] & {
+    height: var(--height);
+  }
+}
+
+.ToastTitle {
+  grid-area: title;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: var(--slate12, #1e293b);
+  font-size: 15px;
+}
+
+.ToastDescription {
+  grid-area: description;
+  margin: 0;
+  color: var(--slate11, #475569);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.ToastAction {
+  grid-area: action;
+}
+
+.ToastClose {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  transform: translate(-35%, -35%);
+  width: 15px;
+  height: 15px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--slate1, #f8fafc);
+  color: var(--slate11, #475569);
+  transition: color 200ms ease 0s, opacity 200ms ease 0s;
+  opacity: 0;
+  box-shadow: rgb(0 0 0 / 16%) 0px 0px 8px;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--slate12, #1e293b);
+  }
+
+  // Show on hover OR when any element inside .ToastInner is focused
+  .ToastInner:hover &,
+  .ToastInner:focus-within & {
+    opacity: 1;
+  }
+}
+
+.Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+
+  &.small {
+    font-size: 12px;
+    padding: 0 10px;
+    line-height: 25px;
+    height: 25px;
+  }
+
+  &.large {
+    font-size: 15px;
+    padding: 0 15px;
+    line-height: 35px;
+    height: 35px;
+  }
+
+  &.violet {
+    background-color: white;
+    color: var(--violet11, #6d28d9);
+    box-shadow: 0 2px 10px var(--blackA7, rgba(0, 0, 0, 0.1));
+
+    &:hover {
+      background-color: var(--mauve3, #f7f3ff);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 2px black;
+    }
+  }
+
+  &.green {
+    background-color: var(--green2, #dcfce7);
+    color: var(--green11, #166534);
+    box-shadow: inset 0 0 0 1px var(--green7, #86efac);
+
+    &:hover {
+      box-shadow: inset 0 0 0 1px var(--green8, #4ade80);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 2px var(--green8, #4ade80);
+    }
+  }
+}
+
+// SVG Icon animations can be added here if needed

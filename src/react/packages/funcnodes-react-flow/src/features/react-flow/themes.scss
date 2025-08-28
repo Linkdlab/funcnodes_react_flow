@@ -1,0 +1,428 @@
+:root {
+  --fn-app-background: hsl(
+    220,
+    11%,
+    12%
+  ); /* slightly darker, crisper contrast */
+  --fn-container-background: hsl(220, 11%, 20%); /* deeper container shading */
+  --fn-text-color-neutral: hsl(0, 0%, 98%); /* near-white for easier reading */
+  --fn-text-color-inverted: hsl(0, 0%, 10%); /* for light surfaces */
+  --fn-neutral-element-background: hsl(220, 10%, 27%);
+  --fn-neutral-element-background-hover: hsl(220, 10%, 37%);
+  --fn-primary-color: hsl(210, 85%, 56%);
+  --fn-primary-color-hover: hsl(210, 85%, 62%); /* -new- smoother hover */
+  --fn-edge-color: hsl(210, 75%, 70%);
+  --fn-edge-color-selected: hsl(116, 100%, 50%);
+
+  // nodes
+  --fn-node-handle-source-color: hsl(189, 20%, 55%);
+  --fn-node-handle-target-color: hsl(192, 25%, 65%);
+  --fn-node-background: hsl(220, 6%, 42%);
+  --fn-node-header-color: hsl(220, 5%, 32%);
+  --fn-node-border-color: hsl(220, 8%, 45%);
+  --fn-node-footer-color: hsl(225, 7%, 70%);
+  --fn-node-progress-color: hsl(95, 38%, 46%); /* green-ish progress bar */
+
+  /* background patterns */
+  --fn-background-pattern-color: hsla(220, 10%, 18%, 0.3);
+
+  /* grouping */
+  --group-color: hsla(210, 75%, 70%, 0.15);
+  --group-color-border: hsla(210, 75%, 70%, 0.4);
+
+  //new
+
+  --fn-surface-elevation-low: hsl(220, 11%, 24%); /* -new-: cards, side-bars */
+  --fn-surface-elevation-high: hsl(
+    220,
+    11%,
+    28%
+  ); /* -new-: dialogs, pop-overs */
+
+  /* typography */
+  --fn-text-color-subtle: hsl(0, 0%, 75%); /* -new-: secondary labels */
+  /* interactive neutrals */
+  --fn-neutral-element-border: hsla(0, 0%, 100%, 0.06); /* hair-line borders */
+
+  /* micro-interactions */
+  --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.6);
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+}
+
+[fn-data-color-theme="classic"] {
+  --fn-app-background: hsl(243, 26%, 13%);
+  --fn-container-background: hsl(245, 22%, 22%);
+  --fn-surface-elevation-low: hsl(220, 11%, 24%);
+  --fn-surface-elevation-high: hsl(220, 11%, 28%);
+  --fn-text-color-neutral: hsl(0, 0%, 100%);
+  --fn-text-color-subtle: hsl(0, 0%, 75%);
+  --fn-text-color-neutral-inverted: hsl(0, 0%, 0%);
+  --fn-neutral-element-background: hsl(245, 15%, 32%);
+  --fn-neutral-element-background-hover: hsl(245, 20%, 50%);
+  --fn-neutral-element-border: hsla(0, 0%, 100%, 0.06);
+  --fn-primary-color: hsl(189, 100%, 50%);
+  --fn-primary-color-hover: hsl(210, 85%, 62%);
+  --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.6);
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: hsl(189, 100%, 70%);
+  --fn-edge-color-selected: hsl(76, 92%, 60%);
+
+  // nodes
+  --fn-node-handle-source-color: hsl(190, 98%, 49%);
+  --fn-node-handle-target-color: hsl(204, 98%, 51%);
+  --fn-node-background: hsl(245, 51%, 42%);
+  --fn-node-header-color: hsl(245, 51%, 22%);
+  --fn-node-border-color: hsl(245, 35%, 35%);
+  --fn-node-footer-color: hsl(266, 88%, 35%);
+  --fn-node-progress-color: hsl(76, 92%, 50%);
+
+  /* background patterns */
+  --fn-background-pattern-color: hsl(245.1, 13.8%, 50%);
+
+  /* grouping */
+  --group-color: hsla(189, 100%, 70%, 0.15);
+  --group-color-border: hsla(189, 100%, 70%, 0.4);
+}
+
+[fn-data-color-theme="metal"] {
+  /* layout & chrome */
+  --fn-app-background: hsl(
+    220,
+    11%,
+    12%
+  ); /* slightly darker, crisper contrast */
+  --fn-container-background: hsl(220, 11%, 20%); /* deeper container shading */
+  --fn-surface-elevation-low: hsl(220, 11%, 24%); /* -new-: cards, side-bars */
+  --fn-surface-elevation-high: hsl(
+    220,
+    11%,
+    28%
+  ); /* -new-: dialogs, pop-overs */
+
+  /* typography */
+  --fn-text-color-neutral: hsl(0, 0%, 98%); /* near-white for easier reading */
+  --fn-text-color-subtle: hsl(0, 0%, 75%); /* -new-: secondary labels */
+  --fn-text-color-inverted: hsl(0, 0%, 10%); /* for light surfaces */
+
+  /* interactive neutrals */
+  --fn-neutral-element-background: hsl(220, 10%, 27%);
+  --fn-neutral-element-background-hover: hsl(220, 10%, 37%);
+  --fn-neutral-element-border: hsla(0, 0%, 100%, 0.06); /* hair-line borders */
+
+  /* primary accent (cool steel-blue) */
+  --fn-primary-color: hsl(210, 85%, 56%);
+  --fn-primary-color-hover: hsl(210, 85%, 62%); /* -new- smoother hover */
+  --fn-edge-color: hsl(210, 85%, 56%);
+  --fn-edge-color-selected: hsl(95, 100%, 60%);
+
+  /* nodes */
+  --fn-node-handle-source-color: hsl(189, 20%, 55%);
+  --fn-node-handle-target-color: hsl(192, 25%, 65%);
+  --fn-node-background: hsl(220, 6%, 42%);
+  --fn-node-header-color: hsl(220, 5%, 32%);
+  --fn-node-border-color: hsl(220, 8%, 45%);
+  --fn-node-footer-color: hsl(225, 7%, 70%);
+  --fn-node-progress-color: hsl(95, 38%, 46%); /* green-ish progress bar */
+
+  /* background patterns */
+  --fn-background-pattern-color: hsl(220, 6.6%, 55%);
+
+  /* grouping */
+  --group-color: hsla(210, 85%, 56%, 0.15);
+  --group-color-border: hsla(210, 85%, 56%, 0.4);
+
+  /* micro-interactions */
+  --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.6);
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+}
+
+[fn-data-color-theme="light"] {
+  --fn-app-background: hsl(0, 0%, 98%);
+  --fn-container-background: hsl(0, 0%, 100%);
+  --fn-surface-elevation-low: hsl(0, 0%, 96%);
+  --fn-surface-elevation-high: hsl(0, 0%, 92%);
+  --fn-text-color-neutral: hsl(0, 0%, 10%);
+  --fn-text-color-subtle: hsl(0, 0%, 40%);
+  --fn-text-color-neutral-inverted: hsl(0, 0%, 100%);
+  --fn-neutral-element-background: hsl(0, 0%, 92%);
+  --fn-neutral-element-background-hover: hsl(0, 0%, 85%);
+  --fn-neutral-element-border: hsla(0, 0%, 0%, 0.08);
+  --fn-primary-color: hsl(210, 85%, 56%);
+  --fn-primary-color-hover: hsl(210, 85%, 62%);
+  --fn-focus-ring: 0 0 0 2px hsla(210, 85%, 56%, 0.4);
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: hsl(210, 85%, 56%);
+  --fn-edge-color-selected: hsl(95, 60%, 46%);
+
+  // nodes
+  --fn-node-handle-source-color: hsl(190, 98%, 49%);
+  --fn-node-handle-target-color: hsl(204, 98%, 51%);
+  --fn-node-background: hsl(0, 0%, 98%);
+  --fn-node-header-color: hsl(210, 85%, 96%);
+  --fn-node-border-color: hsl(210, 70%, 85%);
+  --fn-node-footer-color: hsl(210, 85%, 90%);
+  --fn-node-progress-color: hsl(95, 38%, 46%);
+
+  /* background patterns */
+  --fn-background-pattern-color: hsl(0, 0%, 64%);
+
+  /* grouping */
+  --group-color: hsla(210, 85%, 56%, 0.1);
+  --group-color-border: hsla(210, 85%, 56%, 0.3);
+}
+
+[fn-data-color-theme="solarized"] {
+  --fn-app-background: #fdf6e3;
+  --fn-container-background: #eee8d5;
+  --fn-surface-elevation-low: #e1dbcd;
+  --fn-surface-elevation-high: #d8cfc0;
+  --fn-text-color-neutral: #657b83;
+  --fn-text-color-subtle: #93a1a1;
+  --fn-text-color-neutral-inverted: #fdf6e3;
+  --fn-neutral-element-background: #eee8d5;
+  --fn-neutral-element-background-hover: #e1dbcd;
+  --fn-neutral-element-border: #93a1a1;
+  --fn-primary-color: #268bd2;
+  --fn-primary-color-hover: #2aa198;
+  --fn-focus-ring: 0 0 0 2px #268bd2aa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #268bd2;
+  --fn-edge-color-selected: #859900;
+
+  // nodes
+  --fn-node-handle-source-color: #b58900;
+  --fn-node-handle-target-color: #cb4b16;
+  --fn-node-background: #fdf6e3;
+  --fn-node-header-color: #93a1a1;
+  --fn-node-border-color: #839496;
+  --fn-node-footer-color: #839496;
+  --fn-node-progress-color: #859900;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgb(147, 161, 161);
+
+  /* grouping */
+  --group-color: rgba(38, 139, 210, 0.15);
+  --group-color-border: rgba(38, 139, 210, 0.4);
+}
+
+[fn-data-color-theme="midnight"] {
+  --fn-app-background: #0a1026;
+  --fn-container-background: #181f3a;
+  --fn-surface-elevation-low: #232b4d;
+  --fn-surface-elevation-high: #2d3760;
+  --fn-text-color-neutral: #e0e6f8;
+  --fn-text-color-subtle: #8a99c7;
+  --fn-text-color-neutral-inverted: #0a1026;
+  --fn-neutral-element-background: #232b4d;
+  --fn-neutral-element-background-hover: #2d3760;
+  --fn-neutral-element-border: #3a4370;
+  --fn-primary-color: #4f5dff;
+  --fn-primary-color-hover: #7a8cff;
+  --fn-focus-ring: 0 0 0 2px #4f5dffaa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #4f5dff;
+  --fn-edge-color-selected: #00ffb3;
+
+  // nodes
+  --fn-node-handle-source-color: #7a8cff;
+  --fn-node-handle-target-color: #4f5dff;
+  --fn-node-background: #181f3a;
+  --fn-node-header-color: #232b4d;
+  --fn-node-border-color: #3a4370;
+  --fn-node-footer-color: #2d3760;
+  --fn-node-progress-color: #00cfff;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgb(58, 67, 112);
+
+  /* grouping */
+  --group-color: rgba(79, 93, 255, 0.15);
+  --group-color-border: rgba(79, 93, 255, 0.4);
+}
+
+[fn-data-color-theme="forest"] {
+  --fn-app-background: #1a2b1b;
+  --fn-container-background: #223d22;
+  --fn-surface-elevation-low: #2e4d2e;
+  --fn-surface-elevation-high: #3a5c3a;
+  --fn-text-color-neutral: #eafbe0;
+  --fn-text-color-subtle: #a3cfa3;
+  --fn-text-color-neutral-inverted: #1a2b1b;
+  --fn-neutral-element-background: #2e4d2e;
+  --fn-neutral-element-background-hover: #3a5c3a;
+  --fn-neutral-element-border: #4a6a4a;
+  --fn-primary-color: #4caf50;
+  --fn-primary-color-hover: #81c784;
+  --fn-focus-ring: 0 0 0 2px #4caf50aa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #81c784;
+  --fn-edge-color-selected: #b2ff59;
+
+  // nodes
+  --fn-node-handle-source-color: #81c784;
+  --fn-node-handle-target-color: #388e3c;
+  --fn-node-background: #223d22;
+  --fn-node-header-color: #2e4d2e;
+  --fn-node-border-color: #4a6a4a;
+  --fn-node-footer-color: #3a5c3a;
+  --fn-node-progress-color: #b2ff59;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgb(74, 106, 74);
+
+  /* grouping */
+  --group-color: rgba(129, 199, 132, 0.15);
+  --group-color-border: rgba(129, 199, 132, 0.4);
+}
+
+[fn-data-color-theme="scientific"] {
+  --fn-app-background: #e6e8ed;
+  --fn-container-background: #ffffff;
+  --fn-surface-elevation-low: #e9f1fb;
+  --fn-surface-elevation-high: #dbeafe;
+  --fn-text-color-neutral: #1a202c;
+  --fn-text-color-subtle: #4a5568;
+  --fn-text-color-neutral-inverted: #ffffff;
+  --fn-neutral-element-background: #e9f1fb;
+  --fn-neutral-element-background-hover: #dbeafe;
+  --fn-neutral-element-border: #b5c6e0;
+  --fn-primary-color: #2563eb;
+  --fn-primary-color-hover: #0ea5e9;
+  --fn-focus-ring: 0 0 0 2px #2563eb88;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #2563eb;
+  --fn-edge-color-selected: #22d3ee;
+
+  // nodes
+  --fn-node-handle-source-color: #1976d2;
+  --fn-node-handle-target-color: #1565c0;
+  --fn-node-background: #fafbfc;
+  --fn-node-header-color: #d1e3f4;
+  --fn-node-border-color: #9cb3d4;
+  --fn-node-footer-color: #c3d9f0;
+  --fn-node-progress-color: #22d3ee;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgb(181, 198, 224);
+
+  /* grouping */
+  --group-color: rgba(37, 99, 235, 0.1);
+  --group-color-border: rgba(37, 99, 235, 0.3);
+}
+
+[fn-data-color-theme="neon"] {
+  --fn-app-background: #0a0a0a;
+  --fn-container-background: #111111;
+  --fn-surface-elevation-low: #1a1a1a;
+  --fn-surface-elevation-high: #222222;
+  --fn-text-color-neutral: #ffffff;
+  --fn-text-color-subtle: #cccccc;
+  --fn-text-color-neutral-inverted: #0a0a0a;
+  --fn-neutral-element-background: #1a1a1a;
+  --fn-neutral-element-background-hover: #2a2a2a;
+  --fn-neutral-element-border: rgba(255, 0, 255, 0.3);
+  --fn-primary-color: #ff00ff;
+  --fn-primary-color-hover: #ff44ff;
+  --fn-focus-ring: 0 0 0 2px #ff00ffaa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #00ffff;
+  --fn-edge-color-selected: #ff00ff;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgba(255, 0, 255, 0.1);
+
+  /* grouping */
+  --group-color: rgba(255, 0, 255, 0.1);
+  --group-color-border: rgba(255, 0, 255, 0.6);
+
+  // nodes
+  --fn-node-handle-source-color: #ff00ff;
+  --fn-node-handle-target-color: #00ffff;
+  --fn-node-background: #1a1a1a;
+  --fn-node-header-color: #0a0a0a;
+  --fn-node-border-color: #b271ff;
+  --fn-node-footer-color: #222222;
+  --fn-node-progress-color: #00ffff;
+}
+
+[fn-data-color-theme="ocean"] {
+  --fn-app-background: #0d1b2a;
+  --fn-container-background: #1b263b;
+  --fn-surface-elevation-low: #415a77;
+  --fn-surface-elevation-high: #778da9;
+  --fn-text-color-neutral: #e0e1dd;
+  --fn-text-color-subtle: #a8dadc;
+  --fn-text-color-neutral-inverted: #0d1b2a;
+  --fn-neutral-element-background: #415a77;
+  --fn-neutral-element-background-hover: #778da9;
+  --fn-neutral-element-border: rgba(168, 218, 220, 0.3);
+  --fn-primary-color: #1d3557;
+  --fn-primary-color-hover: #457b9d;
+  --fn-focus-ring: 0 0 0 2px #457b9daa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #a8dadc;
+  --fn-edge-color-selected: #f1faee;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgba(65, 90, 119, 0.3);
+
+  /* grouping */
+  --group-color: rgba(168, 218, 220, 0.15);
+  --group-color-border: rgba(168, 218, 220, 0.4);
+
+  // nodes
+  --fn-node-handle-source-color: #457b9d;
+  --fn-node-handle-target-color: #a8dadc;
+  --fn-node-background: #1b263b;
+  --fn-node-header-color: #0d1b2a;
+  --fn-node-border-color: #415a77;
+  --fn-node-footer-color: #778da9;
+  --fn-node-progress-color: #f1faee;
+}
+
+[fn-data-color-theme="sunset"] {
+  --fn-app-background: #2d1b14;
+  --fn-container-background: #4a2c1a;
+  --fn-surface-elevation-low: #663d20;
+  --fn-surface-elevation-high: #824e26;
+  --fn-text-color-neutral: #fff8e7;
+  --fn-text-color-subtle: #ffd4a3;
+  --fn-text-color-neutral-inverted: #2d1b14;
+  --fn-neutral-element-background: #663d20;
+  --fn-neutral-element-background-hover: #824e26;
+  --fn-neutral-element-border: rgba(255, 212, 163, 0.3);
+  --fn-primary-color: #d2691e;
+  --fn-primary-color-hover: #ff8c42;
+  --fn-focus-ring: 0 0 0 2px #ff8c42aa;
+  --fn-transition-fast: 120ms ease-out;
+  --fn-transition-slow: 240ms ease;
+  --fn-edge-color: #ff8c42;
+  --fn-edge-color-selected: #ffb347;
+
+  /* background patterns */
+  --fn-background-pattern-color: rgba(130, 78, 38, 0.3);
+
+  /* grouping */
+  --group-color: rgba(255, 140, 66, 0.15);
+  --group-color-border: rgba(255, 140, 66, 0.4);
+
+  // nodes
+  --fn-node-handle-source-color: #ff8c42;
+  --fn-node-handle-target-color: #d2691e;
+  --fn-node-background: #4a2c1a;
+  --fn-node-header-color: #2d1b14;
+  --fn-node-border-color: #663d20;
+  --fn-node-footer-color: #824e26;
+  --fn-node-progress-color: #ffb347;
+}

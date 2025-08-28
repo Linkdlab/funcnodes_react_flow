@@ -1,0 +1,8 @@
+.reactflowlayer {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--fn-container-background);
+  padding: var(--fn-space-s);
+  border-radius: var(--containerboarderradius);
+}

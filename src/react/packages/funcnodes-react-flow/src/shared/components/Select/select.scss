@@ -1,0 +1,22 @@
+.styled-select {
+  &__control {
+    height: 100%;
+    min-height: initial;
+    min-width: 10px;
+  }
+
+
+  &__menu-list {
+    max-height: 200px;
+  }
+  &__single-value {
+    text-align: start;
+  }
+  &__option {
+    text-align: start;
+    padding: 2px 5px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

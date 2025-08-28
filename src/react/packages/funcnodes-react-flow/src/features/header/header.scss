@@ -1,0 +1,83 @@
+@use "../../shared/styles/htmlelements.scss";
+
+.funcnodesreactflowheader {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  position: relative;
+  margin-top: 8px;
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  .headerelement {
+    height: 100%;
+    // center items vertically
+    display: flex;
+    // align-items: center;
+    margin: 4px 4px 4px 4px;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  & .statusbar {
+    // max-width: 500px;
+    height: 24px;
+    background-color: var(--fn-container-background);
+    display: inline-block;
+    margin: 2px 4px 0px 4px;
+    position: relative;
+    border-radius: var(--fn-border-radius-s);
+    overflow: hidden;
+    flex-grow: 1;
+
+    &-progressbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: var(--fn-primary-color);
+      display: inline-block;
+    }
+    &-message {
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: var(--fn-font-size-xs);
+      color: var(--fn-primary-color);
+      mix-blend-mode: difference;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.headermenucontent {
+  @extend .basicstyleelement;
+
+  max-height: 90vh;
+  overflow: auto;
+  padding: 5px;
+  border-radius: var(--fn-border-radius-xs);
+  z-index: 1;
+}
+
+.headermenuitem {
+  padding: 0 5px;
+  &[data-highlighted] {
+    background-color: var(--fn-neutral-element-background);
+  }
+
+  &[data-state="open"] {
+    background-color: var(--fn-neutral-element-background);
+  }
+
+  &[data-state="checked"] {
+    background-color: var(--fn-neutral-element-background);
+    color: #fff;
+  }
+}

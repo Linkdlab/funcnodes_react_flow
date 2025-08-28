@@ -1,0 +1,38 @@
+.colorspace {
+  margin: 0.2rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+
+  &_title {
+    font-size: var(--fn-font-size-xs);
+    font-weight: bold;
+  }
+
+  & label {
+    font-size: var(--fn-font-size-xs);
+  }
+  & input {
+    font-size: var(--fn-font-size-xs);
+    max-height: calc(1.1 * var(--fn-font-size-xs));
+    box-sizing: initial;
+  }
+  & input[type="range"] {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+    background-color: #666;
+    height: 0.7rem;
+    border-radius: 5px;
+
+    &::-webkit-slider-thumb,
+    &::-webkit-range-thumb,
+    &::-moz-range-thumb {
+      width: 0.7rem;
+      height: 0.7rem;
+      background-color: #cc1c1c;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  }
+}
