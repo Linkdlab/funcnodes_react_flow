@@ -5,4 +5,6 @@ export {
   useSetIOValue,
   useIOValueStore,
   useSetIOValueOptions,
+  useIOSetHidden,
+  useIOGetFullValue,
 } from "./helper_hooks";

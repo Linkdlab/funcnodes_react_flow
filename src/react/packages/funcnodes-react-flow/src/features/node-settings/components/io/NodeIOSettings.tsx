@@ -1,9 +1,13 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { pick_best_io_type, INPUTCONVERTER, useIOStore } from "@/nodes";
+import {
+  pick_best_io_type,
+  INPUTCONVERTER,
+  useIOStore,
+  useIOSetHidden,
+} from "@/nodes";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 import { useWorkerApi } from "@/workers";
-import { io_set_hidden } from "@/nodes-core";
 
 interface NodeIOSettingsProps {}
 
@@ -13,6 +17,7 @@ export const NodeIOSettings = ({}: NodeIOSettingsProps) => {
   const io_store = useIOStore();
   const io = io_store.use();
   const renderOpts = fnrf_zst.render_options();
+  const set_hidden = useIOSetHidden();
 
   // For editing name
   const [tempName, setTempName] = React.useState(io.name);
@@ -81,7 +86,7 @@ export const NodeIOSettings = ({}: NodeIOSettingsProps) => {
           id={`io-hidden-${io.id}`}
           type="checkbox"
           checked={io.hidden}
-          onChange={(e) => io_set_hidden(io_store, e.target.checked)}
+          onChange={(e) => set_hidden?.(e.target.checked)}
           className="styledcheckbox"
           disabled={io.connected && io.is_input}
         />

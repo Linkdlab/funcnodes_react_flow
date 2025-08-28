@@ -61,9 +61,9 @@ export type {
   FuncNodesReactPlugin,
   VersionedFuncNodesReactPlugin,
   RenderPluginFactoryProps,
-  LATEST_VERSION,
   RendererPlugin,
 } from "@/plugins";
+export { LATEST_VERSION } from "@/plugins";
 export type {
   InputRendererType,
   InputRendererProps,
@@ -90,7 +90,19 @@ export {
   useSetIOValue,
   useIOValueStore,
   useSetIOValueOptions,
+  useIOGetFullValue,
 } from "@/nodes";
+export { useWorkerApi } from "@/workers";
+export { useFuncNodesContext } from "@/providers";
+
+export {
+  DataStructure,
+  ArrayBufferDataStructure,
+  CTypeStructure,
+  JSONStructure,
+  TextStructure,
+} from "@/data-structures";
+
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

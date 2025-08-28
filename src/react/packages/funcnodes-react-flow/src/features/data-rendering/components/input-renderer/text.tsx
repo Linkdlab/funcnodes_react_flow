@@ -26,7 +26,6 @@ export const StringInput = ({ inputconverter }: InputRendererProps) => {
       } catch (e) {}
 
       if (new_value === display) return; // no change
-      console.log("on_change", new_value, display);
       set_io_value(new_value);
     },
     [set_io_value, inputconverter, display]

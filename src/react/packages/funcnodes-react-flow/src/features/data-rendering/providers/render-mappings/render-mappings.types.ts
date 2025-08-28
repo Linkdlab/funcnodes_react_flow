@@ -18,7 +18,7 @@ export type NodeRendererType = (renderprops: NodeRendererProps) => JSX.Element;
 export type NodeHooksProps = {
   // nodestore: NodeStore;
 };
-export type NodeHooksType = (hookprops: NodeHooksProps) => void;
+export type NodeHooksType = (hookprops: NodeHooksProps) => JSX.Element;
 
 // State shape for the render mappings
 export interface RenderMappingState {

@@ -3,7 +3,8 @@ import {
   DataOverlayRendererType,
   DataPreviewViewRendererType,
 } from "@/data-rendering-types";
-import { io_try_get_full_value, IOStore } from "@/nodes-core";
+import { IOStore } from "@/nodes-core";
+import { useIOGetFullValue } from "@/nodes";
 
 export const IODataOverlay = ({
   iostore,
@@ -18,15 +19,16 @@ export const IODataOverlay = ({
   const [pendingValue, setPendingValue] = React.useState<any>(undefined);
 
   const { full } = iostore.valuestore();
+  const get_full_value = useIOGetFullValue();
 
   React.useEffect(() => {
     if (full === undefined) {
-      io_try_get_full_value(iostore);
+      get_full_value?.();
     } else {
       // When a new value arrives, store it as pending
       setPendingValue(full.value);
     }
-  }, [full]);
+  }, [full, get_full_value]);
 
   // This callback will be triggered by the child component when it has loaded the new value
   const handleLoaded = () => {

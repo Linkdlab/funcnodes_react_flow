@@ -1,18 +1,22 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
 import { RenderOptions } from "@/data-rendering-types";
-import { pick_best_io_type, INPUTCONVERTER, useIOStore } from "@/nodes";
+import {
+  pick_best_io_type,
+  INPUTCONVERTER,
+  useIOStore,
+  useIOSetHidden,
+} from "@/nodes";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 
 import { FuncNodesReactFlow } from "@/funcnodes-context";
-import { io_set_hidden } from "@/nodes-core";
 
 export const NodeSettingsInput = () => {
   const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const render: RenderOptions = fnrf_zst.render_options();
   const iostore = useIOStore();
   const io = iostore.use();
-
+  const set_hidden = useIOSetHidden();
   const [typestring, otypestring] = pick_best_io_type(io, render.typemap || {});
   const { Inputrenderer } = React.useContext(RenderMappingContext);
   const Input = typestring
@@ -38,7 +42,7 @@ export const NodeSettingsInput = () => {
             type="checkbox"
             disabled={io.connected}
             onChange={(e) => {
-              io_set_hidden(iostore, e.target.checked);
+              set_hidden?.(e.target.checked);
             }}
             checked={io.hidden}
           ></input>

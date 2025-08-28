@@ -9,9 +9,9 @@ import { LockIcon, LockOpenIcon, FullscreenIcon } from "@/icons";
 import { IODataOverlay, IOPreviewWrapper } from "./iodataoverlay";
 import { useFuncNodesContext } from "@/providers";
 import { CustomDialog } from "@/shared-components";
-import { io_try_get_full_value, IOType, RenderType } from "@/nodes-core";
+import { IOType, RenderType } from "@/nodes-core";
 import { DeepPartial } from "@/object-helpers";
-import { useIOStore } from "@/nodes";
+import { useIOGetFullValue, useIOStore } from "@/nodes";
 
 const pick_best_io_type = (
   io: IOType,
@@ -82,6 +82,7 @@ const HandleWithPreview = ({
   const fnrf_zst = useFuncNodesContext();
   const iostore = useIOStore();
   const io = iostore.use();
+  const get_full_value = useIOGetFullValue();
 
   const [pvhandle, overlayhandle] = usePreviewHandleDataRendererForIo(io);
 
@@ -118,7 +119,7 @@ const HandleWithPreview = ({
                   trigger={<FullscreenIcon />}
                   onOpenChange={(open: boolean) => {
                     if (open) {
-                      io_try_get_full_value(iostore);
+                      get_full_value?.();
                     }
                     setLocked(open);
                   }}

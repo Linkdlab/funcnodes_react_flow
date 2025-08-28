@@ -21,7 +21,6 @@ export const update_node = (
 ): void => {
   const old_state = old_store.getState();
   const updatedstate: Partial<NodeType> = {};
-  console.log("update_node", old_state, new_state);
   const norm_new_state = normalize_node(new_state);
 
   const keys = Object.keys(norm_new_state) as (keyof SerializedNodeType)[];

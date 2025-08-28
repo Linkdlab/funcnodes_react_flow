@@ -3,7 +3,7 @@ export type {
   VersionedFuncNodesReactPlugin,
   RendererPlugin,
   PackedPlugin,
-  LATEST_VERSION,
   RenderPluginFactoryProps,
 } from "./types";
+export { LATEST_VERSION } from "./types";
 export { upgradeFuncNodesReactPlugin } from "./upgrading";

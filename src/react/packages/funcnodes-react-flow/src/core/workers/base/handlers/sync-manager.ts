@@ -116,43 +116,8 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
           kwargs: { key, type: "react" },
           unique: true,
         });
-      if (plugin.js) {
-        for (const js of plugin.js) {
-          const scripttag = document.createElement("script");
 
-          scripttag.text = atob(js);
-
-          document.body.appendChild(scripttag);
-        }
-      }
-      if (plugin.css) {
-        for (const css of plugin.css) {
-          const styletag = document.createElement("style");
-          styletag.innerHTML = atob(css);
-          document.head.appendChild(styletag);
-        }
-      }
-
-      if (plugin.module !== undefined) {
-        /// import the plugin
-        const binaryString = atob(plugin.module);
-
-        // Convert the binary string to a Uint8Array
-        const binaryLen = binaryString.length;
-        const bytes = new Uint8Array(binaryLen);
-        for (let i = 0; i < binaryLen; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-
-        // Convert the Uint8Array to a Blob
-        const blob = new Blob([bytes], { type: "application/javascript" });
-        const blobUrl = URL.createObjectURL(blob);
-        const module = await import(/* @vite-ignore */ blobUrl);
-        // gc the blob
-        URL.revokeObjectURL(blobUrl);
-
-        this.context.worker._zustand.add_plugin(key, module.default);
-      }
+      this.context.worker._zustand.add_packed_plugin(key, plugin);
     }
   }
 

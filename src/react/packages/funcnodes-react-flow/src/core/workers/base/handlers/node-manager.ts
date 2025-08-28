@@ -21,8 +21,8 @@ export interface WorkerNodeManagerAPI {
     keys: string[];
     nullable: boolean;
   }) => Promise<void>;
-  get_io_full_value: (params: { nid: string; ioid: string }) => any;
-  get_io_value: (params: { nid: string; ioid: string }) => any;
+  get_io_full_value: (params: { nid: string; ioid: string }) => Promise<any>;
+  get_io_value: (params: { nid: string; ioid: string }) => Promise<any>;
   get_ios_values: (params: { nid: string }) => any;
   get_node_status: (nid: string) => any;
   update_io_options: (params: {
@@ -181,9 +181,6 @@ export class WorkerNodeManager
       as_bytes: true,
     });
 
-    if (!this.context.worker._zustand) return res;
-
-    if (!this.context.worker._zustand) return;
     const { header, bytes } = res;
 
     const { mime } = header;
@@ -192,7 +189,7 @@ export class WorkerNodeManager
       mime: mime || "application/octet-stream",
     });
 
-    this.context.worker._zustand.on_node_action({
+    this.context.worker._zustand?.on_node_action?.({
       type: "update",
       node: {
         id: nid,
@@ -206,19 +203,7 @@ export class WorkerNodeManager
       from_remote: true,
     });
 
-    // this.context.worker._zustand.on_node_action({
-    //   type: "update",
-    //   node: {
-    //     io: {
-    //       [ioid]: {
-    //         fullvalue: res,
-    //       },
-    //     },
-    //   },
-    //   id: nid,
-    //   from_remote: true,
-    // });
-    return res;
+    return ds;
   }
 
   async update_io_options({

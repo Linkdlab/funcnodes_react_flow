@@ -5,7 +5,11 @@ import { FuncNodesReactFlow } from "@/funcnodes-context";
 import { useFuncNodesContext } from "@/providers";
 import { NodeInput, NodeOutput } from "./io";
 
-import { useBodyDataRendererForIo, useDefaultNodeInjection } from "../../hooks";
+import {
+  useBodyDataRendererForIo,
+  useDefaultNodeInjection,
+  useIOGetFullValue,
+} from "../../hooks";
 import { ProgressBar } from "@/shared-components";
 import {
   PlayCircleFilledIcon,
@@ -18,9 +22,10 @@ import { NodeSettingsOverlay } from "@/node-settings";
 import { useKeyPress } from "@/providers";
 import { CustomDialog } from "@/shared-components";
 import { useWorkerApi } from "@/workers";
-import { io_try_get_full_value, IOStore, NodeStore } from "@/nodes-core";
+import { IOStore, NodeStore } from "@/nodes-core";
 
 import { IOContext, NodeContext, useNodeStore } from "../../provider";
+import { RenderMappingContext } from "@/data-rendering";
 
 interface NodeHeaderProps {
   toogleShowSettings?: () => void;
@@ -87,6 +92,7 @@ const NodeIODataRenderer = React.memo(({ iostore }: { iostore: IOStore }) => {
   const io = iostore.use();
   const nodestore = useNodeStore();
   const render_options = nodestore.use((state) => state.render_options);
+  const get_full_value = useIOGetFullValue(io.id);
 
   const [pvhandle, overlayhandle] = useBodyDataRendererForIo(io);
 
@@ -106,7 +112,7 @@ const NodeIODataRenderer = React.memo(({ iostore }: { iostore: IOStore }) => {
             }
             onOpenChange={(open: boolean) => {
               if (open) {
-                io_try_get_full_value(iostore);
+                get_full_value?.();
               }
             }}
           >
@@ -238,36 +244,72 @@ export interface RFNodeDataPass extends Record<string, unknown> {
   nodestore: NodeStore;
 }
 
+const InnerNode = () => {
+  const nodestore = useNodeStore();
+  const { collapsed, error, node_id } = nodestore.useShallow((state) => ({
+    collapsed: state.properties["frontend:collapsed"] || false,
+    error: state.error,
+    node_id: state.node_id,
+  }));
+  const { visualTrigger } = useDefaultNodeInjection(nodestore);
+  const [showSettings, setShowSettings] = useState(false);
+  const [nodeSettingsPath, setNodeSettingsPath] = useState<string>("");
+  const { keys: pressedKeys } = useKeyPress();
+
+  const renderplugins = React.useContext(RenderMappingContext);
+  const nodeHookComponents = renderplugins.NodeHooks[node_id] ?? [];
+
+  const toogleShowSettings = React.useCallback(() => {
+    setShowSettings((prev) => !prev);
+  }, []);
+
+  const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (pressedKeys.has("s") && !showSettings) {
+      setNodeSettingsPath("");
+      setShowSettings(true);
+      e.stopPropagation();
+    }
+  };
+
+  return (
+    <div
+      className={
+        "innernode" +
+        (visualTrigger ? " intrigger" : "") +
+        (error ? " error" : "")
+      }
+      onClick={onClickHandler}
+    >
+      <NodeHeader toogleShowSettings={toogleShowSettings} />
+      <NodeName />
+      {collapsed ? null : (
+        <NodeBody
+          setNodeSettingsPath={setNodeSettingsPath}
+          setShowSettings={setShowSettings}
+        />
+      )}
+      <NodeFooter />
+      <NodeSettingsOverlay
+        isOpen={showSettings}
+        onOpenChange={setShowSettings}
+        nodeSettingsPath={nodeSettingsPath}
+      ></NodeSettingsOverlay>
+      {/* ✅ Inject hooks properly as React components */}
+      {nodeHookComponents.map((HookComponent, i) => (
+        <React.Fragment key={i}>
+          <HookComponent />
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
 export const DefaultNode = React.memo(
   ({ data }: { data: RFNodeDataPass }) => {
     // Use useShallow to only subscribe to specific properties that affect rendering
-    const { collapsed, error } = data.nodestore.useShallow((state) => ({
-      collapsed: state.properties["frontend:collapsed"] || false,
-      error: state.error,
-    }));
-
-    const { visualTrigger, nodestore: nodecontext } = useDefaultNodeInjection(
-      data.nodestore
-    );
-
-    const [showSettings, setShowSettings] = useState(false);
-    const [nodeSettingsPath, setNodeSettingsPath] = useState<string>("");
-    const { keys: pressedKeys } = useKeyPress();
-
-    const toogleShowSettings = React.useCallback(() => {
-      setShowSettings((prev) => !prev);
-    }, []);
-
-    const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (pressedKeys.has("s") && !showSettings) {
-        setNodeSettingsPath("");
-        setShowSettings(true);
-        e.stopPropagation();
-      }
-    };
 
     return (
-      <NodeContext.Provider value={nodecontext}>
+      <NodeContext.Provider value={data.nodestore}>
         {/* <NodeResizeControl
         minWidth={100}
         minHeight={100}
@@ -275,29 +317,7 @@ export const DefaultNode = React.memo(
       >
         <ExpandIcon fontSize="inherit" className="noderesizeicon" />
       </NodeResizeControl> */}
-        <div
-          className={
-            "innernode" +
-            (visualTrigger ? " intrigger" : "") +
-            (error ? " error" : "")
-          }
-          onClick={onClickHandler}
-        >
-          <NodeHeader toogleShowSettings={toogleShowSettings} />
-          <NodeName />
-          {collapsed ? null : (
-            <NodeBody
-              setNodeSettingsPath={setNodeSettingsPath}
-              setShowSettings={setShowSettings}
-            />
-          )}
-          <NodeFooter />
-          <NodeSettingsOverlay
-            isOpen={showSettings}
-            onOpenChange={setShowSettings}
-            nodeSettingsPath={nodeSettingsPath}
-          ></NodeSettingsOverlay>
-        </div>
+        <InnerNode />
       </NodeContext.Provider>
     );
   },

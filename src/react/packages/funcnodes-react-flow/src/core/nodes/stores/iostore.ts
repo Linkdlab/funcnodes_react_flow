@@ -6,6 +6,7 @@ import { assert_full_nodeio } from "./full-io";
 import { create } from "zustand";
 import { DataStructure, JSONStructure } from "@/data-structures";
 import { update_io } from "./update";
+import { useShallow } from "zustand/react/shallow";
 
 export const createIOStore = (
   node_id: string,
@@ -17,6 +18,9 @@ export const createIOStore = (
     io_state: create_json_safe<IOType>((_set, _get) => io_type),
     use: <U>(selector?: (state: IOType) => U): U | IOType => {
       return selector ? iostore.io_state(selector) : iostore.io_state();
+    },
+    useShallow: <U>(selector: (state: IOType) => U): U => {
+      return iostore.io_state(useShallow(selector));
     },
     getState: () => {
       return iostore.io_state.getState();

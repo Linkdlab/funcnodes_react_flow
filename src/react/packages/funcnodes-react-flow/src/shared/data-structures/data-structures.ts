@@ -342,6 +342,10 @@ export class JSONStructure extends DataStructure<
   }
 
   toString() {
+    // if this._json is string, return it
+    if (typeof this._json === "string") {
+      return this._json;
+    }
     return JSON.stringify(this._json);
   }
 }

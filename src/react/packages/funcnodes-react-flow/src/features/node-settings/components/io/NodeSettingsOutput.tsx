@@ -1,10 +1,10 @@
 import * as React from "react";
-import { useIOStore } from "@/nodes";
-import { io_set_hidden } from "@/nodes-core";
+import { useIOStore, useIOSetHidden } from "@/nodes";
 
 export const NodeSettingsOutput = () => {
   const iostore = useIOStore();
   const io = iostore.use();
+  const set_hidden = useIOSetHidden();
   return (
     <div className="nodesettings_component">
       <div>{io.name}</div>
@@ -16,7 +16,7 @@ export const NodeSettingsOutput = () => {
             type="checkbox"
             disabled={io.connected}
             onChange={(e) => {
-              io_set_hidden(iostore, e.target.checked);
+              set_hidden?.(e.target.checked);
             }}
             checked={io.hidden}
           ></input>

@@ -359,7 +359,7 @@ export class NodeSpaceManager
     }
   };
   _add_node = (action: NodeActionAdd): NodeType | undefined => {
-    console.log("add node", action);
+    this.context.rf.logger.info("add node", action);
     const rfstate = this.reactFlowManager.useReactFlowStore.getState();
     if (action.from_remote) {
       let store = this.nodespace.get_node(action.node.id, false);
@@ -379,18 +379,15 @@ export class NodeSpaceManager
       const node = store!.getState();
 
       this.context.rf.logger.info("Add node", node.id, node.name);
-
-      const new_ndoes = [
-        ...rfstate.getNodes(),
-        assert_reactflow_node(store, this.context.rf),
-      ];
+      const new_node = assert_reactflow_node(store, this.context.rf);
+      const new_ndoes = [...rfstate.getNodes(), new_node];
       this.reactFlowManager.useReactFlowStore
         .getState()
         .update_nodes(new_ndoes);
 
-      for (const io in action.node.io) {
+      for (const io of new_node.io_order) {
         this.workerManager.worker?.api.node.get_io_value({
-          nid: action.node.id,
+          nid: new_node.id,
           ioid: io,
         });
       }
@@ -407,6 +404,10 @@ export class NodeSpaceManager
 
   _update_node = (action: NodeActionUpdate): NodeType | undefined => {
     // some action reset the error, so far trigger does, so errors should remove the in_trigger flag
+    if (Object.keys(action.node).length === 0) {
+      this.context.rf.logger.error("Node update is empty", action);
+      return undefined;
+    }
     if (action.node.in_trigger) {
       action.node.error = undefined;
     }

@@ -219,6 +219,11 @@ export class FuncNodesReactFlow implements FuncNodesReactFlowZustandInterface {
   get add_plugin() {
     return this._pluginManager.add_plugin.bind(this._pluginManager);
   }
+
+  get add_packed_plugin() {
+    return this._pluginManager.add_packed_plugin.bind(this._pluginManager);
+  }
+
   get render_options() {
     return this._pluginManager.render_options.bind(this._pluginManager);
   }

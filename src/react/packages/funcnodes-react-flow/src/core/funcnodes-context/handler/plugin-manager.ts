@@ -7,14 +7,18 @@ import { RenderOptions } from "@/data-rendering-types";
 import { update_zustand_store } from "@/zustand-helpers";
 import {
   FuncNodesReactPlugin,
+  PackedPlugin,
   VersionedFuncNodesReactPlugin,
   upgradeFuncNodesReactPlugin,
 } from "@/plugins";
+import * as React from "react";
+import * as FuncNodesReactFlow from "../../../";
 export interface PluginManagerManagerAPI {
   plugins: UseBoundStore<
     StoreApi<{ [key: string]: FuncNodesReactPlugin | undefined }>
   >;
   add_plugin: (name: string, plugin: FuncNodesReactPlugin) => void;
+  add_packed_plugin: (name: string, plugin: PackedPlugin) => void;
   render_options: UseBoundStore<StoreApi<RenderOptions>>;
   update_render_options: (options: RenderOptions) => void;
 }
@@ -36,6 +40,7 @@ export class PluginManagerHandler
   }
 
   add_plugin(name: string, plugin: VersionedFuncNodesReactPlugin) {
+    console.log("add_plugin", name, plugin);
     if (plugin === undefined) return;
     try {
       const latestplugin = upgradeFuncNodesReactPlugin(plugin);
@@ -45,12 +50,57 @@ export class PluginManagerHandler
     } catch (e) {
       this.stateManager.toaster?.error({
         title: "Error",
-        description: `Error upgrading plugin ${name}: ${e}`,
-        duration: 10000,
+        description: `Error loading plugin ${name}: ${e}`,
+        duration: 5000,
       });
     }
   }
   update_render_options(options: RenderOptions) {
     update_zustand_store(this.render_options, options);
+  }
+
+  async add_packed_plugin(name: string, plugin: PackedPlugin) {
+    if (plugin.js) {
+      for (const js of plugin.js) {
+        const scripttag = document.createElement("script");
+
+        scripttag.text = atob(js);
+
+        document.body.appendChild(scripttag);
+      }
+    }
+    if (plugin.css) {
+      for (const css of plugin.css) {
+        const styletag = document.createElement("style");
+        styletag.innerHTML = atob(css);
+        document.head.appendChild(styletag);
+      }
+    }
+
+    if (plugin.module !== undefined) {
+      /// import the plugin
+      const binaryString = atob(plugin.module);
+
+      try {
+        const factory = new Function(
+          "React",
+          "FuncNodesReactFlow",
+          `
+          return (async () => {
+            ${binaryString}
+            return FuncNodesPlugin;
+          })();
+        `
+        );
+        const module = await factory(React, FuncNodesReactFlow);
+        this.add_plugin(name, module);
+      } catch (e) {
+        this.stateManager.toaster?.error({
+          title: "Error",
+          description: `Error building plugin ${name}: ${e}`,
+          duration: 5000,
+        });
+      }
+    }
   }
 }

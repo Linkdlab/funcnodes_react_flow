@@ -52,6 +52,7 @@ export interface IOStore {
   io_state: UseJSONStore<IOType>;
   use(): IOType;
   use<U>(selector: (state: IOType) => U): U;
+  useShallow<U>(selector: (state: IOType) => U): U;
   getState: () => IOType;
   setState: (new_state: Partial<IOType>) => void;
   update: (new_state: PartialSerializedIOType) => void;
