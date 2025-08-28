@@ -880,13 +880,13 @@ declare interface Logger {
      * Log an error message. Only outputs if current level <= ERROR.
      *
      * @param {string} message - The primary log message
-     * @param {...any[]} args - Additional arguments for context (will be JSON serialized)
+     * @param {Error} [error] - Optional Error object for stack trace handling
      * @example
      * ```typescript
-     * logger.error("Operation failed", error, { retryCount: 3, userId: 123 });
+     * logger.error("Operation failed", error);
      * ```
      */
-    error: (message: string, ...args: any[]) => void;
+    error: (message: string, error?: Error) => void;
 }
 
 declare type NodeAction = NodeActionAdd | NodeActionUpdate | NodeActionDelete | NodeActionError | NodeActionTrigger;
