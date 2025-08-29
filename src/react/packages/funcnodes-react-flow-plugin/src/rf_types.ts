@@ -171,6 +171,8 @@ export declare type DataOverlayRendererType = BasicDataOverlayRendererType | Rea
 
 export declare type DataPreviewViewRendererProps = {};
 
+export declare const DataPreviewViewRendererToHandlePreviewRenderer: (DPR: DataPreviewViewRendererType) => HandlePreviewRendererType;
+
 export declare type DataPreviewViewRendererType = BasicDataPreviewViewRendererType | React.MemoExoticComponent<BasicDataPreviewViewRendererType>;
 
 declare interface DataRenderOptions extends BaseRenderOptions {
@@ -268,6 +270,12 @@ export declare type DataViewRendererProps = {
     preValue?: JSONType | undefined;
     onLoaded?: () => void;
 };
+
+export declare const DataViewRendererToDataPreviewViewRenderer: (DV: DataViewRendererType, defaultValue?: any, props?: any) => DataPreviewViewRendererType;
+
+export declare const DataViewRendererToInputRenderer: (DV: DataViewRendererType, defaultValue?: any) => InputRendererType;
+
+export declare const DataViewRendererToOverlayRenderer: (DV: DataViewRendererType) => DataOverlayRendererType;
 
 export declare type DataViewRendererType = BasicDataViewRendererType | React.MemoExoticComponent<BasicDataViewRendererType>;
 

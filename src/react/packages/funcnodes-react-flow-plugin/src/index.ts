@@ -13,6 +13,10 @@ export {
   CTypeStructure,
   JSONStructure,
   TextStructure,
+  DataViewRendererToOverlayRenderer,
+  DataViewRendererToDataPreviewViewRenderer,
+  DataPreviewViewRendererToHandlePreviewRenderer,
+  DataViewRendererToInputRenderer,
 } from "@linkdlab/funcnodes_react_flow";
 export type {
   FuncNodesReactPlugin,
