@@ -31,6 +31,9 @@ const update_nodeview = (
     node.properties["frontend:collapsed"] = !!view.collapsed; // convert to boolean
 };
 
+const NODE_UPDATE_RATE = 2000;
+const GROUP_UPDATE_RATE = 2000;
+
 export class WorkerSyncManager extends AbstractWorkerHandler {
   on_sync_complete: (worker: FuncNodesWorker) => Promise<void>;
   _nodeupdatetimer: ReturnType<typeof setTimeout> | undefined;
@@ -45,10 +48,10 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
   public start(): void {
     this._nodeupdatetimer = setTimeout(() => {
       this.sync_local_node_updates();
-    }, 5000);
+    }, NODE_UPDATE_RATE);
     this._groupupdatetimer = setTimeout(() => {
       this.sync_local_group_updates();
-    }, 5000);
+    }, GROUP_UPDATE_RATE);
   }
   public stop(): void {
     if (this._nodeupdatetimer) clearTimeout(this._nodeupdatetimer);
@@ -247,17 +250,19 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
           wait_for_response: true,
         });
       if (!this.context.worker._zustand) return;
-      this.context.worker._zustand.on_node_action({
-        type: "update",
-        node: ans,
-        id: id,
-        from_remote: true,
-      });
+      if (Object.keys(ans).length > 0) {
+        this.context.worker._zustand.on_node_action({
+          type: "update",
+          node: ans,
+          id: id,
+          from_remote: true,
+        });
+      }
     });
     this._local_nodeupdates.clear();
     this._nodeupdatetimer = setTimeout(() => {
       this.sync_local_node_updates();
-    }, 200);
+    }, NODE_UPDATE_RATE);
   }
 
   sync_local_group_updates() {
@@ -279,7 +284,7 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     this._local_groupupdates.clear();
     this._groupupdatetimer = setTimeout(() => {
       this.sync_local_group_updates();
-    }, 200);
+    }, GROUP_UPDATE_RATE);
   }
 
   locally_update_node(action: NodeActionUpdate) {
