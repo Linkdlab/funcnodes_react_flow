@@ -1,11 +1,11 @@
 [project]
 name = "funcnodes-react-flow"
-version = "1.0.0a0"
+version = "1.0.0"
 description = "funcnodes frontend for react flow"
 readme = "README.md"
 classifiers = [ "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",]
 requires-python = ">=3.11"
-dependencies = [ "funcnodes-core>=1.0.0a0", "funcnodes-worker>=0.3.0", "funcnodes>=0.5.36; sys_platform != 'emscripten'", "funcnodes>=0.5.35",]
+dependencies = [ "funcnodes-core>=1.0.0", "funcnodes-worker>=1.0.0", "funcnodes>=1.0.0; sys_platform != 'emscripten'", "funcnodes>=1.0.0",]
 [[project.authors]]
 name = "Julian Kimmig"
 email = "julian.kimmig@linkdlab.de"
