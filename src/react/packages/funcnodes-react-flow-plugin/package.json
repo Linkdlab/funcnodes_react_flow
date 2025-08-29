@@ -1,6 +1,6 @@
 {
     "name": "@linkdlab/funcnodes-react-flow-plugin",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "type": "module",
     "description": "Type definitions for FuncNodes React Flow plugins",
     "repository": {
@@ -9,8 +9,18 @@
     },
     "author": "Julian Kimmig",
     "license": "MIT",
-    "main": "dist/index.js",
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.es.js",
     "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.es.js",
+            "require": "./dist/index.cjs.js",
+            "default": "./dist/index.es.js"
+        }
+    },
+    "umd:main": "dist/index.umd.js",
     "files": [
         "dist"
     ],
