@@ -46,7 +46,6 @@ export const reactflowstore = ({
       state.update_nodes(Array.from(old_nodes_id_map.values()));
     },
     update_edges: (edges: Edge[]) => {
-      console.log("update_edges", edges);
       set({
         _edges: edges,
       });
