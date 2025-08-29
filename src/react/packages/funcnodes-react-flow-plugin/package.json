@@ -1,8 +1,14 @@
 {
     "name": "@linkdlab/funcnodes-react-flow-plugin",
-    "version": "0.4.11",
+    "version": "1.0.0",
     "type": "module",
     "description": "Type definitions for FuncNodes React Flow plugins",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Linkdlab/FuncNodesReact.git"
+    },
+    "author": "Julian Kimmig",
+    "license": "MIT",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
