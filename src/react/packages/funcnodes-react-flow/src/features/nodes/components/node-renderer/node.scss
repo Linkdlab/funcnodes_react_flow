@@ -24,7 +24,8 @@
     color: var(--fn-text-color-neutral);
     box-sizing: content-box;
     transform: (-50%, -50%);
-    border: var(--node_border_width) solid var(--fn-node-border-color, #ffffff00);
+    border: var(--node_border_width) solid
+      var(--fn-node-border-color, #ffffff00);
     font-size: var(--fn-font-size-xs);
     width: auto;
     max-width: 250px;
@@ -193,9 +194,19 @@
   display: flex;
 }
 
+.nodedatabody > * {
+  max-height: 100%;
+  max-width: 100%;
+}
+
 .nodedatabutton {
   flex: 1;
   max-height: 40rem;
+}
+
+.nodedatabutton > * {
+  max-height: 100%;
+  max-width: 100%;
 }
 
 .noderesizecontrol {
