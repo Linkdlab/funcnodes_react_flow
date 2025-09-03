@@ -16356,11 +16356,7 @@ const Y9 = (e) => {
             S.currentPage > 1 && (q.preventDefault(), q.stopPropagation(), j(S.currentPage - 1));
             break;
           case "ArrowRight":
-            S.currentPage < S.totalPages && (console.log(
-              "ArrowRight",
-              S.currentPage,
-              S.totalPages
-            ), q.preventDefault(), q.stopPropagation(), j(S.currentPage + 1));
+            S.currentPage < S.totalPages && (q.preventDefault(), q.stopPropagation(), j(S.currentPage + 1));
             break;
           case "Home":
             S.currentPage > 1 && (q.preventDefault(), q.stopPropagation(), j(1));
@@ -27810,7 +27806,7 @@ const ux = ({
         ref: h,
         src: g,
         alt: n,
-        className: `base64-image-renderer ${a.className || ""} ${c ? " loading" : ""}`,
+        className: `base64-image-renderer image-renderer ${a.className || ""} ${c ? " loading" : ""}`,
         ...a
       }
     ) : /* @__PURE__ */ x.jsx(ux, {});
@@ -27910,7 +27906,7 @@ const ux = ({
       "img",
       {
         ref: a,
-        className: `streaming-image ${o.className || ""} ${c ? " loading" : ""}`,
+        className: `streaming-image image-renderer ${o.className || ""} ${c ? " loading" : ""}`,
         alt: t,
         ...o
       }
@@ -39336,7 +39332,7 @@ function Hl(e) {
     throw new Error("No IO found");
   return _.useCallback(
     (r, o) => {
-      console.log("io value set", r), t?.set_io_value({
+      t?.set_io_value({
         nid: e.node,
         ioid: e.id,
         value: r,
@@ -41239,7 +41235,6 @@ const hD = (e) => {
     }
   }, [n, s]), _.useEffect(() => {
     if (r) {
-      console.log("ungroupPressed");
       const y = u(), { group_nodes: w } = c(y);
       w.forEach((v) => {
         p?.remove_group(v.id);
@@ -52429,7 +52424,7 @@ class zpe extends ql {
     super(t), this.plugins = Er((n, r) => ({})), this.render_options = Er((n, r) => ({}));
   }
   add_plugin(t, n) {
-    if (console.log("add_plugin", t, n), n !== void 0)
+    if (n !== void 0)
       try {
         const r = Ipe(n);
         this.plugins.setState((o) => ({ ...o, [t]: r }));

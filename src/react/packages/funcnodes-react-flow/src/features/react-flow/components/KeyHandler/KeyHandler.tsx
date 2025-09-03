@@ -72,7 +72,6 @@ export const KeyHandler = () => {
 
   useEffect(() => {
     if (ungroupPressed) {
-      console.log("ungroupPressed");
       const selectedNodes = getSelectedNodes();
       const { group_nodes } = getSplitNodes(selectedNodes);
       group_nodes.forEach((n) => {

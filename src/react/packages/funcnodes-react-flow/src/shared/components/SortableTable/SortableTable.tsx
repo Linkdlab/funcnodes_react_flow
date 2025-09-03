@@ -278,11 +278,6 @@ const SortableTable: React.FC<SortableTableProps> = ({
           break;
         case "ArrowRight":
           if (pagination.currentPage < pagination.totalPages) {
-            console.log(
-              "ArrowRight",
-              pagination.currentPage,
-              pagination.totalPages
-            );
             event.preventDefault();
             event.stopPropagation(); // Prevent event from bubbling up to dialog
             handlePageChange(pagination.currentPage + 1);
