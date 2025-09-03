@@ -40,7 +40,6 @@ export class PluginManagerHandler
   }
 
   add_plugin(name: string, plugin: VersionedFuncNodesReactPlugin) {
-    console.log("add_plugin", name, plugin);
     if (plugin === undefined) return;
     try {
       const latestplugin = upgradeFuncNodesReactPlugin(plugin);

@@ -23,7 +23,6 @@ function htmlTransformPlugin(mode) {
       }
       // Resolve the absolute path of the file.
       const filePath = path.resolve(__dirname, scriptfile);
-      console.log("filePath", filePath);
       // Read the file content as a string.
       const scriptContent = await fs.readFile(filePath, "utf-8");
       // Replace the placeholder in your HTML with the script tag containing the file content.

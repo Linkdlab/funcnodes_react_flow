@@ -30,7 +30,6 @@ export function useSetIOValue(io?: IOType | string | undefined) {
 
   const func = React.useCallback(
     (value: any, set_default?: boolean) => {
-      console.log("io value set", value);
       node?.set_io_value({
         nid: io.node,
         ioid: io.id,

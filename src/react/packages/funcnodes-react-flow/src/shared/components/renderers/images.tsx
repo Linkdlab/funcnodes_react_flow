@@ -127,9 +127,9 @@ export const Base64ImageRenderer = React.memo(
         ref={imgRef}
         src={src}
         alt={alt}
-        className={`base64-image-renderer ${props.className || ""} ${
-          isLoading ? " loading" : ""
-        }`}
+        className={`base64-image-renderer image-renderer ${
+          props.className || ""
+        } ${isLoading ? " loading" : ""}`}
         {...props}
       />
     );
@@ -299,7 +299,7 @@ export const StreamingImage = React.memo(
     return (
       <img
         ref={imgRef}
-        className={`streaming-image ${props.className || ""} ${
+        className={`streaming-image image-renderer ${props.className || ""} ${
           isLoading ? " loading" : ""
         }`}
         alt={alt}
