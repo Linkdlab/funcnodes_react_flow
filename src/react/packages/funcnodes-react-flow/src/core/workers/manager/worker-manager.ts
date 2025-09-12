@@ -14,6 +14,7 @@ export class WorkerManager {
   private connectionTimeout?: ReturnType<typeof setTimeout>;
   on_setWorker: (worker: FuncNodesWorker | undefined) => void;
   constructor(wsuri: string, zustand: FuncNodesReactFlow) {
+    zustand.logger.debug("Initializing worker manager");
     this._wsuri = wsuri;
     this.zustand = zustand;
     this.workers = {};

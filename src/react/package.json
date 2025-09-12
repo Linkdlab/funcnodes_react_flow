@@ -1,18 +1,19 @@
 {
-    "name": "funcnodes-react-flow-monorepo",
-    "private": true,
-    "packageManager": "yarn@4.9.2",
-    "workspaces": [
-        "packages/*"
-    ],
-    "scripts": {
-        "build": "yarn workspaces foreach -A run build",
-        "typecheck": "yarn workspaces foreach -A run typecheck",
-        "test": "yarn workspaces foreach -A run test",
-        "watch": "yarn workspace @linkdlab/funcnodes_react_flow run watch",
-        "dev-full": "node dev_full.cjs"
-    },
-    "devDependencies": {
-        "typescript": "^5.8.3"
-    }
+  "name": "funcnodes-react-flow-monorepo",
+  "version": "1.0.2",
+  "private": true,
+  "packageManager": "yarn@4.9.2",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "yarn workspaces foreach -A run build",
+    "typecheck": "yarn workspaces foreach -A run typecheck",
+    "test": "yarn workspaces foreach -A run test",
+    "watch": "yarn workspace @linkdlab/funcnodes_react_flow run watch",
+    "dev-full": "node dev_full.cjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
 }

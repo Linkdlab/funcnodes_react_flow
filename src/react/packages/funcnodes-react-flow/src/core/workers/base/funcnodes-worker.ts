@@ -133,6 +133,7 @@ export class FuncNodesWorker {
 
   set_zustand(zustand: FuncNodesReactFlow) {
     if (zustand === this._zustand) return;
+    zustand.logger.debug("Setting zustand for worker");
     this._zustand = zustand;
     zustand.set_worker(this);
     this._zustand.auto_progress();

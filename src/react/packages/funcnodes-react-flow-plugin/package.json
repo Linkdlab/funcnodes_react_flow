@@ -1,48 +1,48 @@
 {
-    "name": "@linkdlab/funcnodes-react-flow-plugin",
-    "version": "1.0.1",
-    "type": "module",
-    "description": "Type definitions for FuncNodes React Flow plugins",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/Linkdlab/FuncNodesReact.git"
-    },
-    "author": "Julian Kimmig",
-    "license": "MIT",
-    "main": "dist/index.cjs.js",
-    "module": "dist/index.es.js",
-    "types": "dist/index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.es.js",
-            "require": "./dist/index.cjs.js",
-            "default": "./dist/index.es.js"
-        }
-    },
-    "umd:main": "dist/index.umd.js",
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "copy-types": "cp ../funcnodes-react-flow/dist/index.d.ts src/rf_types.ts",
-        "prebuild": "npm run copy-types",
-        "build": "npm run prebuild && vite build",
-        "pretypecheck": "npm run copy-types",
-        "typecheck": "npm run pretypecheck && tsc --noEmit"
-    },
-    "devDependencies": {
-        "@linkdlab/funcnodes_react_flow": "workspace:*",
-        "@vitejs/plugin-react": "^4.7.0",
-        "rollup": "^4.46.2",
-        "rollup-plugin-dts": "^6.2.1",
-        "typescript": "^5.8.3",
-        "vite": "^7.0.6",
-        "vite-plugin-dts": "^4.5.4"
-    },
-    "peerDependencies": {
-        "@linkdlab/funcnodes_react_flow": "*",
-        "react": "^19.0",
-        "react-dom": "^19.0"
+  "name": "@linkdlab/funcnodes-react-flow-plugin",
+  "version": "1.0.2",
+  "type": "module",
+  "description": "Type definitions for FuncNodes React Flow plugins",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Linkdlab/FuncNodesReact.git"
+  },
+  "author": "Julian Kimmig",
+  "license": "MIT",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.es.js"
     }
+  },
+  "umd:main": "dist/index.umd.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "copy-types": "cp ../funcnodes-react-flow/dist/index.d.ts src/rf_types.ts",
+    "prebuild": "npm run copy-types",
+    "build": "npm run prebuild && vite build",
+    "pretypecheck": "npm run copy-types",
+    "typecheck": "npm run pretypecheck && tsc --noEmit"
+  },
+  "devDependencies": {
+    "@linkdlab/funcnodes_react_flow": "workspace:*",
+    "@vitejs/plugin-react": "^4.7.0",
+    "rollup": "^4.46.2",
+    "rollup-plugin-dts": "^6.2.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.6",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "peerDependencies": {
+    "@linkdlab/funcnodes_react_flow": "*",
+    "react": "^19.0",
+    "react-dom": "^19.0"
+  }
 }

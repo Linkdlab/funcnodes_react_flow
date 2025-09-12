@@ -24,6 +24,7 @@ export class WorkerManagerHandler
   _unsubscribeFromWorker: (() => void) | undefined;
   constructor(context: FuncNodesReactFlowHandlerContext) {
     super(context);
+    context.rf.logger.debug("Initializing worker manager handler");
     this.workers = create<WorkersState>((_set, _get) => ({}));
     this.workerstate = create<FuncNodesWorkerState>((_set, _get) => ({
       is_open: false,
@@ -42,11 +43,14 @@ export class WorkerManagerHandler
 
     // If new worker is provided
     if (worker) {
+      this.context.rf.logger.debug("Setting worker in worker manager");
       this._unsubscribeFromWorker = worker.state.subscribe((newState) => {
         this.workerstate.setState(newState);
       });
 
       this.workerstate.setState(worker.state.getState());
+    } else {
+      this.context.rf.logger.debug("Removing worker in worker manager");
     }
 
     // Update the reference

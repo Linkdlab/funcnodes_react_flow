@@ -137,6 +137,7 @@ export class NodeSpaceManager
     }
   };
   clear_all = () => {
+    this.context.rf.logger.debug("Clearing all nodespace");
     this.workerManager.worker?.disconnect();
     this.workerManager.set_worker(undefined);
     this.workerManager.workermanager?.setWorker(undefined);
