@@ -35,4 +35,11 @@ repos:
     rev: v0.1.0
     hooks:
       - id: version-sync
-        args: ["--sync", "src/react/package.json", "pyproject.toml"]
+        args:
+          [
+            "--sync",
+            "src/react/package.json",
+            "src/react/packages/funcnodes-react-flow/package.json",
+            "src/react/packages/funcnodes-react-flow-plugin/package.json",
+            "pyproject.toml",
+          ]
