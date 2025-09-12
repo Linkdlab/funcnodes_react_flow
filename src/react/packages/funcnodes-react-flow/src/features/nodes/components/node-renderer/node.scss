@@ -23,7 +23,7 @@
     flex-direction: column;
     color: var(--fn-text-color-neutral);
     box-sizing: content-box;
-    transform: (-50%, -50%);
+    transform: translate(-50%, -50%);
     border: var(--node_border_width) solid
       var(--fn-node-border-color, #ffffff00);
     font-size: var(--fn-font-size-xs);

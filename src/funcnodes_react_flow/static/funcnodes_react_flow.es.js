@@ -29924,7 +29924,7 @@ class VX {
     };
   }
   set_zustand(t) {
-    t !== this._zustand && (this._zustand = t, t.set_worker(this), this._zustand.auto_progress(), this._syncManager.stepwise_fullsync());
+    t !== this._zustand && (t.logger.debug("Setting zustand for worker"), this._zustand = t, t.set_worker(this), this._zustand.auto_progress(), this._syncManager.stepwise_fullsync());
   }
   get is_open() {
     return this.state.getState().is_open;
@@ -31924,7 +31924,7 @@ class D3 extends VX {
 }
 class xZ {
   constructor(t, n) {
-    this.ws = null, this.reconnectAttempts = 0, this.maxReconnectAttempts = 999, this.initialTimeout = 200, this.maxTimeout = 2e3, this._wsuri = t, this.zustand = n, this.workers = {}, this.on_setWorker = (r) => {
+    this.ws = null, this.reconnectAttempts = 0, this.maxReconnectAttempts = 999, this.initialTimeout = 200, this.maxTimeout = 2e3, n.logger.debug("Initializing worker manager"), this._wsuri = t, this.zustand = n, this.workers = {}, this.on_setWorker = (r) => {
       this.zustand.set_worker(r);
     }, this.connectionTimeout = setTimeout(() => {
       this.connect();
@@ -51954,9 +51954,9 @@ const Cw = ({
   library: r
 }) => {
   const [o, a] = _.useState(
-    e.options.worker
+    e.options.worker || e.getWorkerManager().worker
   ), s = _.useRef(null);
-  e.workermanager && (e.workermanager.on_setWorker = a), e.set_worker(o), _.useEffect(() => {
+  e.workermanager && (e.workermanager.on_setWorker = a), _.useEffect(() => {
     e.auto_progress();
   }, []), _.useEffect(() => {
     e.local_state.setState({ funcnodescontainerRef: s.current });
@@ -52136,7 +52136,7 @@ class Mpe extends ql {
           this.context.rf.logger.error("Unknown group action", n);
       }
     }, this.clear_all = () => {
-      this.workerManager.worker?.disconnect(), this.workerManager.set_worker(void 0), this.workerManager.workermanager?.setWorker(void 0), this.libManager.lib.libstate.getState().set({ lib: { shelves: [] }, external_worker: [] }), this.nodespace.nodesstates.clear(), this.reactFlowManager.useReactFlowStore.getState().update_nodes([]), this.reactFlowManager.useReactFlowStore.getState().update_edges([]), this.stateManager.auto_progress();
+      this.context.rf.logger.debug("Clearing all nodespace"), this.workerManager.worker?.disconnect(), this.workerManager.set_worker(void 0), this.workerManager.workermanager?.setWorker(void 0), this.libManager.lib.libstate.getState().set({ lib: { shelves: [] }, external_worker: [] }), this.nodespace.nodesstates.clear(), this.reactFlowManager.useReactFlowStore.getState().update_nodes([]), this.reactFlowManager.useReactFlowStore.getState().update_edges([]), this.stateManager.auto_progress();
     }, this.center_node = (n) => {
       if (!this.reactFlowManager.rf_instance)
         return;
@@ -52342,14 +52342,14 @@ class Npe extends ql {
 }
 class Dpe extends ql {
   constructor(t) {
-    super(t), this.workers = Er((n, r) => ({})), this.workerstate = Er((n, r) => ({
+    super(t), t.rf.logger.debug("Initializing worker manager handler"), this.workers = Er((n, r) => ({})), this.workerstate = Er((n, r) => ({
       is_open: !1
     }));
   }
   set_worker(t) {
-    t !== this.worker && (this._unsubscribeFromWorker && (this._unsubscribeFromWorker(), this._unsubscribeFromWorker = void 0), t && (this._unsubscribeFromWorker = t.state.subscribe((n) => {
+    t !== this.worker && (this._unsubscribeFromWorker && (this._unsubscribeFromWorker(), this._unsubscribeFromWorker = void 0), t ? (this.context.rf.logger.debug("Setting worker in worker manager"), this._unsubscribeFromWorker = t.state.subscribe((n) => {
       this.workerstate.setState(n);
-    }), this.workerstate.setState(t.state.getState())), this.worker = t, t?.set_zustand(this.context.rf));
+    }), this.workerstate.setState(t.state.getState())) : this.context.rf.logger.debug("Removing worker in worker manager"), this.worker = t, t?.set_zustand(this.context.rf));
   }
 }
 class Ppe extends ql {
@@ -52794,7 +52794,7 @@ const Hpe = (e) => {
   );
 };
 window.FuncNodes = rj;
-window.FuncNodes.version = "1.0.0";
+window.FuncNodes.version = "1.0.2";
 window.FuncNodes.utils = {
   logger: {
     ConsoleLogger: l1,

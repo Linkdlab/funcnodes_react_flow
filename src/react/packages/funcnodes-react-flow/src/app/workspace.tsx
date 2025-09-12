@@ -41,7 +41,7 @@ export const InnerFuncnodesReactFlow = ({
   library: ReactFlowLibraryProps;
 }) => {
   const [worker, setWorker] = useState<FuncNodesWorker | undefined>(
-    fnrf_zst.options.worker
+    fnrf_zst.options.worker || fnrf_zst.getWorkerManager().worker
   );
 
   const ref = React.useRef<HTMLDivElement>(null);
@@ -50,7 +50,7 @@ export const InnerFuncnodesReactFlow = ({
     fnrf_zst.workermanager.on_setWorker = setWorker;
   }
 
-  fnrf_zst.set_worker(worker);
+  // fnrf_zst.set_worker(worker);
 
   React.useEffect(() => {
     fnrf_zst.auto_progress();

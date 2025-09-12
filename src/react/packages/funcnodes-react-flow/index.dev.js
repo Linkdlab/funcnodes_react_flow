@@ -398,26 +398,52 @@ function make_logger(type, levelFilters) {
   }
 }
 
+function getParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
 window.onload = async function () {
   // Configuration: set to 'window' for separate browser window, 'popup' for in-DOM popup
   const LOGGER_TYPE = "window"; // Change to 'popup' for in-DOM version
 
   let levelFilters = { debug: true, info: true, warn: true, error: true };
   const loggerElement = make_logger(LOGGER_TYPE, levelFilters);
+  window.FN_WORKER_URL = getParam("worker_url") || window.FN_WORKER_URL;
+  window.FN_WORKER_PORT = getParam("worker_port") || window.FN_WORKER_PORT;
+  let debug = getParam("debug");
+  if (debug === null) {
+    debug = true;
+  } else if (debug === "") {
+    debug = true;
+  } else {
+    debug = debug === "true" || debug === "1" || debug === "yes";
+  }
 
-  const port = window.FN_WORKER_PORT || 9380;
-  const managerurl = `ws://localhost:${port}`;
-  FuncNodes("root", {
-    workermanager_url: managerurl,
-    load_worker: "demo",
-    debug: true,
-    on_ready: function (obj) {
-      window.funcnodes_return = obj;
-    },
-    logger: new window.FuncNodes.utils.logger.DivLogger(
-      loggerElement,
-      "FuncNodes",
-      "DEBUG"
-    ),
-  });
+  if (window.FN_WORKER_URL) {
+    FuncNodes("root", {
+      worker_url: window.FN_WORKER_URL,
+      debug: debug,
+      useWorkerManager: false,
+      on_ready: function (obj) {
+        window.funcnodes_return = obj;
+      },
+    });
+  } else {
+    const port = window.FN_WORKER_PORT || 9380;
+    const managerurl = `ws://localhost:${port}`;
+    FuncNodes("root", {
+      workermanager_url: managerurl,
+      load_worker: "demo",
+      debug: debug,
+      on_ready: function (obj) {
+        window.funcnodes_return = obj;
+      },
+      logger: new window.FuncNodes.utils.logger.DivLogger(
+        loggerElement,
+        "FuncNodes",
+        "DEBUG"
+      ),
+    });
+  }
 };
