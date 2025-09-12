@@ -52672,7 +52672,6 @@ const Hpe = (e) => {
     void 0
   ), [a, s] = _.useState(!1);
   if (_.useEffect(() => {
-    console.log("Initializing FuncNodes with props:", e);
     const u = $pe(e);
     u.logger = u.logger || new l1("FuncNodes", u.debug ? "debug" : "info"), u.logger.debug("Initializing FuncNodes with props:", u), n(u), s(!1);
   }, [e]), _.useEffect(() => {
