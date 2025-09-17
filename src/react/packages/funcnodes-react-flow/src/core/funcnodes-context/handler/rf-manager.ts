@@ -91,11 +91,33 @@ export class ReactFlowManagerHandler
     ) {
       return;
     }
+    const sourceMapping =
+      this.nodespaceManager.get_collapsed_handle_mapping(
+        connection.source,
+        connection.sourceHandle
+      );
+    const targetMapping =
+      this.nodespaceManager.get_collapsed_handle_mapping(
+        connection.target,
+        connection.targetHandle
+      );
+    const finalSource = sourceMapping
+      ? sourceMapping.nodeId
+      : connection.source;
+    const finalSourceHandle = sourceMapping
+      ? sourceMapping.ioId
+      : connection.sourceHandle;
+    const finalTarget = targetMapping
+      ? targetMapping.nodeId
+      : connection.target;
+    const finalTargetHandle = targetMapping
+      ? targetMapping.ioId
+      : connection.targetHandle;
     this.workerManager.worker.api.edge.add_edge({
-      src_nid: connection.source,
-      src_ioid: connection.sourceHandle,
-      trg_nid: connection.target,
-      trg_ioid: connection.targetHandle,
+      src_nid: finalSource,
+      src_ioid: finalSourceHandle,
+      trg_nid: finalTarget,
+      trg_ioid: finalTargetHandle,
       replace: true,
     });
   };

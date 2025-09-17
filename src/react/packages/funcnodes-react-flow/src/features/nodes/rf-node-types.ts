@@ -1,6 +1,22 @@
 import { NodeGroup } from "@/groups";
 import { Node as RFNode } from "@xyflow/react";
 
+export interface CollapsedGroupIO {
+  handleId: string;
+  nodeId: string;
+  ioId: string;
+  ioName: string;
+  nodeName: string;
+  direction: "input" | "output";
+  connectionCount: number;
+  type?: string;
+}
+
+export interface CollapsedGroupVisualState {
+  inputs: CollapsedGroupIO[];
+  outputs: CollapsedGroupIO[];
+}
+
 interface FuncNodesRFNodeData {
   groupID?: string;
   [key: string]: unknown;
@@ -12,6 +28,8 @@ interface FuncNodesRFNode extends RFNode {
 export interface GroupRFNodeData extends FuncNodesRFNodeData {
   group: NodeGroup;
   id: string;
+  collapsed?: boolean;
+  collapsedInfo?: CollapsedGroupVisualState;
 }
 
 export interface GroupRFNode extends FuncNodesRFNode {

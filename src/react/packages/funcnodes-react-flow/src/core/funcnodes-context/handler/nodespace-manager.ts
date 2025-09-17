@@ -14,7 +14,12 @@ import {
   FuncNodesReactFlowHandlerContext,
 } from "./rf-handlers.types";
 
-import { AnyFuncNodesRFNode, GroupRFNode } from "@/nodes";
+import {
+  AnyFuncNodesRFNode,
+  CollapsedGroupIO,
+  CollapsedGroupVisualState,
+  GroupRFNode,
+} from "@/nodes";
 import {
   applyNodeChanges,
   Edge,
@@ -35,6 +40,70 @@ import { generate_edge_id } from "@/edges-core";
 import { assert_reactflow_node } from "@/react-flow";
 import { NodeSpaceZustand, NodeSpaceZustandInterface } from "@/nodespace";
 
+interface GroupMembers {
+  nodeIds: Set<string>;
+  groupIds: Set<string>;
+}
+
+interface CollapsedHandleMapping {
+  nodeId: string;
+  ioId: string;
+  direction: "input" | "output";
+  handleId: string;
+}
+
+const makeNodeIoKey = (
+  nodeId: string,
+  ioId: string,
+  direction: "input" | "output"
+) => `${direction}:${nodeId}:${ioId}`;
+
+const collectGroupMembers = (
+  groupId: string,
+  groups: NodeGroups,
+  visited: Set<string> = new Set()
+): GroupMembers => {
+  const nodeIds = new Set<string>();
+  const groupIds = new Set<string>();
+  const stack = [groupId];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current || visited.has(current)) {
+      continue;
+    }
+    visited.add(current);
+    const group = groups[current];
+    if (!group) {
+      continue;
+    }
+    for (const nodeId of group.node_ids) {
+      nodeIds.add(nodeId);
+    }
+    for (const childGroupId of group.child_groups) {
+      if (!visited.has(childGroupId)) {
+        groupIds.add(childGroupId);
+        stack.push(childGroupId);
+      }
+    }
+  }
+  return { nodeIds, groupIds };
+};
+
+const hasCollapsedAncestor = (
+  groupId: string,
+  groups: NodeGroups,
+  collapsed: Set<string>
+) => {
+  let parent = groups[groupId]?.parent_group ?? null;
+  while (parent) {
+    if (collapsed.has(parent)) {
+      return true;
+    }
+    parent = groups[parent]?.parent_group ?? null;
+  }
+  return false;
+};
+
 export interface NodeSpaceManagerAPI {
   on_node_action: (action: NodeAction) => NodeType | undefined;
   on_edge_action: (edge: EdgeAction) => void;
@@ -49,6 +118,12 @@ export class NodeSpaceManager
   implements NodeSpaceManagerAPI
 {
   public nodespace: NodeSpaceZustandInterface;
+  private _groups: NodeGroups = {};
+  private _collapsedHandleMap: Map<
+    string,
+    Map<string, CollapsedHandleMapping>
+  > = new Map();
+  private _activeCollapsedGroups: Set<string> = new Set();
   constructor(context: FuncNodesReactFlowHandlerContext) {
     super(context);
     this.nodespace = NodeSpaceZustand({});
@@ -125,6 +200,9 @@ export class NodeSpaceManager
       default:
         this.context.rf.logger.error("Unknown edge action", action);
     }
+    if (action.from_remote) {
+      this._refresh_collapsed_groups();
+    }
   };
   on_group_action = (action: GroupAction) => {
     switch (action.type) {
@@ -144,6 +222,9 @@ export class NodeSpaceManager
     this.libManager.lib.libstate
       .getState()
       .set({ lib: { shelves: [] }, external_worker: [] });
+    this._groups = {};
+    this._collapsedHandleMap.clear();
+    this._activeCollapsedGroups.clear();
     this.nodespace.nodesstates.clear();
     this.reactFlowManager.useReactFlowStore.getState().update_nodes([]);
     this.reactFlowManager.useReactFlowStore.getState().update_edges([]);
@@ -303,8 +384,10 @@ export class NodeSpaceManager
       const { new_obj, change } = deep_merge(group.data.group, action.group);
       if (change) {
         group.data.group = new_obj;
+        this._groups[action.id] = new_obj;
       }
       rfstate.partial_update_nodes([group]);
+      this._refresh_collapsed_groups();
     } else {
       if (this.workerManager.worker) {
         this.workerManager.worker.api.group.locally_update_group(action);
@@ -314,6 +397,7 @@ export class NodeSpaceManager
 
   _set_groups = (groups: NodeGroups) => {
     const rfstate = this.reactFlowManager.useReactFlowStore.getState();
+    this._groups = { ...groups };
     const { default_nodes } = split_rf_nodes(rfstate.getNodes());
     const new_nodes: AnyFuncNodesRFNode[] = [...default_nodes];
 
@@ -355,8 +439,294 @@ export class NodeSpaceManager
     //iterate in reverse over sorted_nodes:
     for (const node of sorted_nodes.reverse()) {
       if (node.type === "group") {
-        this.auto_resize_group(node.id);
+        if (!groups[node.id]?.meta?.collapsed) {
+          this.auto_resize_group(node.id);
+        }
       }
+    }
+    this._refresh_collapsed_groups();
+  };
+
+  _refresh_collapsed_groups = () => {
+    const rfstate = this.reactFlowManager.useReactFlowStore.getState();
+    const nodes = rfstate.getNodes();
+    const edges = rfstate.getEdges();
+
+    const baseEdges = edges
+      .filter((edge) => !(edge.data && (edge.data as any).__fnrfCollapsedProxy))
+      .map((edge) => ({
+        ...edge,
+        data: edge.data ? { ...edge.data } : undefined,
+      }));
+    for (const edge of baseEdges) {
+      edge.hidden = false;
+    }
+
+    if (nodes.length === 0) {
+      this._collapsedHandleMap.clear();
+      this._activeCollapsedGroups.clear();
+      if (edges.length !== baseEdges.length) {
+        rfstate.update_edges(baseEdges);
+      }
+      return;
+    }
+
+    const updatedNodes = nodes.map((node) => ({
+      ...node,
+      data: { ...node.data },
+    })) as AnyFuncNodesRFNode[];
+    const nodeMap = new Map(updatedNodes.map((node) => [node.id, node]));
+
+    for (const node of updatedNodes) {
+      node.hidden = false;
+      if (node.type === "group") {
+        const groupNode = node as GroupRFNode;
+        groupNode.data.collapsed = false;
+        groupNode.data.collapsedInfo = undefined;
+      }
+    }
+
+    const collapsedGroupIds = new Set<string>();
+    for (const [gid, group] of Object.entries(this._groups)) {
+      if (group?.meta?.collapsed) {
+        collapsedGroupIds.add(gid);
+      }
+    }
+
+    const topLevelCollapsed = Array.from(collapsedGroupIds).filter(
+      (gid) => !hasCollapsedAncestor(gid, this._groups, collapsedGroupIds)
+    );
+
+    const previousCollapsed = new Set(this._activeCollapsedGroups);
+    const newCollapsedGroupSet = new Set(topLevelCollapsed);
+    const expandedGroups: string[] = [];
+    for (const gid of previousCollapsed) {
+      if (!newCollapsedGroupSet.has(gid)) {
+        expandedGroups.push(gid);
+      }
+    }
+
+    const groupMembersMap = new Map<string, GroupMembers>();
+    for (const gid of topLevelCollapsed) {
+      groupMembersMap.set(gid, collectGroupMembers(gid, this._groups));
+    }
+
+    const nodeToCollapsedGroup = new Map<string, string>();
+    for (const [gid, members] of groupMembersMap) {
+      for (const nodeId of members.nodeIds) {
+        nodeToCollapsedGroup.set(nodeId, gid);
+      }
+    }
+
+    const newCollapsedHandleMap = new Map<
+      string,
+      Map<string, CollapsedHandleMapping>
+    >();
+    const handleLookupByGroup = new Map<
+      string,
+      Map<string, CollapsedHandleMapping>
+    >();
+    const proxyEdges: Edge[] = [];
+
+    for (const gid of topLevelCollapsed) {
+      const members = groupMembersMap.get(gid);
+      if (!members) {
+        continue;
+      }
+      const groupNode = nodeMap.get(gid) as GroupRFNode | undefined;
+      if (!groupNode) {
+        continue;
+      }
+
+      const handleMapByHandleId = new Map<string, CollapsedHandleMapping>();
+      const handleLookup = new Map<string, CollapsedHandleMapping>();
+      const inputs: CollapsedGroupVisualState["inputs"] = [];
+      const outputs: CollapsedGroupVisualState["outputs"] = [];
+
+      for (const nodeId of members.nodeIds) {
+        const nodeStore = this.nodespace.get_node(nodeId, false);
+        if (!nodeStore) {
+          continue;
+        }
+        const nodeState = nodeStore.getState();
+        const nodeLabel =
+          nodeState.name || nodeState.node_name || nodeState.id || nodeId;
+
+        const processIo = (ioId: string, direction: "input" | "output") => {
+          const ioStore = nodeStore.io_stores.get(ioId);
+          if (!ioStore) {
+            return;
+          }
+          const ioState = ioStore.getState();
+          if (ioState.hidden) {
+            return;
+          }
+          const connectedEdges =
+            direction === "input"
+              ? baseEdges.filter(
+                  (edge) =>
+                    edge.target === nodeId && edge.targetHandle === ioId
+                )
+              : baseEdges.filter(
+                  (edge) =>
+                    edge.source === nodeId && edge.sourceHandle === ioId
+                );
+          const externalEdges = connectedEdges.filter((edge) => {
+            const otherNodeId =
+              direction === "input" ? edge.source : edge.target;
+            if (!otherNodeId) {
+              return false;
+            }
+            if (members.nodeIds.has(otherNodeId)) {
+              return false;
+            }
+            const otherGroup = nodeToCollapsedGroup.get(otherNodeId);
+            return otherGroup !== gid;
+          });
+          if (externalEdges.length === 0 && connectedEdges.length !== 0) {
+            return;
+          }
+          const handleId = makeNodeIoKey(nodeId, ioId, direction);
+          const ioType =
+            typeof ioState.type === "string"
+              ? ioState.type
+              : typeof ioState.render_options?.type === "string"
+              ? ioState.render_options?.type
+              : undefined;
+          const entry: CollapsedGroupIO = {
+            handleId,
+            nodeId,
+            ioId,
+            ioName: ioState.name || ioId,
+            nodeName: nodeLabel,
+            direction,
+            connectionCount: externalEdges.length,
+            type: ioType,
+          };
+          if (direction === "input") {
+            inputs.push(entry);
+          } else {
+            outputs.push(entry);
+          }
+          const mapping: CollapsedHandleMapping = {
+            nodeId,
+            ioId,
+            direction,
+            handleId,
+          };
+          handleMapByHandleId.set(handleId, mapping);
+          handleLookup.set(makeNodeIoKey(nodeId, ioId, direction), mapping);
+        };
+
+        nodeState.inputs?.forEach((ioId) => processIo(ioId, "input"));
+        nodeState.outputs?.forEach((ioId) => processIo(ioId, "output"));
+      }
+
+      groupNode.data.collapsed = true;
+      groupNode.data.collapsedInfo = { inputs, outputs };
+
+      const rowCount = Math.max(inputs.length, outputs.length);
+      const collapsedHeight = Math.max(100, rowCount * 34 + 70);
+      const collapsedWidth =
+        inputs.length > 0 && outputs.length > 0 ? 260 : 220;
+      groupNode.height = collapsedHeight;
+      groupNode.width = collapsedWidth;
+      groupNode.zIndex = 1003;
+
+      for (const nodeId of members.nodeIds) {
+        const childNode = nodeMap.get(nodeId);
+        if (childNode) {
+          childNode.hidden = true;
+        }
+      }
+      for (const childGroupId of members.groupIds) {
+        const childGroupNode = nodeMap.get(childGroupId);
+        if (childGroupNode) {
+          childGroupNode.hidden = true;
+        }
+      }
+
+      newCollapsedHandleMap.set(gid, handleMapByHandleId);
+      handleLookupByGroup.set(gid, handleLookup);
+    }
+
+    for (const edge of baseEdges) {
+      if (
+        !edge.source ||
+        !edge.target ||
+        !edge.sourceHandle ||
+        !edge.targetHandle
+      ) {
+        continue;
+      }
+      const sourceGroupId = nodeToCollapsedGroup.get(edge.source);
+      const targetGroupId = nodeToCollapsedGroup.get(edge.target);
+
+      if (!sourceGroupId && !targetGroupId) {
+        continue;
+      }
+
+      if (sourceGroupId && targetGroupId && sourceGroupId === targetGroupId) {
+        edge.hidden = true;
+        continue;
+      }
+
+      let newSourceId = edge.source;
+      let newSourceHandle = edge.sourceHandle;
+      let newTargetId = edge.target;
+      let newTargetHandle = edge.targetHandle;
+
+      if (sourceGroupId) {
+        const mapping = handleLookupByGroup
+          .get(sourceGroupId)
+          ?.get(makeNodeIoKey(edge.source, edge.sourceHandle, "output"));
+        if (!mapping) {
+          edge.hidden = false;
+          continue;
+        }
+        newSourceId = sourceGroupId;
+        newSourceHandle = mapping.handleId;
+      }
+
+      if (targetGroupId) {
+        const mapping = handleLookupByGroup
+          .get(targetGroupId)
+          ?.get(makeNodeIoKey(edge.target, edge.targetHandle, "input"));
+        if (!mapping) {
+          edge.hidden = false;
+          continue;
+        }
+        newTargetId = targetGroupId;
+        newTargetHandle = mapping.handleId;
+      }
+
+      edge.hidden = true;
+
+      proxyEdges.push({
+        ...edge,
+        id: `collapsed:${edge.id}`,
+        source: newSourceId,
+        sourceHandle: newSourceHandle,
+        target: newTargetId,
+        targetHandle: newTargetHandle,
+        hidden: false,
+        data: {
+          ...(edge.data || {}),
+          __fnrfCollapsedProxy: true,
+          originalEdgeId: edge.id,
+        },
+      });
+    }
+
+    const sortedNodes = sortByParent(updatedNodes);
+    rfstate.update_nodes(sortedNodes);
+    rfstate.update_edges([...baseEdges, ...proxyEdges]);
+
+    this._collapsedHandleMap = newCollapsedHandleMap;
+    this._activeCollapsedGroups = newCollapsedGroupSet;
+
+    for (const gid of expandedGroups) {
+      this.auto_resize_group(gid);
     }
   };
   _add_node = (action: NodeActionAdd): NodeType | undefined => {
@@ -385,6 +755,7 @@ export class NodeSpaceManager
       this.reactFlowManager.useReactFlowStore
         .getState()
         .update_nodes(new_ndoes);
+      this._refresh_collapsed_groups();
 
       for (const io of new_node.io_order) {
         this.workerManager.worker?.api.node.get_io_value({
@@ -423,7 +794,9 @@ export class NodeSpaceManager
       }
 
       store.update(action.node);
-      return store.getState();
+      const state = store.getState();
+      this._refresh_collapsed_groups();
+      return state;
     } else {
       if (this.workerManager.worker) {
         this.workerManager.worker.api.node.locally_update_node(action);
@@ -441,6 +814,7 @@ export class NodeSpaceManager
           id: action.id,
         },
       ]);
+      this._refresh_collapsed_groups();
     } else {
       this.workerManager.worker?.api.node.remove_node(action.id);
     }
@@ -475,5 +849,12 @@ export class NodeSpaceManager
       this.workerManager.worker?.api.node.trigger_node(action.id);
     }
     return undefined;
+  };
+
+  get_collapsed_handle_mapping = (
+    groupId: string,
+    handleId: string
+  ): CollapsedHandleMapping | undefined => {
+    return this._collapsedHandleMap.get(groupId)?.get(handleId);
   };
 }
