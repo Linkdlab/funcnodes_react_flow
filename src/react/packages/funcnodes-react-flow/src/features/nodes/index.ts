@@ -3,6 +3,7 @@ export * from "./hooks";
 
 export type {
   GroupRFNode,
+  GroupRFNodeData,
   DefaultRFNode,
   AnyFuncNodesRFNode,
   CollapsedGroupIO,
