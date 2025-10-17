@@ -52291,13 +52291,17 @@ class Mpe extends ql {
         return r.update(n.node), r.getState();
       } else
         this.workerManager.worker && this.workerManager.worker.api.node.locally_update_node(n);
+    }, this._sync_nodes = () => {
+      const n = this.reactFlowManager.useReactFlowStore.getState().getNodes(), r = this.nodespace.nodesstates;
+      for (const o of r.keys())
+        n.some((a) => a.id === o) || r.delete(o);
     }, this._delete_node = (n) => {
-      this.context.rf.logger.info("Deleting node", n.id), n.from_remote ? this.reactFlowManager.useReactFlowStore.getState().onNodesChange([
+      this.context.rf.logger.info("Deleting node", n.id), n.from_remote ? (this.reactFlowManager.useReactFlowStore.getState().onNodesChange([
         {
           type: "remove",
           id: n.id
         }
-      ]) : this.workerManager.worker?.api.node.remove_node(n.id);
+      ]), this._sync_nodes()) : this.workerManager.worker?.api.node.remove_node(n.id);
     }, this._error_action = (n) => (this.context.rf.logger.error("Error", new Error(JSON.stringify(n))), this.on_node_action({
       type: "update",
       id: n.id,
@@ -52794,7 +52798,7 @@ const Hpe = (e) => {
   );
 };
 window.FuncNodes = rj;
-window.FuncNodes.version = "1.0.2";
+window.FuncNodes.version = "1.0.3";
 window.FuncNodes.utils = {
   logger: {
     ConsoleLogger: l1,
