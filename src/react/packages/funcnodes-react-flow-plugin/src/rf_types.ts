@@ -982,6 +982,12 @@ declare class NodeSpaceManager extends AbstractFuncNodesReactFlowHandleHandler i
     _set_groups: (groups: NodeGroups) => void;
     _add_node: (action: NodeActionAdd) => NodeType | undefined;
     _update_node: (action: NodeActionUpdate) => NodeType | undefined;
+    /**
+     * Sync the nodes between the nodespace and the react zustand
+     * This is needed because e.g. deleting a node removes it from the react zustand but the nodespace still has it
+     * so we need to sync the nodes between the two
+     */
+    _sync_nodes: () => void;
     _delete_node: (action: NodeActionDelete) => undefined;
     _error_action: (action: NodeActionError) => NodeType | undefined;
     _trigger_action: (action: NodeActionTrigger) => NodeType | undefined;
