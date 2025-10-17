@@ -33,7 +33,7 @@ export interface NodeGroups {
 
 // The default Node rendering component for groups
 export const DefaultGroup = ({ data }: { data: GroupRFNodeData }) => {
-  const groupId = data?.group?.id || data?.id;
+  const groupId = data.id;
   const removeGroups = useRemoveGroups();
   const fnrf = useFuncNodesContext();
   const { group: groupApi } = useWorkerApi();
@@ -167,9 +167,7 @@ export const DefaultGroup = ({ data }: { data: GroupRFNodeData }) => {
               {hasIo ? (
                 <div className="fn-group-collapsed__columns">
                   <div className="fn-group-collapsed__column fn-group-collapsed__column--inputs">
-                    {collapsedInfo.inputs.map((io) =>
-                      renderIoRow(io, "input")
-                    )}
+                    {collapsedInfo.inputs.map((io) => renderIoRow(io, "input"))}
                   </div>
                   <div className="fn-group-collapsed__column fn-group-collapsed__column--outputs">
                     {collapsedInfo.outputs.map((io) =>
