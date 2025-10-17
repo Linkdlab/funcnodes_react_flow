@@ -564,12 +564,10 @@ export class NodeSpaceManager
           const connectedEdges =
             direction === "input"
               ? baseEdges.filter(
-                  (edge) =>
-                    edge.target === nodeId && edge.targetHandle === ioId
+                  (edge) => edge.target === nodeId && edge.targetHandle === ioId
                 )
               : baseEdges.filter(
-                  (edge) =>
-                    edge.source === nodeId && edge.sourceHandle === ioId
+                  (edge) => edge.source === nodeId && edge.sourceHandle === ioId
                 );
           const externalEdges = connectedEdges.filter((edge) => {
             const otherNodeId =
@@ -805,6 +803,24 @@ export class NodeSpaceManager
     return undefined;
   };
 
+  /**
+   * Sync the nodes between the nodespace and the react zustand
+   * This is needed because e.g. deleting a node removes it from the react zustand but the nodespace still has it
+   * so we need to sync the nodes between the two
+   */
+  _sync_nodes = () => {
+    const rf_nodes = this.reactFlowManager.useReactFlowStore
+      .getState()
+      .getNodes();
+    const nodespace_nodes = this.nodespace.nodesstates;
+    for (const nodeid of nodespace_nodes.keys()) {
+      if (rf_nodes.some((node) => node.id === nodeid)) {
+        continue;
+      }
+      nodespace_nodes.delete(nodeid);
+    }
+  };
+
   _delete_node = (action: NodeActionDelete) => {
     this.context.rf.logger.info("Deleting node", action.id);
     if (action.from_remote) {
@@ -815,6 +831,7 @@ export class NodeSpaceManager
         },
       ]);
       this._refresh_collapsed_groups();
+      this._sync_nodes(); // deleteing a node removes it from the react zustand but the nodespace still has it
     } else {
       this.workerManager.worker?.api.node.remove_node(action.id);
     }
