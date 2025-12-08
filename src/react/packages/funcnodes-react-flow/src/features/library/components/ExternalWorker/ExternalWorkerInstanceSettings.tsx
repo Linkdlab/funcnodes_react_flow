@@ -32,7 +32,7 @@ export const ExternalWorkerInstanceSettings = ({
     <>
       <CustomDialog
         title={ins.name}
-        description={"Settings for" + ins.name}
+        description={"Settings for " + ins.name}
         trigger={<div>Settings</div>}
         buttons={[
           {
