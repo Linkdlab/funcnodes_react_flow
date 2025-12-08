@@ -1,6 +1,6 @@
 [project]
 name = "funcnodes-react-flow"
-version = "1.0.3"
+version = "1.0.4"
 description = "funcnodes frontend for react flow"
 readme = "README.md"
 classifiers = [ "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",]
