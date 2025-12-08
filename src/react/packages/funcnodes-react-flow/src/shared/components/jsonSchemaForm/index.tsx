@@ -1,8 +1,40 @@
 import { useCallback, useState, useEffect } from "react";
-import Form from "@rjsf/core";
+
 import { RJSFSchema, UiSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import * as React from "react";
+
+import { withTheme } from "@rjsf/core";
+import { Theme } from "@rjsf/mui";
+import { createTheme, ThemeProvider } from "@mui/material";
+
+const Form = withTheme(Theme);
+
+const theme = createTheme({
+  cssVariables: { nativeColor: true },
+  palette: {
+    primary: {
+      main: "var(--fn-primary-color)",
+      contrastText: "var(--fn-app-background)",
+    },
+    text: {
+      primary: "var(--fn-text-color-neutral)",
+      secondary: "var(--fn-text-color-neutral)",
+      disabled: "var(--fn-text-color-neutral)",
+    },
+    common: {
+      black: "var(--fn-primary-color)",
+      white: "var(--fn-app-background)",
+    },
+    background: {
+      default: "var(--fn-app-background)",
+      paper: "var(--fn-app-background)",
+    },
+  },
+  shape: {
+    borderRadius: "var(--fn-border-radius-s)",
+  },
+});
 
 export type SchemaResponse = {
   jsonSchema: RJSFSchema;
@@ -46,14 +78,16 @@ export const JsonSchemaForm = ({
   }, [fetch_schema]);
   if (!schema) return <div>Loading…</div>;
   return (
-    <Form
-      schema={schema}
-      uiSchema={uiSchema || undefined}
-      formData={formData || undefined}
-      validator={validator}
-      liveValidate={"onChange"}
-      onChange={({ formData }) => setFormData(formData)}
-      onSubmit={({ formData }) => _inner_setter(formData)}
-    />
+    <ThemeProvider theme={theme}>
+      <Form
+        schema={schema}
+        uiSchema={uiSchema || undefined}
+        formData={formData || undefined}
+        validator={validator}
+        liveValidate={"onChange"}
+        onChange={({ formData }) => setFormData(formData)}
+        onSubmit={({ formData }) => _inner_setter(formData)}
+      />
+    </ThemeProvider>
   );
 };
