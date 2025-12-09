@@ -1,10 +1,17 @@
 import * as React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SortableTable from "./SortableTable";
 import { TableData } from "./types";
 import { sortTableDataChunked, debounce } from "./utils";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
+
+// Ensure cleanup after each test and wait for any pending timers
+afterEach(async () => {
+  cleanup();
+  // Wait for any debounced callbacks to complete (300ms debounce + buffer)
+  await new Promise((resolve) => setTimeout(resolve, 500));
+});
 
 // Mock MUI components
 vi.mock("@mui/material/Table", () => ({

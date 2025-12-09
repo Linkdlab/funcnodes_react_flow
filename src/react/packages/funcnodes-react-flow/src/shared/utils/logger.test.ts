@@ -734,7 +734,8 @@ describe("Real-world Usage Scenarios", () => {
     }
 
     expect(consoleSpies.debug).toHaveBeenCalledOnce();
-    expect(consoleSpies.error).toHaveBeenCalledOnce();
+    // console.error is called twice: once for the formatted message, once for the Error object
+    expect(consoleSpies.error).toHaveBeenCalledTimes(2);
     vi.restoreAllMocks();
   });
 
