@@ -104,7 +104,11 @@ beforeEach(() => {
   }));
 });
 
-afterEach(() => {
+afterEach(async () => {
+  // Wait for any pending timers to complete
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  });
   global.ResizeObserver = originalResizeObserver;
   vi.restoreAllMocks();
 });
