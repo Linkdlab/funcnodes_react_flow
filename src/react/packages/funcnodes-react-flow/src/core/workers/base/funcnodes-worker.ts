@@ -234,6 +234,7 @@ export class FuncNodesWorker {
     class_id: string,
     data: {
       name?: string;
+      config?: Record<string, any>;
     }
   ) {
     const res = await this._communicationManager._send_cmd({

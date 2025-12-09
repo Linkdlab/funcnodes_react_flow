@@ -408,7 +408,7 @@ window.onload = async function () {
   const LOGGER_TYPE = "window"; // Change to 'popup' for in-DOM version
 
   let levelFilters = { debug: true, info: true, warn: true, error: true };
-  const loggerElement = make_logger(LOGGER_TYPE, levelFilters);
+  // const loggerElement = make_logger(LOGGER_TYPE, levelFilters);
   window.FN_WORKER_URL = getParam("worker_url") || window.FN_WORKER_URL;
   window.FN_WORKER_PORT = getParam("worker_port") || window.FN_WORKER_PORT;
   let debug = getParam("debug");
@@ -439,11 +439,11 @@ window.onload = async function () {
       on_ready: function (obj) {
         window.funcnodes_return = obj;
       },
-      logger: new window.FuncNodes.utils.logger.DivLogger(
-        loggerElement,
-        "FuncNodes",
-        "DEBUG"
-      ),
+      // logger: new window.FuncNodes.utils.logger.DivLogger(
+      //   loggerElement,
+      //   "FuncNodes",
+      //   "DEBUG"
+      // ),
     });
   }
 };

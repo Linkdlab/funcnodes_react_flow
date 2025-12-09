@@ -97,12 +97,6 @@ export class WorkerManager {
     }
 
     // Get active worker from window storage
-    const active_worker = window.localStorage.getItem(
-      "funcnodes__active_worker"
-    );
-    if (active_worker) {
-      this.set_active(active_worker);
-    }
   }
   onmessage(event: string) {
     try {
@@ -119,6 +113,20 @@ export class WorkerManager {
           new_state[worker.uuid] = worker;
         }
         this.zustand.workers.setState(new_state);
+
+        if (!this.zustand.worker) {
+          const active_worker = window.localStorage.getItem(
+            "funcnodes__active_worker"
+          );
+          if (
+            active_worker &&
+            new_state[active_worker] &&
+            new_state[active_worker].active
+          ) {
+            this.set_active(active_worker);
+          }
+        }
+
         return;
       } else if (msg.type === "set_worker") {
         if (msg.data.type === "WSWorker") {
