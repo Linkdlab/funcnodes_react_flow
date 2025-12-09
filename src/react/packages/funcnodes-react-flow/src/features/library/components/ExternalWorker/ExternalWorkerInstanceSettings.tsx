@@ -4,6 +4,7 @@ import { useFuncNodesContext } from "@/providers";
 import { CustomDialog } from "@/shared-components";
 import { useWorkerApi } from "@/workers";
 import { ExternalWorkerInstance } from "@/library";
+import { JsonSchemaForm } from "@/shared-components/jsonSchemaForm";
 
 export const ExternalWorkerInstanceSettings = ({
   ins,
@@ -31,7 +32,7 @@ export const ExternalWorkerInstanceSettings = ({
     <>
       <CustomDialog
         title={ins.name}
-        description={"Settings for" + ins.name}
+        description={"Settings for " + ins.name}
         trigger={<div>Settings</div>}
         buttons={[
           {
@@ -57,6 +58,25 @@ export const ExternalWorkerInstanceSettings = ({
               className="styledinput"
             />
           </div>
+          {libAPI && (
+            <JsonSchemaForm
+              getter={() =>
+                libAPI.get_external_worker_config(ins.uuid, ins.nodeclassid)
+              }
+              setter={async (formData: any) => {
+                if (!fnrz.worker) return;
+                return await fnrz.worker.update_external_worker(
+                  ins.uuid,
+                  ins.nodeclassid,
+                  {
+                    name: tempName,
+                    config: formData,
+                  }
+                );
+              }}
+              setter_calls_getter={true}
+            />
+          )}
         </div>
       </CustomDialog>
     </>

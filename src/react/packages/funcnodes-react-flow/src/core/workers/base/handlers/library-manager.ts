@@ -1,5 +1,6 @@
 import { GroupedAvailableModules } from "@/library/components";
 import { AbstractWorkerHandler } from "./worker-handlers.types";
+import { SchemaResponse } from "@/shared-components/jsonSchemaForm";
 
 export interface WorkerLibraryManagerAPI {
   add_external_worker: (params: {
@@ -14,6 +15,10 @@ export interface WorkerLibraryManagerAPI {
     worker_id: string,
     class_id: string
   ) => Promise<void>;
+  get_external_worker_config: (
+    worker_id: string,
+    class_id: string
+  ) => Promise<SchemaResponse>;
 }
 
 export class WorkerLibraryManager
@@ -76,5 +81,17 @@ export class WorkerLibraryManager
       wait_for_response: true,
     });
     return res;
+  }
+
+  async get_external_worker_config(
+    worker_id: string,
+    class_id: string
+  ): Promise<SchemaResponse> {
+    const res = await this.communicationManager._send_cmd({
+      cmd: "get_external_worker_config",
+      kwargs: { worker_id, class_id },
+      wait_for_response: true,
+    });
+    return res as SchemaResponse;
   }
 }

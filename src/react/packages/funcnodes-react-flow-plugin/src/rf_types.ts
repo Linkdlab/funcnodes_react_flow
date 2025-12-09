@@ -10,7 +10,9 @@ import { OnConnect } from '@xyflow/react';
 import { OnEdgesChange } from '@xyflow/react';
 import { OnNodesChange } from '@xyflow/react';
 import { ReactFlowInstance } from '@xyflow/react';
+import { RJSFSchema } from '@rjsf/utils';
 import { StoreApi } from 'zustand';
+import { UiSchema } from '@rjsf/utils';
 import { UseBoundStore } from 'zustand';
 import { useReactFlow } from '@xyflow/react';
 
@@ -588,6 +590,7 @@ declare class FuncNodesWorker {
     stop(): Promise<void>;
     update_external_worker(worker_id: string, class_id: string, data: {
         name?: string;
+        config?: Record<string, any>;
     }): Promise<any>;
     export({ withFiles }: {
         withFiles: boolean;
@@ -1293,6 +1296,12 @@ declare type RFState = {
 
 declare type RFStore = UseBoundStore<StoreApi<RFState>>;
 
+declare type SchemaResponse = {
+    jsonSchema: RJSFSchema;
+    uiSchema?: UiSchema;
+    formData?: any;
+};
+
 declare interface SerializedIOType extends BasicIOType {
     value: IOValueType;
     fullvalue: IOValueType;
@@ -1624,6 +1633,7 @@ declare class WorkerLibraryManager extends AbstractWorkerHandler implements Work
     remove_lib(lib: string): Promise<any>;
     get_available_modules(): Promise<GroupedAvailableModules>;
     remove_external_worker(worker_id: string, class_id: string): Promise<any>;
+    get_external_worker_config(worker_id: string, class_id: string): Promise<SchemaResponse>;
 }
 
 declare interface WorkerLibraryManagerAPI {
@@ -1636,6 +1646,7 @@ declare interface WorkerLibraryManagerAPI {
     remove_lib: (lib: string) => Promise<void>;
     get_available_modules: () => Promise<GroupedAvailableModules>;
     remove_external_worker: (worker_id: string, class_id: string) => Promise<void>;
+    get_external_worker_config: (worker_id: string, class_id: string) => Promise<SchemaResponse>;
 }
 
 declare class WorkerManager {
