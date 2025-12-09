@@ -94,6 +94,12 @@
   overflow: hidden;
 }
 
+.iotooltip_header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3px;
+}
 .iotooltipcontentarrow {
   fill: white;
 }
@@ -113,4 +119,10 @@
     auto; /* column 2  → .c  */
   max-width: 100%; /* your chosen limit */
   width: 100%;
+}
+
+.nodeoutput > .inner_nodeio {
+  grid-template-columns:
+    auto /* column 1  → .b  */
+    minmax(0, 1fr); /* column 2  → .c  */
 }

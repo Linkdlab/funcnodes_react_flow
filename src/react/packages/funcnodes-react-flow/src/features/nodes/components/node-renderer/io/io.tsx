@@ -108,6 +108,7 @@ const HandleWithPreview = ({
         >
           <div className="iotooltip_container">
             <div className="iotooltip_header">
+              {io.name}
               {locked ? (
                 <LockIcon onClick={() => setLocked(false)} />
               ) : (
