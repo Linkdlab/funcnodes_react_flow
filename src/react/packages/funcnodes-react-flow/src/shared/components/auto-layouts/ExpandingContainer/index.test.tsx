@@ -361,7 +361,7 @@ describe("ExpandingContainer", () => {
       render(
         <ExpandingContainer
           {...defaultProps}
-          expanderSize="3rem"
+          expanderSize="48px"
           expanded={false}
         />
       );
@@ -374,9 +374,9 @@ describe("ExpandingContainer", () => {
 
     it("should apply custom containerStyle", () => {
       const customStyle = {
-        backgroundColor: "red",
+        backgroundColor: "rgb(255, 0, 0)",
         margin: "10px",
-        border: "2px solid blue",
+        border: "2px solid rgb(0, 0, 255)",
       };
 
       render(
@@ -386,13 +386,16 @@ describe("ExpandingContainer", () => {
       const container = screen
         .getByTestId("test-content")
         .closest(".expanding_container");
-      expect(container).toHaveStyle("background-color: red");
+      expect(container).toHaveStyle("background-color: rgb(255, 0, 0)");
       expect(container).toHaveStyle("margin: 10px");
-      expect(container).toHaveStyle("border: 2px solid blue");
+      expect(container).toHaveStyle("border: 2px solid rgb(0, 0, 255)");
     });
 
     it("should apply custom content style", () => {
-      const customStyle = { padding: "20px", border: "1px solid blue" };
+      const customStyle = {
+        padding: "20px",
+        border: "1px solid rgb(0, 0, 255)",
+      };
 
       render(<ExpandingContainer {...defaultProps} style={customStyle} />);
 

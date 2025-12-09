@@ -59,7 +59,7 @@ describe("FloatContainer", () => {
     });
 
     it("should apply custom styles", () => {
-      const customStyle = { backgroundColor: "red", margin: "10px" };
+      const customStyle = { backgroundColor: "rgb(255, 0, 0)", margin: "10px" };
       const { container } = render(
         <FloatContainer style={customStyle}>
           <div>Content</div>
@@ -67,7 +67,7 @@ describe("FloatContainer", () => {
       );
 
       const floatContainer = container.firstChild as HTMLElement;
-      expect(floatContainer).toHaveStyle("background-color: red");
+      expect(floatContainer).toHaveStyle("background-color: rgb(255, 0, 0)");
       expect(floatContainer).toHaveStyle("margin: 10px");
     });
   });
@@ -382,7 +382,7 @@ describe("FloatContainer", () => {
         grow: false,
         className: "test",
         id: "test-id",
-        style: { color: "red" },
+        style: { color: "rgb(255, 0, 0)" },
         onClick: () => {},
         onMouseOver: () => {},
         "aria-label": "test label",

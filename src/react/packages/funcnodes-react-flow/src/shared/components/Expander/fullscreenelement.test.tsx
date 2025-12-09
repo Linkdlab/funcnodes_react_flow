@@ -136,7 +136,7 @@ describe("FullScreenComponent", () => {
       render(
         <FullScreenComponent
           className="test-class"
-          style={{ backgroundColor: "red" }}
+          style={{ backgroundColor: "rgb(255, 0, 0)" }}
           data-testid="fullscreen-container"
         >
           <div>Content</div>
@@ -145,7 +145,7 @@ describe("FullScreenComponent", () => {
 
       const container = screen.getByTestId("fullscreen-container");
       expect(container).toHaveClass("test-class");
-      expect(container).toHaveStyle("background-color: red");
+      expect(container).toHaveStyle("background-color: rgb(255, 0, 0)");
     });
 
     it("should forward ref correctly", () => {
@@ -180,7 +180,7 @@ describe("FullScreenComponent", () => {
         <FullScreenComponent
           asChild
           className="parent-class"
-          style={{ color: "blue" }}
+          style={{ color: "rgb(0, 0, 255)" }}
         >
           <div
             data-testid="child-element"
@@ -194,7 +194,7 @@ describe("FullScreenComponent", () => {
 
       const childElement = screen.getByTestId("child-element");
       expect(childElement).toHaveClass("child-class", "parent-class");
-      expect(childElement).toHaveStyle("color: blue");
+      expect(childElement).toHaveStyle("color: rgb(0, 0, 255)");
       expect(childElement).toHaveStyle("font-size: 16px");
     });
   });
