@@ -83,7 +83,7 @@ jobs:
       - name: Build packages (topological order)
         if: steps.publish_plan.outputs.should_publish_any == 'true'
         working-directory: ${{ env.WORKSPACE_ROOT }}
-        run: yarn workspaces foreach --topological-dev run build
+        run: yarn workspaces foreach --topological-dev -A run build
 
       - name: Test funcnodes-react-flow
         if: steps.publish_plan.outputs.publish_flow == 'true'
