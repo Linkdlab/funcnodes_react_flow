@@ -75,14 +75,6 @@ jobs:
             echo "Warning: package versions differ (flow=$FLOW_VERSION, plugin=$PLUGIN_VERSION)." >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Verify npm token
-        if: steps.publish_plan.outputs.should_publish_any == 'true'
-        run: |
-          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
-            echo "NPM_TOKEN secret is missing" >&2
-            exit 1
-          fi
-
       - name: Install dependencies
         if: steps.publish_plan.outputs.should_publish_any == 'true'
         working-directory: ${{ env.WORKSPACE_ROOT }}
@@ -105,19 +97,19 @@ jobs:
 
       - name: Publish @linkdlab/funcnodes_react_flow
         if: steps.publish_plan.outputs.publish_flow == 'true'
-        working-directory: ${{ env.WORKSPACE_ROOT }}
+        working-directory: ${{ env.WORKSPACE_ROOT }}/packages/funcnodes-react-flow
         env:
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org
         run: |
-          yarn workspace @linkdlab/funcnodes_react_flow npm publish --access public --tag latest --tolerate-republish
+          npm publish --access public --tag latest --provenance
 
       - name: Publish @linkdlab/funcnodes-react-flow-plugin
         if: steps.publish_plan.outputs.publish_plugin == 'true'
-        working-directory: ${{ env.WORKSPACE_ROOT }}
+        working-directory: ${{ env.WORKSPACE_ROOT }}/packages/funcnodes-react-flow-plugin
         env:
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org
         run: |
-          yarn workspace @linkdlab/funcnodes-react-flow-plugin npm publish --access public --tag latest --tolerate-republish
+          npm publish --access public --tag latest --provenance
 
       - name: Create git tag for funcnodes-react-flow
         if: steps.publish_plan.outputs.publish_flow == 'true'
