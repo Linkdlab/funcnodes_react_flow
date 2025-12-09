@@ -40634,6 +40634,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             children: [
               /* @__PURE__ */ S.jsxs("div", { className: "iotooltip_container", children: [
                 /* @__PURE__ */ S.jsxs("div", { className: "iotooltip_header", children: [
+                  u.name,
                   r ? /* @__PURE__ */ S.jsx(uoe, { onClick: () => o(!1) }) : /* @__PURE__ */ S.jsx(coe, { onClick: () => o(!0) }),
                   h && /* @__PURE__ */ S.jsx(
                     Ga,
@@ -74246,7 +74247,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     );
   };
   window.FuncNodes = cq;
-  window.FuncNodes.version = "1.0.3";
+  window.FuncNodes.version = "1.0.4";
   window.FuncNodes.utils = {
     logger: {
       ConsoleLogger: QC,
