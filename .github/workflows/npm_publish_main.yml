@@ -1,0 +1,146 @@
+# Publish React packages to npm when main/master is updated.
+name: npm_publish
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  npm_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      WORKSPACE_ROOT: src/react
+      NODE_VERSION: "22"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org
+          cache: yarn
+          cache-dependency-path: src/react/yarn.lock
+
+      - name: Read package versions
+        id: read_versions
+        run: |
+          FLOW_VERSION=$(jq -r .version src/react/packages/funcnodes-react-flow/package.json)
+          PLUGIN_VERSION=$(jq -r .version src/react/packages/funcnodes-react-flow-plugin/package.json)
+          echo "flow_version=${FLOW_VERSION}" >> $GITHUB_OUTPUT
+          echo "plugin_version=${PLUGIN_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Get published versions from npm
+        id: registry_versions
+        run: |
+          FLOW_PUBLISHED=$(npm view @linkdlab/funcnodes_react_flow version 2>/dev/null || echo "0.0.0")
+          PLUGIN_PUBLISHED=$(npm view @linkdlab/funcnodes-react-flow-plugin version 2>/dev/null || echo "0.0.0")
+          echo "flow_published=${FLOW_PUBLISHED}" >> $GITHUB_OUTPUT
+          echo "plugin_published=${PLUGIN_PUBLISHED}" >> $GITHUB_OUTPUT
+
+      - name: Decide publish plan
+        id: publish_plan
+        run: |
+          FLOW_VERSION="${{ steps.read_versions.outputs.flow_version }}"
+          PLUGIN_VERSION="${{ steps.read_versions.outputs.plugin_version }}"
+          FLOW_PUBLISHED="${{ steps.registry_versions.outputs.flow_published }}"
+          PLUGIN_PUBLISHED="${{ steps.registry_versions.outputs.plugin_published }}"
+
+          PUBLISH_FLOW=$([ "$FLOW_VERSION" != "$FLOW_PUBLISHED" ] && echo true || echo false)
+          PUBLISH_PLUGIN=$([ "$PLUGIN_VERSION" != "$PLUGIN_PUBLISHED" ] && echo true || echo false)
+
+          echo "publish_flow=${PUBLISH_FLOW}" >> $GITHUB_OUTPUT
+          echo "publish_plugin=${PUBLISH_PLUGIN}" >> $GITHUB_OUTPUT
+
+          if [ "$PUBLISH_FLOW" = true ] || [ "$PUBLISH_PLUGIN" = true ]; then
+            echo "should_publish_any=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_publish_any=false" >> $GITHUB_OUTPUT
+            echo "No package version changes detected; skipping publish." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "$FLOW_VERSION" != "$PLUGIN_VERSION" ]; then
+            echo "Warning: package versions differ (flow=$FLOW_VERSION, plugin=$PLUGIN_VERSION)." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Verify npm token
+        if: steps.publish_plan.outputs.should_publish_any == 'true'
+        run: |
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "NPM_TOKEN secret is missing" >&2
+            exit 1
+          fi
+
+      - name: Install dependencies
+        if: steps.publish_plan.outputs.should_publish_any == 'true'
+        working-directory: ${{ env.WORKSPACE_ROOT }}
+        run: yarn install --immutable
+
+      - name: Build packages (topological order)
+        if: steps.publish_plan.outputs.should_publish_any == 'true'
+        working-directory: ${{ env.WORKSPACE_ROOT }}
+        run: yarn workspaces foreach --topological-dev run build
+
+      - name: Test funcnodes-react-flow
+        if: steps.publish_plan.outputs.publish_flow == 'true'
+        working-directory: ${{ env.WORKSPACE_ROOT }}
+        run: yarn workspace @linkdlab/funcnodes_react_flow run test
+
+      - name: Typecheck funcnodes-react-flow-plugin
+        if: steps.publish_plan.outputs.publish_plugin == 'true'
+        working-directory: ${{ env.WORKSPACE_ROOT }}
+        run: yarn workspace @linkdlab/funcnodes-react-flow-plugin run typecheck
+
+      - name: Publish @linkdlab/funcnodes_react_flow
+        if: steps.publish_plan.outputs.publish_flow == 'true'
+        working-directory: ${{ env.WORKSPACE_ROOT }}
+        env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          yarn workspace @linkdlab/funcnodes_react_flow npm publish --access public --tag latest --tolerate-republish
+
+      - name: Publish @linkdlab/funcnodes-react-flow-plugin
+        if: steps.publish_plan.outputs.publish_plugin == 'true'
+        working-directory: ${{ env.WORKSPACE_ROOT }}
+        env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          yarn workspace @linkdlab/funcnodes-react-flow-plugin npm publish --access public --tag latest --tolerate-republish
+
+      - name: Create git tag for funcnodes-react-flow
+        if: steps.publish_plan.outputs.publish_flow == 'true'
+        run: |
+          TAG="react-flow-v${{ steps.read_versions.outputs.flow_version }}"
+          git config --local user.name "${GITHUB_ACTOR}"
+          git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping."
+          else
+            git tag -a "$TAG" -m "Release $TAG"
+            git push origin "$TAG"
+          fi
+
+      - name: Create git tag for funcnodes-react-flow-plugin
+        if: steps.publish_plan.outputs.publish_plugin == 'true'
+        run: |
+          TAG="react-flow-plugin-v${{ steps.read_versions.outputs.plugin_version }}"
+          git config --local user.name "${GITHUB_ACTOR}"
+          git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping."
+          else
+            git tag -a "$TAG" -m "Release $TAG"
+            git push origin "$TAG"
+          fi
