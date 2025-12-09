@@ -90,9 +90,7 @@ describe("HSLColorPicker", () => {
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => {
-      render(
-        <HSLColorPicker onChange={mockOnChange} colorconverter={null} />
-      );
+      render(<HSLColorPicker onChange={mockOnChange} colorconverter={null} />);
     }).toThrow("Color converter is null");
 
     consoleSpy.mockRestore();
@@ -155,11 +153,7 @@ describe("CustomColorPicker", () => {
   });
 
   it("calls onChange after delay when color is changed", async () => {
-    vi.useFakeTimers();
-
-    render(
-      <CustomColorPicker onChange={mockOnChange} delay={500} />
-    );
+    render(<CustomColorPicker onChange={mockOnChange} delay={500} />);
 
     const button = screen.getByRole("button");
     fireEvent.click(button);
@@ -168,18 +162,21 @@ describe("CustomColorPicker", () => {
       expect(screen.getByText("Color Preview")).toBeInTheDocument();
     });
 
-    const redSlider = screen.getByDisplayValue("0");
+    // Get all sliders - there will be many with value "0", get the RGB Red slider (first one)
+    const allSliders = screen.getAllByDisplayValue("0");
+    const redSlider = allSliders[0]; // First slider is RGB Red
     fireEvent.change(redSlider, { target: { value: "255" } });
 
     // Should not be called immediately
     expect(mockOnChange).not.toHaveBeenCalled();
 
-    // Fast-forward time
-    vi.advanceTimersByTime(500);
-
-    expect(mockOnChange).toHaveBeenCalled();
-
-    vi.useRealTimers();
+    // Wait for the delay to pass
+    await waitFor(
+      () => {
+        expect(mockOnChange).toHaveBeenCalled();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it("uses custom portal container when provided", () => {
@@ -207,6 +204,7 @@ describe("CustomColorPicker", () => {
       <CustomColorPicker
         onChange={mockOnChange}
         allow_null={true}
+        delay={100}
       />
     );
 
@@ -217,12 +215,20 @@ describe("CustomColorPicker", () => {
       expect(screen.getByText("Color Preview")).toBeInTheDocument();
     });
 
-    // Clear hex input to set null
-    const hexInput = screen.getByDisplayValue("000");
+    // Clear hex input to set null - hex value is "000000" for black [0,0,0]
+    const hexInput = screen.getByDisplayValue("000000");
     fireEvent.change(hexInput, { target: { value: "" } });
 
     // Should not throw error
     expect(screen.getByText("Color Preview")).toBeInTheDocument();
+
+    // Wait for onChange to be called with null
+    await waitFor(
+      () => {
+        expect(mockOnChange).toHaveBeenCalledWith(null);
+      },
+      { timeout: 500 }
+    );
   });
 
   it("updates color when props change", async () => {
@@ -231,10 +237,11 @@ describe("CustomColorPicker", () => {
         onChange={mockOnChange}
         inicolordata={[255, 0, 0]}
         inicolorspace="rgb"
+        delay={100}
       />
     );
 
-    let button = screen.getByRole("button");
+    const button = screen.getByRole("button");
     await waitFor(() => {
       expect(button).toHaveStyle({ background: "#FF0000" });
     });
@@ -244,12 +251,15 @@ describe("CustomColorPicker", () => {
         onChange={mockOnChange}
         inicolordata={[0, 255, 0]}
         inicolorspace="rgb"
+        delay={100}
       />
     );
 
-    button = screen.getByRole("button");
-    await waitFor(() => {
-      expect(button).toHaveStyle({ background: "#00FF00" });
-    });
+    await waitFor(
+      () => {
+        expect(button).toHaveStyle({ background: "#00FF00" });
+      },
+      { timeout: 500 }
+    );
   });
 });

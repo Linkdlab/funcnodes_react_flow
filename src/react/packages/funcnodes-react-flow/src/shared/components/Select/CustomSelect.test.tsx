@@ -160,6 +160,7 @@ describe("CustomSelect", () => {
 
     const input = screen.getByRole("combobox");
     fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: "ArrowDown", code: "ArrowDown" });
 
     await waitFor(() => {
       mockOptions.forEach(option => {
@@ -184,6 +185,7 @@ describe("CustomSelect", () => {
 
     const input = screen.getByRole("combobox");
     fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: "ArrowDown", code: "ArrowDown" });
 
     await waitFor(() => {
       // Should only show first 3 options
