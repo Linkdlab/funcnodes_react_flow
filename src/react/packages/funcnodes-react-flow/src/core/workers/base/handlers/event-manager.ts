@@ -70,6 +70,14 @@ export class WorkerEventManager extends AbstractWorkerHandler {
         await this.context.worker.getSyncManager().sync_external_worker();
         return;
 
+      case "repos_update":
+        // Forward repo updates to hooks so UIs can refresh module lists if open.
+        await this.hookManager.call_hooks(
+          "repos_update",
+          (data as any).repos ?? data
+        );
+        return;
+
       case "starting":
         this.hookManager.call_hooks("starting");
         return;
