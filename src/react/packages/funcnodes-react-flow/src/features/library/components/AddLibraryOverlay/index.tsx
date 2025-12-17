@@ -40,9 +40,15 @@ export const AddLibraryOverlay = ({
       return;
     }
 
-    libAPI?.get_available_modules().then((modules) => {
-      SetAvailableModules(modules);
-    });
+    libAPI
+      ?.get_available_modules({
+        on_load: (modules) => {
+          SetAvailableModules(modules);
+        },
+      })
+      .then((modules) => {
+        SetAvailableModules(modules);
+      });
   };
 
   if (!zustand.worker) {

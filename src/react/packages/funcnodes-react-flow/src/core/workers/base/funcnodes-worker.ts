@@ -214,6 +214,10 @@ export class FuncNodesWorker {
   async reconnect() {}
 
   async stop() {
+    const active_worker = window.localStorage.getItem("funcnodes__active_worker");
+    if (active_worker == this.uuid) {
+      window.localStorage.removeItem("funcnodes__active_worker");
+    }
     await this._communicationManager._send_cmd({
       cmd: "stop_worker",
       wait_for_response: false,
