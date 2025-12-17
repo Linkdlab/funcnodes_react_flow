@@ -1622,6 +1622,7 @@ declare interface WorkerHookProperties {
 }
 
 declare class WorkerLibraryManager extends AbstractWorkerHandler implements WorkerLibraryManagerAPI {
+    private _available_modules_cache;
     start(): void;
     stop(): void;
     add_external_worker({ module, cls_module, cls_name, }: {
@@ -1631,7 +1632,10 @@ declare class WorkerLibraryManager extends AbstractWorkerHandler implements Work
     }): Promise<any>;
     add_lib(lib: string, release: string): Promise<any>;
     remove_lib(lib: string): Promise<any>;
-    get_available_modules(): Promise<GroupedAvailableModules>;
+    get_available_modules({ wait_for_response, on_load, }: {
+        wait_for_response?: boolean;
+        on_load?: (modules: GroupedAvailableModules) => void;
+    }): Promise<GroupedAvailableModules>;
     remove_external_worker(worker_id: string, class_id: string): Promise<any>;
     get_external_worker_config(worker_id: string, class_id: string): Promise<SchemaResponse>;
 }
@@ -1644,7 +1648,10 @@ declare interface WorkerLibraryManagerAPI {
     }) => Promise<void>;
     add_lib: (lib: string, release: string) => Promise<void>;
     remove_lib: (lib: string) => Promise<void>;
-    get_available_modules: () => Promise<GroupedAvailableModules>;
+    get_available_modules: (args: {
+        wait_for_response?: boolean;
+        on_load?: (modules: GroupedAvailableModules) => void;
+    }) => Promise<GroupedAvailableModules>;
     remove_external_worker: (worker_id: string, class_id: string) => Promise<void>;
     get_external_worker_config: (worker_id: string, class_id: string) => Promise<SchemaResponse>;
 }

@@ -6,7 +6,7 @@ import { loadAliasesFromTsConfig } from "./vite.config";
 export default defineConfig({
   test: {
     globals: true,
-    environment: "happy-dom", // Faster than jsdom
+    environment: "jsdom", // Use jsdom for better compatibility in CI
     setupFiles: "./src/setupTests.ts",
     css: false, // Disable CSS processing for faster tests
     testTimeout: 30000,
@@ -24,7 +24,7 @@ export default defineConfig({
     pool: "forks", // Use forks instead of vmThreads for faster startup
     poolOptions: {
       forks: {
-        isolate: false, // Disable isolation for faster tests
+        isolate: true, // Enable isolation for reliable test execution in CI
       },
     },
     deps: {
