@@ -1,6 +1,7 @@
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
-const development: boolean = !!import.meta.env.DEV; // vite
+const isDevelopment = (): boolean =>
+  (window as any)?._FUNCNODES_DEV ?? !!import.meta.env.DEV;
 
 const print_object_size = (
   obj: any,
@@ -29,4 +30,4 @@ const print_object = (
   }
 };
 
-export { print_object_size, print_object, development };
+export { print_object_size, print_object, isDevelopment };

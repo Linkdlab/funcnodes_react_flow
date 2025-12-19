@@ -402,6 +402,16 @@ function getParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
+function parseBool(param, defaultValue) {
+  if (param === null) {
+    return defaultValue;
+  }
+  if (param === "") {
+    return true;
+  }
+  const val = String(param).toLowerCase();
+  return val === "true" || val === "1" || val === "yes";
+}
 
 window.onload = async function () {
   // Configuration: set to 'window' for separate browser window, 'popup' for in-DOM popup
@@ -411,6 +421,7 @@ window.onload = async function () {
   // const loggerElement = make_logger(LOGGER_TYPE, levelFilters);
   window.FN_WORKER_URL = getParam("worker_url") || window.FN_WORKER_URL;
   window.FN_WORKER_PORT = getParam("worker_port") || window.FN_WORKER_PORT;
+  window._FUNCNODES_DEV = parseBool(getParam("dev"), true);
   let debug = getParam("debug");
   if (debug === null) {
     debug = true;
