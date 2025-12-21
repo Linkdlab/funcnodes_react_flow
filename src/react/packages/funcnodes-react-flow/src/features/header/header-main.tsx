@@ -4,7 +4,7 @@ import { FuncnodesReactHeaderProps } from "@/app";
 import { useFuncNodesContext } from "@/providers";
 import { FloatContainer } from "@/shared-components/auto-layouts";
 import { Statusbar } from "./statusbar";
-import { development } from "@/utils/debugger";
+import { isDevelopment } from "@/utils/debugger";
 import { WorkerMenu } from "./workermenu";
 import { NodeSpaceMenu } from "./nodespacemenu";
 import { SettingsMenu } from "./settingsmenu";
@@ -32,12 +32,12 @@ export const FuncnodesHeader = ({
       >
         <Statusbar></Statusbar>
       </FloatContainer>
-      {(headerprops.showmenu || development) && (
+      {(headerprops.showmenu || isDevelopment()) && (
         <FloatContainer direction="row" wrap>
           <div className="headerelement">
             <WorkerMenu></WorkerMenu>
           </div>
-          {((fnrf_zst.worker && workerstate.is_open) || development) && (
+          {((fnrf_zst.worker && workerstate.is_open) || isDevelopment()) && (
             <div className="headerelement">
               <NodeSpaceMenu></NodeSpaceMenu>
             </div>

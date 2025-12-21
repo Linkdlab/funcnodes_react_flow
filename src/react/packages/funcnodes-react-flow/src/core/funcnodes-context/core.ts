@@ -1,6 +1,6 @@
 import { FuncnodesReactFlowProps } from "@/app";
 
-import { development } from "@/utils/debugger";
+import { isDevelopment } from "@/utils/debugger";
 import { ConsoleLogger, DEBUG, INFO, Logger } from "@/utils/logger";
 
 import { UseBoundStore, StoreApi } from "zustand";
@@ -79,7 +79,7 @@ export class FuncNodesReactFlow implements FuncNodesReactFlowZustandInterface {
 
   public logger: Logger;
   public dev_settings: DevSettings = {
-    debug: development,
+    debug: isDevelopment(),
   };
 
   private _nodespaceManager: NodeSpaceManager;
@@ -92,7 +92,7 @@ export class FuncNodesReactFlow implements FuncNodesReactFlowZustandInterface {
   constructor(props: FuncnodesReactFlowProps) {
     this.options = props;
     this.logger =
-      props.logger ?? new ConsoleLogger("fn", development ? DEBUG : INFO);
+      props.logger ?? new ConsoleLogger("fn", isDevelopment() ? DEBUG : INFO);
     const handlerContext = { rf: this };
     this._nodespaceManager = new NodeSpaceManager(handlerContext);
     this._libManager = new LibManager(handlerContext);
