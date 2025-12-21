@@ -6,6 +6,7 @@ import { FloatInput, IntegerInput } from "./numbers";
 import { SelectionInput } from "./selection";
 import { StringInput } from "./text";
 import { InputRendererType } from "./types";
+import { JsonSchemaInput } from "./json_schema";
 
 export const DefaultInputRenderer: {
   [key: string]: InputRendererType | undefined;
@@ -18,5 +19,6 @@ export const DefaultInputRenderer: {
   color: ColorInput,
   select: SelectionInput,
   enum: SelectionInput,
+  json_schema: JsonSchemaInput,
   bytes: DataViewRendererToInputRenderer(Base64BytesRenderer, ""),
 };
