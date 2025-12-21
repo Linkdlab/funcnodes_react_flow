@@ -6,7 +6,7 @@ import { MenuRoundedIcon, ChevronRightIcon } from "@/icons";
 import { downloadBase64, fileDialogToBase64 } from "@/data-helpers";
 
 import { CustomDialog } from "@/shared-components";
-import { development } from "@/utils/debugger";
+import { isDevelopment } from "@/utils/debugger";
 import { FloatContainer } from "@/shared-components/auto-layouts";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
@@ -230,7 +230,7 @@ export const WorkerMenu = () => {
     (fnrf_zst.options.useWorkerManager &&
       fnrf_zst.workermanager &&
       fnrf_zst.workermanager.open) ||
-    development;
+    isDevelopment();
   const show_select =
     has_worker_manager && Object.keys(workersstate).length > 0;
 

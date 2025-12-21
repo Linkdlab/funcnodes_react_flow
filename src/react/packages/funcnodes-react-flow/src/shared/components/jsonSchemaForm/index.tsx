@@ -43,6 +43,8 @@ export type SchemaResponse = {
 };
 
 interface JsonSchemaFormProps {
+  disabled?: boolean;
+  readonly?: boolean;
   getter: () => Promise<SchemaResponse>;
   setter: (formData: any) => Promise<any>;
   setter_calls_getter?: boolean;
@@ -51,6 +53,8 @@ export const JsonSchemaForm = ({
   getter,
   setter,
   setter_calls_getter = false,
+  disabled = false,
+  readonly = false,
 }: JsonSchemaFormProps) => {
   const [schema, setSchema] = useState<any>(null);
   const [uiSchema, setUiSchema] = useState<any>(undefined);
@@ -87,6 +91,8 @@ export const JsonSchemaForm = ({
         liveValidate={"onChange"}
         onChange={({ formData }) => setFormData(formData)}
         onSubmit={({ formData }) => _inner_setter(formData)}
+        disabled={disabled}
+        readonly={readonly}
       />
     </ThemeProvider>
   );

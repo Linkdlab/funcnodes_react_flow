@@ -135,8 +135,10 @@ export function useIOGetFullValue(io?: string | undefined) {
     id: state.id,
   }));
   const { node } = useWorkerApi();
-  const func = React.useCallback(() => {
-    return node?.get_io_full_value({ nid: nid, ioid: ioid });
+  const func = React.useCallback(async () => {
+    const val = await node?.get_io_full_value({ nid: nid, ioid: ioid });
+    iostore.updateValueStore({ full: val });
+    return val;
   }, [node, nid, ioid]);
   return func;
 }

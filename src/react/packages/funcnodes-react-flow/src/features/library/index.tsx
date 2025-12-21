@@ -20,10 +20,8 @@ import {
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const Library = () => {
-  const zustand: FuncNodesReactFlow = useFuncNodesContext();
-  const libstate = zustand.lib.libstate();
-
-  const fnrf_zst = useFuncNodesContext();
+  const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
+  const libstate = fnrf_zst.lib.libstate();
   const expanded = fnrf_zst.local_settings(
     (state) => state.view_settings.expand_lib
   );
@@ -35,10 +33,7 @@ export const Library = () => {
   const on_small_screen = currentBreakpointSmallerThan("m");
 
   const [filter, setFilter] = useState("");
-  const worker_isopen =
-    zustand.worker?.state((s) => {
-      return s.is_open;
-    }) ?? false;
+  const worker_isopen = fnrf_zst.workerstate((s) => s.is_open);
 
   return (
     <ExpandingContainer

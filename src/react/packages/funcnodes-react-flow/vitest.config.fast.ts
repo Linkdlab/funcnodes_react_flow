@@ -4,6 +4,9 @@ import { loadAliasesFromTsConfig } from "./vite.config";
 
 // Fast test configuration that avoids slow Vite config merging
 export default defineConfig({
+  define: {
+    __FN_VERSION__: JSON.stringify("test"),
+  },
   test: {
     globals: true,
     environment: "jsdom", // Use jsdom for better compatibility in CI
