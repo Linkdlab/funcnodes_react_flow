@@ -1,0 +1,35 @@
+name: react tests
+
+on:
+  push:
+    branches:
+      - dev
+      - test
+
+jobs:
+  yarn-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          cache: yarn
+          cache-dependency-path: src/react/yarn.lock
+
+      - name: Install dependencies
+        working-directory: src/react
+        run: yarn install
+
+      - name: Run tests
+        working-directory: src/react
+        run: yarn test
