@@ -25,7 +25,7 @@
     "dist"
   ],
   "scripts": {
-    "copy-types": "cp ../funcnodes-react-flow/dist/index.d.ts src/rf_types.ts",
+    "copy-types": "if [ -f ../funcnodes-react-flow/dist/index.d.ts ]; then cp ../funcnodes-react-flow/dist/index.d.ts src/rf_types.ts; else echo \"funcnodes-react-flow dist not found, skipping copy-types\"; fi",
     "prebuild": "npm run copy-types",
     "build": "npm run prebuild && vite build",
     "pretypecheck": "npm run copy-types",
