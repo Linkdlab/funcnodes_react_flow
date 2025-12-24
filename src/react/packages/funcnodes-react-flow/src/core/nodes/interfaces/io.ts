@@ -11,6 +11,8 @@ import { UseJSONStore } from "@/zustand-helpers";
 
 export interface IORenderOptions extends BaseRenderOptions {
   set_default: boolean;
+  schema?: JSONType;
+  uiSchema?: JSONType;
 }
 
 export interface IOValueOptions {
