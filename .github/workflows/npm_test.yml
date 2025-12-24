@@ -30,6 +30,10 @@ jobs:
         working-directory: src/react
         run: yarn install
 
+      - name: Build project
+        working-directory: src/react
+        run: yarn build
+
       - name: Run typecheck
         working-directory: src/react
         run: yarn typecheck
