@@ -7,15 +7,17 @@ import { create } from "zustand";
 import { JsonSchemaInput } from "./json_schema";
 import { IOContext } from "@/nodes";
 import { FuncNodesContext } from "@/providers";
-import { createIOStore } from "@/nodes-core/stores/iostore";
+import { createIOStore } from "@/nodes-core";
+import { JSONStructure } from "@/data-structures";
 import type { FuncNodesReactFlow } from "@/funcnodes-context";
+import { RJSFSchema } from "@rjsf/utils";
 
 const inputconverter: [(v: unknown) => unknown, (v: unknown) => unknown] = [
   (v) => v,
   (v) => v,
 ];
 
-const schema = {
+const schema: RJSFSchema = {
   type: "object",
   properties: {
     name: {
@@ -49,12 +51,12 @@ const createTestIOStore = () =>
       type: "json",
       schema,
     },
-    fullvalue: {
+    fullvalue: JSONStructure.fromObject({
       name: "Old",
-    },
-    value: {
+    }),
+    value: JSONStructure.fromObject({
       name: "Old",
-    },
+    }),
   });
 
 const JsonSchemaHarness = ({

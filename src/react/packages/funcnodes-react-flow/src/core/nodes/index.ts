@@ -22,4 +22,4 @@ export type {
 } from "./serializations";
 
 export { split_rf_nodes, sortByParent, useNodeTools } from "./utils";
-export { createNodeStore } from "./stores";
+export { createNodeStore, createIOStore } from "./stores";
