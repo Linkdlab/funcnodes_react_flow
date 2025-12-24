@@ -60529,19 +60529,19 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       }
     });
     const i = n?.value;
-    return i && (typeof i == "object" && "schema" in i && "data" in i ? (o.jsonSchema = i.schema, o.formData = i.data ?? {}) : o.formData = i), o;
+    return i && (typeof i == "object" && i !== null && "schema" in i && "data" in i ? (o.jsonSchema = i.schema, o.formData = i.data ?? {}) : o.formData = i), o;
   }, r$e = ({ inputconverter: e }) => {
     const t = vn(), { preview: n, full: r } = t.valuestore(), o = t.use(), [i, a] = T.useState(!1), s = fm(), l = kc(o), u = o.render_options?.schema, f = o.render_options?.uiSchema, p = T.useMemo(() => n$e({
       jsonSchema: u,
       uiSchema: f,
       full: r,
       readonly: o.connected
-    }), [u, f, r, n]), h = T.useCallback(
+    }), [u, f, r, n, o.connected]), h = T.useCallback(
       async () => p,
       [p]
     ), g = T.useCallback(
       async (y) => {
-        console.log(), l(y), a(!1);
+        l(y), a(!1);
       },
       [l]
     );
@@ -60554,7 +60554,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         setOpen: a,
         trigger: /* @__PURE__ */ S.jsx("button", { className: "nodedatainput styledinput", children: "Edit" }),
         onOpenChange: (y) => {
-          y && s?.();
+          y && !r && s?.();
         },
         children: /* @__PURE__ */ S.jsx(
           GV,
