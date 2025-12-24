@@ -15,7 +15,7 @@ jobs:
       id-token: write
     env:
       WORKSPACE_ROOT: src/react
-      NODE_VERSION: "22"
+      NODE_VERSION: "24"
 
     steps:
       - name: Checkout repository
