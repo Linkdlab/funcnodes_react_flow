@@ -1,16 +1,11 @@
 import { DeepPartial, LimitedDeepPartial } from "@/object-helpers";
 
-import { DataStructure } from "@/data-structures";
+import { DataStructure, JSONType } from "@/data-structures";
 import { TqdmState } from "@/shared-components";
 import { BasicIOType } from "../interfaces/io";
 import { BasicNodeType } from "../interfaces/node";
 
-export type IOValueType =
-  | string
-  | number
-  | boolean
-  | undefined
-  | DataStructure<any, any>;
+export type IOValueType = JSONType | undefined | DataStructure<any, any>;
 
 export interface SerializedIOType extends BasicIOType {
   value: IOValueType;
