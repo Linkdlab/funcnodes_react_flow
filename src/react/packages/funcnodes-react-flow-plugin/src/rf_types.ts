@@ -650,6 +650,8 @@ declare type IOGetFullValue = () => Promise<any> | undefined;
 
 declare interface IORenderOptions extends BaseRenderOptions {
     set_default: boolean;
+    schema?: RJSFSchema;
+    uiSchema?: UiSchema;
 }
 
 declare interface IOStore {

@@ -60531,12 +60531,16 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     const i = n?.value;
     return i && (typeof i == "object" && i !== null && "schema" in i && "data" in i ? (o.jsonSchema = i.schema, o.formData = i.data ?? {}) : o.formData = i), o;
   }, r$e = ({ inputconverter: e }) => {
-    const t = vn(), { preview: n, full: r } = t.valuestore(), o = t.use(), [i, a] = T.useState(!1), s = fm(), l = kc(o), u = o.render_options?.schema, f = o.render_options?.uiSchema, p = T.useMemo(() => n$e({
-      jsonSchema: u,
-      uiSchema: f,
-      full: r,
-      readonly: o.connected
-    }), [u, f, r, n, o.connected]), h = T.useCallback(
+    const t = vn(), { preview: n, full: r } = t.valuestore(), o = t.use(), [i, a] = T.useState(!1), s = fm(), l = kc(o), u = o.render_options.schema, f = o.render_options.uiSchema, p = T.useMemo(() => {
+      if (!u)
+        throw new Error("No jsonSchema provided");
+      return n$e({
+        jsonSchema: u,
+        uiSchema: f,
+        full: r,
+        readonly: o.connected
+      });
+    }, [u, f, r, n, o.connected]), h = T.useCallback(
       async () => p,
       [p]
     ), g = T.useCallback(
