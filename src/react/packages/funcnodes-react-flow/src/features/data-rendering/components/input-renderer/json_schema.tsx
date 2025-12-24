@@ -47,6 +47,7 @@ const make_schema_response = ({
 
   if (
     typeof full_value === "object" &&
+    full_value !== null &&
     "schema" in full_value &&
     "data" in full_value
   ) {
@@ -76,7 +77,7 @@ export const JsonSchemaInput = ({ inputconverter }: InputRendererProps) => {
       full: full as JSONStructure | undefined,
       readonly: io.connected,
     });
-  }, [jsonSchema, uiSchema, full, preview]);
+  }, [jsonSchema, uiSchema, full, preview, io.connected]);
 
   const getter = React.useCallback(
     async () => schemaResponse,
@@ -85,7 +86,6 @@ export const JsonSchemaInput = ({ inputconverter }: InputRendererProps) => {
 
   const setter = React.useCallback(
     async (formData: any) => {
-      console.log();
       set_io_value(formData);
       setDialogOpen(false);
     },
@@ -100,7 +100,8 @@ export const JsonSchemaInput = ({ inputconverter }: InputRendererProps) => {
       setOpen={setDialogOpen}
       trigger={<button className="nodedatainput styledinput">Edit</button>}
       onOpenChange={(open: boolean) => {
-        if (open) {
+        // Only fetch full value if not already available
+        if (open && !full) {
           get_full_value?.();
         }
       }}
