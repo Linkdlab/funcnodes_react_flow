@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ErrorDiv > snapshot testing > should match snapshot for empty error 1`] = `
+<div
+  class="error-div"
+>
+  <h1>
+    Error
+  </h1>
+  <p />
+</div>
+`;
+
+exports[`ErrorDiv > snapshot testing > should match snapshot for standard error 1`] = `
+<div
+  class="error-div"
+>
+  <h1>
+    Error
+  </h1>
+  <p>
+    Standard error message
+  </p>
+</div>
+`;
