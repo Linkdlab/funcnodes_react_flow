@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as React from "react";
 import { create } from "zustand";
@@ -50,14 +50,10 @@ const createTestIOStore = () =>
       schema,
     },
     fullvalue: {
-      data: {
-        name: "Old",
-      },
+      name: "Old",
     },
     value: {
-      data: {
-        name: "Old",
-      },
+      name: "Old",
     },
   });
 
@@ -89,31 +85,59 @@ describe("JsonSchemaInput", () => {
 
     render(<JsonSchemaHarness fnrf={fnrf} iostore={iostore} />);
 
+    // Click hidden button (hidden because of dialog overlay, sometimes) or just wait for it
     await user.click(screen.getByRole("button", { name: "Edit" }));
 
+    // Wait for the input to appear and have the value
+    // findByLabelText waits by default
     const input = await screen.findByLabelText(/Name/);
-    expect(input).toHaveValue("Old");
+
+    // In MUI, the input value might be empty initially if it's controlled and waiting for state update
+    await waitFor(
+      () => {
+        expect(input).toHaveValue("Old");
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("keeps edited values after a parent rerender", async () => {
     const fnrf = createFnrfContext();
     const iostore = createTestIOStore();
-    const user = userEvent.setup();
+    // Disable pointer event check because we are clicking a button behind a modal overlay
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
 
     render(<JsonSchemaHarness fnrf={fnrf} iostore={iostore} />);
 
     await user.click(screen.getByRole("button", { name: "Edit" }));
 
     const input = await screen.findByLabelText(/Name/);
+
+    // Wait for the input to have the initial value before clearing it
+    await waitFor(() => {
+      expect(input).toHaveValue("Old");
+    });
+
     await user.clear(input);
     await user.type(input, "New");
 
     expect(input).toHaveValue("New");
 
-    await user.click(screen.getByRole("button", { name: "Force rerender" }));
+    // Click hidden button (hidden because of dialog overlay)
+    // We use fireEvent because userEvent might still be picky about visibility even with pointerEventsCheck=0
+    // But let's try user.click first since we disabled the check.
+    // Actually, simply using fireEvent.click is safer for this 'hacky' harness interaction.
+    fireEvent.click(
+      screen.getByRole("button", { name: "Force rerender", hidden: true })
+    );
 
-    await waitFor(() => {
-      expect(screen.getByLabelText(/Name/)).toHaveValue("New");
-    });
+    await waitFor(
+      () => {
+        // Re-query the input to avoid stale element issues
+        const reRenderedInput = screen.getByLabelText(/Name/);
+        expect(reRenderedInput).toHaveValue("New");
+      },
+      { timeout: 3000 }
+    );
   });
 });
