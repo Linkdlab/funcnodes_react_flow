@@ -8,11 +8,12 @@ import {
 import { BaseRenderOptions } from "./rendering";
 import { UseBoundStore, StoreApi } from "zustand";
 import { UseJSONStore } from "@/zustand-helpers";
+import { RJSFSchema, UiSchema } from "@rjsf/utils";
 
 export interface IORenderOptions extends BaseRenderOptions {
   set_default: boolean;
-  schema?: JSONType;
-  uiSchema?: JSONType;
+  schema?: RJSFSchema;
+  uiSchema?: UiSchema;
 }
 
 export interface IOValueOptions {

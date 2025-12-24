@@ -7,6 +7,7 @@ import {
   SchemaResponse,
 } from "@/shared-components/jsonSchemaForm";
 import { JSONStructure } from "@/data-structures";
+import { RJSFSchema, UiSchema } from "@rjsf/utils";
 
 const make_schema_response = ({
   jsonSchema,
@@ -14,8 +15,8 @@ const make_schema_response = ({
   full,
   readonly,
 }: {
-  jsonSchema: any;
-  uiSchema: any;
+  jsonSchema: RJSFSchema;
+  uiSchema?: UiSchema;
   full?: JSONStructure;
   readonly?: boolean;
 }): SchemaResponse => {
@@ -51,7 +52,7 @@ const make_schema_response = ({
     "schema" in full_value &&
     "data" in full_value
   ) {
-    obj.jsonSchema = full_value.schema;
+    obj.jsonSchema = full_value.schema as RJSFSchema;
     obj.formData = full_value.data ?? {};
   } else {
     obj.formData = full_value;
@@ -68,9 +69,12 @@ export const JsonSchemaInput = ({ inputconverter }: InputRendererProps) => {
 
   const get_full_value = useIOGetFullValue();
   const set_io_value = useSetIOValue(io);
-  const jsonSchema = (io.render_options as any)?.schema;
-  const uiSchema = (io.render_options as any)?.uiSchema;
+  const jsonSchema = io.render_options.schema;
+  const uiSchema = io.render_options.uiSchema;
   const schemaResponse = React.useMemo(() => {
+    if (!jsonSchema) {
+      throw new Error("No jsonSchema provided");
+    }
     return make_schema_response({
       jsonSchema,
       uiSchema,
