@@ -7,7 +7,7 @@ import { create } from "zustand";
 import { JsonSchemaInput } from "./json_schema";
 import { IOContext } from "@/nodes";
 import { FuncNodesContext } from "@/providers";
-import { createIOStore } from "@/nodes-core/stores/iostore";
+import { createIOStore } from "@/nodes-core";
 import type { FuncNodesReactFlow } from "@/funcnodes-context";
 
 const inputconverter: [(v: unknown) => unknown, (v: unknown) => unknown] = [
