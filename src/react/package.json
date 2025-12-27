@@ -10,6 +10,7 @@
     "build": "yarn workspaces foreach -A run build",
     "typecheck": "yarn workspaces foreach -A run typecheck",
     "test": "yarn workspaces foreach -A run test",
+    "test:coverage": "yarn workspace @linkdlab/funcnodes_react_flow test --coverage --coverage.reporter=json --coverage.reporter=json-summary --coverage.reporter=text",
     "watch": "yarn workspace @linkdlab/funcnodes_react_flow run watch",
     "dev-full": "node dev_full.cjs"
   },
