@@ -21,7 +21,7 @@ describe("assert_reactflow_node", () => {
       progress: {},
       properties: {},
       reset_inputs_on_trigger: false,
-    } as NodeType;
+    } as unknown as NodeType;
 
     const store = makeStore(node);
     const rfNode = assert_reactflow_node(store);
@@ -44,7 +44,7 @@ describe("assert_reactflow_node", () => {
       progress: {},
       properties: { "frontend:size": [200, 100] },
       reset_inputs_on_trigger: false,
-    } as NodeType;
+    } as unknown as NodeType;
 
     const store = makeStore(node);
     const fnrfInstance = {

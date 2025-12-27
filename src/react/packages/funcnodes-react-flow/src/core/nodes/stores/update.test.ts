@@ -16,8 +16,10 @@ const createNodeStore = (state: NodeType, ioStoreUpdates: any[] = []) => {
   const store: NodeStore = {
     node_state: undefined as never,
     io_stores: new Map([["io-1", ioStore as IOStore]]),
-    use: () => currentState,
-    useShallow: () => currentState,
+    use: ((selector?: (state: NodeType) => unknown) =>
+      selector ? selector(currentState) : currentState) as NodeStore["use"],
+    useShallow: ((selector: (state: NodeType) => unknown) =>
+      selector(currentState)) as NodeStore["useShallow"],
     getState: () => currentState,
     setState: (partial) => {
       setCalls.push(partial);
@@ -37,8 +39,10 @@ const createIOStore = (state: IOType) => {
 
   const store: IOStore = {
     io_state: undefined as never,
-    use: () => currentState,
-    useShallow: () => currentState,
+    use: ((selector?: (state: IOType) => unknown) =>
+      selector ? selector(currentState) : currentState) as IOStore["use"],
+    useShallow: ((selector: (state: IOType) => unknown) =>
+      selector(currentState)) as IOStore["useShallow"],
     getState: () => currentState,
     setState: (partial) => {
       setCalls.push(partial);

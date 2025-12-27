@@ -71,7 +71,7 @@ describe("toasts", () => {
     expect(await screen.findByText("Default toast")).toBeInTheDocument();
     expect(await screen.findByText("Success toast")).toBeInTheDocument();
 
-    const toastRoots = document.querySelectorAll(".ToastRoot");
+    const toastRoots = document.querySelectorAll<HTMLElement>(".ToastRoot");
     expect(toastRoots.length).toBeGreaterThanOrEqual(2);
 
     const heights = Array.from(toastRoots).map((toast) =>

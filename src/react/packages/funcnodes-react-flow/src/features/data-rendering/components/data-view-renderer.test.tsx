@@ -1,6 +1,7 @@
 import * as React from "react";
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
+import type { JSONType } from "@/data-structures";
 
 import {
   Base64BytesRenderer,
@@ -41,7 +42,7 @@ describe("data view renderers", () => {
   });
 
   it("handles circular data in SingleValueRenderer", () => {
-    const circular: { self?: unknown } = {};
+    const circular: Record<string, JSONType> = {};
     circular.self = circular;
 
     const { container } = render(<SingleValueRenderer value={circular} />);

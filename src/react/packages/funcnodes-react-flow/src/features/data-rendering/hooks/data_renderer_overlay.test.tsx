@@ -165,7 +165,7 @@ describe("useDataOverlayRendererForIo", () => {
               type: "custom",
               render_options: {
                 set_default: true,
-                type: { anyOf: [{ type: "unknown" }] },
+                type: { anyOf: ["image"] },
               },
             } as IOType}
           />

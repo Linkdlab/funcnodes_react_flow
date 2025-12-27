@@ -6,9 +6,10 @@ import {
   JSONStructure,
   TextStructure,
   interfereDataStructure,
+  AnyDataType,
 } from "./data-structures";
 
-const makeBuffer = (value: number, setter: (view: DataView) => void) => {
+const makeBuffer = (setter: (view: DataView) => void) => {
   const buffer = new ArrayBuffer(8);
   const view = new DataView(buffer);
   setter(view);
@@ -18,7 +19,7 @@ const makeBuffer = (value: number, setter: (view: DataView) => void) => {
 describe("DataStructure", () => {
   it("formats string, array, object and buffer data", () => {
     const stringStruct = new DataStructure({
-      data: new String("hello"),
+      data: new String("hello") as unknown as AnyDataType,
       mime: "text/plain",
     });
     const arrayStruct = new DataStructure({ data: [1, 2, 3], mime: "array" });
@@ -42,10 +43,8 @@ describe("DataStructure", () => {
 describe("ArrayBufferDataStructure", () => {
   beforeEach(() => {
     if (!URL.createObjectURL) {
-      // @ts-expect-error - provide test shim
-      URL.createObjectURL = () => "blob:test";
-      // @ts-expect-error - provide test shim
-      URL.revokeObjectURL = () => undefined;
+      URL.createObjectURL = (_data: Blob | MediaSource) => "blob:test";
+      URL.revokeObjectURL = (_url: string) => undefined;
     }
   });
 
@@ -74,8 +73,8 @@ describe("ArrayBufferDataStructure", () => {
 
 describe("CTypeStructure", () => {
   it("parses little and big endian values", () => {
-    const little = makeBuffer(0, (view) => view.setInt16(0, 256, true));
-    const big = makeBuffer(0, (view) => view.setInt16(0, 256, false));
+    const little = makeBuffer((view) => view.setInt16(0, 256, true));
+    const big = makeBuffer((view) => view.setInt16(0, 256, false));
 
     const littleStruct = new CTypeStructure({
       data: little,
@@ -91,7 +90,7 @@ describe("CTypeStructure", () => {
   });
 
   it("parses boolean and string types", () => {
-    const boolBuffer = makeBuffer(0, (view) => view.setInt8(0, 1));
+    const boolBuffer = makeBuffer((view) => view.setInt8(0, 1));
     const textBuffer = new TextEncoder().encode("hello");
 
     const boolStruct = new CTypeStructure({
@@ -148,10 +147,8 @@ describe("TextStructure", () => {
 describe("interfereDataStructure", () => {
   it("returns appropriate structure types", () => {
     if (!URL.createObjectURL) {
-      // @ts-expect-error - provide test shim
-      URL.createObjectURL = () => "blob:test";
-      // @ts-expect-error - provide test shim
-      URL.revokeObjectURL = () => undefined;
+      URL.createObjectURL = (_data: Blob | MediaSource) => "blob:test";
+      URL.revokeObjectURL = (_url: string) => undefined;
     }
 
     const jsonBuffer = new window.Uint8Array([52]).buffer;

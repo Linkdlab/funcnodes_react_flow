@@ -23,8 +23,8 @@ const identityConverter: [(v: any) => any, (v: any) => any] = [
 ];
 
 const createTestIOStore = (overrides?: {
-  value?: unknown;
-  fullvalue?: unknown;
+  value?: string | number | boolean;
+  fullvalue?: string | number | boolean;
   connected?: boolean;
   value_options?: {
     min?: number;
@@ -109,7 +109,7 @@ describe("input renderers", () => {
     });
   });
 
-  it("renders boolean input as indeterminate when value is undefined", () => {
+  it("renders boolean input as indeterminate when value is undefined", async () => {
     const setCalls: any[] = [];
     const fnrf = createFnrfContext(setCalls);
     const iostore = createTestIOStore({ value: undefined, type: "bool" });

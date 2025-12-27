@@ -3,11 +3,14 @@ import { describe, it, expect } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { create } from "zustand";
 
-import { renderMappingReducer, initialRenderMappings } from "./render-mappings.reducer";
+import {
+  renderMappingReducer,
+  initialRenderMappings,
+} from "./render-mappings/render-mappings.reducer";
 import {
   RenderMappingProvider,
   RenderMappingContext,
-} from "./render-mappings.provider";
+} from "./render-mappings/render-mappings.provider";
 import type { RendererPlugin, FuncNodesReactPlugin } from "@/plugins";
 import type { FuncNodesReactFlow } from "@/funcnodes-context";
 
@@ -110,7 +113,7 @@ describe("RenderMappingProvider", () => {
         React.useContext(RenderMappingContext);
 
       React.useEffect(() => {
-        extendInputRenderMapping("custom", DummyRenderer);
+        extendInputRenderMapping("custom", DummyRenderer, {});
       }, [extendInputRenderMapping]);
 
       return <div>{Inputrenderer.custom ? "added" : "missing"}</div>;

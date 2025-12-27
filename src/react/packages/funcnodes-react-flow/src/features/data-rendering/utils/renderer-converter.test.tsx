@@ -11,7 +11,10 @@ import {
 import { IOContext } from "@/nodes";
 import { createIOStore } from "@/nodes-core";
 
-const createTestIOStore = (value: unknown, fullvalue?: unknown) =>
+const createTestIOStore = (
+  value: string | number | boolean | undefined,
+  fullvalue?: string | number | boolean
+) =>
   createIOStore("node-1", {
     id: "io-1",
     name: "IO",
