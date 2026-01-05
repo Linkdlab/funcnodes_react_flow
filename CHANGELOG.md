@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2.1.0 (2026-01-05)
+
+### Feat
+
+- **funcnodes-react-flow**: expose app and worker exports
+
 ## 2.0.0 (2026-01-05)
 
 ### BREAKING CHANGE

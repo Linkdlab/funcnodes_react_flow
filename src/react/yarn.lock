@@ -4822,6 +4822,7 @@ __metadata:
   dependencies:
     "@vitest/coverage-v8": "npm:4.0.16"
     typescript: "npm:^5.9.3"
+    vitest: "npm:4.0.16"
   languageName: unknown
   linkType: soft
 
