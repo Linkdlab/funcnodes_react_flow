@@ -59,7 +59,7 @@
     "react-select": "^5.10.1",
     "react-svg": "^16.3.0",
     "remark-gfm": "^4.0.1",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.1",
@@ -84,7 +84,7 @@
     "typescript": "^5.8.3",
     "vite": "7.0.5",
     "vite-plugin-dts": "^4.5.3",
-    "vitest": "3.2.4"
+    "vitest": "4.0.16"
   },
   "peerDependencies": {
     "react": "^19.0",

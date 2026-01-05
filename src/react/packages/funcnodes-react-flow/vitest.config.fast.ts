@@ -1,5 +1,4 @@
 import { defineConfig } from "vitest/config";
-import path from "path";
 import { loadAliasesFromTsConfig } from "./vite.config";
 
 // Fast test configuration that avoids slow Vite config merging
@@ -26,8 +25,7 @@ export default defineConfig({
     ],
     coverage: {
       provider: "v8",
-      all: true,
-      include: ["src/**/*.{js,jsx,ts,tsx}"],
+      include: ["**/src/**/*.{js,jsx,ts,tsx}"],
       exclude: [
         "**/*.d.ts",
         "**/*.test.*",
@@ -35,15 +33,10 @@ export default defineConfig({
         "**/node_modules/**",
         "**/dist/**",
         "**/coverage/**",
-        "**/tests/**",
       ],
     },
     pool: "forks", // Use forks instead of vmThreads for faster startup
-    poolOptions: {
-      forks: {
-        isolate: true, // Enable isolation for reliable test execution in CI
-      },
-    },
+    isolate: true, // Enable isolation for reliable test execution in CI
     deps: {
       optimizer: {
         web: {

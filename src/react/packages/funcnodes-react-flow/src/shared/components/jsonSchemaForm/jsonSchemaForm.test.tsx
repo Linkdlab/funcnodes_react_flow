@@ -5,7 +5,7 @@ const ORIGINAL_CONSOLE_WARN = console.warn;
 const ORIGINAL_CONSOLE_ERROR = console.error;
 
 const collectConsoleCalls = (spy: ReturnType<typeof vi.spyOn>) =>
-  spy.mock.calls.map((args) => args.map(String).join(" ")).join("\n");
+  spy.mock.calls.map((args:any[]) => args.map(String).join(" ")).join("\n");
 
 describe("jsonSchemaForm theme", () => {
   beforeEach(() => {
