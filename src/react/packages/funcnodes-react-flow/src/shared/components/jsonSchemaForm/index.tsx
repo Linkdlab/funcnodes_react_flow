@@ -21,6 +21,8 @@ const theme = createTheme({
       primary: "var(--fn-text-color-neutral)",
       secondary: "var(--fn-text-color-neutral)",
       disabled: "var(--fn-text-color-neutral)",
+      primaryChannel: "var(--fn-text-color-neutral-channel)",
+      secondaryChannel: "var(--fn-text-color-neutral-channel)",
     },
     common: {
       black: "var(--fn-primary-color)",
@@ -29,6 +31,8 @@ const theme = createTheme({
     background: {
       default: "var(--fn-app-background)",
       paper: "var(--fn-app-background)",
+      defaultChannel: "var(--fn-app-background-channel)",
+      paperChannel: "var(--fn-app-background-channel)",
     },
   },
   shape: {

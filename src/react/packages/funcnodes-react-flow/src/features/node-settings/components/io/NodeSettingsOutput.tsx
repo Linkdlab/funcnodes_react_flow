@@ -1,5 +1,6 @@
 import * as React from "react";
-import { useIOStore, useIOSetHidden } from "@/nodes";
+import { useIOStore } from "@/nodes";
+import { useIOSetHidden } from "@/nodes-io-hooks";
 
 export const NodeSettingsOutput = () => {
   const iostore = useIOStore();

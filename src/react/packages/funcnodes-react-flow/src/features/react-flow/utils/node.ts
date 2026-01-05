@@ -1,7 +1,7 @@
-import { FuncNodesReactFlow } from "@/funcnodes-context";
-import { RFNodeDataPass } from "@/nodes";
-import { NodeStore, NodeType } from "@/nodes-core";
-import { Node as RFNode } from "@xyflow/react";
+import type { FuncNodesReactFlow } from "@/funcnodes-context";
+import type { RFNodeDataPass } from "@/nodes-components";
+import type { NodeStore, NodeType } from "@/nodes-core";
+import type { Node as RFNode } from "@xyflow/react";
 
 const _fill_node_frontend = (
   node: NodeType,

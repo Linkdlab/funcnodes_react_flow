@@ -5,7 +5,7 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 import * as React from "react";
 import { ExpandingContainer, ExpandingContainerProps } from "./index";
 
@@ -388,7 +388,9 @@ describe("ExpandingContainer", () => {
         .closest(".expanding_container");
       expect(container).toHaveStyle("background-color: rgb(255, 0, 0)");
       expect(container).toHaveStyle("margin: 10px");
-      expect(container).toHaveStyle("border: 2px solid rgb(0, 0, 255)");
+      // jsdom 27 doesn't provide computed values for the `border` shorthand,
+      // but does expose the per-side shorthands.
+      expect(container).toHaveStyle("border-top: 2px solid rgb(0, 0, 255)");
     });
 
     it("should apply custom content style", () => {
@@ -400,7 +402,8 @@ describe("ExpandingContainer", () => {
       render(<ExpandingContainer {...defaultProps} style={customStyle} />);
 
       const content = screen.getByTestId("test-content").parentElement;
-      expect(content).toHaveStyle(customStyle);
+      expect(content).toHaveStyle({ padding: "20px" });
+      expect(content).toHaveStyle("border-top: 1px solid rgb(0, 0, 255)");
     });
 
     it("should use correct dimensions for horizontal directions", () => {

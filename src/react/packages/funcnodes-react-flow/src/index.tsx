@@ -93,11 +93,13 @@ export {
 export {
   useNodeStore,
   useIOStore,
+} from "@/nodes";
+export {
   useSetIOValue,
   useIOValueStore,
   useSetIOValueOptions,
   useIOGetFullValue,
-} from "@/nodes";
+} from "@/nodes-io-hooks";
 export { useWorkerApi } from "@/workers";
 export { useFuncNodesContext } from "@/providers";
 

@@ -21,7 +21,11 @@ const testUint8Array = new Uint8Array([
 ]);
 
 describe("data-helper", () => {
+  let originalFileReader: typeof FileReader | undefined;
+
   beforeEach(() => {
+    originalFileReader = global.FileReader;
+
     // Mock window.atob and window.btoa
     global.window.atob = vi.fn().mockImplementation((str: string) => {
       // Simple mock implementation for base64 decoding
@@ -48,6 +52,7 @@ describe("data-helper", () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    global.FileReader = originalFileReader as any;
   });
 
   describe("base64ToUint8Array", () => {
@@ -122,9 +127,9 @@ describe("data-helper", () => {
           }),
       };
 
-      global.FileReader = vi
-        .fn()
-        .mockImplementation(() => mockFileReader) as any;
+      global.FileReader = (function MockFileReader() {
+        return mockFileReader as any;
+      } as unknown) as any;
 
       const blob = new Blob(["test"], { type: "text/plain" });
       const result = await blobToUint8Array(blob);
@@ -162,9 +167,9 @@ describe("data-helper", () => {
           }),
       };
 
-      global.FileReader = vi
-        .fn()
-        .mockImplementation(() => mockFileReader) as any;
+      global.FileReader = (function MockFileReader() {
+        return mockFileReader as any;
+      } as unknown) as any;
 
       const blob = new Blob(["test"], { type: "text/plain" });
       const result = await blobToBase64(blob);
@@ -215,9 +220,9 @@ describe("data-helper", () => {
         }),
       };
 
-      global.FileReader = vi
-        .fn()
-        .mockImplementation(() => mockFileReader) as any;
+      global.FileReader = (function MockFileReader() {
+        return mockFileReader as any;
+      } as unknown) as any;
 
       const file = new File(["test"], "test.txt", { type: "text/plain" });
       const result = await FileToBase64(file);
@@ -242,9 +247,9 @@ describe("data-helper", () => {
         }),
       };
 
-      global.FileReader = vi
-        .fn()
-        .mockImplementation(() => mockFileReader) as any;
+      global.FileReader = (function MockFileReader() {
+        return mockFileReader as any;
+      } as unknown) as any;
 
       const file = new File(["test"], "test.txt", { type: "text/plain" });
       const result = await FileToBase64(file, false);
@@ -338,9 +343,9 @@ describe("data-helper", () => {
       };
 
       global.document.createElement = vi.fn().mockReturnValue(mockInput);
-      global.FileReader = vi
-        .fn()
-        .mockImplementation(() => mockFileReader) as any;
+      global.FileReader = (function MockFileReader() {
+        return mockFileReader as any;
+      } as unknown) as any;
 
       const result = await fileDialogToBase64("image/*");
 
@@ -374,9 +379,9 @@ describe("data-helper", () => {
       };
 
       global.fetch = vi.fn().mockResolvedValue(mockResponse);
-      global.FileReader = vi
-        .fn()
-        .mockImplementation(() => mockFileReader) as any;
+      global.FileReader = (function MockFileReader() {
+        return mockFileReader as any;
+      } as unknown) as any;
 
       const url = "https://example.com/test.txt";
       const result = await remoteUrlToBase64(url);
@@ -412,9 +417,9 @@ describe("data-helper", () => {
       };
 
       global.fetch = vi.fn().mockResolvedValue(mockResponse);
-      global.FileReader = vi
-        .fn()
-        .mockImplementation(() => mockFileReader) as any;
+      global.FileReader = (function MockFileReader() {
+        return mockFileReader as any;
+      } as unknown) as any;
 
       const result = await remoteUrlToBase64(
         "https://example.com/test.txt",
@@ -481,9 +486,9 @@ describe("data-helper", () => {
       };
 
       global.fetch = vi.fn().mockResolvedValue(mockResponse);
-      global.FileReader = vi
-        .fn()
-        .mockImplementation(() => mockFileReader) as any;
+      global.FileReader = (function MockFileReader() {
+        return mockFileReader as any;
+      } as unknown) as any;
 
       // Suppress console.error for this test
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});

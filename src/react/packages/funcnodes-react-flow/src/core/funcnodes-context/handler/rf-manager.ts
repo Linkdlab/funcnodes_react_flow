@@ -10,7 +10,7 @@ import {
   ReactFlowInstance,
   Connection,
 } from "@xyflow/react";
-import { AnyFuncNodesRFNode } from "@/nodes";
+import type { AnyFuncNodesRFNode } from "@/nodes";
 import { RFStore } from "../states";
 import { reactflowstore } from "@/react-flow";
 

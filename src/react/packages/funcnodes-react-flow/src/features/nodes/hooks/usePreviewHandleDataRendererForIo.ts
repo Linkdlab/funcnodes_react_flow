@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { RenderOptions } from "@/data-rendering-types";
 import { useFuncNodesContext } from "@/providers";
-import { pick_best_io_type } from "../components/node-renderer/io/io";
+import { pick_best_io_type } from "../pick_best_io_type";
 import {
   DataViewRendererToDataPreviewViewRenderer,
   RenderMappingContext,
