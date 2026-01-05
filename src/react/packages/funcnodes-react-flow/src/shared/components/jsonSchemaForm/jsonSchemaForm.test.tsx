@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 
 const ORIGINAL_CONSOLE_WARN = console.warn;
 const ORIGINAL_CONSOLE_ERROR = console.error;
@@ -30,4 +30,3 @@ describe("jsonSchemaForm theme", () => {
     expect(output).not.toContain("MUI: Can't create `palette.");
   });
 });
-
