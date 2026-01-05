@@ -11,4 +11,3 @@ declare module "@mui/material/styles/createPalette" {
     paperChannel?: string;
   }
 }
-
