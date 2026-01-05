@@ -82,22 +82,22 @@ export class WorkerCommunicationManager extends AbstractWorkerHandler {
       const wait_for_response_callback = async (): Promise<any> => {
         let response;
         while (retries >= 0) {
-          const msid = msg.id || uuidv4();
-          msg.id = msid;
+          const msg_id = msg.id || uuidv4();
+          msg.id = msg_id;
           const promise = new Promise<any>((resolve, reject) => {
             const timeout = setTimeout(() => {
               reject("Timeout@wait_for_response for " + cmd);
             }, response_timeout);
-            this.messagePromises.set(msid, {
+            this.messagePromises.set(msg_id, {
               resolve: (data: any) => {
                 clearTimeout(timeout);
                 resolve(data);
-                this.messagePromises.delete(msid);
+                this.messagePromises.delete(msg_id);
               },
               reject: (err: any) => {
                 clearTimeout(timeout);
                 reject(err);
-                this.messagePromises.delete(msid);
+                this.messagePromises.delete(msg_id);
               },
             });
           });
@@ -170,7 +170,7 @@ export class WorkerCommunicationManager extends AbstractWorkerHandler {
     }
   }
 
-  async recieve_bytes(
+  async receive_bytes(
     headerObj: { [key: string]: string | undefined },
     bytes: Uint8Array
   ) {
@@ -220,7 +220,7 @@ export class WorkerCommunicationManager extends AbstractWorkerHandler {
       }
       const header = headerStr.substring(0, headerEndIndex + 4);
       const bytes_wo_header = data.slice(headerEndIndex + 4);
-      //header are key value pairs i teh form of k1=v1;k2=v2; k3=v3; ...
+      //header are key value pairs in the form of k1=v1;k2=v2; k3=v3; ...
       const headerArr = header.split(";");
       const headerObj: { [key: string]: string } = {};
       headerArr.forEach((h) => {
@@ -243,7 +243,7 @@ export class WorkerCommunicationManager extends AbstractWorkerHandler {
 
       //if chunk is 1/1, then this is the only chunk
       if (chunk === "1" && total === "1") {
-        return this.recieve_bytes(headerObj, bytes_wo_header);
+        return this.receive_bytes(headerObj, bytes_wo_header);
       }
 
       if (!this.blobChunks[msgid]) {
@@ -260,14 +260,14 @@ export class WorkerCommunicationManager extends AbstractWorkerHandler {
 
       this.blobChunks[msgid].chunks[parseInt(chunk) - 1] = data;
 
-      //check if all chunks are recieved
+      //check if all chunks are received
       if (this.blobChunks[msgid].chunks.every((c) => c !== null)) {
         const fullBytes = new Uint8Array(
           this.blobChunks[msgid].chunks.reduce((acc, chunk) => {
             return acc.concat(Array.from(chunk));
           }, [] as number[])
         );
-        this.recieve_bytes(headerObj, fullBytes);
+        this.receive_bytes(headerObj, fullBytes);
         delete this.blobChunks[msgid];
       }
     } catch (e) {
