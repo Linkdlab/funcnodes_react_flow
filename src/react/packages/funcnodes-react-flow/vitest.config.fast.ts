@@ -24,6 +24,20 @@ export default defineConfig({
       "**/*.e2e.*",
       "**/keypress-provider*.test.tsx",
     ],
+    coverage: {
+      provider: "v8",
+      all: true,
+      include: ["src/**/*.{js,jsx,ts,tsx}"],
+      exclude: [
+        "**/*.d.ts",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/coverage/**",
+        "**/tests/**",
+      ],
+    },
     pool: "forks", // Use forks instead of vmThreads for faster startup
     poolOptions: {
       forks: {
