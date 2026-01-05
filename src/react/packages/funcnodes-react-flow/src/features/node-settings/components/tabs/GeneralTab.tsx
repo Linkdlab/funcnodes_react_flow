@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { NodeName, useNodeStore } from "@/nodes";
+import { useNodeStore } from "@/nodes";
+import { NodeName } from "@/nodes-components";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 interface GeneralTabProps {}

@@ -10,7 +10,8 @@ import { IODataOverlay, IOPreviewWrapper } from "./iodataoverlay";
 import { useFuncNodesContext } from "@/providers";
 import { CustomDialog } from "@/shared-components";
 import { IOType } from "@/nodes-core";
-import { useIOGetFullValue, useIOStore } from "@/nodes";
+import { useIOStore } from "@/nodes";
+import { useIOGetFullValue } from "@/nodes-io-hooks";
 import { pick_best_io_type } from "../../../pick_best_io_type";
 
 

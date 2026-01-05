@@ -2,10 +2,10 @@ import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
 import {
   pick_best_io_type,
-  INPUTCONVERTER,
   useIOStore,
-  useIOSetHidden,
 } from "@/nodes";
+import { INPUTCONVERTER } from "@/nodes-components";
+import { useIOSetHidden } from "@/nodes-io-hooks";
 import { RenderMappingContext, SelectionInput } from "@/data-rendering";
 import { useWorkerApi } from "@/workers";
 

@@ -96,6 +96,15 @@
       "@/nodes": [
         "src/features/nodes"
       ],
+      "@/nodes-hooks": [
+        "src/features/nodes/hooks"
+      ],
+      "@/nodes-components": [
+        "src/features/nodes/components"
+      ],
+      "@/nodes-io-hooks": [
+        "src/features/nodes/io-hooks"
+      ],
       "@/edges": [
         "src/features/edges"
       ],

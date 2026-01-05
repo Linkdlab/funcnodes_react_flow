@@ -14,7 +14,7 @@ import {
   FuncNodesReactFlowHandlerContext,
 } from "./rf-handlers.types";
 
-import { AnyFuncNodesRFNode, GroupRFNode } from "@/nodes";
+import type { AnyFuncNodesRFNode, GroupRFNode } from "@/nodes";
 import {
   applyNodeChanges,
   Edge,

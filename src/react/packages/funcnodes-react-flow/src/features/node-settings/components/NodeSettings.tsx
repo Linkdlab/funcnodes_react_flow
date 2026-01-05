@@ -8,7 +8,8 @@ import {
   ChevronUpIcon,
 } from "@/icons";
 import { ExpandingContainer } from "@/shared-components/auto-layouts";
-import { IOContext, NodeContext, NodeName } from "@/nodes";
+import { IOContext, NodeContext } from "@/nodes";
+import { NodeName } from "@/nodes-components";
 import { NodeStore } from "@/nodes-core";
 
 const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {

@@ -115,6 +115,7 @@ describe("useDataOverlayRendererForIo", () => {
         <RenderMappingContext.Provider
           value={{
             ...baseContextValue,
+            DataOverlayRenderer: {},
             DataViewRenderer: { image: viewRenderer },
           }}
         >

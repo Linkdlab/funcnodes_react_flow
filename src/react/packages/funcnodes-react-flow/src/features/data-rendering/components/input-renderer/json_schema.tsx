@@ -1,6 +1,7 @@
 import * as React from "react";
 import { InputRendererProps } from "./types";
-import { useIOGetFullValue, useIOStore, useSetIOValue } from "@/nodes";
+import { useIOStore } from "@/nodes";
+import { useIOGetFullValue, useSetIOValue } from "@/nodes-io-hooks";
 import { CustomDialog } from "@/shared-components";
 import {
   JsonSchemaForm,
