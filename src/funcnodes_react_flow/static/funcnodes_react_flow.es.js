@@ -74828,7 +74828,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     );
   };
   window.FuncNodes = Mq;
-  window.FuncNodes.version = "1.1.0";
+  window.FuncNodes.version = "2.0.0";
   window.FuncNodes.utils = {
     logger: {
       ConsoleLogger: ok,
