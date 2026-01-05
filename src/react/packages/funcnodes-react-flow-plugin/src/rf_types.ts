@@ -9,6 +9,7 @@ import { NodePositionChange } from '@xyflow/react';
 import { OnConnect } from '@xyflow/react';
 import { OnEdgesChange } from '@xyflow/react';
 import { OnNodesChange } from '@xyflow/react';
+import * as React_2 from 'react';
 import { ReactFlowInstance } from '@xyflow/react';
 import { RJSFSchema } from '@rjsf/utils';
 import { StoreApi } from 'zustand';
@@ -414,6 +415,8 @@ declare interface ExternalWorkerInstance {
     name: string;
 }
 
+export declare const FuncNodes: (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => React_2.JSX.Element;
+
 declare class FuncNodesReactFlow implements FuncNodesReactFlowZustandInterface {
     options: FuncnodesReactFlowProps;
     reactflowRef: HTMLDivElement | null;
@@ -484,7 +487,7 @@ declare interface FuncnodesReactFlowLocalState {
     funcnodescontainerRef: HTMLDivElement | null;
 }
 
-declare interface FuncnodesReactFlowProps {
+export declare interface FuncnodesReactFlowProps {
     id: string;
     debug: boolean;
     on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
@@ -553,7 +556,7 @@ export declare type FuncNodesReactPlugin = VersionedFuncNodesReactPlugin<typeof 
 
 export declare const FuncNodesRenderer: (id_or_element: string | HTMLElement, options?: Partial<FuncnodesReactFlowProps>) => void;
 
-declare class FuncNodesWorker {
+export declare class FuncNodesWorker {
     _zustand?: FuncNodesReactFlow;
     uuid: string;
     private _connectionhealthManager;
@@ -1801,7 +1804,7 @@ declare interface WorkerNodeManagerAPI {
     get_remote_node_state: (nid: string) => Promise<void>;
 }
 
-declare interface WorkerProps {
+export declare interface WorkerProps {
     zustand?: FuncNodesReactFlow;
     uuid: string;
     on_error?: (error: string | Error) => void;
