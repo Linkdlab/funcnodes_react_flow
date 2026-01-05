@@ -30721,7 +30721,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           break;
       }
     }
-    async recieve_bytes(t, n) {
+    async receive_bytes(t, n) {
       const { type: r } = t;
       if (r === "io_value") {
         if (!this.context.worker._zustand) return;
@@ -30773,7 +30773,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         }
         const [c, u] = s.chunk.split("/"), f = s.msgid;
         if (c === "1" && u === "1")
-          return this.recieve_bytes(s, i);
+          return this.receive_bytes(s, i);
         if (this.blobChunks[f] || (this.blobChunks[f] = {
           chunks: Array.from({ length: parseInt(u) }, () => null),
           timestamp: Date.now()
@@ -30785,7 +30785,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           const p = new Uint8Array(
             this.blobChunks[f].chunks.reduce((m, g) => m.concat(Array.from(g)), [])
           );
-          this.recieve_bytes(s, p), delete this.blobChunks[f];
+          this.receive_bytes(s, p), delete this.blobChunks[f];
         }
       } catch (n) {
         console.error("Websocketworker: onbytes error", n, t);
@@ -74834,7 +74834,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     );
   };
   window.FuncNodes = Pq;
-  window.FuncNodes.version = "2.1.0";
+  window.FuncNodes.version = "2.1.1";
   window.FuncNodes.utils = {
     logger: {
       ConsoleLogger: ok,
