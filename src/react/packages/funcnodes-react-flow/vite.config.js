@@ -65,7 +65,9 @@ export default defineConfig(({ mode }) => {
         // add any additional alias entries if needed
       },
     },
-    define: {},
+    define: {
+      __FN_VERSION__: JSON.stringify(version),
+    },
     build: {
       sourcemap: !production,
       cssCodeSplit: false, // disable CSS code splitting, css will be in a separate file
