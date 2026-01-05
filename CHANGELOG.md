@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2.1.1 (2026-01-05)
+
+### Fix
+
+- correct spelling errors and improve variable naming in WorkerCommunicationManager
+
 ## 2.1.0 (2026-01-05)
 
 ### Feat

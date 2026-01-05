@@ -1528,7 +1528,7 @@ declare class WorkerCommunicationManager extends AbstractWorkerHandler {
         unique?: boolean;
     }): Promise<any>;
     receive(data: JSONMessage): Promise<any>;
-    recieve_bytes(headerObj: {
+    receive_bytes(headerObj: {
         [key: string]: string | undefined;
     }, bytes: Uint8Array): Promise<void>;
     onbytes(data: Uint8Array): Promise<void>;
