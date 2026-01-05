@@ -1,5 +1,11 @@
 import * as React from "react";
-import { ReactElement, createContext, useEffect, useReducer } from "react";
+import {
+  ReactElement,
+  createContext,
+  useCallback,
+  useEffect,
+  useReducer,
+} from "react";
 
 import { NodeContext } from "@/nodes";
 import {
@@ -72,112 +78,125 @@ export const RenderMappingProvider = ({
     initialRenderMappings
   );
 
-  const extendInputRenderMapping = (
-    type: string,
-    component: InputRendererType,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_INPUT_RENDER",
-      payload: { type, component },
-      options,
-    });
-  };
+  const extendInputRenderMapping = useCallback(
+    (
+      type: string,
+      component: InputRendererType,
+      options?: DispatchOptions
+    ) => {
+      dispatch({
+        type: "EXTEND_INPUT_RENDER",
+        payload: { type, component },
+        options,
+      });
+    },
+    []
+  );
 
-  const extendOutputRenderMapping = (
-    type: string,
-    component: OutputRendererType,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_OUTPUT_RENDER",
-      payload: { type, component },
-      options,
-    });
-  };
+  const extendOutputRenderMapping = useCallback(
+    (
+      type: string,
+      component: OutputRendererType,
+      options?: DispatchOptions
+    ) => {
+      dispatch({
+        type: "EXTEND_OUTPUT_RENDER",
+        payload: { type, component },
+        options,
+      });
+    },
+    []
+  );
 
-  const extendHandlePreviewRenderMapping = (
-    type: string,
-    component: HandlePreviewRendererType,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_HANDLE_PREVIEW_RENDER",
-      payload: { type, component },
-      options,
-    });
-  };
+  const extendHandlePreviewRenderMapping = useCallback(
+    (
+      type: string,
+      component: HandlePreviewRendererType,
+      options?: DispatchOptions
+    ) => {
+      dispatch({
+        type: "EXTEND_HANDLE_PREVIEW_RENDER",
+        payload: { type, component },
+        options,
+      });
+    },
+    []
+  );
 
-  const extendDataOverlayRenderMapping = (
-    type: string,
-    component: DataOverlayRendererType,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_DATA_OVERLAY_RENDER",
-      payload: { type, component },
-      options,
-    });
-  };
+  const extendDataOverlayRenderMapping = useCallback(
+    (
+      type: string,
+      component: DataOverlayRendererType,
+      options?: DispatchOptions
+    ) => {
+      dispatch({
+        type: "EXTEND_DATA_OVERLAY_RENDER",
+        payload: { type, component },
+        options,
+      });
+    },
+    []
+  );
 
-  const extendDataPreviewRenderMapping = (
-    type: string,
-    component: DataPreviewViewRendererType,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_DATA_PREVIEW_RENDER",
-      payload: { type, component },
-      options,
-    });
-  };
+  const extendDataPreviewRenderMapping = useCallback(
+    (
+      type: string,
+      component: DataPreviewViewRendererType,
+      options?: DispatchOptions
+    ) => {
+      dispatch({
+        type: "EXTEND_DATA_PREVIEW_RENDER",
+        payload: { type, component },
+        options,
+      });
+    },
+    []
+  );
 
-  const extendDataViewRenderMapping = (
-    type: string,
-    component: DataViewRendererType,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_DATA_VIEW_RENDER",
-      payload: { type, component },
-      options,
-    });
-  };
+  const extendDataViewRenderMapping = useCallback(
+    (type: string, component: DataViewRendererType, options?: DispatchOptions) => {
+      dispatch({
+        type: "EXTEND_DATA_VIEW_RENDER",
+        payload: { type, component },
+        options,
+      });
+    },
+    []
+  );
 
-  const extendNodeRenderer = (
-    type: string,
-    component: NodeRendererType,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_NODE_RENDERER",
-      payload: { type, component },
-      options,
-    });
-  };
+  const extendNodeRenderer = useCallback(
+    (type: string, component: NodeRendererType, options?: DispatchOptions) => {
+      dispatch({
+        type: "EXTEND_NODE_RENDERER",
+        payload: { type, component },
+        options,
+      });
+    },
+    []
+  );
 
-  const extendNodeHooks = (
-    type: string,
-    component: NodeHooksType[],
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_NODE_HOOKS",
-      payload: { type, component },
-      options,
-    });
-  };
+  const extendNodeHooks = useCallback(
+    (type: string, component: NodeHooksType[], options?: DispatchOptions) => {
+      dispatch({
+        type: "EXTEND_NODE_HOOKS",
+        payload: { type, component },
+        options,
+      });
+    },
+    []
+  );
 
-  const extendFromPlugin = (
-    plugin: RendererPlugin,
-    options?: DispatchOptions
-  ) => {
-    dispatch({
-      type: "EXTEND_FROM_PLUGIN",
-      payload: { plugin },
-      options,
-    });
-  };
+  const extendFromPlugin = useCallback(
+    (plugin: RendererPlugin, options?: DispatchOptions) => {
+      dispatch({
+        type: "EXTEND_FROM_PLUGIN",
+        payload: { plugin },
+        options,
+      });
+    },
+    []
+  );
+
   useEffect(() => {
     for (const pluginname in plugins) {
       const plugin = plugins[pluginname];
@@ -187,7 +206,7 @@ export const RenderMappingProvider = ({
         extendFromPlugin(renderpluginfactory({ React, fnrf_zst, NodeContext }));
       }
     }
-  }, [plugins]);
+  }, [plugins, extendFromPlugin, fnrf_zst]);
 
   return (
     <RenderMappingContext.Provider

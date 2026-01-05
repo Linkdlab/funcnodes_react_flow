@@ -1,7 +1,8 @@
 import * as React from "react";
 import { InputRendererProps } from "./types";
 import * as Slider from "@radix-ui/react-slider";
-import { useIOStore, useSetIOValue } from "@/nodes";
+import { useIOStore } from "@/nodes";
+import { useSetIOValue } from "@/nodes-io-hooks";
 
 function relativeRound(value: number) {
   if (value === 0) return 0;

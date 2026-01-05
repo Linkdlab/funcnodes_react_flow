@@ -4,7 +4,7 @@ import {
   DataPreviewViewRendererType,
 } from "@/data-rendering-types";
 import { IOStore } from "@/nodes-core";
-import { useIOGetFullValue } from "@/nodes";
+import { useIOGetFullValue } from "@/nodes-io-hooks";
 
 export const IODataOverlay = ({
   iostore,

@@ -2,7 +2,8 @@ import * as React from "react";
 import { InputRendererProps } from "./types";
 
 import { CustomSelect } from "@/shared-components";
-import { useIOStore, useSetIOValue } from "@/nodes";
+import { useIOStore } from "@/nodes";
+import { useSetIOValue } from "@/nodes-io-hooks";
 import { EnumOf } from "@/nodes-core";
 
 const _parse_string = (s: string) => s;

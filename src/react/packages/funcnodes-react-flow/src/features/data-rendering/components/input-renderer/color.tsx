@@ -3,7 +3,8 @@ import { useFuncNodesContext } from "@/providers";
 import { InputRendererProps } from "./types";
 
 import { CustomColorPicker } from "@/shared-components";
-import { useIOStore, useSetIOValue } from "@/nodes";
+import { useIOStore } from "@/nodes";
+import { useSetIOValue } from "@/nodes-io-hooks";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const ColorInput = ({}: InputRendererProps) => {

@@ -1,6 +1,6 @@
 {
   "name": "funcnodes-react-flow-monorepo",
-  "version": "1.1.0",
+  "version": "2.1.1",
   "private": true,
   "packageManager": "yarn@4.9.2",
   "workspaces": [
@@ -10,6 +10,7 @@
     "build": "yarn workspaces foreach -A run build",
     "typecheck": "yarn workspaces foreach -A run typecheck",
     "test": "yarn workspaces foreach -A run test",
+    "test:coverage": "yarn workspace @linkdlab/funcnodes_react_flow test --coverage --coverage.reporter=json --coverage.reporter=json-summary --coverage.reporter=text",
     "watch": "yarn workspace @linkdlab/funcnodes_react_flow run watch",
     "dev-full": "node dev_full.cjs"
   },

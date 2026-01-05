@@ -9,6 +9,7 @@ import { NodePositionChange } from '@xyflow/react';
 import { OnConnect } from '@xyflow/react';
 import { OnEdgesChange } from '@xyflow/react';
 import { OnNodesChange } from '@xyflow/react';
+import * as React_2 from 'react';
 import { ReactFlowInstance } from '@xyflow/react';
 import { RJSFSchema } from '@rjsf/utils';
 import { StoreApi } from 'zustand';
@@ -53,7 +54,7 @@ declare interface AllOf {
     allOf: SerializedType[];
 }
 
-declare type AnyDataType = JSONType | ArrayBufferLike;
+declare type AnyDataType = JSONType | ArrayBuffer | Blob;
 
 declare interface AnyOf {
     anyOf: SerializedType[];
@@ -61,6 +62,10 @@ declare interface AnyOf {
 
 export declare class ArrayBufferDataStructure extends DataStructure<ArrayBuffer, string> {
     private _objectUrl;
+    constructor({ data, mime }: {
+        data: BinarySource;
+        mime: string;
+    });
     get objectUrl(): string;
     dispose(): void;
     get value(): string;
@@ -154,10 +159,15 @@ declare interface BasicNodeType {
 
 declare type BasicOutputRendererType = (props: OutputRendererProps) => JSX.Element;
 
-export declare class CTypeStructure extends DataStructure<ArrayBufferLike, string | number | boolean | null> {
+declare type BinarySource = ArrayBufferLike | ArrayBufferView;
+
+export declare class CTypeStructure extends DataStructure<ArrayBuffer, string | number | boolean | null> {
     private _cType;
     private _value;
-    constructor({ data, mime }: DataStructureProps<ArrayBufferLike>);
+    constructor({ data, mime }: {
+        data: BinarySource;
+        mime: string;
+    });
     parse_value(): string | number | boolean | null;
     get value(): string | number | boolean | null;
     toString(): string;
@@ -405,6 +415,8 @@ declare interface ExternalWorkerInstance {
     name: string;
 }
 
+export declare const FuncNodes: (props: LimitedDeepPartial<FuncnodesReactFlowProps>) => React_2.JSX.Element;
+
 declare class FuncNodesReactFlow implements FuncNodesReactFlowZustandInterface {
     options: FuncnodesReactFlowProps;
     reactflowRef: HTMLDivElement | null;
@@ -475,7 +487,7 @@ declare interface FuncnodesReactFlowLocalState {
     funcnodescontainerRef: HTMLDivElement | null;
 }
 
-declare interface FuncnodesReactFlowProps {
+export declare interface FuncnodesReactFlowProps {
     id: string;
     debug: boolean;
     on_sync_complete?: (worker: FuncNodesWorker) => Promise<void>;
@@ -544,7 +556,7 @@ export declare type FuncNodesReactPlugin = VersionedFuncNodesReactPlugin<typeof 
 
 export declare const FuncNodesRenderer: (id_or_element: string | HTMLElement, options?: Partial<FuncnodesReactFlowProps>) => void;
 
-declare class FuncNodesWorker {
+export declare class FuncNodesWorker {
     _zustand?: FuncNodesReactFlow;
     uuid: string;
     private _connectionhealthManager;
@@ -692,15 +704,18 @@ declare type JSONMessage = ProgressStateMessage | ResultMessage | ErrorMessage |
 
 /**
  * Union type representing all supported data types for DataStructure instances.
- * Includes primitive types and ArrayBufferLike for binary data.
+ * Includes primitive types and binary data.
  */
 declare interface JSONObject {
     [key: string]: JSONType;
 }
 
-export declare class JSONStructure extends DataStructure<ArrayBufferLike, JSONType | undefined> {
+export declare class JSONStructure extends DataStructure<ArrayBuffer, JSONType | undefined> {
     private _json;
-    constructor({ data, mime }: DataStructureProps<any>);
+    constructor({ data, mime }: {
+        data: BinarySource;
+        mime: string;
+    });
     get value(): JSONType | undefined;
     static fromObject(obj: JSONType): JSONStructure;
     toString(): string;
@@ -1346,9 +1361,12 @@ declare interface StateManagerManagerAPI {
     toast?: ToastDispatcher;
 }
 
-export declare class TextStructure extends DataStructure<ArrayBufferLike, string> {
+export declare class TextStructure extends DataStructure<ArrayBuffer, string> {
     private _value;
-    constructor({ data, mime }: DataStructureProps<ArrayBufferLike>);
+    constructor({ data, mime }: {
+        data: BinarySource;
+        mime: string;
+    });
     get value(): string;
     toString(): string;
 }
@@ -1510,7 +1528,7 @@ declare class WorkerCommunicationManager extends AbstractWorkerHandler {
         unique?: boolean;
     }): Promise<any>;
     receive(data: JSONMessage): Promise<any>;
-    recieve_bytes(headerObj: {
+    receive_bytes(headerObj: {
         [key: string]: string | undefined;
     }, bytes: Uint8Array): Promise<void>;
     onbytes(data: Uint8Array): Promise<void>;
@@ -1786,7 +1804,7 @@ declare interface WorkerNodeManagerAPI {
     get_remote_node_state: (nid: string) => Promise<void>;
 }
 
-declare interface WorkerProps {
+export declare interface WorkerProps {
     zustand?: FuncNodesReactFlow;
     uuid: string;
     on_error?: (error: string | Error) => void;

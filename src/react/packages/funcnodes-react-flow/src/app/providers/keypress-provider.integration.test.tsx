@@ -7,7 +7,8 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import "@testing-library/jest-dom";
+import type { Mock } from "vitest";
+import "@testing-library/jest-dom/vitest";
 
 import {
   KeyPressProvider,
@@ -162,12 +163,15 @@ const ComplexApp: React.FC<{
 };
 
 describe("KeyPressProvider Integration Tests", () => {
-  let onCommand: ReturnType<typeof vi.fn>;
-  let onAction: ReturnType<typeof vi.fn>;
+  type CommandHandler = (command: string, data?: any) => void;
+  type ActionHandler = (action: string, data?: any) => void;
+
+  let onCommand: Mock<CommandHandler>;
+  let onAction: Mock<ActionHandler>;
 
   beforeEach(() => {
-    onCommand = vi.fn();
-    onAction = vi.fn();
+    onCommand = vi.fn<CommandHandler>();
+    onAction = vi.fn<ActionHandler>();
   });
 
   afterEach(() => {

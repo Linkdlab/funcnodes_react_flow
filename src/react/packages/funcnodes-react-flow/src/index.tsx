@@ -90,14 +90,13 @@ export {
   DataPreviewViewRendererToHandlePreviewRenderer,
   DataViewRendererToInputRenderer,
 } from "@/data-rendering";
+export { useNodeStore, useIOStore } from "@/nodes";
 export {
-  useNodeStore,
-  useIOStore,
   useSetIOValue,
   useIOValueStore,
   useSetIOValueOptions,
   useIOGetFullValue,
-} from "@/nodes";
+} from "@/nodes-io-hooks";
 export { useWorkerApi } from "@/workers";
 export { useFuncNodesContext } from "@/providers";
 
@@ -108,6 +107,12 @@ export {
   JSONStructure,
   TextStructure,
 } from "@/data-structures";
+
+export { FuncNodes } from "@/app";
+export type { FuncnodesReactFlowProps } from "@/app";
+
+export { FuncNodesWorker } from "@/workers";
+export type { WorkerProps } from "@/workers";
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

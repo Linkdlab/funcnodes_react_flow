@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
+import "@testing-library/jest-dom/vitest";
 import * as React from "react";
 import {
   CustomDialog,
@@ -45,8 +45,16 @@ vi.mock("@radix-ui/react-dialog", () => ({
   Overlay: ({ className }: any) => (
     <div data-testid="dialog-overlay" className={className} />
   ),
-  Content: ({ children, asChild }: any) =>
-    asChild ? children : <div data-testid="dialog-content">{children}</div>,
+  Content: ({ children, asChild, ...props }: any) => {
+    if (asChild && React.isValidElement(children)) {
+      return React.cloneElement(children, props);
+    }
+    return (
+      <div data-testid="dialog-content" {...props}>
+        {children}
+      </div>
+    );
+  },
   Title: ({ children, className, id }: any) => (
     <h1 data-testid="dialog-title" className={className} id={id}>
       {children}
@@ -102,10 +110,33 @@ describe("CustomDialog", () => {
 
       expect(screen.getByTestId("dialog-root")).toBeInTheDocument();
       expect(screen.getByText("Just content")).toBeInTheDocument();
-      expect(screen.queryByTestId("dialog-title")).not.toBeInTheDocument();
+      expect(screen.getByTestId("dialog-title")).toBeInTheDocument();
       expect(
         screen.queryByTestId("dialog-description")
       ).not.toBeInTheDocument();
+    });
+
+    it("should render a visually hidden title when no title is provided", () => {
+      render(
+        <CustomDialog open={true}>
+          <p>Content only</p>
+        </CustomDialog>
+      );
+
+      const title = screen.getByTestId("dialog-title");
+      expect(title).toBeInTheDocument();
+      expect(title).toHaveClass("dialog-title--visually-hidden");
+    });
+
+    it("should not set aria-describedby when no description is provided", () => {
+      render(
+        <CustomDialog open={true}>
+          <p>Content only</p>
+        </CustomDialog>
+      );
+
+      const dialog = screen.getByRole("dialog");
+      expect(dialog).not.toHaveAttribute("aria-describedby");
     });
 
     it("should render with custom className", () => {
@@ -466,7 +497,7 @@ describe("CustomDialog", () => {
       );
 
       const title = screen.getByTestId("dialog-title");
-      expect(title).toHaveAttribute("id", "dialog-title");
+      expect(title.tagName).toBe("H1");
       expect(title).toHaveClass("dialog-title");
     });
 
