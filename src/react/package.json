@@ -15,7 +15,7 @@
     "dev-full": "node dev_full.cjs"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "3.2.4",
-    "typescript": "^5.8.3"
+    "@vitest/coverage-v8": "4.0.16",
+    "typescript": "^5.9.3"
   }
 }
