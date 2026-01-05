@@ -6,4 +6,3 @@ describe("data-rendering module graph", () => {
     await expect(import("@/data-rendering")).resolves.toBeTruthy();
   });
 });
-
