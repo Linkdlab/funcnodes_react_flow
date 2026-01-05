@@ -178,7 +178,7 @@ export const CustomDialog = React.memo<DialogProps>(
         {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
         <Dialog.Portal container={portal}>
           <Dialog.Overlay className="dialog-overlay funcnodescontainer" />
-          <Dialog.Content asChild>
+          <Dialog.Content asChild {...(!description ? { "aria-describedby": undefined } : {})}>
             <div
               className={contentClassName}
               role="dialog"
@@ -188,16 +188,15 @@ export const CustomDialog = React.memo<DialogProps>(
                 (typeof description === "string" ? description : undefined)
               }
             >
-              {title && (
-                <Dialog.Title className="dialog-title" id="dialog-title">
-                  {title}
-                </Dialog.Title>
-              )}
+              <Dialog.Title
+                className={`dialog-title${title ? "" : " dialog-title--visually-hidden"}`}
+              >
+                {title || ariaLabel || "Dialog"}
+              </Dialog.Title>
 
               {description && (
                 <Dialog.Description
                   className="dialog-description"
-                  id="dialog-description"
                 >
                   {description}
                 </Dialog.Description>
