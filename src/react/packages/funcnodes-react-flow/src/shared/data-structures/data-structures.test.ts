@@ -105,6 +105,20 @@ describe("CTypeStructure", () => {
     expect(boolStruct.value).toBe(true);
     expect(textStruct.value).toBe("hello");
   });
+
+  it("parses values from subarray views", () => {
+    const buffer = new ArrayBuffer(4);
+    const view = new DataView(buffer);
+    view.setUint16(2, 0x1234, true);
+
+    const subarray = new Uint8Array(buffer, 2, 2);
+    const struct = new CTypeStructure({
+      data: subarray,
+      mime: "application/fn.struct.<H",
+    });
+
+    expect(struct.value).toBe(0x1234);
+  });
 });
 
 describe("JSONStructure", () => {
