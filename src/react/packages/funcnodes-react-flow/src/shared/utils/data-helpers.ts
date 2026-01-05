@@ -10,10 +10,10 @@
  * const uint8Array = base64ToUint8Array(base64);
  * ```
  */
-function base64ToUint8Array(base64: string): Uint8Array {
+function base64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
   const binaryString = window.atob(base64); // Decode base64 to binary string
   const len = binaryString.length;
-  const bytes = new Uint8Array(len);
+  const bytes: Uint8Array<ArrayBuffer> = new Uint8Array(len);
   for (let i = 0; i < len; i++) {
     bytes[i] = binaryString.charCodeAt(i);
   }
@@ -33,7 +33,7 @@ function base64ToUint8Array(base64: string): Uint8Array {
  * console.log(base64); // "SGVsbG8="
  * ```
  */
-function uint8ArrayToBase64(data: Uint8Array): string {
+function uint8ArrayToBase64(data: Uint8Array<ArrayBuffer>): string {
   let binaryString = "";
   for (let i = 0; i < data.byteLength; i++) {
     binaryString += String.fromCharCode(data[i]);
@@ -54,7 +54,7 @@ function uint8ArrayToBase64(data: Uint8Array): string {
  * const blob = Uint8ArrayToBlob(data, "image/png");
  * ```
  */
-function Uint8ArrayToBlob(data: Uint8Array, type: string): Blob {
+function Uint8ArrayToBlob(data: Uint8Array<ArrayBuffer>, type: string): Blob {
   return new Blob([data], { type });
 }
 
@@ -70,7 +70,7 @@ function Uint8ArrayToBlob(data: Uint8Array, type: string): Blob {
  * const uint8Array = await blobToUint8Array(blob);
  * ```
  */
-function blobToUint8Array(blob: Blob): Promise<Uint8Array> {
+function blobToUint8Array(blob: Blob): Promise<Uint8Array<ArrayBuffer>> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {

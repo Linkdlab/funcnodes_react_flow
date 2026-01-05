@@ -1,6 +1,7 @@
 import * as React from "react";
 import { InputRendererProps } from "./types";
-import { useIOStore, useSetIOValue } from "@/nodes";
+import { useIOStore } from "@/nodes";
+import { useSetIOValue } from "@/nodes-io-hooks";
 
 export const StringInput = ({ inputconverter }: InputRendererProps) => {
   const iostore = useIOStore();

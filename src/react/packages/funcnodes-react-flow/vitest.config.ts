@@ -24,11 +24,7 @@ export default mergeConfig(
         "**/*.e2e.*",
       ],
       pool: "vmThreads",
-      poolOptions: {
-        vmThreads: {
-          memoryLimit: "512MB",
-        },
-      },
+      vmMemoryLimit: "512MB",
     },
   })
 );

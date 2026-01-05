@@ -53,7 +53,7 @@ declare interface AllOf {
     allOf: SerializedType[];
 }
 
-declare type AnyDataType = JSONType | ArrayBufferLike;
+declare type AnyDataType = JSONType | ArrayBuffer | Blob;
 
 declare interface AnyOf {
     anyOf: SerializedType[];
@@ -61,6 +61,10 @@ declare interface AnyOf {
 
 export declare class ArrayBufferDataStructure extends DataStructure<ArrayBuffer, string> {
     private _objectUrl;
+    constructor({ data, mime }: {
+        data: BinarySource;
+        mime: string;
+    });
     get objectUrl(): string;
     dispose(): void;
     get value(): string;
@@ -154,10 +158,15 @@ declare interface BasicNodeType {
 
 declare type BasicOutputRendererType = (props: OutputRendererProps) => JSX.Element;
 
-export declare class CTypeStructure extends DataStructure<ArrayBufferLike, string | number | boolean | null> {
+declare type BinarySource = ArrayBufferLike | ArrayBufferView;
+
+export declare class CTypeStructure extends DataStructure<ArrayBuffer, string | number | boolean | null> {
     private _cType;
     private _value;
-    constructor({ data, mime }: DataStructureProps<ArrayBufferLike>);
+    constructor({ data, mime }: {
+        data: BinarySource;
+        mime: string;
+    });
     parse_value(): string | number | boolean | null;
     get value(): string | number | boolean | null;
     toString(): string;
@@ -692,15 +701,18 @@ declare type JSONMessage = ProgressStateMessage | ResultMessage | ErrorMessage |
 
 /**
  * Union type representing all supported data types for DataStructure instances.
- * Includes primitive types and ArrayBufferLike for binary data.
+ * Includes primitive types and binary data.
  */
 declare interface JSONObject {
     [key: string]: JSONType;
 }
 
-export declare class JSONStructure extends DataStructure<ArrayBufferLike, JSONType | undefined> {
+export declare class JSONStructure extends DataStructure<ArrayBuffer, JSONType | undefined> {
     private _json;
-    constructor({ data, mime }: DataStructureProps<any>);
+    constructor({ data, mime }: {
+        data: BinarySource;
+        mime: string;
+    });
     get value(): JSONType | undefined;
     static fromObject(obj: JSONType): JSONStructure;
     toString(): string;
@@ -1346,9 +1358,12 @@ declare interface StateManagerManagerAPI {
     toast?: ToastDispatcher;
 }
 
-export declare class TextStructure extends DataStructure<ArrayBufferLike, string> {
+export declare class TextStructure extends DataStructure<ArrayBuffer, string> {
     private _value;
-    constructor({ data, mime }: DataStructureProps<ArrayBufferLike>);
+    constructor({ data, mime }: {
+        data: BinarySource;
+        mime: string;
+    });
     get value(): string;
     toString(): string;
 }
