@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2.1.2 (2026-01-06)
+
+### Fix
+
+- **build**: make sure __FN_VERSION__ is baked in on build
+
 ## 2.1.1 (2026-01-05)
 
 ### Fix

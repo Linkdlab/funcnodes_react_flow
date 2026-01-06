@@ -423,7 +423,7 @@ wheels = [
 
 [[package]]
 name = "funcnodes-react-flow"
-version = "2.1.1"
+version = "2.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "funcnodes" },
