@@ -99,13 +99,17 @@ export const FuncNodes = (
   // Effect 3: Manage Worker lifecycle
   React.useEffect(() => {
     if (!fullProps || !fnrfzst) return;
-    // Skip if using worker manager or no worker URL provided
-    if (fullProps.useWorkerManager || !fullProps.worker_url) return;
+    // Skip if: a) a worker manager is used or b) no worker URL or worker is provided
+    if (
+      fullProps.useWorkerManager || // a) a worker manager is used
+      (!fullProps.worker_url && !fullProps.worker) // b) no worker URL and no worker is provided
+    )
+      return;
 
     fullProps.logger?.debug("Worker effect running");
 
     // Check if we need to create a worker
-    if (!fullProps.worker) {
+    if (!fullProps.worker && fullProps.worker_url) {
       fullProps.logger?.debug("Creating WebSocket worker");
 
       const worker = new WebSocketWorker({
@@ -129,7 +133,7 @@ export const FuncNodes = (
       };
     } else {
       // Worker already exists, just ensure zustand is set
-      fullProps.worker.set_zustand(fnrfzst);
+      fullProps.worker?.set_zustand(fnrfzst);
       return; // Explicit return for consistency
     }
   }, [
