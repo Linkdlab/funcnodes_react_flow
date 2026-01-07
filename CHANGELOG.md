@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## 2.2.1a0 (2026-01-07)
+
+### Fix
+
+- **funcnodes-react-flow**: clean up queued fnw_url import callback
+- enhance worker lifecycle management by refining conditions for worker creation
+
 ## 2.2.0 (2026-01-07)
 
 ### Feat

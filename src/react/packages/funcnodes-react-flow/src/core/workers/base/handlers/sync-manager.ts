@@ -40,6 +40,7 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
   _local_nodeupdates: Map<string, PartialSerializedNodeType> = new Map();
   _local_groupupdates: Map<string, Partial<NodeGroup>> = new Map();
   _groupupdatetimer: ReturnType<typeof setTimeout> | undefined;
+  _after_next_sync: ((worker: FuncNodesWorker) => Promise<void>)[] = [];
   constructor(context: WorkerSyncManagerContext) {
     super(context);
     this.on_sync_complete = context.on_sync_complete || (async () => {});
@@ -69,6 +70,22 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     await this.sync_view_state();
 
     await this.on_sync_complete(this.context.worker);
+    const callbacks = this._after_next_sync.splice(0);
+    for (const after_next_sync of callbacks) {
+      await after_next_sync(this.context.worker);
+      if (this._after_next_sync.includes(after_next_sync)) {
+        this._after_next_sync.splice(this._after_next_sync.indexOf(after_next_sync), 1);
+      }
+    }
+  }
+
+  add_after_next_sync(callback: (worker: FuncNodesWorker) => Promise<void>) {
+    this._after_next_sync.push(callback);
+  }
+  remove_after_next_sync(callback: (worker: FuncNodesWorker) => Promise<void>) {
+    this._after_next_sync = this._after_next_sync.filter(
+      (c) => c !== callback
+    );
   }
 
   async sync_lib() {
