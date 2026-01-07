@@ -292,6 +292,147 @@ export declare const DataViewRendererToOverlayRenderer: (DV: DataViewRendererTyp
 export declare type DataViewRendererType = BasicDataViewRendererType | React.MemoExoticComponent<BasicDataViewRendererType>;
 
 /**
+ * Deeply merges two objects, with the source object's properties taking precedence over the target's.
+ *
+ * This function creates a new object by recursively merging properties from the source object
+ * into the target object. Unlike shallow merging, this function traverses nested objects and
+ * merges them at each level. The function returns both the merged result and a boolean flag
+ * indicating whether any changes were made during the merge process.
+ *
+ * @template T - The type of the target object and the resulting merged object
+ *
+ * @param target - The base object that will be merged with the source. Must be a plain object.
+ * @param source - The object whose properties will override or extend the target object.
+ *                Can be a partial representation of T with any level of nesting optional.
+ *
+ * @returns An object containing:
+ *          - `new_obj`: A new object of type T with merged properties
+ *          - `change`: Boolean indicating if any modifications were made during merging
+ *
+ * @throws {Error} Throws an error if either target or source is not a plain object
+ *
+ * @example
+ * ```typescript
+ * const target = {
+ *   user: { name: 'John', age: 30 },
+ *   settings: { theme: 'light', lang: 'en' }
+ * };
+ *
+ * const source = {
+ *   user: { age: 31 },           // Will override age, keep name
+ *   settings: { theme: 'dark' }   // Will override theme, keep lang
+ * };
+ *
+ * const result = deep_merge(target, source);
+ * // result.new_obj = {
+ * //   user: { name: 'John', age: 31 },
+ * //   settings: { theme: 'dark', lang: 'en' }
+ * // }
+ * // result.change = true
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // No changes scenario
+ * const target = { a: 1, b: { c: 2 } };
+ * const source = { a: 1, b: { c: 2 } };
+ * const result = deep_merge(target, source);
+ * // result.new_obj = { a: 1, b: { c: 2 } }
+ * // result.change = false
+ * ```
+ *
+ * @note This function creates a new object rather than modifying the target in place.
+ * @note The function uses deep_compare_objects to determine if changes actually occurred.
+ * @note Nested objects are recursively merged, but arrays and other object types are replaced entirely.
+ *
+ * @see DeepPartial - Type used for the source parameter
+ * @see deep_compare_objects - Used to detect changes during merging
+ * @see isPlainObject - Used to validate object types
+ * @see deep_update - Alternative function for adding missing properties only
+ */
+export declare const deep_merge: <T extends {}>(target: T, source: DeepPartial<T>) => {
+    new_obj: T;
+    change: boolean;
+};
+
+/**
+ * Deeply updates the target object by adding missing properties from the source object.
+ *
+ * Unlike deep_merge which overwrites existing properties, deep_update only adds properties
+ * that are missing (undefined) in the target object. This is useful for filling in default
+ * values or ensuring an object has all required properties without overwriting existing data.
+ * The function recursively processes nested objects to add missing properties at any depth.
+ *
+ * @template T - The type of the complete object structure (source object type)
+ *
+ * @param target - A partial object that may be missing some properties. Can have any subset
+ *                of properties from T, with nested objects also being partial.
+ * @param source - A complete object of type T that provides the default/missing values.
+ *                This object should contain all the properties that might be missing from target.
+ *
+ * @returns An object containing:
+ *          - `new_obj`: A complete object of type T with all properties filled in
+ *          - `change`: Boolean indicating if any properties were added during the update
+ *
+ * @throws {Error} Throws an error if either target or source is not a plain object
+ *
+ * @example
+ * ```typescript
+ * interface Config {
+ *   user: { name: string; age: number; email: string };
+ *   settings: { theme: string; lang: string; notifications: boolean };
+ * }
+ *
+ * const partialConfig = {
+ *   user: { name: 'John' },          // Missing age and email
+ *   settings: { theme: 'dark' }       // Missing lang and notifications
+ * };
+ *
+ * const defaultConfig: Config = {
+ *   user: { name: 'Anonymous', age: 0, email: 'none@example.com' },
+ *   settings: { theme: 'light', lang: 'en', notifications: true }
+ * };
+ *
+ * const result = deep_update(partialConfig, defaultConfig);
+ * // result.new_obj = {
+ * //   user: { name: 'John', age: 0, email: 'none@example.com' },
+ * //   settings: { theme: 'dark', lang: 'en', notifications: true }
+ * // }
+ * // result.change = true
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // No changes needed scenario
+ * const completeConfig = {
+ *   user: { name: 'John', age: 30, email: 'john@example.com' },
+ *   settings: { theme: 'dark', lang: 'fr', notifications: false }
+ * };
+ *
+ * const result = deep_update(completeConfig, defaultConfig);
+ * // result.new_obj = completeConfig (unchanged)
+ * // result.change = false
+ * ```
+ *
+ * @note This function only adds missing properties (undefined values). Existing properties,
+ *       even if null or empty, are preserved and not overwritten.
+ *
+ * @note The function recursively processes nested objects but does not update properties
+ *       where the target has a non-object value but the source has an object value.
+ *
+ * @note This is particularly useful for object factories and default value scenarios.
+ *
+ * @see LimitedDeepPartial - Type used for the target parameter
+ * @see deep_merge - Alternative function that overwrites existing properties
+ * @see object_factory_maker - Uses this function for applying partial updates
+ * @see isPlainObject - Used to validate object types
+ */
+export declare const deep_update: <T extends {}>(target: LimitedDeepPartial<T>, source: T) => {
+    new_obj: T;
+    change: boolean;
+};
+
+/**
  * A utility type that makes all properties of an object type T optional recursively.
  *
  * This type is similar to TypeScript's built-in `Partial<T>`, but it applies the optional
@@ -358,7 +499,7 @@ export declare type DataViewRendererType = BasicDataViewRendererType | React.Mem
  * @see deep_merge - Function that works well with DeepPartial types for object merging
  * @see deep_update - Function that accepts DeepPartial-like objects for updating
  */
-declare type DeepPartial<T> = T extends object ? {
+export declare type DeepPartial<T> = T extends object ? {
     [P in keyof T]?: DeepPartial<T[P]>;
 } : T;
 
@@ -826,7 +967,7 @@ declare interface LibZustandInterface {
  * @see Prev - The helper type array that defines available depth values
  * @see deep_update - Function that works with LimitedDeepPartial types
  */
-declare type LimitedDeepPartial<T, D extends number = 10> = D extends 0 ? T : T extends object ? {
+export declare type LimitedDeepPartial<T, D extends number = 10> = D extends 0 ? T : T extends object ? {
     [K in keyof T]?: LimitedDeepPartial<T[K], Prev[D]>;
 } : T;
 
@@ -1048,6 +1189,58 @@ declare interface NodeType extends Omit<BasicNodeType, "in_trigger" | "io"> {
     [key: string]: any;
 }
 
+/**
+ * Creates a factory function that generates objects based on a default template with optional customizations.
+ *
+ * This function returns a factory that can create new instances of objects by:
+ * 1. Deep cloning the default object (using JSON serialization)
+ * 2. Applying optional factory updates to modify the default object
+ * 3. Merging any provided partial object with the result using deep_update
+ *
+ * @template T - The type of the default object and the objects created by the factory
+ *
+ * @param default_obj - The template object that serves as the base for all created objects.
+ *                     This object will be deep cloned using JSON serialization, so it must be JSON-serializable.
+ *
+ * @param factory_updates - Optional function that receives the cloned default object and returns
+ *                         a modified version. This is useful for applying dynamic updates or
+ *                         transformations to the default object before merging with user input.
+ *                         If undefined, no modifications are applied to the default object.
+ *
+ * @returns A factory function that accepts a partial object and returns a complete object of type T.
+ *          The returned factory function:
+ *          - Takes an optional LimitedDeepPartial<T> parameter for customizations
+ *          - Returns a complete object of type T
+ *          - If no parameter is provided, returns the (possibly updated) default object
+ *          - If a parameter is provided, deep merges it with the default using deep_update
+ *
+ * @example
+ * ```typescript
+ * // Basic usage
+ * const defaultConfig = { theme: 'light', lang: 'en', features: { darkMode: false } };
+ * const configFactory = object_factory_maker(defaultConfig);
+ *
+ * const config1 = configFactory(); // Returns exact copy of defaultConfig
+ * const config2 = configFactory({ theme: 'dark' }); // { theme: 'dark', lang: 'en', features: { darkMode: false } }
+ * const config3 = configFactory({ features: { darkMode: true } }); // Nested merge
+ *
+ * // With factory updates
+ * const configFactoryWithUpdates = object_factory_maker(
+ *   defaultConfig,
+ *   (obj) => ({ ...obj, timestamp: Date.now() })
+ * );
+ * const config4 = configFactoryWithUpdates({ theme: 'dark' }); // Includes timestamp
+ * ```
+ *
+ * @note The default object must be JSON-serializable since deep cloning is performed using
+ *       JSON.stringify/JSON.parse. Objects with functions, undefined values, symbols, or
+ *       circular references will not work correctly.
+ *
+ * @see deep_update - Used internally to merge partial objects with the default
+ * @see LimitedDeepPartial - Type used for the partial object parameter
+ */
+export declare const object_factory_maker: <T extends {}>(default_obj: T, factory_updates?: ((obj: T) => T) | undefined) => ((obj?: LimitedDeepPartial<T>) => T);
+
 export declare type OutputRendererProps = {};
 
 export declare type OutputRendererType = BasicOutputRendererType | React.MemoExoticComponent<BasicOutputRendererType>;
@@ -1060,7 +1253,7 @@ declare interface PackedPlugin {
 
 declare type PartialSerializedIOType = LimitedDeepPartial<SerializedIOType>;
 
-declare type PartialSerializedNodeType = LimitedDeepPartial<SerializedNodeType>;
+export declare type PartialSerializedNodeType = LimitedDeepPartial<SerializedNodeType>;
 
 declare class PluginManagerHandler extends AbstractFuncNodesReactFlowHandleHandler implements PluginManagerManagerAPI {
     plugins: UseBoundStore<StoreApi<{
@@ -1328,7 +1521,7 @@ declare type SerializedNodeIOMappingType = {
     [key: string]: SerializedIOType | undefined;
 };
 
-declare interface SerializedNodeType extends BasicNodeType {
+export declare interface SerializedNodeType extends BasicNodeType {
     in_trigger: boolean;
     io: SerializedNodeIOMappingType | SerializedIOType[];
     io_order?: string[];
