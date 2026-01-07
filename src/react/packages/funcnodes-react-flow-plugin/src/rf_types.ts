@@ -2024,10 +2024,13 @@ declare class WorkerSyncManager extends AbstractWorkerHandler {
     _local_nodeupdates: Map<string, PartialSerializedNodeType>;
     _local_groupupdates: Map<string, Partial<NodeGroup>>;
     _groupupdatetimer: ReturnType<typeof setTimeout> | undefined;
+    _after_next_sync: ((worker: FuncNodesWorker) => Promise<void>)[];
     constructor(context: WorkerSyncManagerContext);
     start(): void;
     stop(): void;
     stepwise_fullsync(): Promise<void>;
+    add_after_next_sync(callback: (worker: FuncNodesWorker) => Promise<void>): void;
+    remove_after_next_sync(callback: (worker: FuncNodesWorker) => Promise<void>): void;
     sync_lib(): Promise<void>;
     sync_external_worker(): Promise<void>;
     sync_funcnodes_plugins(): Promise<void>;
