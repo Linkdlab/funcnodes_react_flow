@@ -151,25 +151,20 @@ export const FuncNodes = (
     fullProps.logger?.debug("Loading fnw_url data");
 
     let cancelled = false;
-    const originalOnSyncComplete =
-      fullProps.worker.getSyncManager().on_sync_complete;
+    const syncManager = fullProps.worker.getSyncManager();
+    let afterNextSyncCallback:
+      | ((worker: FuncNodesWorker) => Promise<void>)
+      | undefined;
 
     const loadFnwData = async () => {
       try {
         const fnw_data = await remoteUrlToBase64(fullProps.fnw_url!);
-
-        if (!cancelled && fullProps.worker) {
-          fullProps.worker.getSyncManager().on_sync_complete = async (
-            worker: FuncNodesWorker
-          ) => {
-            await worker.update_from_export(fnw_data);
-            fullProps.worker!.getSyncManager().on_sync_complete =
-              originalOnSyncComplete;
-            if (originalOnSyncComplete) {
-              originalOnSyncComplete(worker);
-            }
-          };
-        }
+        if (cancelled) return;
+        afterNextSyncCallback = async (worker: FuncNodesWorker) => {
+          if (cancelled) return;
+          await worker.update_from_export(fnw_data);
+        };
+        syncManager.add_after_next_sync(afterNextSyncCallback);
       } catch (error) {
         if (error instanceof Error) {
           fullProps.logger?.error("Failed to load fnw_url:", error);
@@ -186,9 +181,8 @@ export const FuncNodes = (
 
     return () => {
       cancelled = true;
-      if (fullProps.worker) {
-        fullProps.worker.getSyncManager().on_sync_complete =
-          originalOnSyncComplete;
+      if (afterNextSyncCallback) {
+        syncManager.remove_after_next_sync(afterNextSyncCallback);
       }
     };
   }, [fullProps?.fnw_url, fullProps?.worker]);
