@@ -91,6 +91,10 @@ export {
   DataViewRendererToInputRenderer,
 } from "@/data-rendering";
 export { useNodeStore, useIOStore } from "@/nodes";
+export type {
+  PartialSerializedNodeType,
+  SerializedNodeType,
+} from "@/nodes-core";
 export {
   useSetIOValue,
   useIOValueStore,
@@ -113,6 +117,13 @@ export type { FuncnodesReactFlowProps } from "@/app";
 
 export { FuncNodesWorker } from "@/workers";
 export type { WorkerProps } from "@/workers";
+
+export {
+  object_factory_maker,
+  deep_update,
+  deep_merge,
+} from "@/object-helpers";
+export type { LimitedDeepPartial, DeepPartial } from "@/object-helpers";
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
