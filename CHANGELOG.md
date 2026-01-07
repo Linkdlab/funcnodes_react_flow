@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## 2.2.1a0 (2026-01-07)
+## 2.2.1 (2026-01-07)
 
 ### Fix
 

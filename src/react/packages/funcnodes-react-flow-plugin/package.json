@@ -1,6 +1,6 @@
 {
   "name": "@linkdlab/funcnodes-react-flow-plugin",
-  "version": "2.2.1a0",
+  "version": "2.2.1",
   "type": "module",
   "description": "Type definitions for FuncNodes React Flow plugins",
   "repository": {
