@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## 2.2.0 (2026-01-07)
+
+### Feat
+
+- add deep_merge and deep_update utility functions, along with object_factory_maker for enhanced object manipulation
+
 ## 2.1.2 (2026-01-06)
 
 ### Fix
