@@ -8,7 +8,7 @@ export const InLineOutput = () => {
   const iostore = useIOStore();
   const { preview, full } = iostore.valuestore();
   const src = full || preview;
-  let disp = stringifyValue(src);
+  let disp = stringifyValue(src) ?? "";
 
   //truncate the string if it is too long
   if (disp.length > 63) {

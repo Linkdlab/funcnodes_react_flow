@@ -2,7 +2,7 @@ import * as React from "react";
 import { DataViewRendererProps, DataViewRendererType } from "./types";
 import { JSONDisplay } from "@/shared-components";
 
-export const stringifyValue = (value: any): string => {
+export const stringifyValue = (value: any): string | undefined => {
   let disp = "";
   if (typeof value === "string") {
     disp = value;
@@ -11,7 +11,7 @@ export const stringifyValue = (value: any): string => {
   } else if (value === null) {
     disp = "null";
   } else if (value === undefined) {
-    disp = String(value ?? "undefined");
+    return undefined;
   } else {
     try {
       disp = JSON.stringify(value);
@@ -24,7 +24,7 @@ export const SingleValueRenderer: DataViewRendererType = React.memo(
   ({ value }: DataViewRendererProps) => {
     return (
       <div>
-        <pre>{stringifyValue(value)}</pre>
+        <pre>{stringifyValue(value) ?? ""}</pre>
       </div>
     );
   }
