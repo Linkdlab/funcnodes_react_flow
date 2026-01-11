@@ -2,12 +2,13 @@ import { OutputRendererType } from "./types";
 
 import * as React from "react";
 import { useIOStore } from "@/nodes";
+import { stringifyValue } from "../data-view-renderer/json";
 
 export const InLineOutput = () => {
   const iostore = useIOStore();
   const { preview, full } = iostore.valuestore();
-
-  let disp = (JSON.stringify(full || preview) || "").replace(/\\n/g, "\n");
+  const src = full || preview;
+  let disp = stringifyValue(src);
 
   //truncate the string if it is too long
   if (disp.length > 63) {
