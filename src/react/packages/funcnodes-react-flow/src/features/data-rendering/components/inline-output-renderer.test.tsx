@@ -25,6 +25,9 @@ describe("inline and output renderers", () => {
     );
 
     const disp = stringifyValue(preview.value);
+    if (disp === undefined) {
+      throw new Error("Expected stringifyValue(preview.value) to return a string");
+    }
     const expectedLength = Math.round((3 * disp.length) / 4);
     expect(container.textContent).toBe(`Bytes(${expectedLength})`);
   });
