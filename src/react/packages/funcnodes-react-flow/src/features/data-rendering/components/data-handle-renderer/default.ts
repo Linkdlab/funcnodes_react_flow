@@ -2,7 +2,7 @@ import { DataPreviewViewRendererToHandlePreviewRenderer } from "../../utils";
 import {
   DefaultDataPreviewViewRenderer,
   FallbackDataPreviewViewRenderer,
-} from "../data-preview-renderer";
+} from "../data-preview-renderer/default";
 import type { HandlePreviewRendererType } from "./types";
 
 export const DefaultHandlePreviewRenderer: {

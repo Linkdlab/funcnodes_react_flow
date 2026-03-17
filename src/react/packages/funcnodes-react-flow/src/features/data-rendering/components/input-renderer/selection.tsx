@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { InputRendererProps } from "./types";
 
-import { CustomSelect } from "@/shared-components";
+import { CustomSelect } from "@/shared-components/Select";
 import { useIOStore } from "@/nodes";
 import { useSetIOValue } from "@/nodes-io-hooks";
 import type { EnumOf } from "@/nodes-core";

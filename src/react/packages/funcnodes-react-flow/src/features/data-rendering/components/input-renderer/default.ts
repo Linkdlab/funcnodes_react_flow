@@ -1,5 +1,5 @@
 import { DataViewRendererToInputRenderer } from "../../utils";
-import { Base64BytesRenderer } from "../data-view-renderer";
+import { Base64BytesRenderer } from "../data-view-renderer/bytes";
 import { BooleanInput } from "./boolean";
 import { ColorInput } from "./color";
 import { FloatInput, IntegerInput } from "./numbers";
