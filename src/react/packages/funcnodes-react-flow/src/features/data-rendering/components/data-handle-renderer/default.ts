@@ -3,7 +3,7 @@ import {
   DefaultDataPreviewViewRenderer,
   FallbackDataPreviewViewRenderer,
 } from "../data-preview-renderer";
-import { HandlePreviewRendererType } from "./types";
+import type { HandlePreviewRendererType } from "./types";
 
 export const DefaultHandlePreviewRenderer: {
   [key: string]: HandlePreviewRendererType | undefined;

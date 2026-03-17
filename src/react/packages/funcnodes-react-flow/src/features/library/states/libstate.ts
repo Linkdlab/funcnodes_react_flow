@@ -1,4 +1,4 @@
-import { UseBoundStore, StoreApi } from "zustand";
+import type { UseBoundStore, StoreApi } from "zustand";
 
 export interface ExternalWorkerInstance {
   uuid: string;

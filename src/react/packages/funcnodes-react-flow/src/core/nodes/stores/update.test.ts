@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { update_node, update_io } from "./update";
-import { NodeStore, NodeType } from "../interfaces/node";
-import { IOStore, IOType } from "../interfaces/io";
+import type { NodeStore, NodeType } from "../interfaces/node";
+import type { IOStore, IOType } from "../interfaces/io";
 
 const createNodeStore = (state: NodeType, ioStoreUpdates: any[] = []) => {
   let currentState = { ...state };

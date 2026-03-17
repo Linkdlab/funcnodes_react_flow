@@ -7,12 +7,7 @@ import {
   DefaultInputRenderer,
   DefaultOutputRenderer,
 } from "../../components";
-import {
-  RenderMappingState,
-  RenderMappingAction,
-  NodeRendererType,
-  NodeHooksType,
-} from "./render-mappings.types";
+import type { RenderMappingState, RenderMappingAction, NodeRendererType, NodeHooksType } from "./render-mappings.types";
 
 // Initial empty mappings for plugin extensions
 const _NodeRenderer: { [key: string]: NodeRendererType | undefined } = {};

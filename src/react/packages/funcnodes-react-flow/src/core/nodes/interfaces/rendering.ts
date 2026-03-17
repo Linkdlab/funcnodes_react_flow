@@ -1,4 +1,4 @@
-import { SerializedType } from "../serializations";
+import type { SerializedType } from "../serializations";
 
 export type RenderType =
   | "string"

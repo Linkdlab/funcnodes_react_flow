@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 
-import { RJSFSchema, UiSchema } from "@rjsf/utils";
+import type { RJSFSchema, UiSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import * as React from "react";
 

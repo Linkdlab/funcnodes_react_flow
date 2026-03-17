@@ -5,7 +5,7 @@ import { ColorInput } from "./color";
 import { FloatInput, IntegerInput } from "./numbers";
 import { SelectionInput } from "./selection";
 import { StringInput } from "./text";
-import { InputRendererType } from "./types";
+import type { InputRendererType } from "./types";
 import { JsonSchemaInput } from "./json_schema";
 
 export const DefaultInputRenderer: {

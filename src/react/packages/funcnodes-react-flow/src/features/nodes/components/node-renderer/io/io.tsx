@@ -1,6 +1,7 @@
 // import * as Tooltip from "@radix-ui/react-tooltip";
 import * as Popover from "@radix-ui/react-popover";
-import { Handle, HandleProps } from "@xyflow/react";
+import { Handle } from "@xyflow/react";
+import type { HandleProps } from "@xyflow/react";
 import * as React from "react";
 import { useState } from "react";
 import { usePreviewHandleDataRendererForIo } from "./handle_renderer";
@@ -9,7 +10,7 @@ import { LockIcon, LockOpenIcon, FullscreenIcon } from "@/icons";
 import { IODataOverlay, IOPreviewWrapper } from "./iodataoverlay";
 import { useFuncNodesContext } from "@/providers";
 import { CustomDialog } from "@/shared-components";
-import { IOType } from "@/nodes-core";
+import type { IOType } from "@/nodes-core";
 import { useIOStore } from "@/nodes";
 import { useIOGetFullValue } from "@/nodes-io-hooks";
 import { pick_best_io_type } from "../../../pick_best_io_type";

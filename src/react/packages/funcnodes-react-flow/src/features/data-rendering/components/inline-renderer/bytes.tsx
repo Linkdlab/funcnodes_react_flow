@@ -1,5 +1,5 @@
 import { useIOStore } from "@/nodes";
-import { InLineRendererType } from "./types";
+import type { InLineRendererType } from "./types";
 
 export const Base64BytesInLineRenderer: InLineRendererType = () => {
   const iostore = useIOStore();

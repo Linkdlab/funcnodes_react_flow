@@ -2,7 +2,8 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import * as React from "react";
-import { FloatContainer, FloatContainerProps } from "./index";
+import { FloatContainer } from "./index";
+import type { FloatContainerProps } from "./index";
 
 // Test utility to get computed className from rendered element
 const getClassNames = (element: HTMLElement): string[] => {

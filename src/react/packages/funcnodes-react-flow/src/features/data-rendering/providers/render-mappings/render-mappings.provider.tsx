@@ -1,32 +1,16 @@
 import * as React from "react";
-import {
-  ReactElement,
-  createContext,
-  useCallback,
-  useEffect,
-  useReducer,
-} from "react";
+import { createContext, useCallback, useEffect, useReducer } from "react";
+import type { ReactElement } from "react";
 
 import { NodeContext } from "@/nodes";
 import {
   renderMappingReducer,
   initialRenderMappings,
 } from "./render-mappings.reducer";
-import {
-  DispatchOptions,
-  NodeHooksType,
-  NodeRendererType,
-} from "./render-mappings.types";
-import {
-  DataOverlayRendererType,
-  DataPreviewViewRendererType,
-  DataViewRendererType,
-  HandlePreviewRendererType,
-  InputRendererType,
-  OutputRendererType,
-} from "@/data-rendering-types";
+import type { DispatchOptions, NodeHooksType, NodeRendererType } from "./render-mappings.types";
+import type { DataOverlayRendererType, DataPreviewViewRendererType, DataViewRendererType, HandlePreviewRendererType, InputRendererType, OutputRendererType } from "@/data-rendering-types";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
-import { FuncNodesReactPlugin, RendererPlugin } from "@/plugins";
+import type { FuncNodesReactPlugin, RendererPlugin } from "@/plugins";
 
 /**
  * RenderMappingProvider is a React component that provides a context for managing and extending the mappings of input renderers, handle preview renderers, data overlay renderers, data preview view renderers, and data view renderers. These mappings are used throughout the application to render various types of inputs, previews, and data views dynamically.

@@ -1,7 +1,8 @@
 import * as React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { ProgressBar, TqdmState } from "./index";
+import { ProgressBar } from "./index";
+import type { TqdmState } from "./index";
 
 // Mock the fitTextToContainer utility
 vi.mock("@/utils/autolayout/txt", () => ({

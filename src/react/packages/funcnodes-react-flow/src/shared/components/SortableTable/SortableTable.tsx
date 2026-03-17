@@ -7,12 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import {
-  SortableTableProps,
-  SortDirection,
-  PaginationState,
-  VirtualScrollingConfig,
-} from "./types";
+import type { SortableTableProps, SortDirection, PaginationState, VirtualScrollingConfig } from "./types";
 import {
   transformTableData,
   createComparator,

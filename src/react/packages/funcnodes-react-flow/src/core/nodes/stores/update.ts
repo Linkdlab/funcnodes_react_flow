@@ -1,10 +1,5 @@
-import { IOStore, IOType, NodeType } from "../interfaces";
-import {
-  PartialSerializedIOType,
-  PartialSerializedNodeType,
-  SerializedIOType,
-  SerializedNodeType,
-} from "../serializations";
+import type { IOStore, IOType, NodeType } from "../interfaces";
+import type { PartialSerializedIOType, PartialSerializedNodeType, SerializedIOType, SerializedNodeType } from "../serializations";
 import { normalize_node } from "./normalization";
 import {
   deep_compare_objects,
@@ -12,8 +7,8 @@ import {
   deep_updater,
   assertNever,
 } from "@/object-helpers";
-import { IORenderOptions, IOValueOptions } from "../interfaces/io";
-import { NodeProperties, NodeStore } from "../interfaces/node";
+import type { IORenderOptions, IOValueOptions } from "../interfaces/io";
+import type { NodeProperties, NodeStore } from "../interfaces/node";
 
 export const update_node = (
   old_store: NodeStore,

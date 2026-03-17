@@ -1,18 +1,6 @@
 import * as React from "react";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-  createContext,
-  useContext,
-  useMemo,
-  HTMLAttributes,
-  ReactNode,
-  ReactElement,
-} from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState, createContext, useContext, useMemo } from "react";
+import type { HTMLAttributes, ReactNode, ReactElement } from "react";
 
 // Extend HTMLElement to include vendor-prefixed methods
 interface ExtendedHTMLElement extends HTMLDivElement {

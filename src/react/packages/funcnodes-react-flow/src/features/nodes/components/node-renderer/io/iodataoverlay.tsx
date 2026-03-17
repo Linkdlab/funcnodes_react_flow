@@ -1,9 +1,6 @@
 import * as React from "react";
-import {
-  DataOverlayRendererType,
-  DataPreviewViewRendererType,
-} from "@/data-rendering-types";
-import { IOStore } from "@/nodes-core";
+import type { DataOverlayRendererType, DataPreviewViewRendererType } from "@/data-rendering-types";
+import type { IOStore } from "@/nodes-core";
 import { useIOGetFullValue } from "@/nodes-io-hooks";
 
 export const IODataOverlay = ({

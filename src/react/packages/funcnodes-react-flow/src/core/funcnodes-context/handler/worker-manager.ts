@@ -1,14 +1,9 @@
-import { UseBoundStore, StoreApi, create } from "zustand";
-import {
-  AbstractFuncNodesReactFlowHandleHandler,
-  FuncNodesReactFlowHandlerContext,
-} from "./rf-handlers.types";
-import {
-  WorkersState,
-  FuncNodesWorkerState,
-  FuncNodesWorker,
-  WorkerManager,
-} from "@/workers";
+import { create } from "zustand";
+import type { UseBoundStore, StoreApi } from "zustand";
+import { AbstractFuncNodesReactFlowHandleHandler } from "./rf-handlers.types";
+import type { FuncNodesReactFlowHandlerContext } from "./rf-handlers.types";
+import { FuncNodesWorker, WorkerManager } from "@/workers";
+import type { WorkersState, FuncNodesWorkerState } from "@/workers";
 export interface WorkerManagerManagerAPI {
   set_worker: (worker: FuncNodesWorker | undefined) => void;
 }

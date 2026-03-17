@@ -1,11 +1,7 @@
 import { interfereDataStructure } from "@/data-structures";
 import { AbstractWorkerHandler } from "./worker-handlers.types";
-import { NodeActionUpdate } from "@/funcnodes-context";
-import {
-  NodeType,
-  SerializedNodeType,
-  UpdateableIOOptions,
-} from "@/nodes-core";
+import type { NodeActionUpdate } from "@/funcnodes-context";
+import type { NodeType, SerializedNodeType, UpdateableIOOptions } from "@/nodes-core";
 
 export interface WorkerNodeManagerAPI {
   set_io_value: (params: {

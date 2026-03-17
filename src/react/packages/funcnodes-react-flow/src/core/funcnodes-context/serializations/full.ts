@@ -1,7 +1,7 @@
-import { ExternalWorkerDependencies, LibType } from "@/library";
-import { ViewState } from "./view";
-import { NodeGroups } from "@/groups";
-import { SerializedNodeType } from "@/nodes-core";
+import type { ExternalWorkerDependencies, LibType } from "@/library";
+import type { ViewState } from "./view";
+import type { NodeGroups } from "@/groups";
+import type { SerializedNodeType } from "@/nodes-core";
 
 export interface FullNodeSpaceJSON {
   nodes: SerializedNodeType[];

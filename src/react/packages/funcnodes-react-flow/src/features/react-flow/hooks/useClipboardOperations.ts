@@ -1,8 +1,9 @@
 import { useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { useFuncNodesContext } from "@/providers";
-import { SerializedNodeType, useNodeTools } from "@/nodes-core";
-import { SerializedEdge } from "@/edges-core";
+import { useNodeTools } from "@/nodes-core";
+import type { SerializedNodeType } from "@/nodes-core";
+import type { SerializedEdge } from "@/edges-core";
 
 export const useClipboardOperations = () => {
   const fnrf_zst = useFuncNodesContext();

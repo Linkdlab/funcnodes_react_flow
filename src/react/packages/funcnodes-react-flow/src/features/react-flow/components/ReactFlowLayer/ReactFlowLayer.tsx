@@ -9,7 +9,7 @@ import {
 import { useShallow } from "zustand/react/shallow";
 
 import { useFuncNodesContext } from "@/providers";
-import { ReactFlowLayerProps } from "@/app";
+import type { ReactFlowLayerProps } from "@/app";
 import { nodeTypes, edgeTypes, selector } from "@/react-flow/utils/node-types";
 import { useReactFlowSelection } from "@/react-flow/hooks/useReactFlowSelection";
 import { ReactFlowManager } from "../ReactFlowManager";

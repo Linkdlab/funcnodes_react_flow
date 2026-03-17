@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DataViewRendererProps, DataViewRendererType } from "./types";
+import type { DataViewRendererProps, DataViewRendererType } from "./types";
 import { JSONDisplay } from "@/shared-components";
 
 export const stringifyValue = (value: any): string | undefined => {

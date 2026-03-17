@@ -1,11 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
-import {
-  AvailableModule,
-  Restriction,
-  POSSIBLE_RESTRICTIONS,
-  DEFAULT_RESTRICTION,
-} from "./types";
+import { POSSIBLE_RESTRICTIONS, DEFAULT_RESTRICTION } from "./types";
+import type { AvailableModule, Restriction } from "./types";
 
 export const VersionSelector = ({
   availableModule,

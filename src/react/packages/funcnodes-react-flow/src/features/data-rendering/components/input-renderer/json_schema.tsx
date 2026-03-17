@@ -1,14 +1,12 @@
 import * as React from "react";
-import { InputRendererProps } from "./types";
+import type { InputRendererProps } from "./types";
 import { useIOStore } from "@/nodes";
 import { useIOGetFullValue, useSetIOValue } from "@/nodes-io-hooks";
 import { CustomDialog } from "@/shared-components";
-import {
-  JsonSchemaForm,
-  SchemaResponse,
-} from "@/shared-components/jsonSchemaForm";
+import { JsonSchemaForm } from "@/shared-components/jsonSchemaForm";
+import type { SchemaResponse } from "@/shared-components/jsonSchemaForm";
 import { JSONStructure } from "@/data-structures";
-import { RJSFSchema, UiSchema } from "@rjsf/utils";
+import type { RJSFSchema, UiSchema } from "@rjsf/utils";
 
 const make_schema_response = ({
   jsonSchema,

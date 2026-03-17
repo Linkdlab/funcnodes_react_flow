@@ -1,14 +1,6 @@
-import {
-  DataOverlayRendererType,
-  DataPreviewViewRendererType,
-  DataViewRendererType,
-  HandlePreviewRendererType,
-  InLineRendererType,
-  InputRendererType,
-  OutputRendererType,
-} from "@/data-rendering-types";
-import { RendererPlugin } from "@/plugins";
-import { JSX } from "react";
+import type { DataOverlayRendererType, DataPreviewViewRendererType, DataViewRendererType, HandlePreviewRendererType, InLineRendererType, InputRendererType, OutputRendererType } from "@/data-rendering-types";
+import type { RendererPlugin } from "@/plugins";
+import type { JSX } from "react";
 
 export interface NodeRendererProps {
   // nodestore: NodeStore;

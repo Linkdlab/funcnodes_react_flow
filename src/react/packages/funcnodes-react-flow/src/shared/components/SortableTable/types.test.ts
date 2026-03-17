@@ -1,13 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  TableData,
-  TransformedTableData,
-  SortDirection,
-  ComparerFunction,
-  SortableTableProps,
-  PaginationState,
-  VirtualScrollingConfig,
-} from "./types";
+import type { TableData, TransformedTableData, SortDirection, ComparerFunction, SortableTableProps, PaginationState, VirtualScrollingConfig } from "./types";
 
 // Type validation tests
 describe("SortableTable Types", () => {

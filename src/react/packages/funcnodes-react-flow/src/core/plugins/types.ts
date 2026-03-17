@@ -1,13 +1,4 @@
-import {
-  DataOverlayRendererType,
-  DataPreviewViewRendererType,
-  DataViewRendererType,
-  HandlePreviewRendererType,
-  InputRendererType,
-  NodeHooksType,
-  NodeRendererType,
-  OutputRendererType,
-} from "@/data-rendering-types";
+import type { DataOverlayRendererType, DataPreviewViewRendererType, DataViewRendererType, HandlePreviewRendererType, InputRendererType, NodeHooksType, NodeRendererType, OutputRendererType } from "@/data-rendering-types";
 export interface RendererPlugin {
   input_renderers?: { [key: string]: InputRendererType | undefined };
   output_renderers?: { [key: string]: OutputRendererType | undefined };

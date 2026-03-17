@@ -1,19 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-  createContext,
-  forwardRef,
-  useContext,
-  useImperativeHandle,
-  HTMLAttributes,
-  CSSProperties,
-  ReactNode,
-  ReactElement,
-} from "react";
+import { useState, useRef, useCallback, useMemo, createContext, forwardRef, useContext, useImperativeHandle } from "react";
+import type { HTMLAttributes, CSSProperties, ReactNode, ReactElement } from "react";
 
 /**
  * Context type for SmoothExpand component state and methods

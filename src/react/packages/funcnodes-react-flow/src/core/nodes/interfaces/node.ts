@@ -1,12 +1,9 @@
-import { IOStore } from "./io";
-import { TqdmState } from "@/shared-components";
-import { BaseRenderOptions } from "./rendering";
-import {
-  PartialSerializedNodeType,
-  SerializedNodeType,
-} from "../serializations";
-import { DeepPartial } from "@/object-helpers";
-import { UseJSONStore } from "@/zustand-helpers";
+import type { IOStore } from "./io";
+import type { TqdmState } from "@/shared-components";
+import type { BaseRenderOptions } from "./rendering";
+import type { PartialSerializedNodeType, SerializedNodeType } from "../serializations";
+import type { DeepPartial } from "@/object-helpers";
+import type { UseJSONStore } from "@/zustand-helpers";
 
 export interface NodeProperties {
   "frontend:size": [number, number];

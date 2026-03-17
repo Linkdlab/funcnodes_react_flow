@@ -1,5 +1,5 @@
 import * as React from "react";
-import { InputRendererProps } from "./types";
+import type { InputRendererProps } from "./types";
 import * as Slider from "@radix-ui/react-slider";
 import { useIOStore } from "@/nodes";
 import { useSetIOValue } from "@/nodes-io-hooks";

@@ -1,8 +1,5 @@
-import {
-  FuncNodesReactPlugin,
-  VersionedFuncNodesReactPlugin,
-  LATEST_VERSION,
-} from "./types";
+import { LATEST_VERSION } from "./types";
+import type { FuncNodesReactPlugin, VersionedFuncNodesReactPlugin } from "./types";
 
 const SUPPORTED_VERSION = ["1"];
 

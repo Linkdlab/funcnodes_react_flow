@@ -1,31 +1,22 @@
-import { UseBoundStore, StoreApi, create } from "zustand";
-import { FuncNodesWorkerState, WorkerProps } from "@/workers";
-import { LargeMessageHint } from "@/messages";
+import { create } from "zustand";
+import type { UseBoundStore, StoreApi } from "zustand";
+import type { FuncNodesWorkerState, WorkerProps } from "@/workers";
+import type { LargeMessageHint } from "@/messages";
 
 import { WorkerConnectionHealthManager } from "./handlers/connection-health-manager";
 import { WorkerSyncManager } from "./handlers/sync-manager";
 import { WorkerCommunicationManager } from "./handlers/communication-manager";
 import { WorkerEventManager } from "./handlers/event-manager";
-import {
-  WorkerHookManager,
-  WorkerHookManagerAPI,
-} from "./handlers/hook-manager";
-import {
-  WorkerNodeManager,
-  WorkerNodeManagerAPI,
-} from "./handlers/node-manager";
-import {
-  WorkerEdgeManager,
-  WorkerEdgeManagerAPI,
-} from "./handlers/edge-manager";
-import {
-  WorkerGroupManager,
-  WorkerGroupManagerAPI,
-} from "./handlers/group-manager";
-import {
-  WorkerLibraryManager,
-  WorkerLibraryManagerAPI,
-} from "./handlers/library-manager";
+import { WorkerHookManager } from "./handlers/hook-manager";
+import type { WorkerHookManagerAPI } from "./handlers/hook-manager";
+import { WorkerNodeManager } from "./handlers/node-manager";
+import type { WorkerNodeManagerAPI } from "./handlers/node-manager";
+import { WorkerEdgeManager } from "./handlers/edge-manager";
+import type { WorkerEdgeManagerAPI } from "./handlers/edge-manager";
+import { WorkerGroupManager } from "./handlers/group-manager";
+import type { WorkerGroupManagerAPI } from "./handlers/group-manager";
+import { WorkerLibraryManager } from "./handlers/library-manager";
+import type { WorkerLibraryManagerAPI } from "./handlers/library-manager";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export type WorkerAPI = {

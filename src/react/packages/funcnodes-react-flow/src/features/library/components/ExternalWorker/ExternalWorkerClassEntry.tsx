@@ -1,9 +1,10 @@
 import * as React from "react";
-import { useState, MouseEvent } from "react";
+import { useState } from "react";
+import type { MouseEvent } from "react";
 import { ExpandLessIcon } from "@/icons";
 import { ExternalWorkerInstanceEntry } from "./ExternalWorkerInstanceEntry";
 import { useWorkerApi } from "@/workers";
-import { ExternalWorkerClassDep, Shelf } from "@/library";
+import type { ExternalWorkerClassDep, Shelf } from "@/library";
 
 export const ExternalWorkerClassEntry = ({
   item,

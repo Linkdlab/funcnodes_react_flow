@@ -1,5 +1,5 @@
 import * as React from "react";
-import { InputRendererProps } from "./types";
+import type { InputRendererProps } from "./types";
 import { useIOStore } from "@/nodes";
 import { useSetIOValue } from "@/nodes-io-hooks";
 

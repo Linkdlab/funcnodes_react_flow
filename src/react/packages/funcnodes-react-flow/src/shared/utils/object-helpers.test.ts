@@ -1,14 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  DeepPartial,
-  LimitedDeepPartial,
-  isPlainObject,
-  deep_compare_objects,
-  deep_merge,
-  deep_update,
-  printDiff,
-  object_factory_maker,
-} from "./object-helpers";
+import { isPlainObject, deep_compare_objects, deep_merge, deep_update, printDiff, object_factory_maker } from "./object-helpers";
+import type { DeepPartial, LimitedDeepPartial } from "./object-helpers";
 
 describe("object-helpers", () => {
   describe("isPlainObject", () => {

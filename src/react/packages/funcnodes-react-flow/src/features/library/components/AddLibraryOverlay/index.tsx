@@ -3,13 +3,8 @@ import { useState } from "react";
 import { useFuncNodesContext } from "@/providers";
 
 import { CustomDialog } from "@/shared-components";
-import {
-  AvailableModule,
-  ActiveModule,
-  AddableModule,
-  InstallableModule,
-  GroupedAvailableModules,
-} from "@/library/components";
+import { ActiveModule, AddableModule, InstallableModule } from "@/library/components";
+import type { AvailableModule, GroupedAvailableModules } from "@/library/components";
 import { useWorkerApi } from "@/workers";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 

@@ -28,10 +28,11 @@
     "build": "vite build --config vite.browser.config.js && vite build",
     "watch": "vite --config vite.browser.config.js",
     "preview": "vite build --config vite.browser.config.js && vite preview --config vite.browser.config.js",
-    "test": "vitest run --config vitest.config.fast.ts",
+    "test": "vitest run --config vitest.config.ts",
     "test:fast": "vitest run --config vitest.config.fast.ts",
     "e2e": "playwright test",
-    "e2eserver": "vite --port 5061 --config vite.browser.config.js"
+    "e2eserver": "vite --port 5061 --config vite.browser.config.js",
+    "full-check": "yarn check:circular && yarn typecheck && yarn test && yarn build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

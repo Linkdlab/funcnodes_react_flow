@@ -1,4 +1,4 @@
-import { RenderOptions } from "@/data-rendering-types";
+import type { RenderOptions } from "@/data-rendering-types";
 
 export interface NodeViewState {
   pos: [number, number];

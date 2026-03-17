@@ -1,5 +1,5 @@
 import { FuncNodesReactFlow } from "@/funcnodes-context";
-import { Logger } from "@/logging";
+import type { Logger } from "@/logging";
 import { FuncNodesWorker } from "@/workers";
 
 export interface ReactFlowLayerProps {

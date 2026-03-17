@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AvailableModule } from "./types";
+import type { AvailableModule } from "./types";
 
 export const ModuleLinks = ({
   availableModule,

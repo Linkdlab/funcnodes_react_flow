@@ -1,17 +1,8 @@
-import {
-  AbstractFuncNodesReactFlowHandleHandler,
-  FuncNodesReactFlowHandlerContext,
-} from "./rf-handlers.types";
-import {
-  Edge,
-  EdgeChange,
-  Node,
-  NodeChange,
-  ReactFlowInstance,
-  Connection,
-} from "@xyflow/react";
+import { AbstractFuncNodesReactFlowHandleHandler } from "./rf-handlers.types";
+import type { FuncNodesReactFlowHandlerContext } from "./rf-handlers.types";
+import type { Edge, EdgeChange, Node, NodeChange, ReactFlowInstance, Connection } from "@xyflow/react";
 import type { AnyFuncNodesRFNode } from "@/nodes";
-import { RFStore } from "../states";
+import type { RFStore } from "../states";
 import { reactflowstore } from "@/react-flow";
 
 export interface ReactFlowManagerManagerAPI {

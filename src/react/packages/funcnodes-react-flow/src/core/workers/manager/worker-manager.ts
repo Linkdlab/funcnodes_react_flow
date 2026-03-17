@@ -1,6 +1,7 @@
 import { FuncNodesReactFlow } from "@/funcnodes-context";
-import { ProgressStateMessage } from "@/messages";
-import { FuncNodesWorker, WebSocketWorker, WorkersState } from "@/workers";
+import type { ProgressStateMessage } from "@/messages";
+import { FuncNodesWorker, WebSocketWorker } from "@/workers";
+import type { WorkersState } from "@/workers";
 
 export class WorkerManager {
   private _wsuri: string;

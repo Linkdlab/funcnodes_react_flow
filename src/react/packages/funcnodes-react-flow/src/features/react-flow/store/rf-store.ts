@@ -1,14 +1,7 @@
 import { create } from "zustand";
-import {
-  Connection,
-  EdgeChange,
-  NodeChange,
-  applyNodeChanges,
-  applyEdgeChanges,
-  Node,
-  Edge,
-} from "@xyflow/react";
-import { RFStore, RFState } from "@/funcnodes-context";
+import { applyNodeChanges, applyEdgeChanges } from "@xyflow/react";
+import type { Connection, EdgeChange, NodeChange, Node, Edge } from "@xyflow/react";
+import type { RFStore, RFState } from "@/funcnodes-context";
 import { sortByParent } from "@/nodes-core";
 
 export const reactflowstore = ({

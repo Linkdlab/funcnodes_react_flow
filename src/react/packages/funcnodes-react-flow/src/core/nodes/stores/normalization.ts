@@ -1,5 +1,5 @@
-import { LimitedDeepPartial } from "@/object-helpers";
-import { PartialSerializedNodeType, SerializedIOType } from "../serializations";
+import type { LimitedDeepPartial } from "@/object-helpers";
+import type { PartialSerializedNodeType, SerializedIOType } from "../serializations";
 
 export interface NormalizedPartialSerializedNodeType
   extends Omit<PartialSerializedNodeType, "io"> {

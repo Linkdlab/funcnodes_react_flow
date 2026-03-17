@@ -1,9 +1,9 @@
-import { DeepPartial, LimitedDeepPartial } from "@/object-helpers";
+import type { DeepPartial, LimitedDeepPartial } from "@/object-helpers";
 
 import { DataStructure } from "@/data-structures";
-import { TqdmState } from "@/shared-components";
-import { BasicIOType } from "../interfaces/io";
-import { BasicNodeType } from "../interfaces/node";
+import type { TqdmState } from "@/shared-components";
+import type { BasicIOType } from "../interfaces/io";
+import type { BasicNodeType } from "../interfaces/node";
 
 export type IOValueType =
   | string

@@ -8,7 +8,7 @@ import {
   SVGImageRenderer,
   TableRender,
 } from "../data-view-renderer";
-import { DataPreviewViewRendererType } from "./types";
+import type { DataPreviewViewRendererType } from "./types";
 
 export const DefaultDataPreviewViewRenderer: {
   [key: string]: DataPreviewViewRendererType | undefined;

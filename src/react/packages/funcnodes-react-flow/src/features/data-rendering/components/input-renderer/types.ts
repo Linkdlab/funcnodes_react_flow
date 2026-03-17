@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import type { JSX } from "react";
 
 export type InputRendererProps = {
   inputconverter: [(v: any) => any, (v: any) => any];

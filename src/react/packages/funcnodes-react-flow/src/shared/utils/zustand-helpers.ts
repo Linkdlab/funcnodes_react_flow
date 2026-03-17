@@ -1,6 +1,8 @@
-import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
-import { deep_merge, DeepPartial } from "./object-helpers";
-import { JSONObject } from "@/data-structures";
+import { create } from "zustand";
+import type { StateCreator, StoreApi, UseBoundStore } from "zustand";
+import { deep_merge } from "./object-helpers";
+import type { DeepPartial } from "./object-helpers";
+import type { JSONObject } from "@/data-structures";
 
 /**
  * Efficiently updates a Zustand store with partial data using deep merging.

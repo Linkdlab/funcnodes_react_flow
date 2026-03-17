@@ -1,4 +1,4 @@
-import { OutputRendererType } from "./types";
+import type { OutputRendererType } from "./types";
 
 import * as React from "react";
 import { useIOStore } from "@/nodes";

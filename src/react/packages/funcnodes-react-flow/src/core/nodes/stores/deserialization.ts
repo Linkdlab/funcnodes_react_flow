@@ -1,9 +1,5 @@
-import { IOType, NodeType } from "../interfaces";
-import {
-  IOValueType,
-  SerializedIOType,
-  NormalizedSerializedNodeType,
-} from "../serializations";
+import type { IOType, NodeType } from "../interfaces";
+import type { IOValueType, SerializedIOType, NormalizedSerializedNodeType } from "../serializations";
 
 export const deserialize_node = (
   node: NormalizedSerializedNodeType
