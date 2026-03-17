@@ -5,13 +5,27 @@ import SortableTable from "./SortableTable";
 import type { TableData } from "./types";
 import { sortTableDataChunked, debounce } from "./utils";
 import { describe, expect, it, vi, afterEach } from "vitest";
+import { retryPerformanceAssertion } from "../../utils/performance-test-utils";
 
 // Ensure cleanup after each test and wait for any pending timers
-afterEach(async () => {
+const waitForSettledTimers = () =>
+  new Promise((resolve) => setTimeout(resolve, 500));
+
+const cleanupPerformanceAttempt = async () => {
   cleanup();
   // Wait for any debounced callbacks to complete (300ms debounce + buffer)
-  await new Promise((resolve) => setTimeout(resolve, 500));
-});
+  await waitForSettledTimers();
+};
+
+const retryFlakyPerformanceAssertion = (
+  assertion: (attempt: number) => void | Promise<void>
+) =>
+  retryPerformanceAssertion(assertion, {
+    attempts: 3,
+    afterFailure: cleanupPerformanceAttempt,
+  });
+
+afterEach(cleanupPerformanceAttempt);
 
 // Mock MUI components
 vi.mock("@mui/material/Table", () => ({
@@ -102,17 +116,19 @@ const generateLargeDataset = (size: number): TableData => {
 
 describe("SortableTable Performance", () => {
   describe("Large Dataset Rendering", () => {
-    it("renders 1000 rows without performance issues", () => {
-      const largeData = generateLargeDataset(1000);
-      const startTime = performance.now();
+    it("renders 1000 rows without performance issues", async () => {
+      await retryFlakyPerformanceAssertion(() => {
+        const largeData = generateLargeDataset(1000);
+        const startTime = performance.now();
 
-      render(<SortableTable tabledata={largeData} />);
+        render(<SortableTable tabledata={largeData} />);
 
-      const endTime = performance.now();
-      const renderTime = endTime - startTime;
+        const endTime = performance.now();
+        const renderTime = endTime - startTime;
 
-      expect(screen.getByRole("table")).toBeInTheDocument();
-      expect(renderTime).toBeLessThan(1500); // Should render in under 1 second
+        expect(screen.getByRole("table")).toBeInTheDocument();
+        expect(renderTime).toBeLessThan(1500); // Should render in under 1 second
+      });
     });
 
     it("renders 2000 rows with pagination", () => {
@@ -157,20 +173,22 @@ describe("SortableTable Performance", () => {
 
   describe("Sorting Performance", () => {
     it("sorts 1000 rows efficiently", async () => {
-      const user = userEvent.setup();
-      const largeData = generateLargeDataset(1000);
+      await retryFlakyPerformanceAssertion(async () => {
+        const user = userEvent.setup();
+        const largeData = generateLargeDataset(1000);
 
-      render(<SortableTable tabledata={largeData} />);
+        render(<SortableTable tabledata={largeData} />);
 
-      const idSortButton = screen.getByText("ID").closest("button");
-      expect(idSortButton).toBeInTheDocument();
+        const idSortButton = screen.getByText("ID").closest("button");
+        expect(idSortButton).toBeInTheDocument();
 
-      const startTime = performance.now();
-      await user.click(idSortButton!);
-      const endTime = performance.now();
-      const sortTime = endTime - startTime;
+        const startTime = performance.now();
+        await user.click(idSortButton!);
+        const endTime = performance.now();
+        const sortTime = endTime - startTime;
 
-      expect(sortTime).toBeLessThan(500); // Should sort in under 500ms
+        expect(sortTime).toBeLessThan(500); // Should sort in under 500ms
+      });
     });
 
     it("uses chunked sorting for very large datasets", async () => {

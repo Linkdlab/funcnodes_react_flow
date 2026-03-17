@@ -451,8 +451,7 @@ describe("KeyPressProvider Performance Tests", () => {
       // Mount times should not increase significantly over iterations
       const firstMountTime = mountTimes[0];
       const lastMountTime = mountTimes[mountTimes.length - 1];
-      const mountThreshold =
-        firstMountTime === 0 ? 0 : firstMountTime * 2;
+      const mountThreshold = firstMountTime === 0 ? 0 : firstMountTime * 2;
       expect(lastMountTime).toBeLessThanOrEqual(mountThreshold); // No more than 2x slower
 
       // Unmount times should remain consistent
