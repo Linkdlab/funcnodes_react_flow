@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { hasNativeCopySelection } from "./copy-selection";
+import { shouldPreserveNativeCopy } from "./copy-selection";
 
 const clearSelection = () => {
   const selection = window.getSelection();
   selection?.removeAllRanges();
 };
 
-describe("hasNativeCopySelection", () => {
+describe("shouldPreserveNativeCopy", () => {
   afterEach(() => {
     clearSelection();
     document.body.innerHTML = "";
@@ -25,7 +25,7 @@ describe("hasNativeCopySelection", () => {
     selection?.removeAllRanges();
     selection?.addRange(range);
 
-    expect(hasNativeCopySelection()).toBe(true);
+    expect(shouldPreserveNativeCopy()).toBe(true);
   });
 
   it("returns true for an input selection", () => {
@@ -36,7 +36,7 @@ describe("hasNativeCopySelection", () => {
     input.focus();
     input.setSelectionRange(1, 4);
 
-    expect(hasNativeCopySelection()).toBe(true);
+    expect(shouldPreserveNativeCopy()).toBe(true);
   });
 
   it("returns true for a textarea selection", () => {
@@ -47,7 +47,7 @@ describe("hasNativeCopySelection", () => {
     textarea.focus();
     textarea.setSelectionRange(2, 5);
 
-    expect(hasNativeCopySelection()).toBe(true);
+    expect(shouldPreserveNativeCopy()).toBe(true);
   });
 
   it("returns false for collapsed selections", () => {
@@ -62,6 +62,16 @@ describe("hasNativeCopySelection", () => {
     selection?.removeAllRanges();
     selection?.addRange(range);
 
-    expect(hasNativeCopySelection()).toBe(false);
+    expect(shouldPreserveNativeCopy()).toBe(false);
+  });
+
+  it("returns true for nokey targets", () => {
+    const container = document.createElement("div");
+    container.className = "nokey";
+    const child = document.createElement("span");
+    container.appendChild(child);
+    document.body.appendChild(container);
+
+    expect(shouldPreserveNativeCopy(child)).toBe(true);
   });
 });

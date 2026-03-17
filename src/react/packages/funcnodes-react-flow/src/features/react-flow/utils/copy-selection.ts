@@ -10,7 +10,22 @@ const isTextSelectionElement = (
   );
 };
 
-export const hasNativeCopySelection = (doc: Document = document): boolean => {
+const isNoKeyElement = (element: EventTarget | Element | null): boolean => {
+  if (!(element instanceof Element)) {
+    return false;
+  }
+
+  return Boolean(element.closest(".nokey"));
+};
+
+export const shouldPreserveNativeCopy = (
+  target: EventTarget | null = null,
+  doc: Document = document
+): boolean => {
+  if (isNoKeyElement(target) || isNoKeyElement(doc.activeElement)) {
+    return true;
+  }
+
   const activeElement = doc.activeElement;
   if (isTextSelectionElement(activeElement)) {
     const { selectionStart, selectionEnd } = activeElement;

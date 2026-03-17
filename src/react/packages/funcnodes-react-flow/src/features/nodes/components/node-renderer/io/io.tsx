@@ -45,7 +45,7 @@ const HandleWithPreview = ({
       </Popover.Trigger>
       <Popover.Portal container={portal}>
         <Popover.Content
-          className={"iotooltipcontent"}
+          className={"iotooltipcontent nokey"}
           sideOffset={5}
           // side="top"
           // align="center"

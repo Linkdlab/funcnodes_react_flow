@@ -158,6 +158,39 @@ describe("KeyHandler copy behavior", () => {
     expect(navigator.clipboard.writeText).not.toHaveBeenCalled();
   });
 
+  it("does not copy node serialization from nokey regions", () => {
+    const serializedNode = {
+      id: "serialized-node-1",
+      node_id: "math.add",
+      properties: {
+        "frontend:pos": [0, 0],
+      },
+    };
+    reactFlowState.nodes = [{ id: "node-1", selected: true }];
+
+    const { getByTestId } = render(
+      <FuncNodesContext.Provider
+        value={createFnrfContext({ "node-1": serializedNode })}
+      >
+        <KeyHandler />
+        <div className="nokey" data-testid="tooltip-content" tabIndex={0}>
+          tooltip copy area
+        </div>
+      </FuncNodesContext.Provider>
+    );
+
+    const tooltipContent = getByTestId("tooltip-content");
+    tooltipContent.focus();
+
+    const result = fireEvent.keyDown(tooltipContent, {
+      key: "c",
+      ctrlKey: true,
+    });
+
+    expect(result).toBe(true);
+    expect(navigator.clipboard.writeText).not.toHaveBeenCalled();
+  });
+
   it("does not interfere when no node is selected", () => {
     render(
       <FuncNodesContext.Provider value={createFnrfContext({})}>

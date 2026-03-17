@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useKeyPress, useReactFlow } from "@xyflow/react";
 
 import { useClipboardOperations } from "@/react-flow/hooks/useClipboardOperations";
-import { hasNativeCopySelection } from "@/react-flow/utils/copy-selection";
+import { shouldPreserveNativeCopy } from "@/react-flow/utils/copy-selection";
 import { useGroupNodes } from "@/groups";
 import { useWorkerApi } from "@/workers";
 import { useNodeTools } from "@/nodes-core";
@@ -61,7 +61,7 @@ export const KeyHandler = () => {
         return;
       }
 
-      if (hasNativeCopySelection()) {
+      if (shouldPreserveNativeCopy(event.target)) {
         return;
       }
 

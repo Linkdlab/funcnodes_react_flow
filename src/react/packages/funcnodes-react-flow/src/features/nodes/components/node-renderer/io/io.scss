@@ -61,6 +61,7 @@
   cursor: default;
   overflow: hidden;
   box-sizing: border-box;
+  user-select: text;
 
   &.fullsize {
     max-width: 100vw;
