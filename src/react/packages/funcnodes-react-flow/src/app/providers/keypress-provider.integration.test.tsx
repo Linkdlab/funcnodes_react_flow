@@ -18,6 +18,7 @@ import {
 
 import {
   simulateKeyCombo,
+  simulateKeyPress,
   simulateShortcut,
   MockEventTarget,
 } from "./keypress-provider.test-utils";
@@ -99,9 +100,12 @@ const Modal: React.FC<{
   onClose: () => void;
   children: React.ReactNode;
 }> = ({ isOpen, onClose, children }) => {
-  useKeyboardShortcuts({
-    Escape: onClose,
-  });
+  useKeyboardShortcuts(
+    {
+      Escape: onClose,
+    },
+    isOpen
+  );
 
   if (!isOpen) return null;
 
@@ -242,6 +246,10 @@ describe("KeyPressProvider Integration Tests", () => {
       );
       console.log("TEST: Rendered for rapid shortcuts test");
 
+      fireEvent.change(screen.getByTestId("editor-input"), {
+        target: { value: "Hello World" },
+      });
+
       // Rapid fire shortcuts
       console.log("TEST: Firing rapid shortcuts");
       simulateKeyCombo(["Control"], "s");
@@ -322,35 +330,23 @@ describe("KeyPressProvider Integration Tests", () => {
       );
 
       // Test arrow keys
-      act(() => {
-        fireEvent.keyDown(window, { key: "ArrowUp" });
-      });
+      simulateKeyPress("ArrowUp");
       expect(onNavigate).toHaveBeenCalledWith("up");
 
-      act(() => {
-        fireEvent.keyDown(window, { key: "ArrowDown" });
-      });
+      simulateKeyPress("ArrowDown");
       expect(onNavigate).toHaveBeenCalledWith("down");
 
-      act(() => {
-        fireEvent.keyDown(window, { key: "ArrowLeft" });
-      });
+      simulateKeyPress("ArrowLeft");
       expect(onNavigate).toHaveBeenCalledWith("left");
 
-      act(() => {
-        fireEvent.keyDown(window, { key: "ArrowRight" });
-      });
+      simulateKeyPress("ArrowRight");
       expect(onNavigate).toHaveBeenCalledWith("right");
 
       // Test navigation keys
-      act(() => {
-        fireEvent.keyDown(window, { key: "Home" });
-      });
+      simulateKeyPress("Home");
       expect(onNavigate).toHaveBeenCalledWith("home");
 
-      act(() => {
-        fireEvent.keyDown(window, { key: "End" });
-      });
+      simulateKeyPress("End");
       expect(onNavigate).toHaveBeenCalledWith("end");
     });
   });

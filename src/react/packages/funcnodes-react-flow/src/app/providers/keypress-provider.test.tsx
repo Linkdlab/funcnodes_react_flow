@@ -75,6 +75,21 @@ const ShortcutsTestComponent: React.FC<{
   return <div data-testid="shortcuts-component">Shortcuts Active</div>;
 };
 
+const StatefulShortcutComponent: React.FC<{
+  onShortcut: () => void;
+}> = ({ onShortcut }) => {
+  const [triggerCount, setTriggerCount] = React.useState(0);
+
+  useKeyboardShortcuts({
+    "Control+s": () => {
+      setTriggerCount((prev) => prev + 1);
+      onShortcut();
+    },
+  });
+
+  return <div data-testid="shortcut-trigger-count">{triggerCount}</div>;
+};
+
 describe("KeyPressProvider", () => {
   let originalConsoleLog: typeof console.log;
 
@@ -538,6 +553,65 @@ describe("KeyPressProvider", () => {
         });
 
         expect(onShortcut).not.toHaveBeenCalledWith("save");
+      });
+
+      it("should trigger space bar shortcuts", () => {
+        const onShortcut = vi.fn();
+
+        const SpaceShortcutComponent = () => {
+          useKeyboardShortcuts({
+            " ": () => onShortcut("space"),
+          });
+
+          return <div data-testid="space-shortcut">Space Shortcut</div>;
+        };
+
+        render(
+          <KeyPressProvider>
+            <SpaceShortcutComponent />
+          </KeyPressProvider>
+        );
+
+        act(() => {
+          fireEvent.keyDown(window, { key: " " });
+        });
+
+        expect(onShortcut).toHaveBeenCalledWith("space");
+      });
+
+      it("should trigger a stateful shortcut only once per key press cycle", () => {
+        const onShortcut = vi.fn();
+
+        render(
+          <KeyPressProvider>
+            <StatefulShortcutComponent onShortcut={onShortcut} />
+          </KeyPressProvider>
+        );
+
+        act(() => {
+          fireEvent.keyDown(window, { key: "Control" });
+          fireEvent.keyDown(window, { key: "s" });
+        });
+
+        expect(onShortcut).toHaveBeenCalledTimes(1);
+        expect(screen.getByTestId("shortcut-trigger-count")).toHaveTextContent(
+          "1"
+        );
+
+        act(() => {
+          fireEvent.keyUp(window, { key: "s" });
+          fireEvent.keyUp(window, { key: "Control" });
+        });
+
+        act(() => {
+          fireEvent.keyDown(window, { key: "Control" });
+          fireEvent.keyDown(window, { key: "s" });
+        });
+
+        expect(onShortcut).toHaveBeenCalledTimes(2);
+        expect(screen.getByTestId("shortcut-trigger-count")).toHaveTextContent(
+          "2"
+        );
       });
     });
   });

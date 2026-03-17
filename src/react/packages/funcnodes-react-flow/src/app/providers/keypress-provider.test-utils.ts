@@ -13,6 +13,9 @@ export const simulateKeyPress = (
 ) => {
   act(() => {
     fireEvent.keyDown(target, { key });
+  });
+
+  act(() => {
     fireEvent.keyUp(target, { key });
   });
 };
