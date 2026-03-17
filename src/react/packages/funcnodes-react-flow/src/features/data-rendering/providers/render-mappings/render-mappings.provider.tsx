@@ -5,11 +5,11 @@ import type { ReactElement } from "react";
 import { NodeContext } from "@/nodes";
 import {
   renderMappingReducer,
-  initialRenderMappings,
 } from "./render-mappings.reducer";
+import { initialRenderMappings } from "./render-mappings.defaults";
 import type { DispatchOptions, NodeHooksType, NodeRendererType } from "./render-mappings.types";
-import type { DataOverlayRendererType, DataPreviewViewRendererType, DataViewRendererType, HandlePreviewRendererType, InputRendererType, OutputRendererType } from "@/data-rendering-types";
-import { FuncNodesReactFlow } from "@/funcnodes-context";
+import type { DataOverlayRendererType, DataPreviewViewRendererType, DataViewRendererType, HandlePreviewRendererType, InLineRendererType, InputRendererType, OutputRendererType } from "@/data-rendering-types";
+import type { FuncNodesReactFlow } from "@/funcnodes-context";
 import type { FuncNodesReactPlugin, RendererPlugin } from "@/plugins";
 
 /**
@@ -221,15 +221,24 @@ export const RenderMappingProvider = ({
 };
 
 export const RenderMappingContext = createContext({
-  Inputrenderer: initialRenderMappings.Inputrenderer,
-  Outputrenderer: initialRenderMappings.Outputrenderer,
-  HandlePreviewRenderer: initialRenderMappings.HandlePreviewRenderer,
-  DataOverlayRenderer: initialRenderMappings.DataOverlayRenderer,
-  DataPreviewViewRenderer: initialRenderMappings.DataPreviewViewRenderer,
-  DataViewRenderer: initialRenderMappings.DataViewRenderer,
-  InLineRenderer: initialRenderMappings.InLineRenderer,
-  NodeRenderer: initialRenderMappings.NodeRenderer,
-  NodeHooks: initialRenderMappings.NodeHooks,
+  Inputrenderer: {} as Record<string, InputRendererType | undefined>,
+  Outputrenderer: {} as Record<string, OutputRendererType | undefined>,
+  HandlePreviewRenderer: {} as Record<
+    string,
+    HandlePreviewRendererType | undefined
+  >,
+  DataOverlayRenderer: {} as Record<
+    string,
+    DataOverlayRendererType | undefined
+  >,
+  DataPreviewViewRenderer: {} as Record<
+    string,
+    DataPreviewViewRendererType | undefined
+  >,
+  DataViewRenderer: {} as Record<string, DataViewRendererType | undefined>,
+  InLineRenderer: {} as Record<string, InLineRendererType | undefined>,
+  NodeRenderer: {} as Record<string, NodeRendererType | undefined>,
+  NodeHooks: {} as Record<string, NodeHooksType[] | undefined>,
   extendInputRenderMapping: (
     _type: string,
     _component: InputRendererType,
