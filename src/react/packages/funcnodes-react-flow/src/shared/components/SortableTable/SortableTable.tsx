@@ -456,7 +456,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
           <TableHead className="sortable-table-head">
             <TableRow className="sortable-table-header-row">
               {transformedTableData.header.map((column) => {
-                const column_string = stringifyValue(column);
+                const column_string = stringifyValue(column) || "undefined";
                 return (
                   <TableCell
                     key={column_string}
