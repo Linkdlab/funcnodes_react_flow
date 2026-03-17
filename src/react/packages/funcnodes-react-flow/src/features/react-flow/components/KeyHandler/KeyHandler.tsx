@@ -3,13 +3,13 @@ import { useEffect } from "react";
 import { useKeyPress, useReactFlow } from "@xyflow/react";
 
 import { useClipboardOperations } from "@/react-flow/hooks/useClipboardOperations";
+import { shouldPreserveNativeCopy } from "@/react-flow/utils/copy-selection";
 import { useGroupNodes } from "@/groups";
 import { useWorkerApi } from "@/workers";
 import { useNodeTools } from "@/nodes-core";
 
 export const KeyHandler = () => {
   const delPressed = useKeyPress("Delete");
-  const copyPressed = useKeyPress(["Meta+c", "Control+c", "Strg+c"]);
   const groupPressed = useKeyPress(["Control+g", "Meta+g"]);
   const ungroupPressed = useKeyPress(["Control+Alt+g", "Meta+Alt+g"]); // TODO: implement ungrouping
   const groupNodes = useGroupNodes();
@@ -49,12 +49,36 @@ export const KeyHandler = () => {
     }
   }, [delPressed, getNodes, getEdges, nodeApi, groupApi, edgeApi]);
 
-  // --- Copy Logic ---
   useEffect(() => {
-    if (copyPressed) {
+    const handleCopyKeyDown = (event: KeyboardEvent) => {
+      const isCopyShortcut =
+        (event.ctrlKey || event.metaKey) &&
+        !event.altKey &&
+        !event.shiftKey &&
+        event.key.toLowerCase() === "c";
+
+      if (!isCopyShortcut || event.repeat) {
+        return;
+      }
+
+      if (shouldPreserveNativeCopy(event.target)) {
+        return;
+      }
+
+      if (getSelectedNodes().length === 0) {
+        return;
+      }
+
+      event.preventDefault();
       copySelectedNodes();
-    }
-  }, [copyPressed, copySelectedNodes]);
+    };
+
+    document.addEventListener("keydown", handleCopyKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleCopyKeyDown);
+    };
+  }, [copySelectedNodes, getSelectedNodes]);
 
   // --- Grouping Logic ---
   useEffect(() => {

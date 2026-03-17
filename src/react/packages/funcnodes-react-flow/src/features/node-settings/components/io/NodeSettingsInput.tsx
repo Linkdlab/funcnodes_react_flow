@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { RenderOptions } from "@/data-rendering-types";
+import type { RenderOptions } from "@/data-rendering-types";
 import {
   pick_best_io_type,
   useIOStore,

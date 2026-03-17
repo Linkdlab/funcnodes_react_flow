@@ -1,5 +1,5 @@
-import { NodeGroup } from "@/groups";
-import { Node as RFNode } from "@xyflow/react";
+import type { NodeGroup } from "@/groups";
+import type { Node as RFNode } from "@xyflow/react";
 
 interface FuncNodesRFNodeData {
   groupID?: string;

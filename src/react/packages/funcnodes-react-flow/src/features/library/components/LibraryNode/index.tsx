@@ -1,7 +1,7 @@
 import * as React from "react";
-import { MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import { useWorkerApi } from "@/workers";
-import { LibNode } from "@/library";
+import type { LibNode } from "@/library";
 
 export const LibraryNode = ({ item }: { item: LibNode }) => {
   const { node } = useWorkerApi();

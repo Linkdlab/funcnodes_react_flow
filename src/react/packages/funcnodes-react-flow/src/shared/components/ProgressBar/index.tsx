@@ -2,7 +2,7 @@ import * as React from "react";
 import { useEffect, useRef } from "react";
 import { fitTextToContainer } from "@/utils/layout";
 import "./progressBar.scss";
-import { DeepPartial } from "@/object-helpers";
+import type { DeepPartial } from "@/object-helpers";
 
 /**
  * Interface representing the state of a tqdm progress bar.

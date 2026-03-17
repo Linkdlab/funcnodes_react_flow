@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented here.
 
+## 2.3.0 (2026-03-17)
+
+### Feat
+
+- enhance jsonSchemaForm theme with MuiPopover configuration
+- add context7 configuration file
+- enhance CustomDialog accessibility with visually hidden title
+
+### Fix
+
+- **react-flow**: harden IO preview fallbacks and table rendering
+- update stringifyValue function to return undefined and handle empty output
+
+### Refactor
+
+- introduce stringifyValue function for consistent value rendering
+
 ## 2.2.1 (2026-01-07)
 
 ### Fix

@@ -1,8 +1,6 @@
-import { CmdMessage, JSONMessage } from "@/messages";
-import {
-  AbstractWorkerHandler,
-  WorkerHandlerContext,
-} from "./worker-handlers.types";
+import type { CmdMessage, JSONMessage } from "@/messages";
+import { AbstractWorkerHandler } from "./worker-handlers.types";
+import type { WorkerHandlerContext } from "./worker-handlers.types";
 import { v4 as uuidv4 } from "uuid";
 import { interfereDataStructure } from "@/data-structures";
 

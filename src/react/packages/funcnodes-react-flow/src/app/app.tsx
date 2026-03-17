@@ -1,10 +1,12 @@
 import * as React from "react";
 import { remoteUrlToBase64 } from "@/data-helpers";
-import { LimitedDeepPartial, object_factory_maker } from "@/object-helpers";
+import { object_factory_maker } from "@/object-helpers";
+import type { LimitedDeepPartial } from "@/object-helpers";
 import { Toasts, ErrorDiv } from "@/shared-components";
-import { ConsoleLogger, Logger } from "@/logging";
+import { ConsoleLogger } from "@/logging";
+import type { Logger } from "@/logging";
 import { FuncNodesWorker, WebSocketWorker, WorkerManager } from "@/workers";
-import { FuncnodesReactFlowProps } from "./app.types";
+import type { FuncnodesReactFlowProps } from "./app.types";
 import { AVAILABLE_COLOR_THEMES, DEFAULT_FN_PROPS } from "./app-properties";
 import { InnerFuncnodesReactFlow } from "./workspace";
 import { v4 as uuidv4 } from "uuid";

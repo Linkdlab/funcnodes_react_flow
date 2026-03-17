@@ -1,8 +1,8 @@
 import { AbstractWorkerHandler } from "./worker-handlers.types";
-import { NodeSpaceEvent, WorkerEvent } from "@/messages";
-import { NodeGroups } from "@/groups";
-import { NodeActionError } from "@/funcnodes-context";
-import { SerializedNodeType } from "@/nodes-core";
+import type { NodeSpaceEvent, WorkerEvent } from "@/messages";
+import type { NodeGroups } from "@/groups";
+import type { NodeActionError } from "@/funcnodes-context";
+import type { SerializedNodeType } from "@/nodes-core";
 
 export class WorkerEventManager extends AbstractWorkerHandler {
   private _ns_event_intercepts: Map<

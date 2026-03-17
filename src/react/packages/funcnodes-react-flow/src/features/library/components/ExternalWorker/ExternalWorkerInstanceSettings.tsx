@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useFuncNodesContext } from "@/providers";
 import { CustomDialog } from "@/shared-components";
 import { useWorkerApi } from "@/workers";
-import { ExternalWorkerInstance } from "@/library";
+import type { ExternalWorkerInstance } from "@/library";
 import { JsonSchemaForm } from "@/shared-components/jsonSchemaForm";
 
 export const ExternalWorkerInstanceSettings = ({

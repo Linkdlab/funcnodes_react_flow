@@ -29,4 +29,12 @@ describe("jsonSchemaForm theme", () => {
 
     expect(output).not.toContain("MUI: Can't create `palette.");
   });
+
+  it("disables portal rendering for MUI popovers in the json schema form theme", async () => {
+    const { jsonSchemaFormTheme } = await import("./index");
+
+    expect(
+      jsonSchemaFormTheme.components?.MuiPopover?.defaultProps?.disablePortal
+    ).toBe(true);
+  });
 });

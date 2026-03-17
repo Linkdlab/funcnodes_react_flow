@@ -3,8 +3,8 @@ import {
   Base64ImageRenderer,
   StreamingImage,
   SVGImage,
-} from "@/shared-components";
-import { DataViewRendererProps, DataViewRendererType } from "./types";
+} from "@/shared-components/renderers/images";
+import type { DataViewRendererProps, DataViewRendererType } from "./types";
 
 export const SVGImageRenderer: DataViewRendererType = React.memo(
   ({ value }: DataViewRendererProps) => {

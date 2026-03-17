@@ -2,14 +2,7 @@ import * as React from "react";
 import * as ToastPrimitive from "@radix-ui/react-toast";
 import { v4 as uuidv4 } from "uuid";
 import { Cross2Icon, CheckmarkIcon, ErrorIcon } from "./icons";
-import {
-  ToastData,
-  ToastDispatcher,
-  ToastPayload,
-  ToastStatus,
-  ToastContextValue,
-  ToastsProps,
-} from "./toast.types";
+import type { ToastData, ToastDispatcher, ToastPayload, ToastStatus, ToastContextValue, ToastsProps } from "./toast.types";
 
 const ToastContext = React.createContext<ToastDispatcher | undefined>(
   undefined

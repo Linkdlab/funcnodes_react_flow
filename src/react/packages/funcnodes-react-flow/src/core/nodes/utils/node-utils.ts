@@ -1,5 +1,6 @@
 import type { DefaultRFNode, GroupRFNode } from "@/nodes";
-import { Node, useReactFlow } from "@xyflow/react";
+import { useReactFlow } from "@xyflow/react";
+import type { Node } from "@xyflow/react";
 
 export const split_rf_nodes = (
   nodes: Node[]

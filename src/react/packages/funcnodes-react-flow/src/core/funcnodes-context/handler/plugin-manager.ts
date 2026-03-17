@@ -1,16 +1,11 @@
-import {
-  AbstractFuncNodesReactFlowHandleHandler,
-  FuncNodesReactFlowHandlerContext,
-} from "./rf-handlers.types";
-import { UseBoundStore, StoreApi, create } from "zustand";
-import { RenderOptions } from "@/data-rendering-types";
+import { AbstractFuncNodesReactFlowHandleHandler } from "./rf-handlers.types";
+import type { FuncNodesReactFlowHandlerContext } from "./rf-handlers.types";
+import { create } from "zustand";
+import type { UseBoundStore, StoreApi } from "zustand";
+import type { RenderOptions } from "@/data-rendering-types";
 import { update_zustand_store } from "@/zustand-helpers";
-import {
-  FuncNodesReactPlugin,
-  PackedPlugin,
-  VersionedFuncNodesReactPlugin,
-  upgradeFuncNodesReactPlugin,
-} from "@/plugins";
+import { upgradeFuncNodesReactPlugin } from "@/plugins";
+import type { FuncNodesReactPlugin, PackedPlugin, VersionedFuncNodesReactPlugin } from "@/plugins";
 import * as React from "react";
 import * as FuncNodesReactFlow from "../../../";
 export interface PluginManagerManagerAPI {

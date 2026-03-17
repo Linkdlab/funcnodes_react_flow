@@ -3,7 +3,7 @@ import { DefaultImageRenderer, SVGImageRenderer } from "./images";
 import { DictRenderer } from "./json";
 import { TableRender } from "./tables";
 import { StringValueRenderer } from "./text";
-import { DataViewRendererType } from "./types";
+import type { DataViewRendererType } from "./types";
 
 export const FallbackDataViewRenderer = DictRenderer;
 

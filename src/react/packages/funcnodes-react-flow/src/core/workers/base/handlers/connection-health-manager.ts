@@ -1,7 +1,5 @@
-import {
-  AbstractWorkerHandler,
-  WorkerHandlerContext,
-} from "./worker-handlers.types";
+import { AbstractWorkerHandler } from "./worker-handlers.types";
+import type { WorkerHandlerContext } from "./worker-handlers.types";
 const PONG_DELAY = 2000; // 2 seconds
 
 export class WorkerConnectionHealthManager extends AbstractWorkerHandler {

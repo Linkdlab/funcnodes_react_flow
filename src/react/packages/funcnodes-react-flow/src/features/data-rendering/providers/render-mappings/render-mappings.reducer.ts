@@ -1,36 +1,5 @@
-import {
-  DefaultDataOverlayRenderer,
-  DefaultDataPreviewViewRenderer,
-  DefaultDataViewRenderer,
-  DefaultHandlePreviewRenderer,
-  DefaultInLineRenderer,
-  DefaultInputRenderer,
-  DefaultOutputRenderer,
-} from "../../components";
-import {
-  RenderMappingState,
-  RenderMappingAction,
-  NodeRendererType,
-  NodeHooksType,
-} from "./render-mappings.types";
-
-// Initial empty mappings for plugin extensions
-const _NodeRenderer: { [key: string]: NodeRendererType | undefined } = {};
-const _NodeHooks: { [key: string]: NodeHooksType[] | undefined } = {};
-
-// Initial state for the reducer
-export const initialRenderMappings: RenderMappingState = {
-  Inputrenderer: DefaultInputRenderer,
-  Outputrenderer: DefaultOutputRenderer,
-  HandlePreviewRenderer: DefaultHandlePreviewRenderer,
-  DataOverlayRenderer: DefaultDataOverlayRenderer,
-  DataPreviewViewRenderer: DefaultDataPreviewViewRenderer,
-  DataViewRenderer: DefaultDataViewRenderer,
-  InLineRenderer: DefaultInLineRenderer,
-
-  NodeRenderer: _NodeRenderer,
-  NodeHooks: _NodeHooks,
-};
+import type { RenderMappingState, RenderMappingAction } from "./render-mappings.types";
+export { initialRenderMappings } from "./render-mappings.defaults";
 
 // The reducer function to manage render mapping state
 export const renderMappingReducer = (

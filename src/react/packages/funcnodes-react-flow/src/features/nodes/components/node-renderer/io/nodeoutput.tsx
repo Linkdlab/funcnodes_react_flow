@@ -9,7 +9,7 @@ import * as React from "react";
 import { useKeyPress } from "@/providers";
 import { InLineOutput, RenderMappingContext } from "@/data-rendering";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
-import { RenderOptions } from "@/data-rendering-types";
+import type { RenderOptions } from "@/data-rendering-types";
 import { useIOStore } from "@/nodes";
 
 const NodeOutput = ({

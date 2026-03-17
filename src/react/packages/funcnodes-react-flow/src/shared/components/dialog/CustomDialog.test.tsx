@@ -69,6 +69,15 @@ vi.mock("@radix-ui/react-dialog", () => ({
     asChild ? children : <button data-testid="dialog-close">{children}</button>,
 }));
 
+vi.mock("@radix-ui/react-visually-hidden", () => ({
+  Root: ({ children, asChild }: any) =>
+    asChild ? (
+      <span data-testid="visually-hidden-root">{children}</span>
+    ) : (
+      <span data-testid="visually-hidden-root">{children}</span>
+    ),
+}));
+
 // Mock console.error for error handling tests
 const originalConsoleError = console.error;
 
@@ -123,9 +132,10 @@ describe("CustomDialog", () => {
         </CustomDialog>
       );
 
+      expect(screen.getByTestId("visually-hidden-root")).toBeInTheDocument();
       const title = screen.getByTestId("dialog-title");
       expect(title).toBeInTheDocument();
-      expect(title).toHaveClass("dialog-title--visually-hidden");
+      expect(title).toHaveTextContent("Dialog");
     });
 
     it("should not set aria-describedby when no description is provided", () => {

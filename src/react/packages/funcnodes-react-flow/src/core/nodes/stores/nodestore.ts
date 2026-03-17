@@ -1,9 +1,6 @@
 import { create_json_safe } from "@/zustand-helpers";
-import { IOStore, NodeStore, NodeType } from "../interfaces";
-import {
-  PartialSerializedNodeType,
-  SerializedNodeType,
-} from "../serializations";
+import type { IOStore, NodeStore, NodeType } from "../interfaces";
+import type { PartialSerializedNodeType, SerializedNodeType } from "../serializations";
 import { normalize_node } from "./normalization";
 import { assert_full_node } from "./full_node";
 import { update_node } from "./update";

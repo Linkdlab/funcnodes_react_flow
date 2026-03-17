@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ExpandLessIcon } from "@/icons";
 
 import { ExternalWorkerClassEntry } from "./ExternalWorkerClassEntry";
-import { ExternalWorkerDependencies, Shelf } from "@/library";
+import type { ExternalWorkerDependencies, Shelf } from "@/library";
 
 export const ExternalWorkerShelf = ({
   externalworkermod,

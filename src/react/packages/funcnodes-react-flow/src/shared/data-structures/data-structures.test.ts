@@ -1,13 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import {
-  DataStructure,
-  ArrayBufferDataStructure,
-  CTypeStructure,
-  JSONStructure,
-  TextStructure,
-  interfereDataStructure,
-  AnyDataType,
-} from "./data-structures";
+import { DataStructure, ArrayBufferDataStructure, CTypeStructure, JSONStructure, TextStructure, interfereDataStructure } from "./data-structures";
+import type { AnyDataType } from "./data-structures";
 
 const makeBuffer = (setter: (view: DataView) => void) => {
   const buffer = new ArrayBuffer(8);

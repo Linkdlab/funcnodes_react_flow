@@ -1,8 +1,8 @@
-import { IOType } from "@/nodes-core";
+import type { IOType } from "@/nodes-core";
 import { useWorkerApi } from "@/workers";
 import * as React from "react";
 import { useIOStore } from "../provider";
-import { ValueStoreInterface } from "@/nodes-core";
+import type { ValueStoreInterface } from "@/nodes-core";
 
 export function useSetIOValue(): (value: any, set_default?: boolean) => void;
 export function useSetIOValue(

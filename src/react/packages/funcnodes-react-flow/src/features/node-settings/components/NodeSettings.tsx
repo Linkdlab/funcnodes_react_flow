@@ -10,7 +10,7 @@ import {
 import { ExpandingContainer } from "@/shared-components/auto-layouts";
 import { IOContext, NodeContext } from "@/nodes";
 import { NodeName } from "@/nodes-components";
-import { NodeStore } from "@/nodes-core";
+import type { NodeStore } from "@/nodes-core";
 
 const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
   const node = nodestore.use();

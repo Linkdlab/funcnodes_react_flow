@@ -1,20 +1,12 @@
-import {
-  WorkerHandlerContext,
-  AbstractWorkerHandler,
-} from "./worker-handlers.types";
+import { AbstractWorkerHandler } from "./worker-handlers.types";
+import type { WorkerHandlerContext } from "./worker-handlers.types";
 import { FuncNodesWorker } from "../funcnodes-worker";
-import { NodeGroup, NodeGroups } from "@/groups";
+import type { NodeGroup, NodeGroups } from "@/groups";
 import { deep_merge } from "@/object-helpers";
-import {
-  FullState,
-  GroupActionUpdate,
-  NodeActionUpdate,
-  NodeViewState,
-  ViewState,
-} from "@/funcnodes-context";
-import { PartialSerializedNodeType, SerializedNodeType } from "@/nodes-core";
-import { PackedPlugin } from "@/plugins";
-import { LibType } from "@/library";
+import type { FullState, GroupActionUpdate, NodeActionUpdate, NodeViewState, ViewState } from "@/funcnodes-context";
+import type { PartialSerializedNodeType, SerializedNodeType } from "@/nodes-core";
+import type { PackedPlugin } from "@/plugins";
+import type { LibType } from "@/library";
 
 interface WorkerSyncManagerContext extends WorkerHandlerContext {
   on_sync_complete: ((worker: FuncNodesWorker) => Promise<void>) | undefined;

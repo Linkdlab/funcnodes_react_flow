@@ -1,5 +1,5 @@
-import { NodeStore } from "../nodes/interfaces";
-import { NodeSpaceZustandInterface } from "./interfaces";
+import type { NodeStore } from "../nodes/interfaces";
+import type { NodeSpaceZustandInterface } from "./interfaces";
 
 export interface NodeSpaceZustandProps {}
 

@@ -32,7 +32,7 @@ describe("data view renderers", () => {
   it("renders string values via StringValueRenderer", () => {
     render(<StringValueRenderer value="hello" />);
 
-    expect(screen.getByText("\"hello\"")).toBeInTheDocument();
+    expect(screen.getByText("hello")).toBeInTheDocument();
   });
 
   it("renders JSON string output in SingleValueRenderer", () => {
@@ -62,6 +62,12 @@ describe("data view renderers", () => {
     render(<Base64BytesRenderer value="AAAA" />);
 
     expect(screen.getByText("Bytes(3)")).toBeInTheDocument();
+  });
+
+  it("renders exact byte length for padded base64 data", () => {
+    render(<Base64BytesRenderer value="TQ==" />);
+
+    expect(screen.getByText("Bytes(1)")).toBeInTheDocument();
   });
 
   it("renders invalid HTML message for non-string values", () => {

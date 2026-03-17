@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { RenderOptions } from "@/data-rendering-types";
+import type { RenderOptions } from "@/data-rendering-types";
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "../pick_best_io_type";
 import {
@@ -8,12 +8,9 @@ import {
   useDataOverlayRendererForIo,
   FallbackDataViewRenderer,
 } from "@/data-rendering";
-import {
-  DataOverlayRendererType,
-  DataPreviewViewRendererType,
-} from "@/data-rendering-types";
+import type { DataOverlayRendererType, DataPreviewViewRendererType } from "@/data-rendering-types";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
-import { IOType } from "@/nodes-core";
+import type { IOType } from "@/nodes-core";
 
 const usePreviewHandleDataRendererForIo = (
   io?: IOType

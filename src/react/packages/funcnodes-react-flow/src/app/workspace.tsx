@@ -11,11 +11,7 @@ import {
 import { KeyPressProvider } from "@/providers";
 import { FuncNodesWorker } from "@/workers";
 import { FuncNodesContext } from "@/providers";
-import {
-  FuncnodesReactHeaderProps,
-  ReactFlowLayerProps,
-  ReactFlowLibraryProps,
-} from "@/app";
+import type { FuncnodesReactHeaderProps, ReactFlowLayerProps, ReactFlowLibraryProps } from "@/app";
 
 import { ReactFlowLayer } from "@/react-flow";
 import {

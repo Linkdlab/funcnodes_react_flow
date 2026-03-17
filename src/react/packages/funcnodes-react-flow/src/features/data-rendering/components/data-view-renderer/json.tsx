@@ -1,20 +1,16 @@
 import * as React from "react";
-import { DataViewRendererProps, DataViewRendererType } from "./types";
-import { JSONDisplay } from "@/shared-components";
+import type { DataViewRendererProps, DataViewRendererType } from "./types";
+import { JSONDisplay } from "@/shared-components/JSONDisplay";
+import { stringifyValue } from "@/data-helpers";
 
 export const SingleValueRenderer: DataViewRendererType = React.memo(
   ({ value }: DataViewRendererProps) => {
-    let disp = "";
-    try {
-      disp = JSON.stringify(value);
-    } catch (e) {}
-
     return (
       <div>
-        <pre>{disp}</pre>
+        <pre>{stringifyValue(value) ?? ""}</pre>
       </div>
     );
-  }
+  },
 );
 
 export const DictRenderer: DataViewRendererType = ({

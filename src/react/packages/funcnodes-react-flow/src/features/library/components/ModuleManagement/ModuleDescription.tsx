@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { AvailableModule } from "./types";
+import type { AvailableModule } from "./types";
 
 export const ModuleDescription = ({
   availableModule,

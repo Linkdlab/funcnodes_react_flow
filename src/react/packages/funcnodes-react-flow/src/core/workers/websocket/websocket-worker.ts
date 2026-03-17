@@ -1,6 +1,7 @@
 import axios from "axios";
-import { FuncNodesWorker, WebSocketWorkerProps } from "@/workers";
-import { LargeMessageHint } from "@/messages";
+import { FuncNodesWorker } from "@/workers";
+import type { WebSocketWorkerProps } from "@/workers";
+import type { LargeMessageHint } from "@/messages";
 
 export class WebSocketWorker extends FuncNodesWorker {
   private _url: string;

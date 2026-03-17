@@ -20,12 +20,23 @@ describe("inline and output renderers", () => {
     const { container } = render(
       <IOContext.Provider value={iostore}>
         <Base64BytesInLineRenderer />
-      </IOContext.Provider>
+      </IOContext.Provider>,
     );
 
-    const disp = JSON.stringify(preview.value) || "";
-    const expectedLength = Math.round((3 * disp.length) / 4);
-    expect(container.textContent).toBe(`Bytes(${expectedLength})`);
+    expect(container.textContent).toBe("Bytes(3)");
+  });
+
+  it("renders exact byte length for padded base64 output", () => {
+    const preview = { value: "TQ==" };
+    const iostore = createIOStore(preview);
+
+    const { container } = render(
+      <IOContext.Provider value={iostore}>
+        <Base64BytesInLineRenderer />
+      </IOContext.Provider>,
+    );
+
+    expect(container.textContent).toBe("Bytes(1)");
   });
 
   it("truncates long inline output", () => {
@@ -37,7 +48,7 @@ describe("inline and output renderers", () => {
     const { container } = render(
       <IOContext.Provider value={iostore}>
         <InLineOutput />
-      </IOContext.Provider>
+      </IOContext.Provider>,
     );
 
     expect(container.textContent?.endsWith("...")).toBe(true);
