@@ -6,7 +6,7 @@ import { IOContext } from "@/nodes";
 import type { IOStore } from "@/nodes-core";
 import { Base64BytesInLineRenderer } from "./inline-renderer/bytes";
 import { InLineOutput } from "./output-renderer/default";
-import { stringifyValue } from "./data-view-renderer/json";
+import { stringifyValue } from "@/data-helpers";
 
 const createIOStore = (preview: any, full?: any) =>
   ({
@@ -21,12 +21,14 @@ describe("inline and output renderers", () => {
     const { container } = render(
       <IOContext.Provider value={iostore}>
         <Base64BytesInLineRenderer />
-      </IOContext.Provider>
+      </IOContext.Provider>,
     );
 
     const disp = stringifyValue(preview.value);
     if (disp === undefined) {
-      throw new Error("Expected stringifyValue(preview.value) to return a string");
+      throw new Error(
+        "Expected stringifyValue(preview.value) to return a string",
+      );
     }
     const expectedLength = Math.round((3 * disp.length) / 4);
     expect(container.textContent).toBe(`Bytes(${expectedLength})`);
@@ -41,7 +43,7 @@ describe("inline and output renderers", () => {
     const { container } = render(
       <IOContext.Provider value={iostore}>
         <InLineOutput />
-      </IOContext.Provider>
+      </IOContext.Provider>,
     );
 
     expect(container.textContent?.endsWith("...")).toBe(true);

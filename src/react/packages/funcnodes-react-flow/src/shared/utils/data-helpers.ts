@@ -304,6 +304,24 @@ async function remoteUrlToBase64(
   }
 }
 
+export const stringifyValue = (value: any): string | undefined => {
+  let disp = "";
+  if (typeof value === "string") {
+    disp = value;
+  } else if (typeof value === "number" || typeof value === "boolean") {
+    disp = String(value);
+  } else if (value === null) {
+    disp = "null";
+  } else if (value === undefined) {
+    return undefined;
+  } else {
+    try {
+      disp = JSON.stringify(value);
+    } catch (e) { }
+  }
+  return disp;
+};
+
 export {
   base64ToUint8Array,
   uint8ArrayToBase64,

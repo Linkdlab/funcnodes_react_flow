@@ -2,7 +2,7 @@ import type { OutputRendererType } from "./types";
 
 import * as React from "react";
 import { useIOStore } from "@/nodes";
-import { stringifyValue } from "../data-view-renderer/json";
+import { stringifyValue } from "@/data-helpers";
 
 export const InLineOutput = () => {
   const iostore = useIOStore();

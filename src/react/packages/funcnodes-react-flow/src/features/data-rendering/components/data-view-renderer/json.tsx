@@ -1,24 +1,7 @@
 import * as React from "react";
 import type { DataViewRendererProps, DataViewRendererType } from "./types";
 import { JSONDisplay } from "@/shared-components";
-
-export const stringifyValue = (value: any): string | undefined => {
-  let disp = "";
-  if (typeof value === "string") {
-    disp = value;
-  } else if (typeof value === "number" || typeof value === "boolean") {
-    disp = String(value);
-  } else if (value === null) {
-    disp = "null";
-  } else if (value === undefined) {
-    return undefined;
-  } else {
-    try {
-      disp = JSON.stringify(value);
-    } catch (e) {}
-  }
-  return disp;
-};
+import { stringifyValue } from "@/data-helpers";
 
 export const SingleValueRenderer: DataViewRendererType = React.memo(
   ({ value }: DataViewRendererProps) => {
@@ -27,7 +10,7 @@ export const SingleValueRenderer: DataViewRendererType = React.memo(
         <pre>{stringifyValue(value) ?? ""}</pre>
       </div>
     );
-  }
+  },
 );
 
 export const DictRenderer: DataViewRendererType = ({
