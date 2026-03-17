@@ -1,11 +1,6 @@
 import * as React from "react";
-import {
-  Component,
-  ReactNode,
-  ComponentType,
-  ReactElement,
-  ErrorInfo,
-} from "react";
+import { Component } from "react";
+import type { ReactNode, ComponentType, ReactElement, ErrorInfo } from "react";
 
 // Base props that all fallback components will receive
 export interface BaseFallbackProps {

@@ -1,6 +1,7 @@
 import { DataViewRendererToOverlayRenderer } from "../../utils";
-import { DefaultDataViewRenderer, DictRenderer } from "../data-view-renderer";
-import { DataOverlayRendererType } from "./types";
+import { DefaultDataViewRenderer } from "../data-view-renderer/defaults";
+import { DictRenderer } from "../data-view-renderer/json";
+import type { DataOverlayRendererType } from "./types";
 
 export const DefaultDataOverlayRenderer: {
   [key: string]: DataOverlayRendererType | undefined;

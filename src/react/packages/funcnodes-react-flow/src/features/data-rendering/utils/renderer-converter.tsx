@@ -1,15 +1,5 @@
 import * as React from "react";
-import {
-  DataOverlayRendererProps,
-  DataOverlayRendererType,
-  DataPreviewViewRendererProps,
-  DataPreviewViewRendererType,
-  DataViewRendererType,
-  HandlePreviewRendererProps,
-  HandlePreviewRendererType,
-  InputRendererProps,
-  InputRendererType,
-} from "@/data-rendering-types";
+import type { DataOverlayRendererProps, DataOverlayRendererType, DataPreviewViewRendererProps, DataPreviewViewRendererType, DataViewRendererType, HandlePreviewRendererProps, HandlePreviewRendererType, InputRendererProps, InputRendererType } from "@/data-rendering-types";
 import { useIOStore } from "@/nodes";
 
 export const DataViewRendererToOverlayRenderer = (

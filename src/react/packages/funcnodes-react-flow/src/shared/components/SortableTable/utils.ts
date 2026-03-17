@@ -1,11 +1,5 @@
-import { JSONType } from "@/data-structures";
-import {
-  TableData,
-  TransformedTableData,
-  SortDirection,
-  ComparerFunction,
-  PaginationState,
-} from "./types";
+import type { JSONType } from "@/data-structures";
+import type { TableData, TransformedTableData, SortDirection, ComparerFunction, PaginationState } from "./types";
 
 /**
  * Transforms raw table data into a format suitable for rendering.

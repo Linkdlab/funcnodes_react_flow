@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 
-import { RJSFSchema, UiSchema } from "@rjsf/utils";
+import type { RJSFSchema, UiSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import * as React from "react";
 
@@ -10,7 +10,7 @@ import { createTheme, ThemeProvider } from "@mui/material";
 
 const Form = withTheme(Theme);
 
-const theme = createTheme({
+export const jsonSchemaFormTheme = createTheme({
   cssVariables: { nativeColor: true },
   palette: {
     primary: {
@@ -38,6 +38,13 @@ const theme = createTheme({
   shape: {
     borderRadius: "var(--fn-border-radius-s)",
   },
+  components: {
+    MuiPopover: {
+      defaultProps: {
+        disablePortal: true,
+      },
+    },
+  },
 });
 
 export type SchemaResponse = {
@@ -52,6 +59,7 @@ interface JsonSchemaFormProps {
   getter: () => Promise<SchemaResponse>;
   setter: (formData: any) => Promise<any>;
   setter_calls_getter?: boolean;
+  theme?: typeof jsonSchemaFormTheme;
 }
 export const JsonSchemaForm = ({
   getter,
@@ -59,6 +67,7 @@ export const JsonSchemaForm = ({
   setter_calls_getter = false,
   disabled = false,
   readonly = false,
+  theme = jsonSchemaFormTheme,
 }: JsonSchemaFormProps) => {
   const [schema, setSchema] = useState<any>(null);
   const [uiSchema, setUiSchema] = useState<any>(undefined);

@@ -1,4 +1,4 @@
-import { FuncNodesWorker } from "../funcnodes-worker";
+import type { FuncNodesWorker } from "../funcnodes-worker";
 
 /**
  * Defines the required context for handler classes, providing access

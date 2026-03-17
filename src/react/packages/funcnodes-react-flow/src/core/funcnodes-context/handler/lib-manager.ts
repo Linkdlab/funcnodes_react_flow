@@ -1,8 +1,6 @@
-import { LibState, LibZustandInterface } from "@/library";
-import {
-  AbstractFuncNodesReactFlowHandleHandler,
-  FuncNodesReactFlowHandlerContext,
-} from "./rf-handlers.types";
+import type { LibState, LibZustandInterface } from "@/library";
+import { AbstractFuncNodesReactFlowHandleHandler } from "./rf-handlers.types";
+import type { FuncNodesReactFlowHandlerContext } from "./rf-handlers.types";
 import { create } from "zustand";
 
 export const LibZustand = (): LibZustandInterface => {

@@ -1,4 +1,4 @@
-import { JSONType } from "@/data-structures";
+import type { JSONType } from "@/data-structures";
 
 /**
  * Represents the structure of table data with columns, row indices, and data values.

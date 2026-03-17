@@ -1,6 +1,6 @@
-import { GroupedAvailableModules } from "@/library/components";
+import type { GroupedAvailableModules } from "@/library/components";
 import { AbstractWorkerHandler } from "./worker-handlers.types";
-import { SchemaResponse } from "@/shared-components/jsonSchemaForm";
+import type { SchemaResponse } from "@/shared-components/jsonSchemaForm";
 
 export interface WorkerLibraryManagerAPI {
   add_external_worker: (params: {

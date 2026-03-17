@@ -1,11 +1,5 @@
 import { useFuncNodesContext } from "@/providers";
-import {
-  WorkerEdgeManagerAPI,
-  WorkerGroupManagerAPI,
-  WorkerHookManagerAPI,
-  WorkerLibraryManagerAPI,
-  WorkerNodeManagerAPI,
-} from "../base/handlers";
+import type { WorkerEdgeManagerAPI, WorkerGroupManagerAPI, WorkerHookManagerAPI, WorkerLibraryManagerAPI, WorkerNodeManagerAPI } from "../base/handlers";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 import { FuncNodesWorker } from "../base/funcnodes-worker";
 

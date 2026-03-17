@@ -1,10 +1,10 @@
 import * as React from "react";
-import { InputRendererProps } from "./types";
+import type { InputRendererProps } from "./types";
 
-import { CustomSelect } from "@/shared-components";
+import { CustomSelect } from "@/shared-components/Select";
 import { useIOStore } from "@/nodes";
 import { useSetIOValue } from "@/nodes-io-hooks";
-import { EnumOf } from "@/nodes-core";
+import type { EnumOf } from "@/nodes-core";
 
 const _parse_string = (s: string) => s;
 const _parse_number = (s: string) => parseFloat(s);

@@ -1,4 +1,4 @@
-import { NodeStore } from "../nodes/interfaces";
+import type { NodeStore } from "../nodes/interfaces";
 
 export interface NodeSpaceZustandInterface {
   nodesstates: Map<string, NodeStore>;

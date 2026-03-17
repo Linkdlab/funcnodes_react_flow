@@ -1,14 +1,14 @@
-import { ErrorMessage } from "./error-messages";
+import type { ErrorMessage } from "./error-messages";
 export type { ErrorMessage };
-import { NodeSpaceEvent, WorkerEvent } from "./event-messages";
+import type { NodeSpaceEvent, WorkerEvent } from "./event-messages";
 export type { NodeSpaceEvent, WorkerEvent };
-import { LargeMessageHint, PongMessage } from "./helper-messages";
+import type { LargeMessageHint, PongMessage } from "./helper-messages";
 export type { LargeMessageHint, PongMessage };
-import { ResultMessage } from "./result-messages";
+import type { ResultMessage } from "./result-messages";
 export type { ResultMessage };
-import { CmdMessage } from "./cmd-messages";
+import type { CmdMessage } from "./cmd-messages";
 export type { CmdMessage };
-import { ProgressStateMessage } from "./progress-message";
+import type { ProgressStateMessage } from "./progress-message";
 export type { ProgressStateMessage };
 
 export type JSONMessage =

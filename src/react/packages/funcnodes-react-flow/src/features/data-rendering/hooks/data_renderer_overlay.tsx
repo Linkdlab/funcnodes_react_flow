@@ -1,13 +1,13 @@
 import { useContext } from "react";
-import { RenderOptions } from "@/data-rendering-types";
+import type { RenderOptions } from "@/data-rendering-types";
 
 import { useFuncNodesContext } from "@/providers";
 import { pick_best_io_type } from "@/nodes";
 import { RenderMappingContext } from "../providers";
 import { FallbackOverlayRenderer } from "../components";
 import { DataViewRendererToOverlayRenderer } from "../utils";
-import { DataOverlayRendererType } from "../types";
-import { IOType } from "@/nodes-core";
+import type { DataOverlayRendererType } from "../types";
+import type { IOType } from "@/nodes-core";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const useDataOverlayRendererForIo = (

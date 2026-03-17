@@ -1,9 +1,9 @@
-import { OnNodesChange } from "@xyflow/react";
+import type { OnNodesChange } from "@xyflow/react";
 import { useWorkerApi } from "@/workers";
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { SerializedNodeType } from "@/nodes-core";
-import { SerializedEdge } from "@/edges-core";
+import type { SerializedNodeType } from "@/nodes-core";
+import type { SerializedEdge } from "@/edges-core";
 
 export const usePasteClipboardData = () => {
   const { node: nodeApi, edge: edgeApi } = useWorkerApi();

@@ -6,7 +6,7 @@
  */
 
 import * as React from "react";
-import { Breakpoint } from "../SizeContextContainer";
+import type { Breakpoint } from "../SizeContextContainer";
 import "./float-container.scss";
 /**
  * Direction type for flex layout

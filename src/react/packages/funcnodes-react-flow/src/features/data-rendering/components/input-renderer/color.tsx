@@ -1,11 +1,11 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { InputRendererProps } from "./types";
+import type { InputRendererProps } from "./types";
 
-import { CustomColorPicker } from "@/shared-components";
+import { CustomColorPicker } from "@/shared-components/ColorPicker";
 import { useIOStore } from "@/nodes";
 import { useSetIOValue } from "@/nodes-io-hooks";
-import { FuncNodesReactFlow } from "@/funcnodes-context";
+import type { FuncNodesReactFlow } from "@/funcnodes-context";
 
 export const ColorInput = ({}: InputRendererProps) => {
   const iostore = useIOStore();

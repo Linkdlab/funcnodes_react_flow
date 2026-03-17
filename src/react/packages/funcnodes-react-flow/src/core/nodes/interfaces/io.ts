@@ -1,14 +1,10 @@
-import { AnyDataType, DataStructure, JSONType } from "@/data-structures";
-import {
-  EnumOf,
-  PartialSerializedIOType,
-  SerializedIOType,
-  SerializedType,
-} from "../serializations";
-import { BaseRenderOptions } from "./rendering";
-import { UseBoundStore, StoreApi } from "zustand";
-import { UseJSONStore } from "@/zustand-helpers";
-import { RJSFSchema, UiSchema } from "@rjsf/utils";
+import { DataStructure } from "@/data-structures";
+import type { AnyDataType, JSONType } from "@/data-structures";
+import type { EnumOf, PartialSerializedIOType, SerializedIOType, SerializedType } from "../serializations";
+import type { BaseRenderOptions } from "./rendering";
+import type { UseBoundStore, StoreApi } from "zustand";
+import type { UseJSONStore } from "@/zustand-helpers";
+import type { RJSFSchema, UiSchema } from "@rjsf/utils";
 
 export interface IORenderOptions extends BaseRenderOptions {
   set_default: boolean;

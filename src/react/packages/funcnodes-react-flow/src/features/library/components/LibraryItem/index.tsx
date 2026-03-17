@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import { ExpandLessIcon } from "@/icons";
 import { LibraryNode } from "@/library/components";
-import { Shelf } from "@/library";
+import type { Shelf } from "@/library";
 
 const filterShelf = (shelf: Shelf, filter: string): boolean => {
   const hasFilteredNodes =

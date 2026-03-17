@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FuncnodesReactHeaderProps } from "@/app";
+import type { FuncnodesReactHeaderProps } from "@/app";
 
 import { useFuncNodesContext } from "@/providers";
 import { FloatContainer } from "@/shared-components/auto-layouts";

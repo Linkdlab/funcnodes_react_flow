@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import {
+import type {
   SortableTableProps,
   SortDirection,
   PaginationState,
@@ -24,7 +24,7 @@ import {
   debounce,
 } from "./utils";
 import "./SortableTable.scss";
-
+import { stringifyValue } from "@/data-helpers";
 /**
  * A high-performance, sortable table component with support for large datasets.
  *
@@ -112,7 +112,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
   // Transform table data with memoization
   const transformedTableData = useMemo(
     () => transformTableData(tabledata),
-    [tabledata]
+    [tabledata],
   );
 
   // State to manage the sorted column and direction
@@ -121,7 +121,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
 
   // Pagination state
   const [pagination, setPagination] = useState<PaginationState>(() =>
-    calculatePagination(transformedTableData.rows.length, 1, pageSize)
+    calculatePagination(transformedTableData.rows.length, 1, pageSize),
   );
 
   // Virtual scrolling state
@@ -142,7 +142,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
         setOrderBy(column);
         onSortChange?.(column, direction);
       }, 150),
-    [onSortChange]
+    [onSortChange],
   );
 
   /**
@@ -171,13 +171,13 @@ const SortableTable: React.FC<SortableTableProps> = ({
       onSortChange,
       transformedTableData.rows.length,
       debouncedSort,
-    ]
+    ],
   );
 
   // Memoized comparator
   const comparator = useMemo(
     () => createComparator(orderDirection, orderByIndex),
-    [orderDirection, orderByIndex]
+    [orderDirection, orderByIndex],
   );
 
   // Sort the rows with performance optimization for large datasets
@@ -214,7 +214,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
       virtualConfig.containerHeight,
       virtualConfig.itemHeight,
       currentPageData.length,
-      virtualConfig.overscan
+      virtualConfig.overscan,
     );
   }, [
     scrollTop,
@@ -234,7 +234,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
       if (!enableVirtualScrolling) return;
       setScrollTop(event.currentTarget.scrollTop);
     },
-    [enableVirtualScrolling]
+    [enableVirtualScrolling],
   );
 
   /**
@@ -304,7 +304,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
       pagination.currentPage,
       pagination.totalPages,
       handlePageChange,
-    ]
+    ],
   );
 
   // Update pagination when data changes
@@ -314,7 +314,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
         const newPagination = calculatePagination(
           sortedRows.length,
           prev.currentPage, // Use previous current page instead of hardcoding 1
-          pageSize
+          pageSize,
         );
         return newPagination;
       });
@@ -381,7 +381,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
     const rowsToRender = enableVirtualScrolling
       ? currentPageData.slice(
           visibleRange.startIndex,
-          visibleRange.endIndex + 1
+          visibleRange.endIndex + 1,
         )
       : currentPageData;
 
@@ -411,7 +411,7 @@ const SortableTable: React.FC<SortableTableProps> = ({
                       : "sortable-table-data-cell"
                   }
                 >
-                  {cell}
+                  {stringifyValue(cell)}
                 </TableCell>
               ))}
             </TableRow>
@@ -455,27 +455,32 @@ const SortableTable: React.FC<SortableTableProps> = ({
         <Table size={size as "small" | "medium"}>
           <TableHead className="sortable-table-head">
             <TableRow className="sortable-table-header-row">
-              {transformedTableData.header.map((column) => (
-                <TableCell
-                  key={column}
-                  className="sortable-table-header-cell"
-                  aria-label={`Sort by ${column}`}
-                >
-                  <TableSortLabel
-                    active={orderBy === column}
-                    direction={orderBy === column ? orderDirection : "asc"}
-                    onClick={() => handleSort(column)}
-                    className="sortable-table-sort-label"
-                    sx={{
-                      "& .MuiTableSortLabel-icon": {
-                        color: "inherit !important",
-                      },
-                    }}
+              {transformedTableData.header.map((column) => {
+                const column_string = stringifyValue(column) || "undefined";
+                return (
+                  <TableCell
+                    key={column_string}
+                    className="sortable-table-header-cell"
+                    aria-label={`Sort by ${column_string}`}
                   >
-                    {column}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
+                    <TableSortLabel
+                      active={orderBy === column_string}
+                      direction={
+                        orderBy === column_string ? orderDirection : "asc"
+                      }
+                      onClick={() => handleSort(column_string)}
+                      className="sortable-table-sort-label"
+                      sx={{
+                        "& .MuiTableSortLabel-icon": {
+                          color: "inherit !important",
+                        },
+                      }}
+                    >
+                      {column_string}
+                    </TableSortLabel>
+                  </TableCell>
+                );
+              })}
             </TableRow>
           </TableHead>
           {renderTableBody()}

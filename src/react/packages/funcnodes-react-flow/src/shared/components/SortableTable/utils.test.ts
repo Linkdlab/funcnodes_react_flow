@@ -8,7 +8,7 @@ import {
   calculateVisibleRange,
   debounce,
 } from "./utils";
-import { TableData } from "./types";
+import type { TableData } from "./types";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 describe("SortableTable Utils", () => {

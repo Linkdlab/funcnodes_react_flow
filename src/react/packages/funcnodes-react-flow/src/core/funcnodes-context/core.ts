@@ -1,36 +1,29 @@
-import { FuncnodesReactFlowProps } from "@/app";
+import type { FuncnodesReactFlowProps } from "@/app";
 
 import { isDevelopment } from "@/utils/debugger";
-import { ConsoleLogger, DEBUG, INFO, Logger } from "@/utils/logger";
+import { ConsoleLogger, DEBUG, INFO } from "@/utils/logger";
+import type { Logger } from "@/utils/logger";
 
-import { UseBoundStore, StoreApi } from "zustand";
+import type { UseBoundStore, StoreApi } from "zustand";
 import { NodeSpaceManager } from "./handler/nodespace-manager";
 import { LibManager } from "./handler/lib-manager";
 import { WorkerManagerHandler } from "./handler/worker-manager";
 
-import {
-  FuncnodesReactFlowLocalSettings,
-  FuncnodesReactFlowLocalState,
-  FuncnodesReactFlowViewSettings,
-  StateManagerHandler,
-} from "./handler/state-manager";
+import { StateManagerHandler } from "./handler/state-manager";
+import type { FuncnodesReactFlowLocalSettings, FuncnodesReactFlowLocalState, FuncnodesReactFlowViewSettings } from "./handler/state-manager";
 import { PluginManagerHandler } from "./handler/plugin-manager";
 import { ReactFlowManagerHandler } from "./handler/rf-manager";
-import { LibZustandInterface } from "@/library";
-import {
-  FuncNodesWorker,
-  FuncNodesWorkerState,
-  WorkerManager,
-  WorkersState,
-} from "@/workers";
+import type { LibZustandInterface } from "@/library";
+import { FuncNodesWorker, WorkerManager } from "@/workers";
+import type { FuncNodesWorkerState, WorkersState } from "@/workers";
 
-import { ProgressState, RFStore } from "./states";
-import { RenderOptions } from "@/data-rendering-types";
+import type { ProgressState, RFStore } from "./states";
+import type { RenderOptions } from "@/data-rendering-types";
 import { useReactFlow } from "@xyflow/react";
-import { NodeType } from "@/nodes-core";
-import { EdgeAction, GroupAction, NodeAction } from "./actions";
-import { FuncNodesReactPlugin } from "@/plugins";
-import { NodeSpaceZustandInterface } from "@/nodespace";
+import type { NodeType } from "@/nodes-core";
+import type { EdgeAction, GroupAction, NodeAction } from "./actions";
+import type { FuncNodesReactPlugin } from "@/plugins";
+import type { NodeSpaceZustandInterface } from "@/nodespace";
 
 export interface FuncNodesReactFlowZustandInterface {
   options: FuncnodesReactFlowProps;

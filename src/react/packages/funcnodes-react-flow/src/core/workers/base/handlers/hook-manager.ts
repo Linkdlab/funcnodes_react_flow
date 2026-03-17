@@ -1,4 +1,4 @@
-import { WorkerHookProperties } from "../worker.types";
+import type { WorkerHookProperties } from "../worker.types";
 import { AbstractWorkerHandler } from "./worker-handlers.types";
 
 export interface WorkerHookManagerAPI {

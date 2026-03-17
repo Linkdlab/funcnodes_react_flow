@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useFuncNodesContext } from "@/providers";
 import { Position } from "@xyflow/react";
-import { RenderOptions } from "@/data-rendering-types";
+import type { RenderOptions } from "@/data-rendering-types";
 import { HandleWithPreview, pick_best_io_type } from "./io";
 
 import * as React from "react";

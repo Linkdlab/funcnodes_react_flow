@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { assert_reactflow_node } from "./node";
 import { selector } from "./node-types";
-import { NodeStore, NodeType } from "@/nodes-core";
+import type { NodeStore, NodeType } from "@/nodes-core";
 
 const makeStore = (node: NodeType) => ({
   getState: () => node,

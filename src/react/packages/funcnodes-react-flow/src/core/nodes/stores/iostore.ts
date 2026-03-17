@@ -1,5 +1,5 @@
-import { IOStore, IOType, ValueStoreInterface } from "../interfaces";
-import { PartialSerializedIOType, SerializedIOType } from "../serializations";
+import type { IOStore, IOType, ValueStoreInterface } from "../interfaces";
+import type { PartialSerializedIOType, SerializedIOType } from "../serializations";
 import { create_json_safe } from "@/zustand-helpers";
 import { assert_full_nodeio } from "./full-io";
 

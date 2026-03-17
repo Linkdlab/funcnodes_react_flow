@@ -1,10 +1,30 @@
 import * as React from "react";
-import {
+import type {
+  DataOverlayRendererProps,
   DataOverlayRendererType,
   DataPreviewViewRendererType,
 } from "@/data-rendering-types";
-import { IOStore } from "@/nodes-core";
+import type { IOStore } from "@/nodes-core";
+import {
+  FallbackDataPreviewViewRenderer,
+  FallbackOverlayRenderer,
+} from "@/data-rendering";
 import { useIOGetFullValue } from "@/nodes-io-hooks";
+import {
+  ErrorBoundary,
+  type BaseFallbackProps,
+} from "@/shared-components/error-boundary";
+
+type OverlayFallbackProps = BaseFallbackProps & DataOverlayRendererProps;
+
+const OverlayFallback = ({
+  error: _error,
+  ...props
+}: OverlayFallbackProps) => <FallbackOverlayRenderer {...props} />;
+
+const PreviewFallback = ({ error: _error }: BaseFallbackProps) => (
+  <FallbackDataPreviewViewRenderer />
+);
 
 export const IODataOverlay = ({
   iostore,
@@ -38,11 +58,18 @@ export const IODataOverlay = ({
   };
 
   return (
-    <Component
-      value={pendingValue} // currently rendered value
-      preValue={displayValue} // new value, not yet swapped in
-      onLoaded={handleLoaded} // callback to swap in the new value when ready
-    />
+    <ErrorBoundary<OverlayFallbackProps>
+      fallback={OverlayFallback}
+      value={pendingValue}
+      preValue={displayValue}
+      onLoaded={handleLoaded}
+    >
+      <Component
+        value={pendingValue} // currently rendered value
+        preValue={displayValue} // new value, not yet swapped in
+        onLoaded={handleLoaded} // callback to swap in the new value when ready
+      />
+    </ErrorBoundary>
   );
 };
 
@@ -51,5 +78,9 @@ export const IOPreviewWrapper = ({
 }: {
   Component: DataPreviewViewRendererType;
 }): React.JSX.Element => {
-  return <Component />;
+  return (
+    <ErrorBoundary<BaseFallbackProps> fallback={PreviewFallback}>
+      <Component />
+    </ErrorBoundary>
+  );
 };

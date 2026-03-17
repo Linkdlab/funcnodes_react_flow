@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
-import Select, { ActionMeta, SingleValue } from "react-select";
+import Select from "react-select";
+import type { ActionMeta, SingleValue } from "react-select";
 import "./select.scss";
 
 export interface CustomSelectProps<

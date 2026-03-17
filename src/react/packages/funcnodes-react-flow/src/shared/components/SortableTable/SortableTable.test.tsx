@@ -2,7 +2,7 @@ import * as React from "react";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SortableTable from "./SortableTable";
-import { TableData } from "./types";
+import type { TableData } from "./types";
 import { transformTableData, sortTableData, createComparator } from "./utils";
 import { describe, expect, it, vi } from "vitest";
 

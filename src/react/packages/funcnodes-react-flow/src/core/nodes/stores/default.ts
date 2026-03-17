@@ -1,8 +1,6 @@
-import { object_factory_maker, LimitedDeepPartial } from "@/object-helpers";
-import {
-  NormalizedSerializedNodeType,
-  SerializedIOType,
-} from "../serializations";
+import { object_factory_maker } from "@/object-helpers";
+import type { LimitedDeepPartial } from "@/object-helpers";
+import type { NormalizedSerializedNodeType, SerializedIOType } from "../serializations";
 
 const dummy_node: NormalizedSerializedNodeType = {
   id: "dummy",

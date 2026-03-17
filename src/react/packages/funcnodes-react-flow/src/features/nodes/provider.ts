@@ -1,4 +1,4 @@
-import { IOStore, NodeStore } from "@/nodes-core";
+import type { IOStore, NodeStore } from "@/nodes-core";
 import * as React from "react";
 import { useContext } from "react";
 

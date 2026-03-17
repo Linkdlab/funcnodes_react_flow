@@ -1,4 +1,4 @@
-import { SerializedNodeType, PartialSerializedNodeType } from "@/nodes-core";
+import type { SerializedNodeType, PartialSerializedNodeType } from "@/nodes-core";
 
 export interface BaseNodeAction {
   type: string;

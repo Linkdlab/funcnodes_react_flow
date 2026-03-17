@@ -22,7 +22,7 @@ import { NodeSettingsOverlay } from "@/node-settings";
 import { useKeyPress } from "@/providers";
 import { CustomDialog } from "@/shared-components";
 import { useWorkerApi } from "@/workers";
-import { IOStore, NodeStore } from "@/nodes-core";
+import type { IOStore, NodeStore } from "@/nodes-core";
 
 import { IOContext, NodeContext, useNodeStore } from "../../provider";
 import { RenderMappingContext } from "@/data-rendering";

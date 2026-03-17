@@ -10,7 +10,7 @@ import { FuncNodesContext } from "@/providers";
 import { createIOStore } from "@/nodes-core";
 import { JSONStructure } from "@/data-structures";
 import type { FuncNodesReactFlow } from "@/funcnodes-context";
-import { RJSFSchema } from "@rjsf/utils";
+import type { RJSFSchema } from "@rjsf/utils";
 
 const inputconverter: [(v: unknown) => unknown, (v: unknown) => unknown] = [
   (v) => v,

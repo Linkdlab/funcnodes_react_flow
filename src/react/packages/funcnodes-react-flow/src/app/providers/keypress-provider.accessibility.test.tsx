@@ -15,6 +15,7 @@ import {
 } from "./keypress-provider";
 
 import {
+  simulateKeyPress,
   simulateKeyCombo,
 } from "./keypress-provider.test-utils";
 
@@ -396,9 +397,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
       expect(list).toHaveAttribute("aria-label", "Selectable items");
 
       // Test arrow navigation
-      act(() => {
-        fireEvent.keyDown(window, { key: "ArrowDown" });
-      });
+      simulateKeyPress("ArrowDown");
 
       await waitFor(() => {
         expect(screen.getByTestId("announce-text")).toHaveTextContent(
@@ -406,9 +405,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
         );
       });
 
-      act(() => {
-        fireEvent.keyDown(window, { key: "ArrowUp" });
-      });
+      simulateKeyPress("ArrowUp");
 
       await waitFor(() => {
         expect(screen.getByTestId("announce-text")).toHaveTextContent(
@@ -417,9 +414,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
       });
 
       // Test Home/End navigation
-      act(() => {
-        fireEvent.keyDown(window, { key: "End" });
-      });
+      simulateKeyPress("End");
 
       await waitFor(() => {
         expect(screen.getByTestId("announce-text")).toHaveTextContent(
@@ -427,9 +422,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
         );
       });
 
-      act(() => {
-        fireEvent.keyDown(window, { key: "Home" });
-      });
+      simulateKeyPress("Home");
 
       await waitFor(() => {
         expect(screen.getByTestId("announce-text")).toHaveTextContent(
@@ -438,9 +431,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
       });
 
       // Test selection
-      act(() => {
-        fireEvent.keyDown(window, { key: "Enter" });
-      });
+      simulateKeyPress("Enter");
 
       expect(onSelect).toHaveBeenCalledWith("Apple", 0);
 
@@ -461,9 +452,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
         </KeyPressProvider>
       );
 
-      act(() => {
-        fireEvent.keyDown(window, { key: " " });
-      });
+      simulateKeyPress(" ");
 
       expect(onSelect).toHaveBeenCalledWith("Item 1", 0);
     });
@@ -558,9 +547,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
       });
 
       // Test navigation
-      act(() => {
-        fireEvent.keyDown(window, { key: "ArrowDown" });
-      });
+      simulateKeyPress("ArrowDown");
 
       expect(screen.getByTestId("command-1")).toHaveAttribute(
         "aria-selected",
@@ -568,9 +555,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
       );
 
       // Test selection
-      act(() => {
-        fireEvent.keyDown(window, { key: "Enter" });
-      });
+      simulateKeyPress("Enter");
 
       expect(commands[1].action).toHaveBeenCalled();
       expect(onClose).toHaveBeenCalled();
@@ -609,9 +594,7 @@ describe("KeyPressProvider Accessibility Tests", () => {
       expect(selectedItem).toHaveAttribute("aria-selected", "true");
 
       // Test that selection still works visually
-      act(() => {
-        fireEvent.keyDown(window, { key: "ArrowDown" });
-      });
+      simulateKeyPress("ArrowDown");
 
       expect(screen.getByTestId("list-item-1")).toHaveAttribute(
         "aria-selected",

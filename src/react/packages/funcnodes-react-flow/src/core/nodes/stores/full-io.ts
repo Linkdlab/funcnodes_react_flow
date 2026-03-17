@@ -1,5 +1,5 @@
-import { IOType } from "../interfaces";
-import { IOValueType, PartialSerializedIOType } from "../serializations";
+import type { IOType } from "../interfaces";
+import type { IOValueType, PartialSerializedIOType } from "../serializations";
 import { default_nodeio_factory } from "./default";
 import { deserialize_io } from "./deserialization";
 

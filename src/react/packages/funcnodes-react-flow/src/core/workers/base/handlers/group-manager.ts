@@ -1,6 +1,6 @@
 import { AbstractWorkerHandler } from "./worker-handlers.types";
-import { NodeGroups } from "@/groups";
-import { GroupActionUpdate } from "@/funcnodes-context";
+import type { NodeGroups } from "@/groups";
+import type { GroupActionUpdate } from "@/funcnodes-context";
 
 export interface WorkerGroupManagerAPI {
   group_nodes: (nodeIds: string[], group_ids: string[]) => Promise<NodeGroups>;

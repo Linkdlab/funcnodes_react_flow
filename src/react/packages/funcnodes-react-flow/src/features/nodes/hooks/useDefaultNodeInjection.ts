@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NodeStore } from "@/nodes-core";
+import type { NodeStore } from "@/nodes-core";
 
 export const useDefaultNodeInjection = (nodestore: NodeStore) => {
   const [visualTrigger, setVisualTrigger] = useState(false);

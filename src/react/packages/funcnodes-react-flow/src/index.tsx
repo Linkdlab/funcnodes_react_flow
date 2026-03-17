@@ -15,7 +15,8 @@ import {
   INFO,
   WARN,
 } from "@/logging";
-import { FuncNodes, FuncnodesReactFlowProps } from "@/app";
+import { FuncNodes } from "@/app";
+import type { FuncnodesReactFlowProps } from "@/app";
 import "./index.scss";
 
 declare const __FN_VERSION__: string;

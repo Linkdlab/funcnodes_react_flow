@@ -1,9 +1,4 @@
-import {
-  FuncnodesReactFlowProps,
-  FuncnodesReactHeaderProps,
-  ReactFlowLayerProps,
-  ReactFlowLibraryProps,
-} from "./app.types";
+import type { FuncnodesReactFlowProps, FuncnodesReactHeaderProps, ReactFlowLayerProps, ReactFlowLibraryProps } from "./app.types";
 
 const DEFAULT_LIB_PROPS: ReactFlowLibraryProps = {
   show: true,

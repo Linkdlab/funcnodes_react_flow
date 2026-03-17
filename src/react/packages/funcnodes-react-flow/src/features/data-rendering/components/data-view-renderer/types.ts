@@ -1,5 +1,5 @@
-import { JSX } from "react";
-import { JSONType } from "@/data-structures";
+import type { JSX } from "react";
+import type { JSONType } from "@/data-structures";
 
 export type DataViewRendererProps = {
   value: JSONType | undefined;

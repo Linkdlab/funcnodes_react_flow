@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 import { CloseIcon } from "@/icons";
 import { useFuncNodesContext } from "@/providers";
@@ -178,7 +179,12 @@ export const CustomDialog = React.memo<DialogProps>(
         {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
         <Dialog.Portal container={portal}>
           <Dialog.Overlay className="dialog-overlay funcnodescontainer" />
-          <Dialog.Content asChild {...(!description ? { "aria-describedby": undefined } : {})}>
+          <Dialog.Content
+            asChild
+            {...(!description && !ariaDescription
+              ? { "aria-describedby": undefined }
+              : {})}
+          >
             <div
               className={contentClassName}
               role="dialog"
@@ -188,16 +194,18 @@ export const CustomDialog = React.memo<DialogProps>(
                 (typeof description === "string" ? description : undefined)
               }
             >
-              <Dialog.Title
-                className={`dialog-title${title ? "" : " dialog-title--visually-hidden"}`}
-              >
-                {title || ariaLabel || "Dialog"}
-              </Dialog.Title>
+              {title ? (
+                <Dialog.Title className="dialog-title">{title}</Dialog.Title>
+              ) : (
+                <VisuallyHidden.Root asChild>
+                  <Dialog.Title className="dialog-title">
+                    {ariaLabel || "Dialog"}
+                  </Dialog.Title>
+                </VisuallyHidden.Root>
+              )}
 
               {description && (
-                <Dialog.Description
-                  className="dialog-description"
-                >
+                <Dialog.Description className="dialog-description">
                   {description}
                 </Dialog.Description>
               )}

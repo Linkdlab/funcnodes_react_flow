@@ -201,20 +201,45 @@ export const useKeyboardShortcuts = (
   enabled = true
 ) => {
   const { keys } = useKeyPress();
+  const shortcutsRef = React.useRef(shortcuts);
+  const activeShortcutsRef = React.useRef<Set<string>>(new Set());
 
   React.useEffect(() => {
-    if (!enabled) return;
+    shortcutsRef.current = shortcuts;
+  }, [shortcuts]);
+
+  React.useEffect(() => {
+    if (!enabled) {
+      activeShortcutsRef.current.clear();
+      return;
+    }
+
+    const matchedShortcuts = new Set<string>();
 
     // Check each shortcut
-    Object.entries(shortcuts).forEach(([shortcut, callback]) => {
-      const requiredKeys = shortcut.split("+").map((k) => k.trim());
+    Object.entries(shortcutsRef.current).forEach(([shortcut, callback]) => {
+      const requiredKeys = shortcut.split("+").map((rawKey) => {
+        const trimmedKey = rawKey.trim();
+        return trimmedKey === "" ? " " : trimmedKey;
+      });
       const allPressed = requiredKeys.every((key) => keys.has(key));
 
       if (allPressed && keys.size === requiredKeys.length) {
-        callback();
+        matchedShortcuts.add(shortcut);
+
+        if (!activeShortcutsRef.current.has(shortcut)) {
+          activeShortcutsRef.current.add(shortcut);
+          callback();
+        }
       }
     });
-  }, [keys, shortcuts, enabled]);
+
+    activeShortcutsRef.current.forEach((shortcut) => {
+      if (!matchedShortcuts.has(shortcut)) {
+        activeShortcutsRef.current.delete(shortcut);
+      }
+    });
+  }, [keys, enabled]);
 };
 
 /**

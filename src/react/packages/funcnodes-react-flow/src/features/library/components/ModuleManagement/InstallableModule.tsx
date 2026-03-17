@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
-import { AvailableModule, DEFAULT_RESTRICTION } from "./types";
+import { DEFAULT_RESTRICTION } from "./types";
+import type { AvailableModule } from "./types";
 import { ModuleLinks } from "./ModuleLinks";
 import { ModuleDescription } from "./ModuleDescription";
 import { VersionSelector } from "./VersionSelector";

@@ -12,15 +12,8 @@
  * - Error cases and edge scenarios
  */
 
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  vi,
-  MockInstance,
-} from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import type { MockInstance } from "vitest";
 import {
   BaseLogger,
   ConsoleLogger,

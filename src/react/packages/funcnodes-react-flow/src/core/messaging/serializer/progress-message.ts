@@ -1,4 +1,4 @@
-import { ProgressState } from "@/funcnodes-context";
+import type { ProgressState } from "@/funcnodes-context";
 
 export interface ProgressStateMessage extends ProgressState {
   type: "progress";

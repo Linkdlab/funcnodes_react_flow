@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { Node, Edge } from "@xyflow/react";
+import type { Node, Edge } from "@xyflow/react";
 import { useFuncNodesContext } from "@/providers";
 import { split_rf_nodes } from "@/nodes-core";
 

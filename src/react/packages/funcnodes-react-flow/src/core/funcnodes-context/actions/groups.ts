@@ -1,4 +1,4 @@
-import { NodeGroup, NodeGroups } from "@/groups";
+import type { NodeGroup, NodeGroups } from "@/groups";
 
 interface BaseGroupAction {
   type: string;

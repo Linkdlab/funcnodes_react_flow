@@ -1,7 +1,7 @@
-import { NodeType } from "../interfaces/node";
+import type { NodeType } from "../interfaces/node";
 import { default_node_factory } from "./default";
 import { deserialize_node } from "./deserialization";
-import { PartialNormalizedSerializedNodeType } from "../serializations";
+import type { PartialNormalizedSerializedNodeType } from "../serializations";
 
 export const assert_full_node = (
   node: PartialNormalizedSerializedNodeType

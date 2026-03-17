@@ -346,9 +346,23 @@ describe("KeyPress Provider Examples", () => {
       act(() => {
         fireEvent.keyDown(window, { key: "Control" });
         fireEvent.keyDown(window, { key: "s" });
+      });
+
+      act(() => {
         fireEvent.keyUp(window, { key: "s" });
+        fireEvent.keyUp(window, { key: "Control" });
+      });
+
+      act(() => {
+        fireEvent.keyDown(window, { key: "Control" });
         fireEvent.keyDown(window, { key: "s" });
+      });
+
+      act(() => {
         fireEvent.keyUp(window, { key: "s" });
+      });
+
+      act(() => {
         fireEvent.keyUp(window, { key: "Control" });
       });
 
