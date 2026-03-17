@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useFuncNodesContext } from "@/providers/funcnodescontext";
+import { useFuncNodesContext } from "@/providers";
 import type { InputRendererProps } from "./types";
 
 import { CustomColorPicker } from "@/shared-components/ColorPicker";

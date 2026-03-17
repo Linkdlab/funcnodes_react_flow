@@ -1,5 +1,4 @@
 import type { RenderMappingState, RenderMappingAction } from "./render-mappings.types";
-import { initialRenderMappings } from "./render-mappings.defaults";
 export { initialRenderMappings } from "./render-mappings.defaults";
 
 // The reducer function to manage render mapping state
