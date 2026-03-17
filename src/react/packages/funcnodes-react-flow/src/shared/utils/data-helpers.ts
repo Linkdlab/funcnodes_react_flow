@@ -322,6 +322,29 @@ export const stringifyValue = (value: any): string | undefined => {
   return disp;
 };
 
+export const getBase64ByteLength = (value: unknown): number => {
+  const rawValue =
+    typeof value === "string" ? value : value?.toString?.() ?? "";
+  const normalizedValue = rawValue.replace(/\s+/g, "");
+  const base64Value =
+    normalizedValue.includes(",") &&
+    normalizedValue.slice(0, normalizedValue.indexOf(",")).includes(";base64")
+      ? normalizedValue.slice(normalizedValue.indexOf(",") + 1)
+      : normalizedValue;
+
+  if (base64Value.length === 0) {
+    return 0;
+  }
+
+  const padding = base64Value.endsWith("==")
+    ? 2
+    : base64Value.endsWith("=")
+      ? 1
+      : 0;
+
+  return Math.max(0, Math.floor((base64Value.length * 3) / 4) - padding);
+};
+
 export {
   base64ToUint8Array,
   uint8ArrayToBase64,

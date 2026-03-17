@@ -1,11 +1,10 @@
 import * as React from "react";
 import type { DataViewRendererProps, DataViewRendererType } from "./types";
+import { getBase64ByteLength } from "@/data-helpers";
 
 export const Base64BytesRenderer: DataViewRendererType = React.memo(
   ({ value }: DataViewRendererProps) => {
-    // chack if the value is a base64 string
-    const valuestring = value?.toString() ?? "";
-    const length = Math.round((3 * valuestring.length) / 4); // 3/4 is the ratio of base64 encoding
+    const length = getBase64ByteLength(value);
     return (
       <div>
         <pre>Bytes({length})</pre>

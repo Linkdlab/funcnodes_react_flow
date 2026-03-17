@@ -451,12 +451,16 @@ describe("KeyPressProvider Performance Tests", () => {
       // Mount times should not increase significantly over iterations
       const firstMountTime = mountTimes[0];
       const lastMountTime = mountTimes[mountTimes.length - 1];
-      expect(lastMountTime).toBeLessThan(firstMountTime * 2); // No more than 2x slower
+      const mountThreshold =
+        firstMountTime === 0 ? 0 : firstMountTime * 2;
+      expect(lastMountTime).toBeLessThanOrEqual(mountThreshold); // No more than 2x slower
 
       // Unmount times should remain consistent
       const firstUnmountTime = unmountTimes[0];
       const lastUnmountTime = unmountTimes[unmountTimes.length - 1];
-      expect(lastUnmountTime).toBeLessThan(firstUnmountTime * 2);
+      const unmountThreshold =
+        firstUnmountTime === 0 ? 0 : firstUnmountTime * 2;
+      expect(lastUnmountTime).toBeLessThanOrEqual(unmountThreshold);
     });
   });
 

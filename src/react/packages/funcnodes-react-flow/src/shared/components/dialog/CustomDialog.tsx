@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 import { CloseIcon } from "@/icons";
 import { useFuncNodesContext } from "@/providers";
@@ -197,11 +196,9 @@ export const CustomDialog = React.memo<DialogProps>(
               {title ? (
                 <Dialog.Title className="dialog-title">{title}</Dialog.Title>
               ) : (
-                <VisuallyHidden.Root asChild>
-                  <Dialog.Title className="dialog-title">
-                    {ariaLabel || "Dialog"}
-                  </Dialog.Title>
-                </VisuallyHidden.Root>
+                <Dialog.Title className="dialog-title dialog-title--visually-hidden">
+                  {ariaLabel || "Dialog"}
+                </Dialog.Title>
               )}
 
               {description && (

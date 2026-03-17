@@ -6,7 +6,6 @@ import { IOContext } from "@/nodes";
 import type { IOStore } from "@/nodes-core";
 import { Base64BytesInLineRenderer } from "./inline-renderer/bytes";
 import { InLineOutput } from "./output-renderer/default";
-import { stringifyValue } from "@/data-helpers";
 
 const createIOStore = (preview: any, full?: any) =>
   ({
@@ -24,14 +23,20 @@ describe("inline and output renderers", () => {
       </IOContext.Provider>,
     );
 
-    const disp = stringifyValue(preview.value);
-    if (disp === undefined) {
-      throw new Error(
-        "Expected stringifyValue(preview.value) to return a string",
-      );
-    }
-    const expectedLength = Math.round((3 * disp.length) / 4);
-    expect(container.textContent).toBe(`Bytes(${expectedLength})`);
+    expect(container.textContent).toBe("Bytes(3)");
+  });
+
+  it("renders exact byte length for padded base64 output", () => {
+    const preview = { value: "TQ==" };
+    const iostore = createIOStore(preview);
+
+    const { container } = render(
+      <IOContext.Provider value={iostore}>
+        <Base64BytesInLineRenderer />
+      </IOContext.Provider>,
+    );
+
+    expect(container.textContent).toBe("Bytes(1)");
   });
 
   it("truncates long inline output", () => {

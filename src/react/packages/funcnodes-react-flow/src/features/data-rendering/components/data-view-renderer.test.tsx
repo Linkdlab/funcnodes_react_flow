@@ -64,6 +64,12 @@ describe("data view renderers", () => {
     expect(screen.getByText("Bytes(3)")).toBeInTheDocument();
   });
 
+  it("renders exact byte length for padded base64 data", () => {
+    render(<Base64BytesRenderer value="TQ==" />);
+
+    expect(screen.getByText("Bytes(1)")).toBeInTheDocument();
+  });
+
   it("renders invalid HTML message for non-string values", () => {
     render(<HTMLRenderer value={123} />);
 
