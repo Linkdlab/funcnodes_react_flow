@@ -32,7 +32,7 @@ describe("data view renderers", () => {
   it("renders string values via StringValueRenderer", () => {
     render(<StringValueRenderer value="hello" />);
 
-    expect(screen.getByText("\"hello\"")).toBeInTheDocument();
+    expect(screen.getByText("hello")).toBeInTheDocument();
   });
 
   it("renders JSON string output in SingleValueRenderer", () => {
