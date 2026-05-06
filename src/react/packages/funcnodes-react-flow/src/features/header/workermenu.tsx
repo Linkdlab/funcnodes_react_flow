@@ -328,6 +328,10 @@ export const WorkerMenu = () => {
                   className="headermenuitem"
                   onClick={() => {
                     if (!fnrf_zst.worker) return;
+                    if (fnrf_zst.workermanager?.open) {
+                      fnrf_zst.workermanager.stop_worker(fnrf_zst.worker.uuid);
+                      return;
+                    }
                     fnrf_zst.worker.stop();
                   }}
                 >

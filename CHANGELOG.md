@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented here.
 
+## 2.4.0 (2026-05-06)
+
+### Feat
+
+- migrate worker autostart to policy-based configuration and implement managed worker termination via WorkerManager
+- **worker-settings**: add worker configuration management in settings menu
+
+### Fix
+
+- update checkbox state handling in settings menu and add corresponding test coverage
+
 ## 2.3.0 (2026-03-17)
 
 ### Feat
