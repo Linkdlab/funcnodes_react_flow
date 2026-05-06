@@ -77,6 +77,8 @@ declare interface ArrayOf {
     uniqueItems: boolean;
 }
 
+declare type AutostartPolicy = "never" | "always" | "unless-stopped";
+
 declare interface AvailableModule {
     name: string;
     description: string;
@@ -730,6 +732,12 @@ export declare class FuncNodesWorker {
     save(): Promise<any>;
     load(data: any): Promise<void>;
     get_runstate(): Promise<any>;
+    get_config(): Promise<WorkerRepresentation>;
+    update_settings({ name, autostart, update_on_startup, }: {
+        name?: string;
+        autostart?: AutostartPolicy;
+        update_on_startup?: Record<string, boolean>;
+    }): Promise<WorkerRepresentation>;
     send(_data: any): Promise<void>;
     upload_file(_params: {
         files: File[] | FileList;
@@ -1889,15 +1897,17 @@ declare class WorkerManager {
     onmessage(event: string): void;
     setWorker(worker: FuncNodesWorker | undefined): void;
     restart_worker(workerid: string): Promise<void>;
+    stop_worker(workerid: string): Promise<void>;
     private calculateReconnectTimeout;
     private reconnect;
     onclose(): void;
     set_active(workerid: string): void;
-    new_worker({ name, reference, copyLib, copyNS, in_venv, }: {
+    new_worker({ name, reference, copyLib, copyNS, autostart, in_venv, }: {
         name?: string;
         reference?: string;
         copyLib?: boolean;
         copyNS?: boolean;
+        autostart?: AutostartPolicy;
         in_venv?: boolean;
     }): void;
     remove(): void;
@@ -2012,6 +2022,12 @@ declare interface WorkerRepresentation {
     active: boolean;
     open: boolean;
     name: string | null;
+    type?: string;
+    autostart?: AutostartPolicy;
+    data_path?: string | null;
+    env_path?: string | null;
+    pid?: number | null;
+    update_on_startup?: Record<string, boolean>;
 }
 
 declare interface WorkersState {
