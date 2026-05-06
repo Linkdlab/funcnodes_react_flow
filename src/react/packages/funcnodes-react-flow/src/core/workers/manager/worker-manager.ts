@@ -234,12 +234,14 @@ export class WorkerManager {
     reference,
     copyLib,
     copyNS,
+    autostart,
     in_venv,
   }: {
     name?: string;
     reference?: string;
     copyLib?: boolean;
     copyNS?: boolean;
+    autostart?: boolean;
     in_venv?: boolean;
   }) {
     if (!name) name = undefined;
@@ -260,6 +262,7 @@ export class WorkerManager {
             reference,
             copyLib,
             copyNS,
+            autostart,
             in_venv,
           },
         })

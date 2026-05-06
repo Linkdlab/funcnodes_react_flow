@@ -18,6 +18,7 @@ import type { WorkerGroupManagerAPI } from "./handlers/group-manager";
 import { WorkerLibraryManager } from "./handlers/library-manager";
 import type { WorkerLibraryManagerAPI } from "./handlers/library-manager";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
+import type { WorkerRepresentation } from "@/workers";
 
 export type WorkerAPI = {
   node: WorkerNodeManagerAPI;
@@ -171,6 +172,32 @@ export class FuncNodesWorker {
       cmd: "get_runstate",
       wait_for_response: true,
       unique: true,
+    });
+    return res;
+  }
+
+  async get_config(): Promise<WorkerRepresentation> {
+    const res = await this._communicationManager._send_cmd({
+      cmd: "get_config",
+      wait_for_response: true,
+      unique: true,
+    });
+    return res;
+  }
+
+  async update_settings({
+    name,
+    autostart,
+    update_on_startup,
+  }: {
+    name?: string;
+    autostart?: boolean;
+    update_on_startup?: Record<string, boolean>;
+  }): Promise<WorkerRepresentation> {
+    const res = await this._communicationManager._send_cmd({
+      cmd: "update_worker_config",
+      kwargs: { name, autostart, update_on_startup },
+      wait_for_response: true,
     });
     return res;
   }
