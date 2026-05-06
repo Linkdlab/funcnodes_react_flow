@@ -1,13 +1,26 @@
 import * as React from "react";
 
 import { useFuncNodesContext } from "@/providers";
-import type { WorkerRepresentation } from "@/workers";
+import type { AutostartPolicy, WorkerRepresentation } from "@/workers";
 
 const DEFAULT_UPDATE_ON_STARTUP = [
   "funcnodes",
   "funcnodes-core",
   "funcnodes-worker",
 ];
+
+const normalizeAutostart = (value: unknown): AutostartPolicy => {
+  if (value === true) return "unless-stopped";
+  if (value === false || value == null) return "never";
+  if (
+    value === "never" ||
+    value === "always" ||
+    value === "unless-stopped"
+  ) {
+    return value;
+  }
+  return "never";
+};
 
 export const WorkerSettingsDialogContent = ({
   setOpen,
@@ -19,8 +32,8 @@ export const WorkerSettingsDialogContent = ({
   const worker = fnrf_zst.worker;
   const workerConfig = worker?.uuid ? workersstate[worker.uuid] : undefined;
   const [name, setName] = React.useState(workerConfig?.name || "");
-  const [autostart, setAutostart] = React.useState(
-    workerConfig?.autostart || false
+  const [autostart, setAutostart] = React.useState<AutostartPolicy>(
+    normalizeAutostart(workerConfig?.autostart)
   );
   const [updateOnStartup, setUpdateOnStartup] = React.useState<
     Record<string, boolean>
@@ -36,7 +49,7 @@ export const WorkerSettingsDialogContent = ({
     setError(null);
     setLoadedConfig(workerConfig);
     setName(workerConfig?.name || "");
-    setAutostart(workerConfig?.autostart || false);
+    setAutostart(normalizeAutostart(workerConfig?.autostart));
     setUpdateOnStartup(workerConfig?.update_on_startup || {});
 
     if (!worker) return;
@@ -47,7 +60,7 @@ export const WorkerSettingsDialogContent = ({
         if (cancelled) return;
         setLoadedConfig(config);
         setName(config.name || "");
-        setAutostart(config.autostart || false);
+        setAutostart(normalizeAutostart(config.autostart));
         setUpdateOnStartup(config.update_on_startup || {});
       })
       .catch((err) => {
@@ -106,13 +119,18 @@ export const WorkerSettingsDialogContent = ({
         />
       </label>
       <label>
-        <input
-          className="styledcheckbox"
-          type="checkbox"
-          checked={autostart}
-          onChange={(e) => setAutostart(e.currentTarget.checked)}
-        />
         Autostart
+        <select
+          className="styleddropdown full-width"
+          value={autostart}
+          onChange={(e) =>
+            setAutostart(e.currentTarget.value as AutostartPolicy)
+          }
+        >
+          <option value="never">Never</option>
+          <option value="unless-stopped">Unless stopped</option>
+          <option value="always">Always</option>
+        </select>
       </label>
       <div>
         <div style={{ marginBottom: 6, fontWeight: 500 }}>Update on startup</div>

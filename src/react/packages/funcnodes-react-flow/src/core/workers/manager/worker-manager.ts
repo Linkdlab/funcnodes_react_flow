@@ -1,7 +1,7 @@
-import { FuncNodesReactFlow } from "@/funcnodes-context";
+import type { FuncNodesReactFlow } from "@/funcnodes-context";
 import type { ProgressStateMessage } from "@/messages";
 import { FuncNodesWorker, WebSocketWorker } from "@/workers";
-import type { WorkersState } from "@/workers";
+import type { AutostartPolicy, WorkersState } from "./worker-manager.types";
 
 export class WorkerManager {
   private _wsuri: string;
@@ -189,6 +189,19 @@ export class WorkerManager {
     this.ws?.send(JSON.stringify({ type: "restart_worker", workerid }));
   }
 
+  async stop_worker(workerid: string) {
+    this.ws?.send(JSON.stringify({ type: "stop_worker", workerid }));
+    const active_worker = window.localStorage.getItem(
+      "funcnodes__active_worker"
+    );
+    if (active_worker === workerid) {
+      window.localStorage.removeItem("funcnodes__active_worker");
+    }
+    if (this.zustand.worker?.uuid === workerid) {
+      this.zustand.clear_all();
+    }
+  }
+
   private calculateReconnectTimeout(): number {
     // Increase timeout exponentially, capped at maxTimeout
     let timeout = Math.min(
@@ -241,7 +254,7 @@ export class WorkerManager {
     reference?: string;
     copyLib?: boolean;
     copyNS?: boolean;
-    autostart?: boolean;
+    autostart?: AutostartPolicy;
     in_venv?: boolean;
   }) {
     if (!name) name = undefined;

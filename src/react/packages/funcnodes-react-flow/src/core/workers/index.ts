@@ -8,6 +8,7 @@ export { WebSocketWorker } from "./websocket/websocket-worker";
 export type { WebSocketWorkerProps } from "./websocket/websocket-worker.types";
 export { WorkerManager } from "./manager/worker-manager";
 export type {
+  AutostartPolicy,
   WorkersState,
   WorkerRepresentation,
 } from "./manager/worker-manager.types";

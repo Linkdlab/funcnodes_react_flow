@@ -18,7 +18,10 @@ import type { WorkerGroupManagerAPI } from "./handlers/group-manager";
 import { WorkerLibraryManager } from "./handlers/library-manager";
 import type { WorkerLibraryManagerAPI } from "./handlers/library-manager";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
-import type { WorkerRepresentation } from "@/workers";
+import type {
+  AutostartPolicy,
+  WorkerRepresentation,
+} from "../manager/worker-manager.types";
 
 export type WorkerAPI = {
   node: WorkerNodeManagerAPI;
@@ -191,7 +194,7 @@ export class FuncNodesWorker {
     update_on_startup,
   }: {
     name?: string;
-    autostart?: boolean;
+    autostart?: AutostartPolicy;
     update_on_startup?: Record<string, boolean>;
   }): Promise<WorkerRepresentation> {
     const res = await this._communicationManager._send_cmd({

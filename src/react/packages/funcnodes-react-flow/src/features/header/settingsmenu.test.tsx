@@ -71,7 +71,7 @@ describe("SettingsMenu worker settings", () => {
         host: "localhost",
         port: 9381,
         name: "primary",
-        autostart: true,
+        autostart: "unless-stopped",
         update_on_startup: { funcnodes: true },
       })),
       update_settings: vi.fn(),
@@ -89,7 +89,7 @@ describe("SettingsMenu worker settings", () => {
           active: true,
           open: true,
           name: "primary",
-          autostart: true,
+          autostart: "unless-stopped",
         },
       },
     });
@@ -101,7 +101,7 @@ describe("SettingsMenu worker settings", () => {
       await screen.findByRole("dialog", { name: "Worker" })
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Name")).toHaveValue("primary");
-    expect(screen.getByLabelText("Autostart")).toBeChecked();
+    expect(screen.getByLabelText("Autostart")).toHaveValue("unless-stopped");
   });
 
   it("saves edited worker settings", async () => {
@@ -112,7 +112,7 @@ describe("SettingsMenu worker settings", () => {
       get_config: vi.fn(async () => ({
         uuid: "worker-1",
         name: "primary",
-        autostart: false,
+        autostart: "never",
         update_on_startup: { funcnodes: true },
       })),
       update_settings: vi.fn(async (settings) => ({
@@ -139,12 +139,12 @@ describe("SettingsMenu worker settings", () => {
     const nameInput = await screen.findByLabelText("Name");
     await user.clear(nameInput);
     await user.type(nameInput, "renamed");
-    await user.click(screen.getByLabelText("Autostart"));
+    await user.selectOptions(screen.getByLabelText("Autostart"), "always");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() => {
       expect(worker.update_settings).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "renamed", autostart: true })
+        expect.objectContaining({ name: "renamed", autostart: "always" })
       );
       expect(context.workers.setState).toHaveBeenCalled();
     });
@@ -158,7 +158,7 @@ describe("SettingsMenu worker settings", () => {
       get_config: vi.fn(async () => ({
         uuid: "worker-1",
         name: "primary",
-        autostart: false,
+        autostart: "never",
         update_on_startup: { funcnodes: true },
       })),
       update_settings: vi.fn(async (settings) => ({
@@ -194,5 +194,41 @@ describe("SettingsMenu worker settings", () => {
         })
       );
     });
+  });
+
+  it("normalizes stale boolean autostart config from workers", async () => {
+    const user = userEvent.setup();
+    const worker = {
+      uuid: "worker-1",
+      is_open: true,
+      get_config: vi.fn(async () => ({
+        uuid: "worker-1",
+        name: "primary",
+        autostart: true,
+        update_on_startup: {},
+      })),
+      update_settings: vi.fn(),
+    };
+
+    renderSettingsMenu({
+      worker,
+      workerOpen: true,
+      workers: {
+        "worker-1": {
+          uuid: "worker-1",
+          name: "primary",
+          active: true,
+          open: true,
+          autostart: false,
+        },
+      },
+    });
+
+    await user.click(screen.getByRole("button", { name: /settings/i }));
+    await user.click(screen.getByText("Worker"));
+
+    expect(await screen.findByLabelText("Autostart")).toHaveValue(
+      "unless-stopped"
+    );
   });
 });
