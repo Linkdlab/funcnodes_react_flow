@@ -149,4 +149,50 @@ describe("SettingsMenu worker settings", () => {
       expect(context.workers.setState).toHaveBeenCalled();
     });
   });
+
+  it("saves update-on-startup checkbox changes", async () => {
+    const user = userEvent.setup();
+    const worker = {
+      uuid: "worker-1",
+      is_open: true,
+      get_config: vi.fn(async () => ({
+        uuid: "worker-1",
+        name: "primary",
+        autostart: false,
+        update_on_startup: { funcnodes: true },
+      })),
+      update_settings: vi.fn(async (settings) => ({
+        uuid: "worker-1",
+        ...settings,
+      })),
+    };
+
+    renderSettingsMenu({
+      worker,
+      workerOpen: true,
+      workers: {
+        "worker-1": {
+          uuid: "worker-1",
+          name: "primary",
+          active: true,
+          open: true,
+          update_on_startup: { funcnodes: true },
+        },
+      },
+    });
+
+    await user.click(screen.getByRole("button", { name: /settings/i }));
+    await user.click(screen.getByText("Worker"));
+    const updateCheckbox = await screen.findByLabelText("funcnodes");
+    await user.click(updateCheckbox);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(worker.update_settings).toHaveBeenCalledWith(
+        expect.objectContaining({
+          update_on_startup: expect.objectContaining({ funcnodes: false }),
+        })
+      );
+    });
+  });
 });

@@ -122,12 +122,13 @@ export const WorkerSettingsDialogContent = ({
               className="styledcheckbox"
               type="checkbox"
               checked={updateOnStartup[key] ?? true}
-              onChange={(e) =>
+              onChange={(e) => {
+                const checked = e.currentTarget.checked;
                 setUpdateOnStartup((state) => ({
                   ...state,
-                  [key]: e.currentTarget.checked,
-                }))
-              }
+                  [key]: checked,
+                }));
+              }}
             />
             {key}
           </label>
