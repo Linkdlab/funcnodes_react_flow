@@ -119,6 +119,8 @@ export class NodeSpaceManager
   };
   clear_all = () => {
     this.context.rf.logger.debug("Clearing all nodespace");
+    // A cleared or replaced document always returns the editor to root.
+    this.stateManager.reset_nodespace_path();
     this.workerManager.worker?.disconnect();
     this.workerManager.set_worker(undefined);
     this.workerManager.workermanager?.setWorker(undefined);

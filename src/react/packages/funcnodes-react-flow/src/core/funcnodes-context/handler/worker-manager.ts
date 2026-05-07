@@ -31,6 +31,9 @@ export class WorkerManagerHandler
       return;
     }
 
+    // Worker replacement invalidates any nested group path from the old worker.
+    this.stateManager.reset_nodespace_path();
+
     if (this._unsubscribeFromWorker) {
       this._unsubscribeFromWorker();
       this._unsubscribeFromWorker = undefined;

@@ -10,6 +10,12 @@ import type { ToastDispatcher } from "@/shared-components";
 export interface StateManagerManagerAPI {
   set_progress: (progress: ProgressState) => void;
   auto_progress: () => void;
+  set_nodespace_path: (path: NodeSpacePath) => void;
+  enter_group_nodespace: (groupNodeId: string, label: string) => void;
+  leave_group_nodespace: () => void;
+  go_to_nodespace_path_index: (index: number) => void;
+  reset_nodespace_path: () => void;
+  sync_active_nodespace: () => Promise<void>;
   toast?: ToastDispatcher;
 }
 
@@ -28,6 +34,44 @@ export interface FuncnodesReactFlowLocalState {
   funcnodescontainerRef: HTMLDivElement | null;
 }
 
+/**
+ * One segment in the currently edited executable group nodespace path.
+ */
+export interface NodeSpacePathEntry {
+  groupNodeId: string;
+  label: string;
+}
+
+/**
+ * Path from the root nodespace to the currently edited nested group.
+ */
+export type NodeSpacePath = NodeSpacePathEntry[];
+
+/**
+ * Minimal React Flow viewport snapshot persisted per nodespace path.
+ */
+export interface NodeSpaceViewport {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
+/**
+ * Local UI state for the active nodespace navigation model.
+ */
+export interface ActiveNodeSpaceState {
+  path: NodeSpacePath;
+  viewportByPath: Record<string, NodeSpaceViewport>;
+  loading: boolean;
+  error?: string;
+}
+
+/**
+ * Builds a stable map key for per-path UI state such as saved viewports.
+ */
+export const nodespacePathKey = (path: NodeSpacePath): string =>
+  path.map((entry) => entry.groupNodeId).join("/");
+
 export class StateManagerHandler
   extends AbstractFuncNodesReactFlowHandleHandler
   implements StateManagerManagerAPI
@@ -35,6 +79,7 @@ export class StateManagerHandler
   progress_state: UseBoundStore<StoreApi<ProgressState>>;
   local_settings: UseBoundStore<StoreApi<FuncnodesReactFlowLocalSettings>>;
   local_state: UseBoundStore<StoreApi<FuncnodesReactFlowLocalState>>;
+  active_nodespace: UseBoundStore<StoreApi<ActiveNodeSpaceState>>;
   toaster?: ToastDispatcher;
   constructor(context: FuncNodesReactFlowHandlerContext) {
     super(context);
@@ -57,6 +102,12 @@ export class StateManagerHandler
       selected_edges: [],
       selected_groups: [],
       funcnodescontainerRef: null,
+    }));
+    this.active_nodespace = create<ActiveNodeSpaceState>((_set, _get) => ({
+      path: [],
+      viewportByPath: {},
+      loading: false,
+      error: undefined,
     }));
   }
   set_progress(progress: ProgressState) {
@@ -107,5 +158,104 @@ export class StateManagerHandler
 
   update_view_settings(settings: FuncnodesReactFlowViewSettings) {
     update_zustand_store(this.local_settings, { view_settings: settings });
+  }
+
+  /**
+   * Saves the current React Flow viewport for the currently active path.
+   */
+  save_active_nodespace_viewport(): void {
+    const rfInstance = this.reactFlowManager.rf_instance as
+      | { getViewport?: () => NodeSpaceViewport }
+      | undefined;
+    const viewport = rfInstance?.getViewport?.();
+    if (!viewport) return;
+
+    const state = this.active_nodespace.getState();
+    this.active_nodespace.setState({
+      viewportByPath: {
+        ...state.viewportByPath,
+        [nodespacePathKey(state.path)]: viewport,
+      },
+    });
+  }
+
+  /**
+   * Restores a saved React Flow viewport for the currently active path.
+   */
+  restore_active_nodespace_viewport(): void {
+    const rfInstance = this.reactFlowManager.rf_instance as
+      | { setViewport?: (viewport: NodeSpaceViewport) => void }
+      | undefined;
+    const state = this.active_nodespace.getState();
+    const viewport = state.viewportByPath[nodespacePathKey(state.path)];
+    if (!viewport) return;
+
+    rfInstance?.setViewport?.(viewport);
+  }
+
+  /**
+   * Replaces the active nodespace path and preserves viewport state around the
+   * transition.
+   */
+  set_nodespace_path(path: NodeSpacePath): void {
+    this.save_active_nodespace_viewport();
+    this.active_nodespace.setState({
+      path: path.map((entry) => ({ ...entry })),
+      error: undefined,
+    });
+    this.restore_active_nodespace_viewport();
+  }
+
+  /**
+   * Enters a child executable group nodespace from the current path.
+   */
+  enter_group_nodespace(groupNodeId: string, label: string): void {
+    const currentPath = this.active_nodespace.getState().path;
+    const lastEntry = currentPath[currentPath.length - 1];
+    if (lastEntry?.groupNodeId === groupNodeId) return;
+
+    this.set_nodespace_path([...currentPath, { groupNodeId, label }]);
+  }
+
+  /**
+   * Leaves the currently active group nodespace and returns to its parent.
+   */
+  leave_group_nodespace(): void {
+    const currentPath = this.active_nodespace.getState().path;
+    this.set_nodespace_path(currentPath.slice(0, -1));
+  }
+
+  /**
+   * Navigates to a path ancestor by index, or to root when the index is below
+   * zero.
+   */
+  go_to_nodespace_path_index(index: number): void {
+    const currentPath = this.active_nodespace.getState().path;
+    if (index < 0) {
+      this.set_nodespace_path([]);
+      return;
+    }
+    this.set_nodespace_path(currentPath.slice(0, index + 1));
+  }
+
+  /**
+   * Clears the active nodespace path, typically after worker or document
+   * replacement.
+   */
+  reset_nodespace_path(): void {
+    this.active_nodespace.setState({
+      path: [],
+      loading: false,
+      error: undefined,
+    });
+    this.restore_active_nodespace_viewport();
+  }
+
+  /**
+   * Placeholder sync hook for later milestones that will request path-aware
+   * worker snapshots.
+   */
+  async sync_active_nodespace(): Promise<void> {
+    return Promise.resolve();
   }
 }

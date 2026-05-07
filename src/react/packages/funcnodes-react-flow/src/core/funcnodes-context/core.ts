@@ -10,7 +10,13 @@ import { LibManager } from "./handler/lib-manager";
 import { WorkerManagerHandler } from "./handler/worker-manager";
 
 import { StateManagerHandler } from "./handler/state-manager";
-import type { FuncnodesReactFlowLocalSettings, FuncnodesReactFlowLocalState, FuncnodesReactFlowViewSettings } from "./handler/state-manager";
+import type {
+  ActiveNodeSpaceState,
+  FuncnodesReactFlowLocalSettings,
+  FuncnodesReactFlowLocalState,
+  FuncnodesReactFlowViewSettings,
+  NodeSpacePath,
+} from "./handler/state-manager";
 import { PluginManagerHandler } from "./handler/plugin-manager";
 import { ReactFlowManagerHandler } from "./handler/rf-manager";
 import type { LibZustandInterface } from "@/library";
@@ -30,6 +36,22 @@ export interface FuncNodesReactFlowZustandInterface {
   local_settings: UseBoundStore<StoreApi<FuncnodesReactFlowLocalSettings>>;
   update_view_settings: (settings: FuncnodesReactFlowViewSettings) => void;
   local_state: UseBoundStore<StoreApi<FuncnodesReactFlowLocalState>>;
+  /** Store for the currently edited executable group nodespace path. */
+  active_nodespace: UseBoundStore<StoreApi<ActiveNodeSpaceState>>;
+  /** Current path from root to the active nested group nodespace. */
+  active_nodespace_path: NodeSpacePath;
+  /** Replace the active nodespace path. */
+  set_nodespace_path: (path: NodeSpacePath) => void;
+  /** Enter a child executable group nodespace. */
+  enter_group_nodespace: (groupNodeId: string, label: string) => void;
+  /** Leave the current executable group nodespace. */
+  leave_group_nodespace: () => void;
+  /** Navigate to root or a specific active path ancestor. */
+  go_to_nodespace_path_index: (index: number) => void;
+  /** Reset active nodespace navigation to root. */
+  reset_nodespace_path: () => void;
+  /** Sync the currently active nodespace from the worker. */
+  sync_active_nodespace: () => Promise<void>;
   lib: LibZustandInterface;
   workermanager: WorkerManager | undefined;
   workers: UseBoundStore<StoreApi<WorkersState>>;
@@ -198,8 +220,42 @@ export class FuncNodesReactFlow implements FuncNodesReactFlowZustandInterface {
   get local_state() {
     return this._stateManager.local_state;
   }
+  /** Store for the active executable group nodespace navigation state. */
+  get active_nodespace() {
+    return this._stateManager.active_nodespace;
+  }
+  /** Current active nodespace path, returned as a defensive copy. */
+  get active_nodespace_path() {
+    return this._stateManager.active_nodespace
+      .getState()
+      .path.map((entry) => ({ ...entry }));
+  }
   update_view_settings(settings: FuncnodesReactFlowViewSettings) {
     this._stateManager.update_view_settings(settings);
+  }
+  /** Replace the active nodespace path. */
+  set_nodespace_path(path: NodeSpacePath) {
+    this._stateManager.set_nodespace_path(path);
+  }
+  /** Enter a child executable group nodespace. */
+  enter_group_nodespace(groupNodeId: string, label: string) {
+    this._stateManager.enter_group_nodespace(groupNodeId, label);
+  }
+  /** Leave the current executable group nodespace. */
+  leave_group_nodespace() {
+    this._stateManager.leave_group_nodespace();
+  }
+  /** Navigate to root or an active path ancestor by breadcrumb index. */
+  go_to_nodespace_path_index(index: number) {
+    this._stateManager.go_to_nodespace_path_index(index);
+  }
+  /** Reset active nodespace navigation to root. */
+  reset_nodespace_path() {
+    this._stateManager.reset_nodespace_path();
+  }
+  /** Sync the currently active nodespace from the worker. */
+  sync_active_nodespace() {
+    return this._stateManager.sync_active_nodespace();
   }
 
   // #endregion statemanager

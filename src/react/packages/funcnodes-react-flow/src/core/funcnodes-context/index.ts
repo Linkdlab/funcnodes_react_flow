@@ -20,3 +20,9 @@ export type {
   NodeViewState,
   FullNodeSpaceJSON,
 } from "./serializations";
+export type {
+  ActiveNodeSpaceState,
+  NodeSpacePath,
+  NodeSpacePathEntry,
+  NodeSpaceViewport,
+} from "./handler/state-manager";
