@@ -1,4 +1,5 @@
 import type { FuncNodesWorker } from "../funcnodes-worker";
+import type { NodeSpacePath } from "@/funcnodes-context";
 
 /**
  * Defines the required context for handler classes, providing access
@@ -55,5 +56,12 @@ export abstract class AbstractWorkerHandler {
 
   protected get libraryManager() {
     return this.context.worker.getLibraryManager();
+  }
+
+  /**
+   * Return the currently edited nodespace path for path-aware worker commands.
+   */
+  protected get activeNodeSpacePath(): NodeSpacePath {
+    return this.context.worker._zustand?.active_nodespace.getState().path ?? [];
   }
 }

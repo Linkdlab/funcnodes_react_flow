@@ -144,4 +144,35 @@ describe("WorkerSyncManager active nodespace sync", () => {
       type: "group",
     });
   });
+
+  it("sends local node updates to the active nodespace path", async () => {
+    const flow = makeFlow();
+    const path = [{ groupNodeId: "group-1", label: "Group One" }];
+    flow.active_nodespace.setState({ path });
+    const { manager, sendCmd } = makeSyncManager(
+      { path, nodes: [], edges: [], groups: {} },
+      flow
+    );
+    sendCmd.mockResolvedValueOnce({});
+
+    manager.locally_update_node({
+      type: "update",
+      id: "inner-node",
+      node: { name: "Renamed Inner" },
+      from_remote: false,
+      immediate: true,
+    });
+    await vi.waitFor(() => expect(sendCmd).toHaveBeenCalled());
+
+    expect(sendCmd).toHaveBeenCalledWith({
+      cmd: "update_node_at_path",
+      kwargs: {
+        path,
+        nid: "inner-node",
+        data: { name: "Renamed Inner" },
+      },
+      wait_for_response: true,
+    });
+    manager.stop();
+  });
 });

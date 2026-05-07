@@ -288,14 +288,17 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     await this.sync_active_nodespace();
   }
 
+  /**
+   * Flush queued local node updates to the active nodespace path.
+   */
   sync_local_node_updates() {
     clearTimeout(this._nodeupdatetimer);
     this._local_nodeupdates.forEach(async (node, id) => {
       const ans = await this.context.worker
         .getCommunicationManager()
         ._send_cmd({
-          cmd: "update_node",
-          kwargs: { nid: id, data: node },
+          cmd: "update_node_at_path",
+          kwargs: { path: this.activeNodeSpacePath, nid: id, data: node },
           wait_for_response: true,
         });
       if (!this.context.worker._zustand) return;
@@ -314,12 +317,15 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     }, NODE_UPDATE_RATE);
   }
 
+  /**
+   * Flush queued legacy visual group updates to the active nodespace path.
+   */
   sync_local_group_updates() {
     clearTimeout(this._groupupdatetimer);
     this._local_groupupdates.forEach(async (group, id) => {
       const ans = await this.communicationManager._send_cmd({
-        cmd: "update_group",
-        kwargs: { gid: id, data: group },
+        cmd: "update_group_at_path",
+        kwargs: { path: this.activeNodeSpacePath, gid: id, data: group },
         wait_for_response: true,
       });
       if (!this.context.worker._zustand) return;
@@ -336,9 +342,11 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     }, GROUP_UPDATE_RATE);
   }
 
+  /**
+   * Merge local node edits until the update timer flushes them to the active
+   * nodespace path.
+   */
   locally_update_node(action: NodeActionUpdate) {
-    // Add the type to the parameter
-    //log current stack trace
     const currentstate = this._local_nodeupdates.get(action.id);
     if (currentstate) {
       const { new_obj, change } = deep_merge(currentstate, action.node);
@@ -353,9 +361,11 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     }
   }
 
+  /**
+   * Merge local legacy group edits until the update timer flushes them to the
+   * active nodespace path.
+   */
   locally_update_group(action: GroupActionUpdate) {
-    // Add the type to the parameter
-    //log current stack trace
     const currentstate = this._local_groupupdates.get(action.id);
     if (currentstate) {
       const { new_obj, change } = deep_merge(currentstate, action.group);

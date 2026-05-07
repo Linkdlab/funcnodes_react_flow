@@ -28,6 +28,9 @@ export class WorkerEdgeManager
     // no-op
   }
 
+  /**
+   * Connect two node IOs in the currently edited nodespace.
+   */
   add_edge({
     src_nid,
     src_ioid,
@@ -42,11 +45,21 @@ export class WorkerEdgeManager
     replace?: boolean;
   }) {
     return this.communicationManager._send_cmd({
-      cmd: "add_edge",
-      kwargs: { src_nid, src_ioid, trg_nid, trg_ioid, replace },
+      cmd: "connect_at_path",
+      kwargs: {
+        path: this.activeNodeSpacePath,
+        src_nid,
+        src_ioid,
+        trg_nid,
+        trg_ioid,
+        replace,
+      },
     });
   }
 
+  /**
+   * Disconnect two node IOs in the currently edited nodespace.
+   */
   remove_edge({
     src_nid,
     src_ioid,
@@ -59,8 +72,14 @@ export class WorkerEdgeManager
     trg_ioid: string;
   }) {
     return this.communicationManager._send_cmd({
-      cmd: "remove_edge",
-      kwargs: { src_nid, src_ioid, trg_nid, trg_ioid },
+      cmd: "disconnect_at_path",
+      kwargs: {
+        path: this.activeNodeSpacePath,
+        src_nid,
+        src_ioid,
+        trg_nid,
+        trg_ioid,
+      },
     });
   }
 }

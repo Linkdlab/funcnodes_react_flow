@@ -20,27 +20,38 @@ export class WorkerGroupManager
     // no-op
   }
 
+  /**
+   * Create a legacy visual group in the active root or executable group nodespace.
+   */
   async group_nodes(nodeIds: string[], group_ids: string[]) {
-    // This sends a command to the backend Python worker
-    // The backend should implement a handler for the "group_nodes" command
     const res = (await this.communicationManager._send_cmd({
-      cmd: "group_nodes",
-      kwargs: { node_ids: nodeIds, group_ids: group_ids },
+      cmd: "group_nodes_at_path",
+      kwargs: {
+        path: this.activeNodeSpacePath,
+        node_ids: nodeIds,
+        group_ids: group_ids,
+      },
       wait_for_response: true,
     })) as NodeGroups;
     this.eventManager._receive_groups(res);
     return res;
   }
 
+  /**
+   * Remove a legacy visual group from the active nodespace.
+   */
   async remove_group(gid: string) {
     await this.communicationManager._send_cmd({
-      cmd: "remove_group",
-      kwargs: { gid: gid },
+      cmd: "remove_group_at_path",
+      kwargs: { path: this.activeNodeSpacePath, gid: gid },
       wait_for_response: true,
     });
-    await this.syncManager.sync_nodespace();
+    await this.syncManager.sync_active_nodespace();
   }
 
+  /**
+   * Queue a local legacy visual group update for path-aware synchronization.
+   */
   locally_update_group(action: GroupActionUpdate) {
     this.syncManager.locally_update_group(action);
   }
