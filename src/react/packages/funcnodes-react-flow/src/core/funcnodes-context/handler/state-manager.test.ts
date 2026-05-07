@@ -109,4 +109,19 @@ describe("active nodespace path state", () => {
     ).toEqual({ x: 30, y: 40, zoom: 0.75 });
     expect(setViewport).toHaveBeenCalledWith({ x: 10, y: 20, zoom: 1.5 });
   });
+
+  it("syncs the active nodespace through the current worker", async () => {
+    const flow = makeFlow();
+    const sync_active_nodespace = vi.fn().mockResolvedValue(undefined);
+    const worker = makeWorker("worker-1");
+    worker.getSyncManager = vi.fn(() => ({ sync_active_nodespace }));
+    flow.set_worker(worker);
+    flow.enter_group_nodespace("group-1", "Group One");
+
+    await flow.sync_active_nodespace();
+
+    expect(sync_active_nodespace).toHaveBeenCalledWith([
+      { groupNodeId: "group-1", label: "Group One" },
+    ]);
+  });
 });

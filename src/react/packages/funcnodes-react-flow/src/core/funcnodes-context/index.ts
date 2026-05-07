@@ -19,6 +19,7 @@ export type {
   ViewState,
   NodeViewState,
   FullNodeSpaceJSON,
+  EditableNodeSpaceSnapshot,
 } from "./serializations";
 export type {
   ActiveNodeSpaceState,

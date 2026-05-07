@@ -252,10 +252,21 @@ export class StateManagerHandler
   }
 
   /**
-   * Placeholder sync hook for later milestones that will request path-aware
-   * worker snapshots.
+   * Requests a path-aware worker snapshot for the currently active nodespace.
    */
   async sync_active_nodespace(): Promise<void> {
-    return Promise.resolve();
+    const worker = this.workerManager.worker as
+      | {
+          getSyncManager?: () => {
+            sync_active_nodespace: (path: NodeSpacePath) => Promise<void>;
+          };
+        }
+      | undefined;
+    const syncManager = worker?.getSyncManager?.();
+    if (!syncManager) return;
+
+    await syncManager.sync_active_nodespace(
+      this.active_nodespace.getState().path
+    );
   }
 }

@@ -15,11 +15,13 @@ import { generate_edge_id } from "@/edges-core";
 import { assert_reactflow_node } from "@/react-flow";
 import { NodeSpaceZustand } from "@/nodespace";
 import type { NodeSpaceZustandInterface } from "@/nodespace";
+import type { EditableNodeSpaceSnapshot } from "../serializations";
 
 export interface NodeSpaceManagerAPI {
   on_node_action: (action: NodeAction) => NodeType | undefined;
   on_edge_action: (edge: EdgeAction) => void;
   on_group_action: (group: GroupAction) => void;
+  apply_nodespace_snapshot: (snapshot: EditableNodeSpaceSnapshot) => void;
   clear_all: () => void;
   center_node: (node_id: string | string[]) => void;
   center_all: () => void;
@@ -150,6 +152,47 @@ export class NodeSpaceManager
   center_all() {
     this.reactFlowManager.rf_instance?.fitView({ padding: 0.2 });
   }
+
+  /**
+   * Replaces frontend node stores, React Flow nodes, edges, and legacy UI groups
+   * with one path-aware backend nodespace snapshot.
+   */
+  apply_nodespace_snapshot = (snapshot: EditableNodeSpaceSnapshot): void => {
+    const rfstate = this.reactFlowManager.useReactFlowStore.getState();
+    this.nodespace.nodesstates.clear();
+
+    const rfNodes: AnyFuncNodesRFNode[] = [];
+    for (const serializedNode of snapshot.nodes) {
+      try {
+        const store = createNodeStore(serializedNode);
+        this.nodespace.nodesstates.set(serializedNode.id, store);
+        rfNodes.push(assert_reactflow_node(store, this.context.rf) as AnyFuncNodesRFNode);
+      } catch (e) {
+        this.context.rf.logger.error(`Failed to create node store ${e}`);
+      }
+    }
+
+    const rfEdges: Edge[] = snapshot.edges.map(
+      ([src_nid, src_ioid, trg_nid, trg_ioid]) => ({
+        id: generate_edge_id({
+          src_nid,
+          src_ioid,
+          trg_nid,
+          trg_ioid,
+        }),
+        source: src_nid,
+        target: trg_nid,
+        sourceHandle: src_ioid,
+        targetHandle: trg_ioid,
+        className: "funcnodes-edge animated",
+        zIndex: 1003,
+      })
+    );
+
+    rfstate.update_nodes(rfNodes);
+    rfstate.update_edges(rfEdges);
+    this._set_groups(snapshot.groups || {});
+  };
 
   auto_resize_group = (gid: string) => {
     const rfstate = this.reactFlowManager.useReactFlowStore.getState();

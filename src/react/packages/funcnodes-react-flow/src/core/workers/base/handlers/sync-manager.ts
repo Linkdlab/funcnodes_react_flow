@@ -3,7 +3,15 @@ import type { WorkerHandlerContext } from "./worker-handlers.types";
 import { FuncNodesWorker } from "../funcnodes-worker";
 import type { NodeGroup, NodeGroups } from "@/groups";
 import { deep_merge } from "@/object-helpers";
-import type { FullState, GroupActionUpdate, NodeActionUpdate, NodeViewState, ViewState } from "@/funcnodes-context";
+import type {
+  EditableNodeSpaceSnapshot,
+  FullState,
+  GroupActionUpdate,
+  NodeActionUpdate,
+  NodeSpacePath,
+  NodeViewState,
+  ViewState,
+} from "@/funcnodes-context";
 import type { PartialSerializedNodeType, SerializedNodeType } from "@/nodes-core";
 import type { PackedPlugin } from "@/plugins";
 import type { LibType } from "@/library";
@@ -58,7 +66,7 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     await this.sync_lib();
     await this.sync_external_worker();
     await this.sync_funcnodes_plugins();
-    await this.sync_nodespace();
+    await this.sync_active_nodespace();
     await this.sync_view_state();
 
     await this.on_sync_complete(this.context.worker);
@@ -148,6 +156,9 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
       this.context.worker._zustand.update_render_options(resp.renderoptions);
 
     const nodeview = resp.nodes;
+    if (this.context.worker._zustand.active_nodespace.getState().path.length > 0) {
+      return;
+    }
     if (nodeview) {
       for (const nodeid in nodeview) {
         const partnode: PartialSerializedNodeType = {};
@@ -200,6 +211,49 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
     this.eventManager._receive_groups(groups);
   }
 
+  /**
+   * Synchronize the React Flow canvas with the nodespace at the requested
+   * executable group path.
+   */
+  async sync_active_nodespace(path?: NodeSpacePath) {
+    if (!this.context.worker._zustand) return;
+    if (!this.context.worker.is_open) return;
+
+    const activePath =
+      path ?? this.context.worker._zustand.active_nodespace.getState().path;
+    this.context.worker._zustand.active_nodespace.setState({
+      loading: true,
+      error: undefined,
+    });
+
+    try {
+      const snapshot = (await this.context.worker
+        .getCommunicationManager()
+        ._send_cmd({
+          cmd: "get_nodespace_at_path",
+          kwargs: { path: activePath },
+          wait_for_response: true,
+          unique: true,
+        })) as EditableNodeSpaceSnapshot;
+
+      this.context.worker._zustand
+        .getNodespaceManager()
+        .apply_nodespace_snapshot(snapshot);
+      this.context.worker._zustand.active_nodespace.setState({
+        path: snapshot.path,
+        loading: false,
+        error: undefined,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.context.worker._zustand.active_nodespace.setState({
+        loading: false,
+        error: message,
+      });
+      throw error;
+    }
+  }
+
   async fullsync() {
     if (!this.context.worker._zustand) return;
     if (!this.context.worker.is_open) return;
@@ -231,21 +285,7 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
       this.context.worker._zustand.update_render_options(
         resp.view.renderoptions
       );
-    const nodeview = resp.view.nodes;
-    for (const node of resp.backend.nodes) {
-      const _nodeview = nodeview[node.id];
-      if (_nodeview !== undefined) {
-        update_nodeview(node, _nodeview);
-      }
-      this.eventManager._receive_node_added(node);
-    }
-    for (const edge of resp.backend.edges) {
-      this.eventManager._receive_edge_added(...edge);
-    }
-    const groups = resp.backend.groups;
-    if (groups) {
-      this.eventManager._receive_groups(groups);
-    }
+    await this.sync_active_nodespace();
   }
 
   sync_local_node_updates() {
