@@ -441,9 +441,15 @@ export class NodeSpaceManager
     if (action.node.in_trigger) {
       action.node.error = undefined;
     }
+    const updatedPathLabel =
+      typeof action.node.name === "string" &&
+      this.context.rf
+        .getStateManager()
+        .update_nodespace_path_label(action.id, action.node.name);
     if (action.from_remote) {
       const store = this.nodespace.get_node(action.id, false);
       if (!store) {
+        if (updatedPathLabel) return undefined;
         console.error("Node not found to update", action.id);
         return undefined;
       }

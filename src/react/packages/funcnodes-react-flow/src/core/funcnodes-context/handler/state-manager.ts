@@ -14,6 +14,7 @@ export interface StateManagerManagerAPI {
   enter_group_nodespace: (groupNodeId: string, label: string) => void;
   leave_group_nodespace: () => void;
   go_to_nodespace_path_index: (index: number) => void;
+  update_nodespace_path_label: (groupNodeId: string, label: string) => boolean;
   reset_nodespace_path: () => void;
   sync_active_nodespace: () => Promise<void>;
   toast?: ToastDispatcher;
@@ -236,6 +237,24 @@ export class StateManagerHandler
       return;
     }
     this.set_nodespace_path(currentPath.slice(0, index + 1));
+  }
+
+  /**
+   * Updates a breadcrumb label when a group node already present in the active
+   * path is renamed.
+   */
+  update_nodespace_path_label(groupNodeId: string, label: string): boolean {
+    const currentPath = this.active_nodespace.getState().path;
+    if (!currentPath.some((entry) => entry.groupNodeId === groupNodeId)) {
+      return false;
+    }
+
+    this.active_nodespace.setState({
+      path: currentPath.map((entry) =>
+        entry.groupNodeId === groupNodeId ? { ...entry, label } : entry
+      ),
+    });
+    return true;
   }
 
   /**

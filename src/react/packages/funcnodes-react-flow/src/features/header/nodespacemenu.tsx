@@ -12,6 +12,7 @@ export const NodeSpaceMenu = () => {
   const onNew = () => {
     const alert = window.confirm("Are you sure you want to start a new flow?");
     if (alert) {
+      fnrf_zst.reset_nodespace_path();
       fnrf_zst.worker?.clear();
     }
   };
@@ -44,6 +45,7 @@ export const NodeSpaceMenu = () => {
         if (!contents) return;
         const data = JSON.parse(contents as string);
         await fnrf_zst.worker?.load(data);
+        fnrf_zst.reset_nodespace_path();
       };
       reader.readAsText(file);
     };
