@@ -13,6 +13,9 @@ export type {
   SerializedType,
   SerializedIOType,
   PartialSerializedIOType,
+  ExecutableGroupNodeSpaceJSON,
+  GroupInterfaceBinding,
+  GroupNodePayload,
   AllOf,
   AnyOf,
   ArrayOf,
@@ -21,5 +24,17 @@ export type {
   TypeOf,
 } from "./serializations";
 
-export { split_rf_nodes, sortByParent, useNodeTools } from "./utils";
+export {
+  EXECUTABLE_GROUP_NODE_ID,
+  GROUP_INPUT_GATEWAY_NODE_ID,
+  GROUP_OUTPUT_GATEWAY_NODE_ID,
+  SUPPORTED_GROUP_PAYLOAD_VERSION,
+  getGroupPayload,
+  isExecutableGroupNode,
+  isGroupInputGateway,
+  isGroupOutputGateway,
+  split_rf_nodes,
+  sortByParent,
+  useNodeTools,
+} from "./utils";
 export { createNodeStore, createIOStore } from "./stores";

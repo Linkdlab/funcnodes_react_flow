@@ -1,6 +1,102 @@
 import type { DefaultRFNode, GroupRFNode } from "@/nodes";
 import { useReactFlow } from "@xyflow/react";
 import type { Node } from "@xyflow/react";
+import type { NodeType } from "../interfaces";
+import type { GroupNodePayload, SerializedNodeType } from "../serializations";
+
+/** Backend node id used by executable group nodes. */
+export const EXECUTABLE_GROUP_NODE_ID = "funcnodes_core.group";
+
+/** Backend node id used by the internal group input gateway node. */
+export const GROUP_INPUT_GATEWAY_NODE_ID = "funcnodes_core.group.input";
+
+/** Backend node id used by the internal group output gateway node. */
+export const GROUP_OUTPUT_GATEWAY_NODE_ID = "funcnodes_core.group.output";
+
+/** Group payload schema version currently understood by the frontend. */
+export const SUPPORTED_GROUP_PAYLOAD_VERSION = 1;
+
+type NodeIdLike = Partial<Pick<NodeType | SerializedNodeType, "node_id">> & {
+  properties?: Record<string, unknown>;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+};
+
+const getNodeId = (node: unknown): string | undefined => {
+  if (!isRecord(node)) return undefined;
+  return typeof node.node_id === "string" ? node.node_id : undefined;
+};
+
+const hasRecordValue = (
+  value: Record<string, unknown>,
+  key: string
+): boolean => {
+  return isRecord(value[key]);
+};
+
+const isGroupPayloadShape = (payload: unknown): payload is GroupNodePayload => {
+  if (!isRecord(payload)) return false;
+  if (typeof payload.version !== "number") return false;
+  if (!hasRecordValue(payload, "inner_nodespace")) return false;
+  if (typeof payload.input_gateway_node !== "string") return false;
+  if (typeof payload.output_gateway_node !== "string") return false;
+  if (!hasRecordValue(payload, "input_bindings")) return false;
+  if (!hasRecordValue(payload, "output_bindings")) return false;
+  return true;
+};
+
+/**
+ * Returns whether a serialized/frontend node-like object is an executable
+ * backend `GroupNode`.
+ */
+export const isExecutableGroupNode = (node: unknown): boolean => {
+  return getNodeId(node) === EXECUTABLE_GROUP_NODE_ID;
+};
+
+/** Returns whether a node-like object is an internal group input gateway. */
+export const isGroupInputGateway = (node: unknown): boolean => {
+  return getNodeId(node) === GROUP_INPUT_GATEWAY_NODE_ID;
+};
+
+/** Returns whether a node-like object is an internal group output gateway. */
+export const isGroupOutputGateway = (node: unknown): boolean => {
+  return getNodeId(node) === GROUP_OUTPUT_GATEWAY_NODE_ID;
+};
+
+/**
+ * Reads and validates the supported executable group payload from a group node.
+ *
+ * Returns `undefined` for non-group nodes or group nodes without a payload, and
+ * throws when the payload exists but is unsupported or malformed.
+ */
+export const getGroupPayload = (
+  node: NodeIdLike | unknown
+): GroupNodePayload | undefined => {
+  if (!isExecutableGroupNode(node)) return undefined;
+  if (!isRecord(node)) return undefined;
+  if (!isRecord(node.properties)) return undefined;
+
+  const payload = node.properties.group;
+  if (payload === undefined) return undefined;
+
+  if (!isRecord(payload)) {
+    throw new Error("Invalid executable group payload: expected object");
+  }
+  if (payload.version !== SUPPORTED_GROUP_PAYLOAD_VERSION) {
+    throw new Error(
+      `Unsupported executable group payload version: ${String(
+        payload.version
+      )}`
+    );
+  }
+  if (!isGroupPayloadShape(payload)) {
+    throw new Error("Invalid executable group payload: missing required fields");
+  }
+
+  return payload;
+};
 
 export const split_rf_nodes = (
   nodes: Node[]

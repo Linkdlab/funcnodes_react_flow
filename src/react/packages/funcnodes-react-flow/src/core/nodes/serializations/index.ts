@@ -49,3 +49,9 @@ export type {
   EnumOf,
   TypeOf,
 } from "./types";
+
+export type {
+  ExecutableGroupNodeSpaceJSON,
+  GroupInterfaceBinding,
+  GroupNodePayload,
+} from "./group";
