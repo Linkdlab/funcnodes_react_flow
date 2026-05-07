@@ -11,6 +11,7 @@ import { ExpandingContainer } from "@/shared-components/auto-layouts";
 import { IOContext, NodeContext } from "@/nodes";
 import { NodeName } from "@/nodes-components";
 import type { NodeStore } from "@/nodes-core";
+import { GroupBoundarySettings } from "./GroupBoundarySettings";
 
 const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
   const node = nodestore.use();
@@ -38,6 +39,7 @@ const CurrentNodeSettings = ({ nodestore }: { nodestore: NodeStore }) => {
             );
           })}
         </div>
+        <GroupBoundarySettings nodestore={nodestore} />
         <div className="nodesettings_section">
           <div>Outputs</div>
           {node.outputs.map((ioname) => {

@@ -13,6 +13,24 @@ export interface WorkerGroupManagerAPI {
   ungroup_node: (groupNodeId: string) => Promise<void>;
   /** Convert one selected legacy visual group into an executable GroupNode. */
   materialize_group: (legacyGroupId: string) => Promise<string | undefined>;
+  /** Add one public input boundary to an executable GroupNode. */
+  add_group_input: (
+    groupNodeId: string,
+    options: GroupBoundaryOptions
+  ) => Promise<void>;
+  /** Add one public output boundary to an executable GroupNode. */
+  add_group_output: (
+    groupNodeId: string,
+    options: GroupBoundaryOptions
+  ) => Promise<void>;
+  /** Update one public input or output boundary on an executable GroupNode. */
+  update_group_io: (
+    groupNodeId: string,
+    boundaryId: string,
+    options: GroupBoundaryOptions
+  ) => Promise<void>;
+  /** Remove one public input or output boundary from an executable GroupNode. */
+  remove_group_io: (groupNodeId: string, boundaryId: string) => Promise<void>;
   remove_group: (gid: string) => Promise<void>;
   locally_update_group: (action: GroupActionUpdate) => void;
 }
@@ -20,6 +38,22 @@ export interface WorkerGroupManagerAPI {
 export interface ExecutableGroupOptions {
   groupId?: string;
   name?: string;
+}
+
+/** Constructor-style metadata for one executable group boundary IO. */
+export interface GroupBoundaryOptions {
+  id?: string;
+  uuid?: string;
+  name?: string;
+  type?: unknown;
+  description?: string;
+  required?: boolean;
+  default?: unknown;
+  does_trigger?: boolean;
+  hidden?: boolean;
+  emit_value_set?: boolean;
+  render_options?: unknown;
+  value_options?: unknown;
 }
 
 type GroupCommandResult = string | { id?: string; uuid?: string } | undefined;
@@ -117,6 +151,84 @@ export class WorkerGroupManager
     })) as GroupCommandResult;
     await this.syncManager.sync_active_nodespace();
     return getGroupResultId(result);
+  }
+
+  /**
+   * Add a public input boundary to an executable `GroupNode` in the active path.
+   */
+  async add_group_input(
+    groupNodeId: string,
+    options: GroupBoundaryOptions
+  ): Promise<void> {
+    await this.communicationManager._send_cmd({
+      cmd: "add_group_input_at_path",
+      kwargs: {
+        path: this.activeNodeSpacePath,
+        group_node_id: groupNodeId,
+        options,
+      },
+      wait_for_response: true,
+    });
+    await this.syncManager.sync_active_nodespace();
+  }
+
+  /**
+   * Add a public output boundary to an executable `GroupNode` in the active path.
+   */
+  async add_group_output(
+    groupNodeId: string,
+    options: GroupBoundaryOptions
+  ): Promise<void> {
+    await this.communicationManager._send_cmd({
+      cmd: "add_group_output_at_path",
+      kwargs: {
+        path: this.activeNodeSpacePath,
+        group_node_id: groupNodeId,
+        options,
+      },
+      wait_for_response: true,
+    });
+    await this.syncManager.sync_active_nodespace();
+  }
+
+  /**
+   * Update public boundary metadata on an executable `GroupNode`.
+   */
+  async update_group_io(
+    groupNodeId: string,
+    boundaryId: string,
+    options: GroupBoundaryOptions
+  ): Promise<void> {
+    await this.communicationManager._send_cmd({
+      cmd: "update_group_io_at_path",
+      kwargs: {
+        path: this.activeNodeSpacePath,
+        group_node_id: groupNodeId,
+        boundary_id: boundaryId,
+        options,
+      },
+      wait_for_response: true,
+    });
+    await this.syncManager.sync_active_nodespace();
+  }
+
+  /**
+   * Remove a public input or output boundary from an executable `GroupNode`.
+   */
+  async remove_group_io(
+    groupNodeId: string,
+    boundaryId: string
+  ): Promise<void> {
+    await this.communicationManager._send_cmd({
+      cmd: "remove_group_io_at_path",
+      kwargs: {
+        path: this.activeNodeSpacePath,
+        group_node_id: groupNodeId,
+        boundary_id: boundaryId,
+      },
+      wait_for_response: true,
+    });
+    await this.syncManager.sync_active_nodespace();
   }
 
   /**

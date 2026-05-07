@@ -1,5 +1,8 @@
 export type { WorkerNodeManagerAPI } from "./node-manager";
-export type { WorkerGroupManagerAPI } from "./group-manager";
+export type {
+  GroupBoundaryOptions,
+  WorkerGroupManagerAPI,
+} from "./group-manager";
 export type { WorkerEdgeManagerAPI } from "./edge-manager";
 export type { WorkerHookManagerAPI } from "./hook-manager";
 export type { WorkerLibraryManagerAPI } from "./library-manager";

@@ -13,3 +13,4 @@ export type {
   WorkerRepresentation,
 } from "./manager/worker-manager.types";
 export { useWorkerApi } from "./hooks";
+export type { GroupBoundaryOptions } from "./base/handlers";
