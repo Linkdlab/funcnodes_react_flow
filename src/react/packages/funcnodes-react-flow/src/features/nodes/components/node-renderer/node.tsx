@@ -16,13 +16,19 @@ import {
   LanIcon,
   GearIcon,
   ExpandLessIcon,
+  OpenInFullIcon,
 } from "@/icons";
 import { IODataOverlay, IOPreviewWrapper } from "./io/iodataoverlay";
 import { NodeSettingsOverlay } from "@/node-settings";
 import { useKeyPress } from "@/providers";
 import { CustomDialog } from "@/shared-components";
 import { useWorkerApi } from "@/workers";
-import type { IOStore, NodeStore } from "@/nodes-core";
+import type { IOStore, NodeStore, NodeType } from "@/nodes-core";
+import {
+  isExecutableGroupNode,
+  isGroupInputGateway,
+  isGroupOutputGateway,
+} from "@/nodes-core";
 
 import { IOContext, NodeContext, useNodeStore } from "../../provider";
 import { RenderMappingContext } from "@/data-rendering";
@@ -31,15 +37,41 @@ interface NodeHeaderProps {
   toogleShowSettings?: () => void;
 }
 
+interface GroupNodePresentation {
+  isExecutableGroup: boolean;
+  isInputGateway: boolean;
+  isOutputGateway: boolean;
+}
+
+/** Returns presentation flags for executable group and gateway node kinds. */
+const getGroupNodePresentation = (
+  node: Pick<NodeType, "node_id">
+): GroupNodePresentation => ({
+  isExecutableGroup: isExecutableGroupNode(node),
+  isInputGateway: isGroupInputGateway(node),
+  isOutputGateway: isGroupOutputGateway(node),
+});
+
+/** Picks the most user-facing label available for group navigation affordances. */
+const getNodeDisplayLabel = (
+  node: Pick<NodeType, "id" | "name" | "node_name">
+): string => node.name || node.node_name || node.id;
+
 const NodeHeader = React.memo(({ toogleShowSettings }: NodeHeaderProps) => {
   const fnrf_zst: FuncNodesReactFlow = useFuncNodesContext();
   const { node } = useWorkerApi();
   const nodestore = useNodeStore();
-  const { id, description, node_name } = nodestore.useShallow((state) => ({
-    id: state.id,
-    description: state.description,
-    node_name: state.node_name,
-  }));
+  const { id, description, node_name, name, node_id } = nodestore.useShallow(
+    (state) => ({
+      id: state.id,
+      description: state.description,
+      node_name: state.node_name,
+      name: state.name,
+      node_id: state.node_id,
+    })
+  );
+  const { isExecutableGroup } = getGroupNodePresentation({ node_id });
+  const groupLabel = getNodeDisplayLabel({ id, name, node_name });
 
   const clicktrigger = React.useCallback(() => {
     fnrf_zst.on_node_action({
@@ -48,6 +80,30 @@ const NodeHeader = React.memo(({ toogleShowSettings }: NodeHeaderProps) => {
       id: id,
     });
   }, [fnrf_zst, id]);
+
+  /**
+   * Enters the executable group from the header button while leaving the
+   * canvas-level double-click navigation behavior available on the node body.
+   */
+  const enterGroup = React.useCallback(
+    async (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        fnrf_zst.enter_group_nodespace(id, groupLabel);
+        await fnrf_zst.sync_active_nodespace();
+      } catch (error) {
+        const description =
+          error instanceof Error ? error.message : String(error);
+        fnrf_zst.getStateManager().toaster?.error({
+          title: "Could not enter group",
+          description,
+        });
+      }
+    },
+    [fnrf_zst, id, groupLabel]
+  );
+
   return (
     <div className="nodeheader" title={description || node_name}>
       <div className="nodeheader_element">
@@ -72,6 +128,18 @@ const NodeHeader = React.memo(({ toogleShowSettings }: NodeHeaderProps) => {
             toogleShowSettings?.();
           }}
         />
+        {isExecutableGroup && (
+          <button
+            type="button"
+            aria-label={`Enter group ${groupLabel}`}
+            title={`Enter group ${groupLabel}`}
+            className="groupenterbutton nodeheaderbutton nodrag"
+            data-no-group-enter="true"
+            onClick={enterGroup}
+          >
+            <OpenInFullIcon fontSize="inherit" />
+          </button>
+        )}
       </div>
       <div className="nodeheader_element nodeheader_title">
         <div className="nodeheader_title_text">{node_name}</div>
@@ -244,13 +312,28 @@ export interface RFNodeDataPass extends Record<string, unknown> {
   nodestore: NodeStore;
 }
 
+/** Renders a compact boundary label for internal group gateway nodes. */
+const GroupGatewayLabel = React.memo(
+  ({ presentation }: { presentation: GroupNodePresentation }) => {
+    if (presentation.isInputGateway) {
+      return <div className="group-gateway-label">Group Input Gateway</div>;
+    }
+    if (presentation.isOutputGateway) {
+      return <div className="group-gateway-label">Group Output Gateway</div>;
+    }
+    return null;
+  }
+);
+
 const InnerNode = () => {
   const nodestore = useNodeStore();
-  const { collapsed, error, node_id } = nodestore.useShallow((state) => ({
+  const { id, collapsed, error, node_id } = nodestore.useShallow((state) => ({
+    id: state.id,
     collapsed: state.properties["frontend:collapsed"] || false,
     error: state.error,
     node_id: state.node_id,
   }));
+  const presentation = getGroupNodePresentation({ node_id });
   const { visualTrigger } = useDefaultNodeInjection(nodestore);
   const [showSettings, setShowSettings] = useState(false);
   const [nodeSettingsPath, setNodeSettingsPath] = useState<string>("");
@@ -273,14 +356,22 @@ const InnerNode = () => {
 
   return (
     <div
+      data-testid={`fn-node-${id}`}
       className={
         "innernode" +
         (visualTrigger ? " intrigger" : "") +
-        (error ? " error" : "")
+        (error ? " error" : "") +
+        (presentation.isExecutableGroup ? " executable-group-node" : "") +
+        (presentation.isInputGateway || presentation.isOutputGateway
+          ? " group-gateway-node"
+          : "") +
+        (presentation.isInputGateway ? " group-input-gateway-node" : "") +
+        (presentation.isOutputGateway ? " group-output-gateway-node" : "")
       }
       onClick={onClickHandler}
     >
       <NodeHeader toogleShowSettings={toogleShowSettings} />
+      <GroupGatewayLabel presentation={presentation} />
       <NodeName />
       {collapsed ? null : (
         <NodeBody
