@@ -4,19 +4,30 @@ import { useKeyPress, useReactFlow } from "@xyflow/react";
 
 import { useClipboardOperations } from "@/react-flow/hooks/useClipboardOperations";
 import { shouldPreserveNativeCopy } from "@/react-flow/utils/copy-selection";
-import { useGroupNodes } from "@/groups";
+import { useGroupNodesAsNode, useUngroupNodes } from "@/groups";
 import { useWorkerApi } from "@/workers";
-import { useNodeTools } from "@/nodes-core";
+import { isExecutableGroupNode, useNodeTools } from "@/nodes-core";
+import { useFuncNodesContext } from "@/providers";
 
 export const KeyHandler = () => {
   const delPressed = useKeyPress("Delete");
   const groupPressed = useKeyPress(["Control+g", "Meta+g"]);
-  const ungroupPressed = useKeyPress(["Control+Alt+g", "Meta+Alt+g"]); // TODO: implement ungrouping
-  const groupNodes = useGroupNodes();
+  const ungroupPressed = useKeyPress(["Control+Alt+g", "Meta+Alt+g"]);
+  const groupNodesAsNode = useGroupNodesAsNode();
+  const ungroupNodes = useUngroupNodes();
   const { getEdges } = useReactFlow();
   const { getNodes, getSelectedNodes, getSplitNodes } = useNodeTools();
   const { copySelectedNodes } = useClipboardOperations();
   const { node: nodeApi, group: groupApi, edge: edgeApi } = useWorkerApi();
+  const fnrf_zst = useFuncNodesContext();
+
+  /** Show executable grouping feedback through the shared toast channel. */
+  const showGroupingError = React.useCallback(
+    (title: string, description: string) => {
+      fnrf_zst.getStateManager().toaster?.error({ title, description });
+    },
+    [fnrf_zst]
+  );
 
   // --- Deletion Logic ---
   useEffect(() => {
@@ -85,24 +96,58 @@ export const KeyHandler = () => {
     if (groupPressed) {
       const selectedNodes = getSelectedNodes();
       const { group_nodes, default_nodes } = getSplitNodes(selectedNodes);
-      if (selectedNodes.length > 0) {
-        groupNodes(
-          default_nodes.map((n) => n.id),
-          group_nodes.map((n) => n.id)
+      if (group_nodes.length > 0) {
+        // Legacy UI groups are layout metadata. They need explicit
+        // materialization before they can be part of executable grouping.
+        showGroupingError(
+          "Cannot create executable group",
+          "Legacy visual groups must be materialized explicitly before grouping."
         );
+        return;
+      }
+      if (default_nodes.length > 1) {
+        groupNodesAsNode(default_nodes.map((n) => n.id)).catch((error) => {
+          const description =
+            error instanceof Error ? error.message : String(error);
+          showGroupingError("Could not create executable group", description);
+        });
       }
     }
-  }, [groupPressed, getNodes]);
+  }, [
+    groupPressed,
+    getNodes,
+    getSelectedNodes,
+    getSplitNodes,
+    groupNodesAsNode,
+    showGroupingError,
+  ]);
 
   useEffect(() => {
     if (ungroupPressed) {
       const selectedNodes = getSelectedNodes();
-      const { group_nodes } = getSplitNodes(selectedNodes);
-      group_nodes.forEach((n) => {
-        groupApi?.remove_group(n.id);
-      });
+      const { default_nodes } = getSplitNodes(selectedNodes);
+      const executableGroupNodeIds = default_nodes
+        .filter((node) => {
+          const serializedNode = (node.data as any)?.nodestore?.getState?.();
+          return isExecutableGroupNode(serializedNode);
+        })
+        .map((node) => node.id);
+      if (executableGroupNodeIds.length > 0) {
+        ungroupNodes(executableGroupNodeIds).catch((error) => {
+          const description =
+            error instanceof Error ? error.message : String(error);
+          showGroupingError("Could not ungroup executable group", description);
+        });
+      }
     }
-  }, [ungroupPressed, getNodes]);
+  }, [
+    ungroupPressed,
+    getNodes,
+    getSelectedNodes,
+    getSplitNodes,
+    ungroupNodes,
+    showGroupingError,
+  ]);
 
   return <></>;
 };
