@@ -105,6 +105,27 @@ describe("WorkerGroupManager executable group commands", () => {
     expect(syncActiveNodeSpace).toHaveBeenCalledTimes(1);
   });
 
+  it("adds a public group input at an explicitly supplied parent path", async () => {
+    const { manager, sendCmd, syncActiveNodeSpace } = makeGroupManager();
+
+    await manager.add_group_input_at_path([], "group-node", {
+      id: "value",
+      name: "Value",
+      type: "int",
+    });
+
+    expect(sendCmd).toHaveBeenCalledWith({
+      cmd: "add_group_input_at_path",
+      kwargs: {
+        path: [],
+        group_node_id: "group-node",
+        options: { id: "value", name: "Value", type: "int" },
+      },
+      wait_for_response: true,
+    });
+    expect(syncActiveNodeSpace).toHaveBeenCalledTimes(1);
+  });
+
   it("adds a public group output at the active nodespace path", async () => {
     const { manager, sendCmd, syncActiveNodeSpace } = makeGroupManager();
 
@@ -118,6 +139,29 @@ describe("WorkerGroupManager executable group commands", () => {
       cmd: "add_group_output_at_path",
       kwargs: {
         path: GROUP_PATH,
+        group_node_id: "group-node",
+        options: { id: "result", name: "Result", type: "float" },
+      },
+      wait_for_response: true,
+    });
+    expect(syncActiveNodeSpace).toHaveBeenCalledTimes(1);
+  });
+
+  it("adds a public group output at an explicitly supplied parent path", async () => {
+    const { manager, sendCmd, syncActiveNodeSpace } = makeGroupManager(
+      GROUP_PATH
+    );
+
+    await manager.add_group_output_at_path([], "group-node", {
+      id: "result",
+      name: "Result",
+      type: "float",
+    });
+
+    expect(sendCmd).toHaveBeenCalledWith({
+      cmd: "add_group_output_at_path",
+      kwargs: {
+        path: [],
         group_node_id: "group-node",
         options: { id: "result", name: "Result", type: "float" },
       },
@@ -146,6 +190,26 @@ describe("WorkerGroupManager executable group commands", () => {
     expect(syncActiveNodeSpace).toHaveBeenCalledTimes(1);
   });
 
+  it("updates public group boundary metadata at an explicit parent path", async () => {
+    const { manager, sendCmd, syncActiveNodeSpace } = makeGroupManager();
+
+    await manager.update_group_io_at_path([], "group-node", "value", {
+      name: "Renamed Value",
+    });
+
+    expect(sendCmd).toHaveBeenCalledWith({
+      cmd: "update_group_io_at_path",
+      kwargs: {
+        path: [],
+        group_node_id: "group-node",
+        boundary_id: "value",
+        options: { name: "Renamed Value" },
+      },
+      wait_for_response: true,
+    });
+    expect(syncActiveNodeSpace).toHaveBeenCalledTimes(1);
+  });
+
   it("removes public group boundary IO at the active nodespace path", async () => {
     const { manager, sendCmd, syncActiveNodeSpace } = makeGroupManager();
 
@@ -155,6 +219,23 @@ describe("WorkerGroupManager executable group commands", () => {
       cmd: "remove_group_io_at_path",
       kwargs: {
         path: GROUP_PATH,
+        group_node_id: "group-node",
+        boundary_id: "value",
+      },
+      wait_for_response: true,
+    });
+    expect(syncActiveNodeSpace).toHaveBeenCalledTimes(1);
+  });
+
+  it("removes public group boundary IO at an explicit parent path", async () => {
+    const { manager, sendCmd, syncActiveNodeSpace } = makeGroupManager();
+
+    await manager.remove_group_io_at_path([], "group-node", "value");
+
+    expect(sendCmd).toHaveBeenCalledWith({
+      cmd: "remove_group_io_at_path",
+      kwargs: {
+        path: [],
         group_node_id: "group-node",
         boundary_id: "value",
       },

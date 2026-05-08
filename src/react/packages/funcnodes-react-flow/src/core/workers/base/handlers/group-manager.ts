@@ -1,6 +1,6 @@
 import { AbstractWorkerHandler } from "./worker-handlers.types";
 import type { NodeGroups } from "@/groups";
-import type { GroupActionUpdate } from "@/funcnodes-context";
+import type { GroupActionUpdate, NodeSpacePath } from "@/funcnodes-context";
 
 export interface WorkerGroupManagerAPI {
   group_nodes: (nodeIds: string[], group_ids: string[]) => Promise<NodeGroups>;
@@ -18,8 +18,20 @@ export interface WorkerGroupManagerAPI {
     groupNodeId: string,
     options: GroupBoundaryOptions
   ) => Promise<void>;
+  /** Add one public input boundary to a group at an explicit nodespace path. */
+  add_group_input_at_path: (
+    path: NodeSpacePath,
+    groupNodeId: string,
+    options: GroupBoundaryOptions
+  ) => Promise<void>;
   /** Add one public output boundary to an executable GroupNode. */
   add_group_output: (
+    groupNodeId: string,
+    options: GroupBoundaryOptions
+  ) => Promise<void>;
+  /** Add one public output boundary to a group at an explicit nodespace path. */
+  add_group_output_at_path: (
+    path: NodeSpacePath,
     groupNodeId: string,
     options: GroupBoundaryOptions
   ) => Promise<void>;
@@ -29,8 +41,21 @@ export interface WorkerGroupManagerAPI {
     boundaryId: string,
     options: GroupBoundaryOptions
   ) => Promise<void>;
+  /** Update one public input or output boundary at an explicit nodespace path. */
+  update_group_io_at_path: (
+    path: NodeSpacePath,
+    groupNodeId: string,
+    boundaryId: string,
+    options: GroupBoundaryOptions
+  ) => Promise<void>;
   /** Remove one public input or output boundary from an executable GroupNode. */
   remove_group_io: (groupNodeId: string, boundaryId: string) => Promise<void>;
+  /** Remove one public input or output boundary at an explicit nodespace path. */
+  remove_group_io_at_path: (
+    path: NodeSpacePath,
+    groupNodeId: string,
+    boundaryId: string
+  ) => Promise<void>;
   remove_group: (gid: string) => Promise<void>;
   locally_update_group: (action: GroupActionUpdate) => void;
 }
@@ -160,10 +185,29 @@ export class WorkerGroupManager
     groupNodeId: string,
     options: GroupBoundaryOptions
   ): Promise<void> {
+    await this.add_group_input_at_path(
+      this.activeNodeSpacePath,
+      groupNodeId,
+      options
+    );
+  }
+
+  /**
+   * Add a public input boundary to an executable `GroupNode` at `path`.
+   *
+   * This is used by gateway settings while editing inside a group, where the
+   * gateway is displayed in the child nodespace but the public IO mutation must
+   * target the parent nodespace that contains the group node.
+   */
+  async add_group_input_at_path(
+    path: NodeSpacePath,
+    groupNodeId: string,
+    options: GroupBoundaryOptions
+  ): Promise<void> {
     await this.communicationManager._send_cmd({
       cmd: "add_group_input_at_path",
       kwargs: {
-        path: this.activeNodeSpacePath,
+        path,
         group_node_id: groupNodeId,
         options,
       },
@@ -179,10 +223,28 @@ export class WorkerGroupManager
     groupNodeId: string,
     options: GroupBoundaryOptions
   ): Promise<void> {
+    await this.add_group_output_at_path(
+      this.activeNodeSpacePath,
+      groupNodeId,
+      options
+    );
+  }
+
+  /**
+   * Add a public output boundary to an executable `GroupNode` at `path`.
+   *
+   * Gateway settings use this explicit-path variant to mutate the current
+   * group from its parent nodespace while keeping the active child view open.
+   */
+  async add_group_output_at_path(
+    path: NodeSpacePath,
+    groupNodeId: string,
+    options: GroupBoundaryOptions
+  ): Promise<void> {
     await this.communicationManager._send_cmd({
       cmd: "add_group_output_at_path",
       kwargs: {
-        path: this.activeNodeSpacePath,
+        path,
         group_node_id: groupNodeId,
         options,
       },
@@ -199,10 +261,30 @@ export class WorkerGroupManager
     boundaryId: string,
     options: GroupBoundaryOptions
   ): Promise<void> {
+    await this.update_group_io_at_path(
+      this.activeNodeSpacePath,
+      groupNodeId,
+      boundaryId,
+      options
+    );
+  }
+
+  /**
+   * Update public boundary metadata on an executable `GroupNode` at `path`.
+   *
+   * The explicit path keeps gateway controls from accidentally targeting the
+   * child nodespace that contains the gateway node instead of the parent group.
+   */
+  async update_group_io_at_path(
+    path: NodeSpacePath,
+    groupNodeId: string,
+    boundaryId: string,
+    options: GroupBoundaryOptions
+  ): Promise<void> {
     await this.communicationManager._send_cmd({
       cmd: "update_group_io_at_path",
       kwargs: {
-        path: this.activeNodeSpacePath,
+        path,
         group_node_id: groupNodeId,
         boundary_id: boundaryId,
         options,
@@ -219,10 +301,28 @@ export class WorkerGroupManager
     groupNodeId: string,
     boundaryId: string
   ): Promise<void> {
+    await this.remove_group_io_at_path(
+      this.activeNodeSpacePath,
+      groupNodeId,
+      boundaryId
+    );
+  }
+
+  /**
+   * Remove a public input or output boundary from a group at `path`.
+   *
+   * This preserves the currently viewed child nodespace while the worker
+   * removes the public IO and any affected parent or gateway edges.
+   */
+  async remove_group_io_at_path(
+    path: NodeSpacePath,
+    groupNodeId: string,
+    boundaryId: string
+  ): Promise<void> {
     await this.communicationManager._send_cmd({
       cmd: "remove_group_io_at_path",
       kwargs: {
-        path: this.activeNodeSpacePath,
+        path,
         group_node_id: groupNodeId,
         boundary_id: boundaryId,
       },

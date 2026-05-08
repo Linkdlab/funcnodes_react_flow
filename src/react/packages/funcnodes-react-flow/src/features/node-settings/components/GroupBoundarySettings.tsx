@@ -1,16 +1,22 @@
 import * as React from "react";
 import { useFuncNodesContext } from "@/providers";
-import { getGroupPayload, isExecutableGroupNode } from "@/nodes-core";
+import {
+  getGroupPayload,
+  isExecutableGroupNode,
+  isGroupInputGateway,
+  isGroupOutputGateway,
+} from "@/nodes-core";
 import type { IOStore, IOType, NodeStore, NodeType } from "@/nodes-core";
 import { useWorkerApi } from "@/workers";
 import type { GroupBoundaryOptions } from "@/workers";
+import type { NodeSpacePath } from "@/funcnodes-context";
 
 interface GroupBoundarySettingsProps {
   nodestore: NodeStore;
 }
 
 interface BoundaryCreateFormProps {
-  direction: "input" | "output";
+  direction: BoundaryDirection;
   groupNodeId: string;
   onSubmit: (options: GroupBoundaryOptions) => Promise<void>;
 }
@@ -30,6 +36,16 @@ interface BoundaryIONameControlProps {
   onError: (title: string, error: unknown) => void;
 }
 
+type BoundaryDirection = "input" | "output";
+
+interface BoundarySettingsContext {
+  groupNodeId: string;
+  path?: NodeSpacePath;
+  directions: BoundaryDirection[];
+  ioIds: string[];
+  title: string;
+}
+
 /** Convert an unknown failure value into toaster-friendly text. */
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) return error.message;
@@ -37,12 +53,10 @@ const getErrorMessage = (error: unknown): string => {
 };
 
 /** Returns user-facing labels for one public boundary creation form. */
-const getBoundaryFormLabels = (direction: "input" | "output") => {
+const getBoundaryFormLabels = (direction: BoundaryDirection) => {
   const title = direction === "input" ? "Input" : "Output";
   return {
-    id: `${title} ID`,
     name: `${title} name`,
-    type: `${title} type`,
     button: `Add public ${direction}`,
   };
 };
@@ -63,39 +77,85 @@ const getPublicBoundaryIOIds = (node: NodeType): string[] => {
   return orderedIds;
 };
 
+/** Returns gateway IO ids in the same order they are rendered on the node. */
+const getGatewayBoundaryIOIds = (
+  node: NodeType,
+  direction: BoundaryDirection
+): string[] => {
+  const validIds = new Set(direction === "input" ? node.outputs : node.inputs);
+  return node.io_order.filter((ioId) => validIds.has(ioId));
+};
+
+/**
+ * Resolves which executable group boundary a selected node settings panel edits.
+ *
+ * Selecting the outer `GroupNode` edits that node at the active path. Selecting
+ * an internal gateway edits the current group from its parent path, because the
+ * gateway is displayed one level below the group node that owns public IO.
+ */
+const getBoundarySettingsContext = (
+  node: NodeType,
+  activePath: NodeSpacePath
+): BoundarySettingsContext | undefined => {
+  if (isExecutableGroupNode(node)) {
+    return {
+      groupNodeId: node.id,
+      directions: ["input", "output"],
+      ioIds: getPublicBoundaryIOIds(node),
+      title: "Public interface",
+    };
+  }
+
+  const currentGroup = activePath[activePath.length - 1];
+  if (!currentGroup) return undefined;
+
+  if (isGroupInputGateway(node)) {
+    return {
+      groupNodeId: currentGroup.groupNodeId,
+      path: activePath.slice(0, -1),
+      directions: ["input"],
+      ioIds: getGatewayBoundaryIOIds(node, "input"),
+      title: "Current group inputs",
+    };
+  }
+
+  if (isGroupOutputGateway(node)) {
+    return {
+      groupNodeId: currentGroup.groupNodeId,
+      path: activePath.slice(0, -1),
+      directions: ["output"],
+      ioIds: getGatewayBoundaryIOIds(node, "output"),
+      title: "Current group outputs",
+    };
+  }
+
+  return undefined;
+};
+
 /** Collects metadata for one new public input or output boundary. */
 const BoundaryCreateForm = ({
   direction,
   groupNodeId,
   onSubmit,
 }: BoundaryCreateFormProps) => {
-  const [id, setId] = React.useState("");
   const [name, setName] = React.useState("");
-  const [type, setType] = React.useState("any");
   const labels = getBoundaryFormLabels(direction);
 
-  /** Submit a new boundary IO through the worker-owned graph mutation API. */
+  /** Submit a name-only boundary and let the backend generate ID and Any type. */
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      const trimmedId = id.trim();
-      if (!trimmedId) return;
       const trimmedName = name.trim();
-      const trimmedType = type.trim();
       try {
         await onSubmit({
-          id: trimmedId,
           ...(trimmedName ? { name: trimmedName } : {}),
-          ...(trimmedType ? { type: trimmedType } : {}),
         });
-        setId("");
         setName("");
-        setType("any");
       } catch {
         // The caller owns error reporting so the form can keep the failed edit.
       }
     },
-    [id, name, onSubmit, type]
+    [name, onSubmit]
   );
 
   return (
@@ -103,18 +163,6 @@ const BoundaryCreateForm = ({
       className="nodesettings-io-entry funcnodes-control-group"
       onSubmit={handleSubmit}
     >
-      <div className="funcnodes-control-row">
-        <label htmlFor={`${groupNodeId}-${direction}-boundary-id`}>
-          {labels.id}
-        </label>
-        <input
-          id={`${groupNodeId}-${direction}-boundary-id`}
-          type="text"
-          className="styledinput"
-          value={id}
-          onChange={(event) => setId(event.target.value)}
-        />
-      </div>
       <div className="funcnodes-control-row">
         <label htmlFor={`${groupNodeId}-${direction}-boundary-name`}>
           {labels.name}
@@ -125,18 +173,6 @@ const BoundaryCreateForm = ({
           className="styledinput"
           value={name}
           onChange={(event) => setName(event.target.value)}
-        />
-      </div>
-      <div className="funcnodes-control-row">
-        <label htmlFor={`${groupNodeId}-${direction}-boundary-type`}>
-          {labels.type}
-        </label>
-        <input
-          id={`${groupNodeId}-${direction}-boundary-type`}
-          type="text"
-          className="styledinput"
-          value={type}
-          onChange={(event) => setType(event.target.value)}
         />
       </div>
       <button type="submit">{labels.button}</button>
@@ -198,7 +234,7 @@ const BoundaryIONameControl = ({
         aria-label={`Remove boundary ${io.id}`}
         onClick={removeBoundary}
       >
-        Remove boundary {io.id}
+        Remove boundary
       </button>
     </div>
   );
@@ -213,6 +249,8 @@ export const GroupBoundarySettings = ({
   const node = nodestore.use();
   const fnrf_zst = useFuncNodesContext();
   const { group } = useWorkerApi();
+  const activePath = fnrf_zst.active_nodespace((state) => state.path);
+  const boundaryContext = getBoundarySettingsContext(node, activePath);
 
   /** Surface worker command failures without applying optimistic local edits. */
   const showError = React.useCallback(
@@ -228,54 +266,113 @@ export const GroupBoundarySettings = ({
   /** Add one public input and let the worker resync refresh the node snapshot. */
   const addInput = React.useCallback(
     async (options: GroupBoundaryOptions) => {
+      if (!boundaryContext) return;
       try {
-        await group?.add_group_input(node.id, options);
+        if (boundaryContext.path) {
+          await group?.add_group_input_at_path(
+            boundaryContext.path,
+            boundaryContext.groupNodeId,
+            options
+          );
+        } else {
+          await group?.add_group_input(boundaryContext.groupNodeId, options);
+        }
       } catch (error) {
         showError("Could not add public input", error);
         throw error;
       }
     },
-    [group, node.id, showError]
+    [boundaryContext, group, showError]
   );
 
   /** Add one public output and let the worker resync refresh the node snapshot. */
   const addOutput = React.useCallback(
     async (options: GroupBoundaryOptions) => {
+      if (!boundaryContext) return;
       try {
-        await group?.add_group_output(node.id, options);
+        if (boundaryContext.path) {
+          await group?.add_group_output_at_path(
+            boundaryContext.path,
+            boundaryContext.groupNodeId,
+            options
+          );
+        } else {
+          await group?.add_group_output(boundaryContext.groupNodeId, options);
+        }
       } catch (error) {
         showError("Could not add public output", error);
         throw error;
       }
     },
-    [group, node.id, showError]
+    [boundaryContext, group, showError]
   );
 
-  if (!isExecutableGroupNode(node)) return null;
+  /** Update a boundary through the command target resolved for this settings UI. */
+  const updateBoundary = React.useCallback(
+    async (
+      groupNodeId: string,
+      boundaryId: string,
+      options: GroupBoundaryOptions
+    ) => {
+      if (boundaryContext?.path) {
+        await group?.update_group_io_at_path(
+          boundaryContext.path,
+          groupNodeId,
+          boundaryId,
+          options
+        );
+        return;
+      }
+      await group?.update_group_io(groupNodeId, boundaryId, options);
+    },
+    [boundaryContext, group]
+  );
+
+  /** Remove a boundary through the command target resolved for this settings UI. */
+  const removeBoundary = React.useCallback(
+    async (groupNodeId: string, boundaryId: string) => {
+      if (boundaryContext?.path) {
+        await group?.remove_group_io_at_path(
+          boundaryContext.path,
+          groupNodeId,
+          boundaryId
+        );
+        return;
+      }
+      await group?.remove_group_io(groupNodeId, boundaryId);
+    },
+    [boundaryContext, group]
+  );
+
+  if (!boundaryContext) return null;
 
   return (
     <div className="nodesettings_section">
-      <div>Public interface</div>
-      <BoundaryCreateForm
-        direction="input"
-        groupNodeId={node.id}
-        onSubmit={addInput}
-      />
-      <BoundaryCreateForm
-        direction="output"
-        groupNodeId={node.id}
-        onSubmit={addOutput}
-      />
-      {getPublicBoundaryIOIds(node).map((ioId) => {
+      <div>{boundaryContext.title}</div>
+      {boundaryContext.directions.includes("input") && (
+        <BoundaryCreateForm
+          direction="input"
+          groupNodeId={boundaryContext.groupNodeId}
+          onSubmit={addInput}
+        />
+      )}
+      {boundaryContext.directions.includes("output") && (
+        <BoundaryCreateForm
+          direction="output"
+          groupNodeId={boundaryContext.groupNodeId}
+          onSubmit={addOutput}
+        />
+      )}
+      {boundaryContext.ioIds.map((ioId) => {
         const ioStore = nodestore.io_stores.get(ioId);
         if (!ioStore) return null;
         return (
           <BoundaryIONameControl
             key={ioId}
-            groupNodeId={node.id}
+            groupNodeId={boundaryContext.groupNodeId}
             ioStore={ioStore}
-            onUpdate={group?.update_group_io}
-            onRemove={group?.remove_group_io}
+            onUpdate={updateBoundary}
+            onRemove={removeBoundary}
             onError={showError}
           />
         );
