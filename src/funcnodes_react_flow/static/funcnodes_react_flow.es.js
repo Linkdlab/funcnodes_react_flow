@@ -61242,7 +61242,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     const e = $t(), { node: t } = Rr(), r = En().use(), o = e.render_options(), i = UT(), [a, s] = T.useState(r.name);
     T.useEffect(() => s(r.name), [r.name]);
     const c = T.useCallback(
-      (b) => s(b.target.value),
+      (v) => s(v.target.value),
       []
     ), u = T.useCallback(() => {
       a !== r.name && t?.update_io_options({
@@ -61250,10 +61250,19 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         ioid: r.id,
         options: { name: a }
       });
-    }, [r, t, a]), [f, p] = Ec(
+    }, [r, t, a]), f = T.useCallback(
+      (v) => {
+        t?.update_io_options({
+          nid: r.node,
+          ioid: r.id,
+          options: { does_trigger: v }
+        });
+      },
+      [r.id, r.node, t]
+    ), [p, m] = Ec(
       r,
       o.typemap || {}
-    ), m = Od[(p && o.inputconverter?.[p]) ?? ""] || Od[""], { Inputrenderer: g } = T.useContext(os), y = f ? r.value_options?.options ? fh : g[f] : void 0;
+    ), g = Od[(m && o.inputconverter?.[m]) ?? ""] || Od[""], { Inputrenderer: y } = T.useContext(os), b = p ? r.value_options?.options ? fh : y[p] : void 0;
     return /* @__PURE__ */ S.jsxs("div", { className: "nodesettings-io-entry funcnodes-control-group", children: [
       /* @__PURE__ */ S.jsxs("div", { className: "funcnodes-control-row", children: [
         /* @__PURE__ */ S.jsx("label", { htmlFor: `io-name-${r.id}`, children: "Name:" }),
@@ -61275,7 +61284,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       ] }),
       /* @__PURE__ */ S.jsxs("div", { className: "funcnodes-control-row", children: [
         /* @__PURE__ */ S.jsx("label", { children: "Value:" }),
-        y && /* @__PURE__ */ S.jsx(y, { inputconverter: m })
+        b && /* @__PURE__ */ S.jsx(b, { inputconverter: g })
       ] }),
       /* @__PURE__ */ S.jsxs("div", { className: "funcnodes-control-row", children: [
         /* @__PURE__ */ S.jsx("label", { children: "Type:" }),
@@ -61289,7 +61298,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
             id: `io-hidden-${r.id}`,
             type: "checkbox",
             checked: r.hidden,
-            onChange: (b) => i?.(b.target.checked),
+            onChange: (v) => i?.(v.target.checked),
             className: "styledcheckbox",
             disabled: r.connected && r.is_input
           }
@@ -61305,8 +61314,17 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       ] }),
       r.is_input && /* @__PURE__ */ S.jsxs(S.Fragment, { children: [
         /* @__PURE__ */ S.jsxs("div", { className: "funcnodes-control-row", children: [
-          /* @__PURE__ */ S.jsx("label", { children: "Does Trigger:" }),
-          /* @__PURE__ */ S.jsx("span", { children: String(r.does_trigger) })
+          /* @__PURE__ */ S.jsx("label", { htmlFor: `io-does-trigger-${r.id}`, children: "Does Trigger:" }),
+          /* @__PURE__ */ S.jsx(
+            "input",
+            {
+              id: `io-does-trigger-${r.id}`,
+              type: "checkbox",
+              checked: r.does_trigger,
+              onChange: (v) => f(v.target.checked),
+              className: "styledcheckbox"
+            }
+          )
         ] }),
         /* @__PURE__ */ S.jsxs("div", { className: "funcnodes-control-row", children: [
           /* @__PURE__ */ S.jsx("label", { children: "Required:" }),
