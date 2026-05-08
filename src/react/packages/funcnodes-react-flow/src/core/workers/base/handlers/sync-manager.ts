@@ -12,7 +12,11 @@ import type {
   NodeViewState,
   ViewState,
 } from "@/funcnodes-context";
-import type { PartialSerializedNodeType, SerializedNodeType } from "@/nodes-core";
+import type {
+  PartialSerializedNodeType,
+  SerializedIOType,
+  SerializedNodeType,
+} from "@/nodes-core";
 import type { PackedPlugin } from "@/plugins";
 import type { LibType } from "@/library";
 
@@ -29,6 +33,19 @@ const update_nodeview = (
   if (view.size) node.properties["frontend:size"] = view.size;
   if (view.collapsed !== undefined)
     node.properties["frontend:collapsed"] = !!view.collapsed; // convert to boolean
+};
+
+/**
+ * Return the IO ids present on a serialized nodespace snapshot node.
+ */
+const getSnapshotNodeIoIds = (node: SerializedNodeType): string[] => {
+  if (node.io_order && node.io_order.length > 0) return node.io_order;
+  if (Array.isArray(node.io)) {
+    return node.io
+      .map((io) => io?.id)
+      .filter((id): id is string => typeof id === "string");
+  }
+  return Object.keys(node.io || {});
 };
 
 const NODE_UPDATE_RATE = 2000;
@@ -239,6 +256,7 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
       this.context.worker._zustand
         .getNodespaceManager()
         .apply_nodespace_snapshot(snapshot);
+      await this.sync_snapshot_io_values(snapshot);
       this.context.worker._zustand
         .getStateManager()
         .clear_nodespace_path_stale(snapshot.path);
@@ -255,6 +273,43 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
       });
       throw error;
     }
+  }
+
+  /**
+   * Fetch current preview values for every IO in a freshly applied snapshot.
+   *
+   * `get_nodespace_at_path` returns graph structure and IO metadata without
+   * transient runtime values. Navigating into or out of a group replaces all
+   * frontend node stores, so the visible IO previews must be rehydrated from
+   * the backend for the snapshot path before the canvas is considered loaded.
+   */
+  private async sync_snapshot_io_values(
+    snapshot: EditableNodeSpaceSnapshot
+  ): Promise<void> {
+    if (!this.context.worker._zustand) return;
+
+    await Promise.all(
+      snapshot.nodes.map(async (node) => {
+        if (getSnapshotNodeIoIds(node).length === 0) return;
+        const values = (await this.communicationManager._send_cmd({
+          cmd: "get_ios_values_at_path",
+          kwargs: { path: snapshot.path, nid: node.id },
+          wait_for_response: true,
+        })) as Record<string, SerializedIOType["value"]>;
+
+        const io: PartialSerializedNodeType["io"] = {};
+        for (const ioid in values) {
+          io[ioid] = { value: values[ioid] };
+        }
+
+        this.context.worker._zustand?.on_node_action({
+          type: "update",
+          node: { io },
+          id: node.id,
+          from_remote: true,
+        });
+      })
+    );
   }
 
   async fullsync() {

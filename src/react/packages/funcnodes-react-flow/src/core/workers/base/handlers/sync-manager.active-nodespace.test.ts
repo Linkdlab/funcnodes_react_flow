@@ -29,6 +29,50 @@ const makeSerializedNode = (
     progress: {},
   } as SerializedNodeType);
 
+/** Creates a serialized node with one input and one output for value sync tests. */
+const makeSerializedValueNode = (
+  id: string,
+  name: string = id
+): SerializedNodeType =>
+  ({
+    ...makeSerializedNode(id, name),
+    io_order: ["in", "out"],
+    io: {
+      in: {
+        id: "in",
+        name: "In",
+        node: id,
+        full_id: `${id}.in`,
+        type: "int",
+        value: undefined,
+        fullvalue: undefined,
+        is_input: true,
+        connected: false,
+        does_trigger: false,
+        render_options: { set_default: true, type: "int" },
+        hidden: false,
+        emit_value_set: true,
+        required: false,
+      },
+      out: {
+        id: "out",
+        name: "Out",
+        node: id,
+        full_id: `${id}.out`,
+        type: "int",
+        value: undefined,
+        fullvalue: undefined,
+        is_input: false,
+        connected: false,
+        does_trigger: false,
+        render_options: { set_default: true, type: "int" },
+        hidden: false,
+        emit_value_set: true,
+        required: false,
+      },
+    },
+  } as SerializedNodeType);
+
 const makeFlow = () =>
   new FuncNodesReactFlow({
     ...DEFAULT_FN_PROPS,
@@ -109,6 +153,42 @@ describe("WorkerSyncManager active nodespace sync", () => {
     expect(Array.from(flow.nodespace.nodesstates.keys())).toEqual([
       "inner-node",
     ]);
+  });
+
+  it("hydrates IO preview values after switching active nodespaces", async () => {
+    const flow = makeFlow();
+    const path = [{ groupNodeId: "group-1", label: "Group One" }];
+    const snapshot: EditableNodeSpaceSnapshot = {
+      path,
+      nodes: [makeSerializedValueNode("inner-node")],
+      edges: [],
+      groups: {},
+    };
+    const { manager, sendCmd } = makeSyncManager(snapshot, flow);
+    sendCmd.mockResolvedValueOnce(snapshot).mockResolvedValueOnce({
+      in: 12,
+      out: 34,
+    });
+
+    await manager.sync_active_nodespace(path);
+
+    expect(sendCmd).toHaveBeenCalledWith({
+      cmd: "get_ios_values_at_path",
+      kwargs: { path, nid: "inner-node" },
+      wait_for_response: true,
+    });
+    expect(
+      flow.nodespace
+        .get_node("inner-node")!
+        .io_stores.get("in")!
+        .valuestore.getState().preview?.value
+    ).toBe(12);
+    expect(
+      flow.nodespace
+        .get_node("inner-node")!
+        .io_stores.get("out")!
+        .valuestore.getState().preview?.value
+    ).toBe(34);
   });
 
   it("renders snapshot edges and legacy groups scoped to the active path", async () => {
