@@ -1,4 +1,4 @@
-import { useWorkerApi } from "@/workers";
+import { useWorkerApi } from "../../../core/workers/hooks";
 import { useFuncNodesContext } from "@/providers";
 
 /**

@@ -3,6 +3,44 @@ import { AbstractWorkerHandler } from "./worker-handlers.types";
 import type { WorkerHandlerContext } from "./worker-handlers.types";
 import { v4 as uuidv4 } from "uuid";
 import { interfereDataStructure } from "@/data-structures";
+import type { NodeSpacePath } from "@/funcnodes-context";
+import { nodespacePathKey } from "@/funcnodes-context";
+
+/** Returns whether a decoded header value is a frontend nodespace path. */
+const isNodeSpacePath = (value: unknown): value is NodeSpacePath => {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (entry) =>
+        entry !== null &&
+        typeof entry === "object" &&
+        typeof (entry as any).groupNodeId === "string"
+    )
+  );
+};
+
+/** Parses the optional JSON path carried by binary IO value headers. */
+const parseHeaderNodeSpacePath = (
+  value: string | undefined
+): NodeSpacePath | undefined => {
+  if (!value) return undefined;
+  try {
+    const parsed = JSON.parse(value);
+    if (!isNodeSpacePath(parsed)) return undefined;
+    return parsed.map((entry) => ({
+      groupNodeId: entry.groupNodeId,
+      label: entry.label,
+    }));
+  } catch {
+    return undefined;
+  }
+};
+
+/** Compares two frontend nodespace paths by stable group ids. */
+const nodespacePathsEqual = (
+  first: NodeSpacePath,
+  second: NodeSpacePath
+): boolean => nodespacePathKey(first) === nodespacePathKey(second);
 
 export class WorkerCommunicationManager extends AbstractWorkerHandler {
   private CHUNK_TIMEOUT: number = 10000; // 10 seconds
@@ -177,6 +215,7 @@ export class WorkerCommunicationManager extends AbstractWorkerHandler {
     if (type === "io_value") {
       if (!this.context.worker._zustand) return;
       const { node, io, preview, mime } = headerObj;
+      if (!this.shouldApplyIOValueBytes(headerObj)) return;
       const valuekey = preview ? "value" : "fullvalue";
       if (!node || !io) console.error("Invalid io_value message", headerObj);
       const ds = interfereDataStructure({
@@ -205,6 +244,52 @@ export class WorkerCommunicationManager extends AbstractWorkerHandler {
     } else {
       console.warn("Unhandled bytes message", headerObj);
     }
+  }
+
+  /** Marks a path stale after an inactive binary IO update arrives. */
+  private markNodeSpacePathStale(path: NodeSpacePath): void {
+    const zustand = this.context.worker._zustand;
+    if (!zustand) return;
+    const stateManager = zustand.getStateManager?.();
+    if (stateManager?.mark_nodespace_path_stale) {
+      stateManager.mark_nodespace_path_stale(path);
+      return;
+    }
+
+    const activeState = zustand.active_nodespace.getState();
+    zustand.active_nodespace.setState({
+      stalePathKeys: {
+        ...(activeState.stalePathKeys || {}),
+        [nodespacePathKey(path)]: true,
+      },
+    });
+  }
+
+  /**
+   * Decides whether a binary IO value update targets the rendered nodespace.
+   */
+  private shouldApplyIOValueBytes(headerObj: {
+    [key: string]: string | undefined;
+  }): boolean {
+    const zustand = this.context.worker._zustand;
+    if (!zustand) return false;
+    const activePath = zustand.active_nodespace.getState().path ?? [];
+    const eventPath = parseHeaderNodeSpacePath(headerObj.path);
+
+    if (eventPath && !nodespacePathsEqual(activePath, eventPath)) {
+      this.markNodeSpacePathStale(eventPath);
+      return false;
+    }
+
+    if (!eventPath && activePath.length > 0) {
+      this.markNodeSpacePathStale(activePath);
+      void this.context.worker
+        .getSyncManager()
+        .sync_active_nodespace(activePath);
+      return false;
+    }
+
+    return true;
   }
 
   async onbytes(data: Uint8Array) {

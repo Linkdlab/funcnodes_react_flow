@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { UseBoundStore, StoreApi } from "zustand";
-import type { FuncNodesWorkerState, WorkerProps } from "@/workers";
+import type { FuncNodesWorkerState, WorkerProps } from "./worker.types";
 import type { LargeMessageHint } from "@/messages";
 
 import { WorkerConnectionHealthManager } from "./handlers/connection-health-manager";
@@ -17,11 +17,12 @@ import { WorkerGroupManager } from "./handlers/group-manager";
 import type { WorkerGroupManagerAPI } from "./handlers/group-manager";
 import { WorkerLibraryManager } from "./handlers/library-manager";
 import type { WorkerLibraryManagerAPI } from "./handlers/library-manager";
-import { FuncNodesReactFlow } from "@/funcnodes-context";
+import type { FuncNodesReactFlow } from "@/funcnodes-context";
 import type {
   AutostartPolicy,
   WorkerRepresentation,
 } from "../manager/worker-manager.types";
+import { loadWorkerData } from "./funcnodes-worker.load";
 
 export type WorkerAPI = {
   node: WorkerNodeManagerAPI;
@@ -158,16 +159,16 @@ export class FuncNodesWorker {
     });
   }
 
+  /**
+   * Replace the worker graph from serialized data and resync from the root path.
+   */
   load(data: any) {
-    return this._communicationManager
-      ._send_cmd({
-        cmd: "load_data",
-        kwargs: { data },
-        wait_for_response: true,
-      })
-      .then(() => {
-        this._syncManager.stepwise_fullsync();
-      });
+    return loadWorkerData({
+      data,
+      resetNodeSpacePath: () => this._zustand?.reset_nodespace_path(),
+      sendCommand: (params) => this._communicationManager._send_cmd(params),
+      fullSync: () => this._syncManager.stepwise_fullsync(),
+    });
   }
 
   async get_runstate() {

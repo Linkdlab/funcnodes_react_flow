@@ -145,6 +145,25 @@ describe("WorkerSyncManager active nodespace sync", () => {
     });
   });
 
+  it("clears the stale marker for a path after it is resynced", async () => {
+    const flow = makeFlow();
+    const path = [{ groupNodeId: "group-1", label: "Group One" }];
+    flow.active_nodespace.setState({
+      path,
+      stalePathKeys: { "group-1": true, "other-group": true },
+    });
+    const { manager } = makeSyncManager(
+      { path, nodes: [makeSerializedNode("inner-node")], edges: [], groups: {} },
+      flow
+    );
+
+    await manager.sync_active_nodespace(path);
+
+    expect(flow.active_nodespace.getState().stalePathKeys).toEqual({
+      "other-group": true,
+    });
+  });
+
   it("sends local node updates to the active nodespace path", async () => {
     const flow = makeFlow();
     const path = [{ groupNodeId: "group-1", label: "Group One" }];

@@ -27,3 +27,4 @@ export type {
   NodeSpacePathEntry,
   NodeSpaceViewport,
 } from "./handler/state-manager";
+export { nodespacePathKey } from "./handler/state-manager";

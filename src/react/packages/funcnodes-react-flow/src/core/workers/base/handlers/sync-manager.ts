@@ -1,6 +1,6 @@
 import { AbstractWorkerHandler } from "./worker-handlers.types";
 import type { WorkerHandlerContext } from "./worker-handlers.types";
-import { FuncNodesWorker } from "../funcnodes-worker";
+import type { FuncNodesWorker } from "../funcnodes-worker";
 import type { NodeGroup, NodeGroups } from "@/groups";
 import { deep_merge } from "@/object-helpers";
 import type {
@@ -239,6 +239,9 @@ export class WorkerSyncManager extends AbstractWorkerHandler {
       this.context.worker._zustand
         .getNodespaceManager()
         .apply_nodespace_snapshot(snapshot);
+      this.context.worker._zustand
+        .getStateManager()
+        .clear_nodespace_path_stale(snapshot.path);
       this.context.worker._zustand.active_nodespace.setState({
         path: snapshot.path,
         loading: false,

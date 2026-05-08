@@ -1,5 +1,5 @@
-import { FuncNodesReactFlow } from "@/funcnodes-context";
-import { FuncNodesWorker } from "./funcnodes-worker";
+import type { FuncNodesReactFlow } from "@/funcnodes-context";
+import type { FuncNodesWorker } from "./funcnodes-worker";
 
 export interface WorkerProps {
   zustand?: FuncNodesReactFlow;

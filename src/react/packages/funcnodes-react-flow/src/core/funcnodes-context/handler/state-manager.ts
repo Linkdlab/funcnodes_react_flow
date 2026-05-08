@@ -11,6 +11,9 @@ export interface StateManagerManagerAPI {
   set_progress: (progress: ProgressState) => void;
   auto_progress: () => void;
   set_nodespace_path: (path: NodeSpacePath) => void;
+  mark_nodespace_path_stale: (path: NodeSpacePath) => void;
+  clear_nodespace_path_stale: (path: NodeSpacePath) => void;
+  is_nodespace_path_stale: (path: NodeSpacePath) => boolean;
   enter_group_nodespace: (groupNodeId: string, label: string) => void;
   leave_group_nodespace: () => void;
   go_to_nodespace_path_index: (index: number) => void;
@@ -63,6 +66,7 @@ export interface NodeSpaceViewport {
 export interface ActiveNodeSpaceState {
   path: NodeSpacePath;
   viewportByPath: Record<string, NodeSpaceViewport>;
+  stalePathKeys: Record<string, boolean>;
   loading: boolean;
   error?: string;
 }
@@ -107,6 +111,7 @@ export class StateManagerHandler
     this.active_nodespace = create<ActiveNodeSpaceState>((_set, _get) => ({
       path: [],
       viewportByPath: {},
+      stalePathKeys: {},
       loading: false,
       error: undefined,
     }));
@@ -208,6 +213,38 @@ export class StateManagerHandler
   }
 
   /**
+   * Marks a non-active nodespace path as needing a fresh worker snapshot.
+   */
+  mark_nodespace_path_stale(path: NodeSpacePath): void {
+    const state = this.active_nodespace.getState();
+    this.active_nodespace.setState({
+      stalePathKeys: {
+        ...state.stalePathKeys,
+        [nodespacePathKey(path)]: true,
+      },
+    });
+  }
+
+  /**
+   * Clears the stale marker for a nodespace path after a successful resync.
+   */
+  clear_nodespace_path_stale(path: NodeSpacePath): void {
+    const key = nodespacePathKey(path);
+    const { [key]: _stale, ...remaining } =
+      this.active_nodespace.getState().stalePathKeys;
+    this.active_nodespace.setState({ stalePathKeys: remaining });
+  }
+
+  /**
+   * Returns whether a nodespace path is marked stale by inactive live events.
+   */
+  is_nodespace_path_stale(path: NodeSpacePath): boolean {
+    return !!this.active_nodespace.getState().stalePathKeys[
+      nodespacePathKey(path)
+    ];
+  }
+
+  /**
    * Enters a child executable group nodespace from the current path.
    */
   enter_group_nodespace(groupNodeId: string, label: string): void {
@@ -264,6 +301,7 @@ export class StateManagerHandler
   reset_nodespace_path(): void {
     this.active_nodespace.setState({
       path: [],
+      stalePathKeys: {},
       loading: false,
       error: undefined,
     });
