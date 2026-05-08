@@ -22,6 +22,7 @@ import { usePasteClipboardData } from "@/react-flow/utils";
 import { useTheme } from "@/providers";
 import { useToast } from "@/shared-components";
 import { isExecutableGroupNode } from "@/nodes-core";
+import { NodeSpaceBreadcrumb } from "../../../header/nodespacebreadcrumb";
 
 const BackgroundVariantLookup: Record<string, BackgroundVariant> = {
   default: BackgroundVariant.Dots,
@@ -150,6 +151,7 @@ export const ReactFlowLayer = (props: ReactFlowLayerProps) => {
 
   return (
     <div className="reactflowlayer">
+      <NodeSpaceBreadcrumb></NodeSpaceBreadcrumb>
       <ReactFlow
         onPasteCapture={handlePasteCapture}
         nodes={nodes}

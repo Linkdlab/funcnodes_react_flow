@@ -7,7 +7,6 @@ import { Statusbar } from "./statusbar";
 import { isDevelopment } from "@/utils/debugger";
 import { WorkerMenu } from "./workermenu";
 import { NodeSpaceMenu } from "./nodespacemenu";
-import { NodeSpaceBreadcrumb } from "./nodespacebreadcrumb";
 import { SettingsMenu } from "./settingsmenu";
 import { FuncNodesReactFlow } from "@/funcnodes-context";
 
@@ -41,11 +40,6 @@ export const FuncnodesHeader = ({
           {((fnrf_zst.worker && workerstate.is_open) || isDevelopment()) && (
             <div className="headerelement">
               <NodeSpaceMenu></NodeSpaceMenu>
-            </div>
-          )}
-          {((fnrf_zst.worker && workerstate.is_open) || isDevelopment()) && (
-            <div className="headerelement">
-              <NodeSpaceBreadcrumb></NodeSpaceBreadcrumb>
             </div>
           )}
           <div className="headerelement">
