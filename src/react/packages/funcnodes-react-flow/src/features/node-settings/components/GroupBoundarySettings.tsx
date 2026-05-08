@@ -164,9 +164,11 @@ const BoundaryCreateForm = ({
       onSubmit={handleSubmit}
     >
       <div className="funcnodes-control-row">
+        <div>
         <label htmlFor={`${groupNodeId}-${direction}-boundary-name`}>
           {labels.name}
         </label>
+        </div>
         <input
           id={`${groupNodeId}-${direction}-boundary-name`}
           type="text"
@@ -175,7 +177,7 @@ const BoundaryCreateForm = ({
           onChange={(event) => setName(event.target.value)}
         />
       </div>
-      <button type="submit">{labels.button}</button>
+      <button type="submit" className="styledbtn">{labels.button}</button>
     </form>
   );
 };
@@ -218,7 +220,9 @@ const BoundaryIONameControl = ({
   return (
     <div className="nodesettings-io-entry funcnodes-control-group">
       <div className="funcnodes-control-row">
+        <div>
         <label htmlFor={`group-boundary-name-${io.id}`}>{io.id}</label>
+        </div>
         <input
           id={`group-boundary-name-${io.id}`}
           aria-label={`Boundary name ${io.id}`}
@@ -231,6 +235,7 @@ const BoundaryIONameControl = ({
       </div>
       <button
         type="button"
+        className="styledbtn"
         aria-label={`Remove boundary ${io.id}`}
         onClick={removeBoundary}
       >
@@ -349,24 +354,30 @@ export const GroupBoundarySettings = ({
   return (
     <div className="nodesettings_section">
       <div>{boundaryContext.title}</div>
+
       {boundaryContext.directions.includes("input") && (
+        <div className="nodesettings_component">
         <BoundaryCreateForm
           direction="input"
           groupNodeId={boundaryContext.groupNodeId}
           onSubmit={addInput}
         />
+        </div>
       )}
       {boundaryContext.directions.includes("output") && (
+        <div className="nodesettings_component">
         <BoundaryCreateForm
           direction="output"
           groupNodeId={boundaryContext.groupNodeId}
           onSubmit={addOutput}
         />
+        </div>
       )}
       {boundaryContext.ioIds.map((ioId) => {
         const ioStore = nodestore.io_stores.get(ioId);
         if (!ioStore) return null;
         return (
+          <div className="nodesettings_component">
           <BoundaryIONameControl
             key={ioId}
             groupNodeId={boundaryContext.groupNodeId}
@@ -375,6 +386,7 @@ export const GroupBoundarySettings = ({
             onRemove={removeBoundary}
             onError={showError}
           />
+          </div>
         );
       })}
     </div>
