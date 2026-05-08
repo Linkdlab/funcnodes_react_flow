@@ -37,6 +37,18 @@ export const NodeIOSettings = ({}: NodeIOSettingsProps) => {
     }
   }, [io, node, tempName]);
 
+  /** Persists input trigger behavior through the active worker nodespace. */
+  const setDoesTrigger = React.useCallback(
+    (doesTrigger: boolean) => {
+      node?.update_io_options({
+        nid: io.node,
+        ioid: io.id,
+        options: { does_trigger: doesTrigger },
+      });
+    },
+    [io.id, io.node, node]
+  );
+
   // For editing default value (inputs only)
   const [_typestring, otypestring] = pick_best_io_type(
     io,
@@ -104,8 +116,14 @@ export const NodeIOSettings = ({}: NodeIOSettingsProps) => {
       {io.is_input && (
         <>
           <div className="funcnodes-control-row">
-            <label>Does Trigger:</label>
-            <span>{String(io.does_trigger)}</span>
+            <label htmlFor={`io-does-trigger-${io.id}`}>Does Trigger:</label>
+            <input
+              id={`io-does-trigger-${io.id}`}
+              type="checkbox"
+              checked={io.does_trigger}
+              onChange={(e) => setDoesTrigger(e.target.checked)}
+              className="styledcheckbox"
+            />
           </div>
           <div className="funcnodes-control-row">
             <label>Required:</label>

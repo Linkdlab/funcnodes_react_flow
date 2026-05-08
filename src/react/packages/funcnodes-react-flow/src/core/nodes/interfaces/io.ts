@@ -62,6 +62,8 @@ export interface IOStore {
 }
 
 export interface UpdateableIOOptions {
+  /** Controls whether setting an input value requests a node trigger. */
+  does_trigger?: boolean;
   name?: string;
   hidden?: boolean;
 }
