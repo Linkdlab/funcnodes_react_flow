@@ -19,6 +19,12 @@ const INNER_PARENT_EVENTS = new Set([
   "progress",
 ]);
 
+const IGNORED_NODE_EVENTS = new Set([
+  "after_set_nodespace",
+  "before_request_trigger",
+  "after_request_trigger",
+]);
+
 /** Returns whether a value is shaped like a frontend nodespace path. */
 const isNodeSpacePath = (value: unknown): value is NodeSpacePath => {
   return (
@@ -192,6 +198,8 @@ export class WorkerEventManager extends AbstractWorkerHandler {
         normalizeNodeSpacePath(data.parent_path) ?? eventPath?.slice(0, -1);
       const innerEvent =
         typeof data.inner_event === "string" ? data.inner_event : undefined;
+
+      if (innerEvent && IGNORED_NODE_EVENTS.has(innerEvent)) return undefined;
 
       if (eventPath && nodespacePathsEqual(activePath, eventPath)) {
         if (!innerEvent || typeof data.inner_node !== "string") {
@@ -425,8 +433,7 @@ export class WorkerEventManager extends AbstractWorkerHandler {
         break;
 
       default:
-        const ignored_events = ["after_set_nodespace"];
-        if (ignored_events.includes(event)) return;
+        if (IGNORED_NODE_EVENTS.has(event)) return;
         console.warn("Unhandled nodepsace event", event, data);
         break;
     }

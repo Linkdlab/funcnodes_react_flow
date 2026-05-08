@@ -54,6 +54,33 @@ const makeEventManager = (activePath: NodeSpacePath = GROUP_PATH) => {
 };
 
 describe("WorkerEventManager path-aware nodespace events", () => {
+  it("ignores bubbled inner request-trigger events without warning", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { manager, nodeActions, active_nodespace } =
+      makeEventManager(GROUP_PATH);
+
+    try {
+      await manager.receive_nodespace_event({
+        type: "nsevent",
+        event: "inner_after_request_trigger",
+        data: {
+          path: GROUP_PATH,
+          parent_path: [],
+          node: "group-node",
+          inner_node: "inner-node",
+          inner_event: "after_request_trigger",
+          result: null,
+        },
+      });
+    } finally {
+      warn.mockRestore();
+    }
+
+    expect(nodeActions).toEqual([]);
+    expect(active_nodespace.getState().stalePathKeys).toEqual({});
+    expect(warn).not.toHaveBeenCalled();
+  });
+
   it("routes inner node trigger errors to the displayed internal node when active path matches", async () => {
     const { manager, nodeActions } = makeEventManager(GROUP_PATH);
 
