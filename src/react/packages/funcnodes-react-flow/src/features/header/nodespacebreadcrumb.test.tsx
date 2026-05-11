@@ -26,12 +26,15 @@ const renderWithFlow = (flow: FuncNodesReactFlow, element: React.ReactNode) =>
   );
 
 describe("NodeSpaceBreadcrumb", () => {
-  it("displays Root for the root nodespace", () => {
+  it("hides the breadcrumb for the root nodespace", () => {
     const flow = makeFlow();
 
     renderWithFlow(flow, <NodeSpaceBreadcrumb />);
 
-    expect(screen.getByRole("button", { name: "Root" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("navigation", { name: "Nodespace path" })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Root" })).not.toBeInTheDocument();
   });
 
   it("displays group labels in order for nested paths", () => {
@@ -131,7 +134,7 @@ describe("NodeSpaceMenu active path resets", () => {
     await user.click(await screen.findByText("New"));
 
     expect(flow.active_nodespace.getState().path).toEqual([]);
-    expect(screen.getByRole("button", { name: "Root" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Root" })).not.toBeInTheDocument();
   });
 
   it("loading a flow clears the breadcrumb back to Root", async () => {
@@ -189,6 +192,6 @@ describe("NodeSpaceMenu active path resets", () => {
       expect(flow.worker?.load).toHaveBeenCalledWith(loadedFlow);
     });
     expect(flow.active_nodespace.getState().path).toEqual([]);
-    expect(screen.getByRole("button", { name: "Root" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Root" })).not.toBeInTheDocument();
   });
 });

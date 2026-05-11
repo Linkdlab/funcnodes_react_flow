@@ -50,6 +50,10 @@ export const NodeSpaceBreadcrumb = () => {
     }
   }, [fnrf_zst]);
 
+  if (path.length === 0) {
+    return null;
+  }
+
   return (
     <nav
       aria-label="Nodespace path"
